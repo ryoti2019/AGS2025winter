@@ -7,7 +7,7 @@ class TitleScene : public SceneBase
 public:
 
 	// コンストラクタ
-	TitleScene() = default;
+	TitleScene();
 
 	// デストラクタ
 	~TitleScene() = default;

@@ -14,7 +14,7 @@ class ActorBase
 
 public:
 
-	ActorBase() = default;
+	ActorBase(const VECTOR& pos);
 
 	virtual ~ActorBase() = default;
 
@@ -32,9 +32,6 @@ public:
 protected:
 
 #pragma region オブジェクトの情報
-
-	// 座標
-	VECTOR pos_;
 
 	// 移動後座標
 	VECTOR movedPos_;
@@ -60,6 +57,9 @@ protected:
 #pragma endregion
 
 private:
+
+	// 座標
+	VECTOR pos_;
 
 	// アクティブ状態かどうか
 	bool isActive_;

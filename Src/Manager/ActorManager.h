@@ -48,13 +48,13 @@ template<typename T>
 inline void ActorManager::CreateActor()
 {
 
-	std::shared_ptr<ActorBase> actor = std::make_shared<T>();
+	const VECTOR pos = { 0.0f,0.0f,0.0f };
+	std::shared_ptr<ActorBase> actor = std::make_shared<T>(pos);
 
 	// ポインタを使うときはクラッシュしないようにNULLチェックを行うようにする
 	if (!actor) return;
 
-	const Vector2F pos = { 0.0f,0.0f };
-	actor->Init(pos);
+	//actor->Init(pos);
 
 	// deactiveActorData_の中にすでに同じ型が生成されているかチェックする
 	auto deactorElem = deactiveActorData_.find(actor->GetActorType());

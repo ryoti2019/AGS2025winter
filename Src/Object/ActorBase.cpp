@@ -1,5 +1,19 @@
 #include "ActorBase.h"
 
+ActorBase::ActorBase(const VECTOR& pos)
+	:
+	pos_(pos),
+	movedPos_(pos),
+	speed_(0.0f),
+	movePow_(),
+	hp_(),
+	isHit_(),
+	actorType_(),
+	isAlive_(),
+	isActive_()
+{
+}
+
 void ActorBase::Init(const VECTOR& pos)
 {
 
@@ -11,7 +25,7 @@ void ActorBase::Init(const VECTOR& pos)
 	movePow_ = 0.0f;
 	hp_ = 0;
 	isHit_ = false;
-	actorType_ = ActorType::MAX;
+	actorType_ = ActorType::NONE;
 	isAlive_ = true;
 	isActive_ = false;
 
