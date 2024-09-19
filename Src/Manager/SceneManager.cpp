@@ -104,11 +104,11 @@ void SceneManager::DoChangeScene(const SCENE_ID& sceneId)
 	// シーンを変更する
 	sceneId_ = sceneId;
 
-	// 現在のシーンを解放
-	if (scene_ != nullptr)
-	{
-		scene_->Release();
-	}
+	//// 現在のシーンを解放
+	//if (scene_ != nullptr)
+	//{
+	//	scene_->Release();
+	//}
 
 	// シーンを変更
 	sceneChange_[sceneId_]();
