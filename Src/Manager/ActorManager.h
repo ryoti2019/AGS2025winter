@@ -15,7 +15,7 @@ class ActorManager
 
 public:
 
-	ActorManager() = default;
+	ActorManager();
 	~ActorManager() = default;
 
 	void Init();

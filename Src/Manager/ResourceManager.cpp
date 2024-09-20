@@ -24,6 +24,14 @@ void ResourceManager::Init(void)
 
 	Resource res;
 
+	// プレイヤーのモデル
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Player/Player.mv1");
+	resourcesMap_.emplace(SRC::PLAYER, res);
+
+	// プレイヤーの待機アニメーション
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Player/Idle.mv1");
+	resourcesMap_.emplace(SRC::PLAYER_IDLE, res);
+
 }
 
 void ResourceManager::Release(void)

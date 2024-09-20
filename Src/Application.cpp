@@ -1,4 +1,5 @@
 #include <DxLib.h>
+#include <EffekseerForDXLib.h>
 #include "Manager/ResourceManager.h"
 #include "Manager/InputManager.h"
 #include "Manager/SceneManager.h"
@@ -96,6 +97,14 @@ Application::Application()
 		isInitFail_ = true;
 		return;
 	}
+
+	// Effekseer‚Ì‰Šú‰»
+	if (Effekseer_Init(8000) == -1)
+	{
+		DxLib_End();
+	}
+	SetChangeScreenModeGraphicsSystemResetFlag(FALSE);
+	Effekseer_SetGraphicsDeviceLostCallbackFunctions();
 
 	// ƒL[§Œä‰Šú‰»
 	SetUseDirectInputFlag(true);

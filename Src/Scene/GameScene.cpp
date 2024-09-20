@@ -3,6 +3,8 @@
 
 GameScene::GameScene()
 {
+	// アクター管理クラス
+	actorManager_ = std::make_shared<ActorManager>();
 }
 
 GameScene::~GameScene()

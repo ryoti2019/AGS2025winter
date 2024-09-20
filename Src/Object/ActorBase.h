@@ -1,6 +1,8 @@
 #pragma once
 #include <DxLib.h>
 #include "../Common/Vector2F.h"
+#include "../Object/Common/Transform.h"
+#include "../Manager/ResourceManager.h"
 
 enum class ActorType {
 	NONE = -1,
@@ -23,7 +25,7 @@ public:
 	virtual void Update(const float deltaTime);
 	virtual void Draw();
 
-	void SetPos(const VECTOR& pos) { pos_ = pos; };
+	void SetPos(const VECTOR& pos) { transform_.pos = pos; };
 
 	void SetIsActive(const bool isActive) { isActive_ = isActive; }
 
@@ -31,22 +33,19 @@ public:
 
 protected:
 
+	// リソース管理
+	ResourceManager& resMng_;
+
 #pragma region オブジェクトの情報
 
-	// 移動後座標
-	VECTOR movedPos_;
+	// モデル制御の基本情報
+	Transform transform_;
 
 	// スピード
 	float speed_;
 
-	// 移動量
-	float movePow_;
-
 	// HP
 	int hp_;
-
-	// 衝突しているか
-	bool isHit_;
 
 	// アクターの種類
 	ActorType actorType_;
@@ -57,9 +56,6 @@ protected:
 #pragma endregion
 
 private:
-
-	// 座標
-	VECTOR pos_;
 
 	// アクティブ状態かどうか
 	bool isActive_;

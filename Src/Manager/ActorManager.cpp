@@ -1,5 +1,10 @@
 #include "ActorManager.h"
 
+ActorManager::ActorManager()
+{
+
+}
+
 void ActorManager::Init()
 {
 }

@@ -11,11 +11,8 @@ public:
 	// リソース名
 	enum class SRC
 	{
-		PLAYER_IDLE,
-		PLAYER_RUN,
-		PLAYER_JUMP,
-		SHOT,
-		MAP_CHIP,
+		PLAYER,
+		PLAYER_IDLE
 	};
 
 	// 明示的にインステンスを生成する

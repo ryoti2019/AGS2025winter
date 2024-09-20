@@ -9,11 +9,7 @@ public:
 
 	using ActorBase::ActorBase;
 
-	Player(const VECTOR& pos) : movedPos_(0.0f) : ActorBase(pos),
-		
-		
-	{
-	};
+	Player(const VECTOR& pos);
 
 	~Player() = default;
 
