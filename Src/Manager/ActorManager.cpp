@@ -1,8 +1,11 @@
 #include "ActorManager.h"
-
+#include "../Object/Player.h"
 ActorManager::ActorManager()
 {
 
+	// プレイヤーを生成
+	CreateActor<Player>();
+	ActiveData(ActorType::PLAYER, { 0.0f,0.0f,0.0f });
 }
 
 void ActorManager::Init()
@@ -11,10 +14,48 @@ void ActorManager::Init()
 
 void ActorManager::Update(const float deltaTime)
 {
+
+	// activeActorData_に非アクティブ状態のものがあれば
+	// deactiveActorData_に格納する
+	int num = 0;
+	for (auto& data : activeActorData_)
+	{
+		num = 0;
+		for (const std::shared_ptr<ActorBase>& actor : data.second)
+		{
+			if (actor && !actor->GetIsActive())
+			{
+				// 非アクティブになったものを格納
+				DeactiveData(actor);
+
+				// 非アクティブになったものを削除
+				data.second.erase(data.second.begin() += num);
+			}
+			num++;
+		}
+	}
+
+	for (auto& data : activeActorData_)
+	{
+		for (const std::shared_ptr<ActorBase>& actor : data.second)
+		{
+			actor->Update(deltaTime);
+		}
+	}
+
 }
 
 void ActorManager::Draw()
 {
+
+	for (auto& data : activeActorData_)
+	{
+		for (const std::shared_ptr<ActorBase>& actor : data.second)
+		{
+			actor->Draw();
+		}
+	}
+
 }
 
 std::shared_ptr<ActorBase> ActorManager::ActiveData(const ActorType type, const VECTOR& pos)
@@ -63,4 +104,18 @@ std::shared_ptr<ActorBase> ActorManager::ActiveData(const ActorType type, const 
 
 void ActorManager::DeactiveData(const std::shared_ptr<ActorBase>& actor)
 {
+
+	ActorType type = actor->GetActorType();
+
+	// activeActorData_の中にすでに同じ型が生成されているかチェックする
+	auto actorElem = activeActorData_.find(type);
+
+	// 生成されていない場合は、NULLを返す
+	if (actorElem == activeActorData_.end()) return;
+
+	// activeActorData_の先頭部分を削除してdeactiveActorData_に格納する
+
+	// activeActorData_に格納
+	deactiveActorData_[type].emplace_back(actor);
+
 }

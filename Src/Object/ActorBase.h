@@ -27,6 +27,8 @@ public:
 
 	void SetPos(const VECTOR& pos) { transform_.pos = pos; };
 
+	const bool GetIsActive() const { return isActive_; }
+
 	void SetIsActive(const bool isActive) { isActive_ = isActive; }
 
 	const ActorType GetActorType() const { return actorType_; }

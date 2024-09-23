@@ -3,9 +3,11 @@
 #include <memory>
 #include <unordered_map>
 
+class Fader;
+class Camera;
 class SceneBase;
-class ActorManager;
 class GameScene;
+class ActorManager;
 
 // シーン管理用
 enum class SCENE_ID
@@ -28,6 +30,7 @@ public:
 	static SceneManager& GetInstance() { return *instance_; };
 
 	void Init();
+	void Init3D();
 	void Update(const float deltaTime);
 	void Draw();
 
@@ -45,6 +48,9 @@ public:
 		isSceneChanging_ = true;
 
 	};
+
+	// カメラの取得
+	std::weak_ptr<Camera> GetCamera(void) const { return camera_; };
 
 	// シーンIDの取得
 	const SCENE_ID& GetSceneID() const { return sceneId_; };
@@ -66,14 +72,20 @@ private:
 	// 待機中のシーンID
 	SCENE_ID waitSceneId_;
 
+	// フェード
+	std::unique_ptr<Fader> fader_;
+
+	// カメラ
+	std::weak_ptr<Camera> camera_;
+
+	// シーンの基底クラス
+	std::shared_ptr<SceneBase> scene_;
+
 	// 状態遷移
 	std::unordered_map<SCENE_ID, std::function<void(void)>> sceneChange_;
 	void ChangeTitleScene();
 	void ChangeGameScene();
 	void ChangeGameOverScene();
-
-	// シーンの基底クラス
-	std::shared_ptr<SceneBase> scene_;
 
 	// シーン遷移中判定
 	bool isSceneChanging_;
@@ -91,5 +103,8 @@ private:
 	SceneManager(const SceneManager&);
 	// デストラクタも同様
 	~SceneManager() = default;
+
+	// フェード
+	void Fade(void);
 
 };

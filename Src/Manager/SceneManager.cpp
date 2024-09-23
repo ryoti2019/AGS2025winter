@@ -1,6 +1,9 @@
 #include <chrono>
 #include <DxLib.h>
+#include <EffekseerForDXLib.h>
 #include "ResourceManager.h"
+#include "../Common/Fader.h"
+#include "Camera.h"
 #include "SceneManager.h"
 #include "../Scene/SceneBase.h"
 #include "../Scene/TitleScene.h"
@@ -36,6 +39,9 @@ void SceneManager::Init()
 	// シーン遷移中判定
 	isSceneChanging_ = false;
 
+	// 3D用の設定
+	Init3D();
+
 	// 初期シーンの設定
 	DoChangeScene(SCENE_ID::TITLE);
 
@@ -47,20 +53,53 @@ void SceneManager::Init()
 
 }
 
+void SceneManager::Init3D()
+{
+
+	// 背景色設定
+	SetBackgroundColor(255, 255, 255);
+
+	// Zバッファを有効にする
+	SetUseZBuffer3D(true);
+
+	// Zバッファへの書き込みを有効にする
+	SetWriteZBuffer3D(true);
+
+	// バックカリングを有効にする
+	SetUseBackCulling(true);
+
+	// ライトの設定
+	SetUseLighting(true);
+
+	// 正面から斜め下に向かったライト
+	ChangeLightTypeDir({ 0.00f, -1.00f, 0.00f });
+
+}
+
 void SceneManager::Update(const float deltaTime)
 {
 
 	// nullの場合は通らない
-	if (scene_ == nullptr)
-	{
-		return;
-	}
+	if (scene_ == nullptr)return;
+	if (fader_ == nullptr)return;
+	if (camera_ == nullptr)return;
 
 	// シーン遷移以外は更新
-	if (!isSceneChanging_)
+	fader_->Update();
+	if (isSceneChanging_)
+	{
+		Fade();
+	}
+	else
 	{
 		scene_->Update(deltaTime);
 	}
+
+	// カメラ更新
+	camera_->Update();
+
+	// Effekseerにより再生中のエフェクトを更新する。
+	UpdateEffekseer3D();
 
 }
 
@@ -74,8 +113,17 @@ void SceneManager::Draw()
 	// 画面を初期化
 	ClearDrawScreen();
 
+	// カメラ設定
+	camera_ .lock()->SetBeforeDraw();
+
 	// 描画
 	scene_->Draw();
+
+	// Effekseerにより再生中のエフェクトを描画する。
+	DrawEffekseer3D();
+
+	// 暗転・明転
+	fader_->Draw();
 
 }
 
@@ -93,6 +141,35 @@ SceneManager::SceneManager()
 	isGamePad_(false),
 	isOperation_(false)
 {
+}
+
+void SceneManager::Fade(void)
+{
+
+	Fader::STATE fState = fader_->GetState();
+	switch (fState)
+	{
+	case Fader::STATE::FADE_IN:
+		// 明転中
+		if (fader_->IsEnd())
+		{
+			// 明転が終了したら、フェード処理終了
+			fader_->SetFade(Fader::STATE::NONE);
+			isSceneChanging_ = false;
+		}
+		break;
+	case Fader::STATE::FADE_OUT:
+		// 暗転中
+		if (fader_->IsEnd())
+		{
+			// 完全に暗転してからシーン遷移
+			DoChangeScene(waitSceneId_);
+			// 暗転から明転へ
+			fader_->SetFade(Fader::STATE::FADE_IN);
+		}
+		break;
+	}
+
 }
 
 void SceneManager::DoChangeScene(const SCENE_ID& sceneId)

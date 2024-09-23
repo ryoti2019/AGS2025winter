@@ -9,6 +9,7 @@ Player::Player(const VECTOR& pos) : ActorBase(pos)
 	transform_.quaRot = Quaternion::Euler({ Utility::Deg2RadF(0.0f) , Utility::Deg2RadF(0.0f),Utility::Deg2RadF(0.0f) });
 	transform_.quaRotLocal = Quaternion::Euler({ Utility::Deg2RadF(0.0f) , Utility::Deg2RadF(0.0f),Utility::Deg2RadF(0.0f) });
 	transform_.Update();
+	actorType_ = ActorType::PLAYER;
 }
 
 void Player::Init(const VECTOR& pos)
