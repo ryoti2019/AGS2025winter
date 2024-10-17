@@ -30,9 +30,15 @@ void SceneManager::Init()
 	//関数ポインタの初期化
 	sceneChange_.emplace(SCENE_ID::TITLE, std::bind(&SceneManager::ChangeTitleScene, this));
 	sceneChange_.emplace(SCENE_ID::GAME, std::bind(&SceneManager::ChangeGameScene, this));
-	sceneChange_.emplace(SCENE_ID::GAMEOVER, std::bind(&SceneManager::ChangeGameOverScene, this));
+	//sceneChange_.emplace(SCENE_ID::GAMEOVER, std::bind(&SceneManager::ChangeGameOverScene, this));
 
-	// 初期化
+	// フェーダーの初期化
+	fader_ = std::make_unique<Fader>();
+	
+	// カメラの初期化
+	camera_ = std::make_shared<Camera>();
+
+	// シーンの初期化
 	scene_ = std::make_unique<TitleScene>();
 	scene_->Init();
 
@@ -82,7 +88,6 @@ void SceneManager::Update(const float deltaTime)
 	// nullの場合は通らない
 	if (scene_ == nullptr)return;
 	if (fader_ == nullptr)return;
-	if (camera_ == nullptr)return;
 
 	// シーン遷移以外は更新
 	fader_->Update();
@@ -114,7 +119,7 @@ void SceneManager::Draw()
 	ClearDrawScreen();
 
 	// カメラ設定
-	camera_ .lock()->SetBeforeDraw();
+	camera_->SetBeforeDraw();
 
 	// 描画
 	scene_->Draw();
@@ -181,12 +186,6 @@ void SceneManager::DoChangeScene(const SCENE_ID& sceneId)
 	// シーンを変更する
 	sceneId_ = sceneId;
 
-	//// 現在のシーンを解放
-	//if (scene_ != nullptr)
-	//{
-	//	scene_->Release();
-	//}
-
 	// シーンを変更
 	sceneChange_[sceneId_]();
 
@@ -206,8 +205,4 @@ void SceneManager::ChangeTitleScene()
 void SceneManager::ChangeGameScene()
 {
 	scene_ = std::make_unique<GameScene>();
-}
-
-void SceneManager::ChangeGameOverScene()
-{
 }

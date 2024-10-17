@@ -76,7 +76,7 @@ private:
 	std::unique_ptr<Fader> fader_;
 
 	// カメラ
-	std::weak_ptr<Camera> camera_;
+	std::shared_ptr<Camera> camera_;
 
 	// シーンの基底クラス
 	std::shared_ptr<SceneBase> scene_;
@@ -85,7 +85,7 @@ private:
 	std::unordered_map<SCENE_ID, std::function<void(void)>> sceneChange_;
 	void ChangeTitleScene();
 	void ChangeGameScene();
-	void ChangeGameOverScene();
+	//void ChangeGameOverScene();
 
 	// シーン遷移中判定
 	bool isSceneChanging_;
