@@ -1,8 +1,12 @@
 #pragma once
 #include <DxLib.h>
+#include <memory>
+#include <vector>
 #include "../Common/Vector2F.h"
 #include "../Object/Common/Transform.h"
 #include "../Manager/ResourceManager.h"
+
+class Camera;
 
 enum class ActorType {
 	NONE = -1,

@@ -20,4 +20,9 @@ public:
 	// •`‰æˆ—
 	virtual void Draw() = 0;
 
+protected:
+
+	//ƒJƒƒ‰
+	std::unique_ptr<Camera> camera_;
+
 };

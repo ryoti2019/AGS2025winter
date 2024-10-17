@@ -6,6 +6,7 @@ ActorManager::ActorManager()
 	// ƒvƒŒƒCƒ„[‚ğ¶¬
 	CreateActor<Player>();
 	ActiveData(ActorType::PLAYER, { 0.0f,0.0f,0.0f });
+
 }
 
 void ActorManager::Init()

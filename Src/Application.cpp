@@ -64,6 +64,8 @@ void Application::Destroy()
 	ResourceManager::GetInstance().Destroy();
 	SceneManager::GetInstance().Destroy();
 
+	Effkseer_End();
+
 	// DxLibèIóπ
 	if (DxLib_End() == -1)
 	{

@@ -9,7 +9,7 @@
 
 Camera::Camera(void)
 {
-	mode_ = MODE::NONE;
+	mode_ = MODE::FREE;
 	pos_ = { 0.0f, 0.0f, 0.0f };
 	targetPos_ = { 0.0f, 0.0f, 0.0f };
 	rotXY_ = Quaternion::Identity();
@@ -25,8 +25,6 @@ Camera::~Camera(void)
 
 void Camera::Init(void)
 {
-
-
 }
 
 void Camera::Update(void)
