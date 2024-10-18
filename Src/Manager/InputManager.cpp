@@ -34,9 +34,7 @@ void InputManager::Init(void)
 	InputManager::GetInstance().Add(KEY_INPUT_S);
 	InputManager::GetInstance().Add(KEY_INPUT_D);
 	InputManager::GetInstance().Add(KEY_INPUT_Q);
-	InputManager::GetInstance().Add(KEY_INPUT_H);
-	InputManager::GetInstance().Add(KEY_INPUT_V);
-	InputManager::GetInstance().Add(KEY_INPUT_B);
+	InputManager::GetInstance().Add(KEY_INPUT_E);
 
 	InputManager::GetInstance().Add(KEY_INPUT_UP);
 	InputManager::GetInstance().Add(KEY_INPUT_DOWN);

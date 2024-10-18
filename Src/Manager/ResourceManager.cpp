@@ -32,6 +32,10 @@ void ResourceManager::Init(void)
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Player/Idle.mv1");
 	resourcesMap_.emplace(SRC::PLAYER_IDLE, res);
 
+	// プレイヤーの走るアニメーション
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Player/Run.mv1");
+	resourcesMap_.emplace(SRC::PLAYER_RUN, res);
+
 }
 
 void ResourceManager::Release(void)

@@ -61,6 +61,12 @@ public:
 	// 今のシーンを取得
 	const std::shared_ptr<SceneBase>& GetNowScene() const { return scene_; };
 
+	// ゲームパッドで操作するフラグを取得する
+	bool GetGamePad(void);
+
+	// ゲームパッドで操作するフラグを取得する
+	void SetGamePad(bool isPad);
+
 private:
 
 	// 静的インスタンス

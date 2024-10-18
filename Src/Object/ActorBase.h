@@ -5,6 +5,7 @@
 #include "../Common/Vector2F.h"
 #include "../Object/Common/Transform.h"
 #include "../Manager/ResourceManager.h"
+#include "../Object/Common/AnimationController.h"
 
 class Camera;
 
@@ -44,8 +45,14 @@ protected:
 
 #pragma region オブジェクトの情報
 
+	// アニメーション
+	std::unique_ptr<AnimationController> animationController_;
+
 	// モデル制御の基本情報
 	Transform transform_;
+
+	// 方向
+	VECTOR dir_;
 
 	// スピード
 	float speed_;

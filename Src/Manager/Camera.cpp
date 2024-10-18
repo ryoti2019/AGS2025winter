@@ -12,7 +12,7 @@ Camera::Camera(void)
 	mode_ = MODE::FREE;
 	pos_ = { 0.0f, 0.0f, 0.0f };
 	targetPos_ = { 0.0f, 0.0f, 0.0f };
-	rotXY_ = Quaternion::Identity();
+	angle_ = { 0.0f, 0.0f, 0.0f };
 
 	// カメラの初期設定
 	SetDefault();
@@ -75,13 +75,40 @@ void Camera::SetBeforeDrawFree(void)
 
 	auto& ins = InputManager::GetInstance();
 
-	// 回転
-	//-------------------------------------
+#pragma region 回転
+
 	VECTOR axisDeg = Utility::VECTOR_ZERO;
-	if (ins.IsNew(KEY_INPUT_UP)) { axisDeg.x += 1.0f; }
-	if (ins.IsNew(KEY_INPUT_DOWN)) { axisDeg.x += -1.0f; }
-	if (ins.IsNew(KEY_INPUT_LEFT)) { axisDeg.y += 1.0f; }
-	if (ins.IsNew(KEY_INPUT_RIGHT)) { axisDeg.y +=-1.0f; }
+	if (ins.IsNew(KEY_INPUT_UP)) { axisDeg.x += -1.0f; }
+	if (ins.IsNew(KEY_INPUT_DOWN)) { axisDeg.x += 1.0f; }
+	if (ins.IsNew(KEY_INPUT_LEFT)) { axisDeg.y += -1.0f; }
+	if (ins.IsNew(KEY_INPUT_RIGHT)) { axisDeg.y += 1.0f; }
+
+
+	if (!Utility::EqualsVZero(axisDeg))
+	{
+		// カメラを回転させる
+		angle_.x += Utility::Deg2RadF(axisDeg.x);
+		angle_.y += Utility::Deg2RadF(axisDeg.y);
+	}
+
+
+	rotY_ = Quaternion::AngleAxis(angle_.y, Utility::AXIS_Y);
+	rotXY_ = rotY_.Mult(Quaternion::AngleAxis(angle_.x, Utility::AXIS_X));
+
+	// 注視点(通常重力でいうところのY値を追従対象と同じにする)
+	VECTOR localPos = rotXY_.PosAxis(LOCAL_P2T_POS);
+	targetPos_ = VAdd(pos_, localPos);
+
+	//// カメラ位置
+	//localPos = rotXY_.PosAxis(LOCAL_P2C_POS);
+	//pos_ = VAdd(playerTransform_->pos, localPos);
+
+	// カメラの上方向
+	cameraUp_ = rotXY_.GetUp();
+
+#pragma endregion
+
+#pragma region 移動
 
 	// 移動
 	//--------------------------------------
@@ -90,31 +117,9 @@ void Camera::SetBeforeDrawFree(void)
 	if (ins.IsNew(KEY_INPUT_A)) { moveDir = Utility::DIR_L; }
 	if (ins.IsNew(KEY_INPUT_S)) { moveDir = Utility::DIR_B; }
 	if (ins.IsNew(KEY_INPUT_D)) { moveDir = Utility::DIR_R; }
+	if (ins.IsNew(KEY_INPUT_Q)) { moveDir = Utility::DIR_U; }
+	if (ins.IsNew(KEY_INPUT_E)) { moveDir = Utility::DIR_D; }
 	//---------------------------------------
-
-	if (!Utility::EqualsVZero(axisDeg))
-	{
-
-		// カメラを回転させる
-		angle_.x += Utility::Deg2RadF(axisDeg.x);
-		angle_.y += Utility::Deg2RadF(axisDeg.y);
-
-		rotY_ = Quaternion::AngleAxis(angle_.y, Utility::AXIS_Y);
-
-		rotXY_ = rotY_.Mult(Quaternion::AngleAxis(angle_.x, Utility::AXIS_X));
-
-		// 注視点(通常重力でいうところのY値を追従対象と同じにする)
-		VECTOR localPos = rotY_.PosAxis(LOCAL_P2T_POS);
-		targetPos_ = VAdd(playerTransform_->pos, localPos);
-
-		// カメラ位置
-		localPos = rotXY_.PosAxis(LOCAL_P2C_POS);
-		pos_ = VAdd(playerTransform_->pos, localPos);
-
-		// カメラの上方向
-		cameraUp_ = rotXY_.GetUp();
-
-	}
 
 	if (!Utility::EqualsVZero(moveDir))
 	{
@@ -131,6 +136,9 @@ void Camera::SetBeforeDrawFree(void)
 		targetPos_ = VAdd(targetPos_, movePow);
 
 	}
+
+#pragma endregion
+
 
 }
 
@@ -181,7 +189,7 @@ void Camera::SetBeforeDrawLockOn(void)
 
 	// カメラ位置
 	lockOnLook_ = lockOnLook_.Mult(Quaternion::AngleAxis(lockOnAngles_.y, Utility::AXIS_Y));
-	lockOnLook_ = lockOnLook_.Mult(Quaternion::AngleAxis(-angles_.x + lockOnAngles_.x, Utility::AXIS_X));
+	lockOnLook_ = lockOnLook_.Mult(Quaternion::AngleAxis(-angle_.x + lockOnAngles_.x, Utility::AXIS_X));
 	localRotPos = lockOnLook_.PosAxis(LOCAL_LOCK_ON_F2C_POS);
 	auto goalCameraPos = VAdd(playerPos, localRotPos);
 	dis = Utility::Distance(goalCameraPos, targetPos_);

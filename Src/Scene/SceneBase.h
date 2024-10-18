@@ -1,4 +1,6 @@
 #pragma once
+#include <memory>
+#include "../Manager/Camera.h"
 
 class SceneBase
 {

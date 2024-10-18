@@ -78,7 +78,7 @@ void SceneManager::Init3D()
 	SetUseLighting(true);
 
 	// 正面から斜め下に向かったライト
-	ChangeLightTypeDir({ 0.00f, -1.00f, 0.00f });
+	ChangeLightTypeDir({ 0.0f, -1.0f, 1.0f });
 
 }
 
@@ -195,6 +195,16 @@ void SceneManager::DoChangeScene(const SCENE_ID& sceneId)
 	// 待機中のシーンIDを初期化
 	waitSceneId_ = SCENE_ID::NONE;
 
+}
+
+bool SceneManager::GetGamePad(void)
+{
+	return isGamePad_;
+}
+
+void SceneManager::SetGamePad(bool isPad)
+{
+	isGamePad_ = isPad;
 }
 
 void SceneManager::ChangeTitleScene()

@@ -1,8 +1,8 @@
 #pragma once
 #include <DxLib.h>
 #include "../Common/Quaternion.h"
+#include "../Object/Common/Transform.h"
 
-class Transform;
 class Player;
 
 class Camera
@@ -120,6 +120,8 @@ private:
 	// カメラモード
 	MODE mode_;
 
+	Transform transform_;
+
 	// カメラの位置
 	VECTOR pos_;
 
@@ -149,8 +151,6 @@ private:
 
 	// ロックオン専用コントローラ制御角
 	VECTOR lockOnAngles_;
-
-	VECTOR angles_;
 
 	bool isNearLockOnTarget_;
 

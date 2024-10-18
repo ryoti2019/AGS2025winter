@@ -12,7 +12,8 @@ public:
 	enum class SRC
 	{
 		PLAYER,
-		PLAYER_IDLE
+		PLAYER_IDLE,
+		PLAYER_RUN
 	};
 
 	// 明示的にインステンスを生成する
