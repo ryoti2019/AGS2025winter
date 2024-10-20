@@ -9,7 +9,7 @@
 
 Camera::Camera(void)
 {
-	mode_ = MODE::FREE;
+	mode_ = MODE::FIXED_POINT;
 	pos_ = { 0.0f, 0.0f, 0.0f };
 	targetPos_ = { 0.0f, 0.0f, 0.0f };
 	angle_ = { 0.0f, 0.0f, 0.0f };
@@ -67,7 +67,7 @@ void Camera::SetBeforeDraw(void)
 
 void Camera::SetBeforeDrawFixedPoint(void)
 {
-	// ‰½‚à‚µ‚È‚¢
+	pos_ = { 0.0f,100.0f,-5000.0f };
 }
 
 void Camera::SetBeforeDrawFree(void)

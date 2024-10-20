@@ -5,41 +5,43 @@
 #include "../Player.h"
 #include "InputController.h"
 
-InputContoroller::InputContoroller(Player* player)
+InputController::InputController(Player* player)
 {
 	player_ = player;
 }
 
-InputContoroller::~InputContoroller(void)
+InputController::~InputController(void)
 {
 }
 
-VECTOR InputContoroller::Dir()
+VECTOR InputController::Dir()
 {
-
-	dir_ = Utility::VECTOR_ZERO;
 
 	auto& ins = InputManager::GetInstance();
 
-	//// 方向(direction)
-	//VECTOR dir = AsoUtility::VECTOR_ZERO;
+	// 方向を初期化
+	dir_ = Utility::VECTOR_ZERO;
 
 	// コントローラー
 	// WASDでプレイヤーの位置を変える
 	if (!SceneManager::GetInstance().GetGamePad())
 	{
+		// 前方向
 		if (ins.IsNew(KEY_INPUT_W))
 		{
 			dir_ = { 0.0f, 0.0f, 1.0f };
 		}
+		// 左方向
 		if (ins.IsNew(KEY_INPUT_A))
 		{
 			dir_ = { -1.0f, 0.0f, 0.0f };
 		}
+		// 後ろ方向
 		if (ins.IsNew(KEY_INPUT_S))
 		{
 			dir_ = { 0.0f, 0.0f, -1.0f };
 		}
+		// 右方向
 		if (ins.IsNew(KEY_INPUT_D))
 		{
 			dir_ = { 1.0f, 0.0f, 0.0f };
@@ -57,11 +59,9 @@ VECTOR InputContoroller::Dir()
 
 	return dir_;
 
-	dir_ = Utility::VECTOR_ZERO;
-
 }
 
-bool InputContoroller::ChargeWalk()
+bool InputController::ChargeWalk()
 {
 
 	auto& ins = InputManager::GetInstance();
@@ -89,7 +89,7 @@ bool InputContoroller::ChargeWalk()
 
 }
 
-bool InputContoroller::Run()
+bool InputController::Run()
 {
 
 	auto& ins = InputManager::GetInstance();
@@ -108,7 +108,7 @@ bool InputContoroller::Run()
 
 }
 
-bool InputContoroller::Roll()
+bool InputController::Roll()
 {
 
 	auto& ins = InputManager::GetInstance();
@@ -127,7 +127,7 @@ bool InputContoroller::Roll()
 
 }
 
-bool InputContoroller::Attack()
+bool InputController::Attack()
 {
 
 	auto& ins = InputManager::GetInstance();
@@ -146,7 +146,7 @@ bool InputContoroller::Attack()
 
 }
 
-bool InputContoroller::ChargeAttack()
+bool InputController::ChargeAttack()
 {
 
 	auto& ins = InputManager::GetInstance();

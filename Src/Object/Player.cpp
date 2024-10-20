@@ -4,24 +4,64 @@
 #include "../Scene/GameScene.h"
 #include "../Manager/SceneManager.h"
 #include "../Manager/Camera.h"
+#include "../Object/Common/InputController.h"
 #include "Player.h"
 
 Player::Player(const VECTOR& pos) : ActorBase(pos)
 {
 
-	transform_.SetModel(resMng_.LoadModelDuplicate(ResourceManager::SRC::PLAYER));
-	SetPos(pos);
-	transform_.scl = { 1.0f,1.0f,1.0f };
-	transform_.quaRot = Quaternion::Euler({ Utility::Deg2RadF(0.0f) , Utility::Deg2RadF(0.0f),Utility::Deg2RadF(0.0f) });
-	transform_.quaRotLocal = Quaternion::Euler({ Utility::Deg2RadF(0.0f) , Utility::Deg2RadF(0.0f),Utility::Deg2RadF(0.0f) });
-	transform_.Update();
-	actorType_ = ActorType::PLAYER;
+	// 機能の初期化
+	InitFunction();
+
+	// 共通部分は基底クラスで初期化
+	ActorBase::Init(pos);
+
+	// 関数ポインタの初期化
+	InitFunctionPointer();
+
+	// パラメータの初期化
+	InitPrameter();
+
+	// アニメーションの初期化
+	InitAnimation();
+
+}
+
+void Player::Init(const VECTOR& pos)
+{
+}
+
+void Player::InitFunction()
+{
+
+	// インプットコントローラーの生成
+	inputController_ = std::make_unique<InputController>(this);
+
+	// カメラを生成
 	std::weak_ptr<Camera> camera = SceneManager::GetInstance().GetCamera();
+
+	// カメラのターゲットをプレイヤーに設定
 	camera.lock()->SetPlayer(&transform_);
 
+}
+
+void Player::InitFunctionPointer()
+{
 	//関数ポインタの初期化
 	stateChange_.emplace(STATE::IDLE, std::bind(&Player::ChangeIdle, this));
 	stateChange_.emplace(STATE::RUN, std::bind(&Player::ChangeRun, this));
+}
+
+void Player::InitPrameter()
+{
+
+	// アクターの種類
+	actorType_ = ActorType::PLAYER;
+
+}
+
+void Player::InitAnimation()
+{
 
 	// アニメーションコントローラの生成
 	animationController_ = std::make_unique<AnimationController>(transform_.modelId);
@@ -40,51 +80,49 @@ Player::Player(const VECTOR& pos) : ActorBase(pos)
 
 }
 
-void Player::Init(const VECTOR& pos)
-{
-}
-
 void Player::Update(const float deltaTime)
 {
-	//if (input)
-	//{
 
-	//}
+	// 移動処理
+	Move();
+
+	// 状態ごとの更新
 	stateUpdate_();
 
 	// アニメーション再生
 	animationController_->Update(deltaTime);
-
+	
+	// モデル情報を更新
 	transform_.Update();
 
 }
 
-void Player::ChangeIdle(void)
+void Player::Move()
 {
-	stateUpdate_ = std::bind(&Player::UpdateIdle, this);
-	stateDraw_ = std::bind(&Player::DrawIdle, this);
-}
 
-void Player::ChangeRun(void)
-{
-}
+	// 入力方向
+	dir_ = inputController_->Dir();
 
-void Player::UpdateIdle(void)
-{
-}
+	// 入力していたら移動する
+	if (!Utility::EqualsVZero(dir_))
+	{
+		ChangeState(STATE::RUN);
+	}
+	// 入力していなければ待機状態にする
+	else if (Utility::EqualsVZero(dir_))
+	{
+		ChangeState(STATE::IDLE);
+	}
 
-void Player::UpdateRun(void)
-{
-	// 移動処理
-	transform_.pos = VAdd(transform_.pos, VScale(dir_, 10.0f));
-}
+	// 方向を角度に変換する(XZ平面 Y軸)
+	float angle = atan2f(dir_.x, dir_.z);
 
-void Player::DrawIdle(void)
-{
-}
+	// 回転処理(代用)
+	LazyRotation(angle);
 
-void Player::DrawRun(void)
-{
+	// プレイヤーにカメラを追従するときはこっちに切り替える
+	//LazyRotation(cameraAngles.y + angle);
+
 }
 
 void Player::ChangeState(STATE state)
@@ -105,4 +143,34 @@ void Player::ChangeState(STATE state)
 	// アニメーションコントローラー側のアニメーション遷移
 	animationController_->ChangeAnimation(key_);
 
+}
+
+void Player::ChangeIdle(void)
+{
+	stateUpdate_ = std::bind(&Player::UpdateIdle, this);
+	stateDraw_ = std::bind(&Player::DrawIdle, this);
+}
+
+void Player::ChangeRun(void)
+{
+	stateUpdate_ = std::bind(&Player::UpdateRun, this);
+	stateDraw_ = std::bind(&Player::DrawRun, this);
+}
+
+void Player::UpdateIdle(void)
+{
+}
+
+void Player::UpdateRun(void)
+{
+	// 移動処理
+	transform_.pos = VAdd(transform_.pos, VScale(dir_, 10.0f));
+}
+
+void Player::DrawIdle(void)
+{
+}
+
+void Player::DrawRun(void)
+{
 }

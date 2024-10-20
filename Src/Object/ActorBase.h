@@ -21,6 +21,9 @@ class ActorBase
 
 public:
 
+	// 回転完了までの時間
+	const float ROTATION_POW;
+
 	ActorBase(const VECTOR& pos);
 
 	virtual ~ActorBase() = default;
@@ -54,6 +57,9 @@ protected:
 	// 方向
 	VECTOR dir_;
 
+	// 目的の角度
+	Quaternion goalQuaRot_;
+
 	// スピード
 	float speed_;
 
@@ -65,6 +71,15 @@ protected:
 
 	// 生きているかどうか
 	bool isAlive_;
+
+	// 回転する時間
+	float stepRotTime_;
+
+	// 移動処理
+	virtual void Move() = 0;
+
+	// 遅延回転
+	void LazyRotation(float goalRot);
 
 #pragma endregion
 

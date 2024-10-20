@@ -4,8 +4,6 @@
 #include "ActorBase.h"
 #include "Common/InputController.h"
 
-class InputController;
-
 class Player : public ActorBase
 {
 
@@ -16,7 +14,7 @@ public:
 		NONE,
 		IDLE,
 		RUN,
-		MAX,
+		MAX
 	};
 
 	// アニメーションコントローラーに渡す引数
@@ -27,8 +25,6 @@ public:
 		"RUN"
 	};
 
-	using ActorBase::ActorBase;
-
 	Player(const VECTOR& pos);
 
 	~Player() = default;
@@ -38,8 +34,8 @@ public:
 
 private:
 
-	// 入力コントローラー
-	//InputController inputController_;
+	// 入力用コントローラー
+	std::unique_ptr<InputController> inputController_;
 
 	// 状態
 	STATE state_;
@@ -49,22 +45,37 @@ private:
 	std::string preKey_;
 
 	// 状態遷移
-	std::unordered_map<STATE, std::function<void(void)>> stateChange_;
-	void ChangeIdle(void);
-	void ChangeRun(void);
+	std::unordered_map<STATE, std::function<void()>> stateChange_;
+	void ChangeIdle();
+	void ChangeRun();
 
 	// 状態の更新
-	std::function<void(void)> stateUpdate_;
-	void UpdateIdle(void);
-	void UpdateRun(void);
+	std::function<void()> stateUpdate_;
+	void UpdateIdle();
+	void UpdateRun();
 
 	// 状態の描画
-	std::function<void(void)> stateDraw_;
-	void DrawIdle(void);
-	void DrawRun(void);
+	std::function<void()> stateDraw_;
+	void DrawIdle();
+	void DrawRun();
+
+	// 機能の初期化
+	void InitFunction();
+
+	// パラメータの初期化
+	void InitPrameter();
+
+	// アニメーションの初期化
+	void InitAnimation();
+
+	// 関数ポインタの初期化
+	void InitFunctionPointer();
 
 	// 状態遷移
 	void ChangeState(STATE state);
+
+	// 移動処理
+	void Move()override;
 
 };
 

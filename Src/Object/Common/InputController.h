@@ -4,21 +4,18 @@
 class AnimationController;
 class Player;
 
-class InputContoroller
+class InputController
 {
 public:
 
 	// コンストラクタ
-	InputContoroller(Player* player);
+	InputController(Player* player);
 
 	// デストラクタ
-	~InputContoroller(void);
+	~InputController(void);
 
 	// 方向
 	VECTOR Dir();
-
-	// 移動
-	VECTOR Move();
 
 	// 溜め歩き
 	bool ChargeWalk();
