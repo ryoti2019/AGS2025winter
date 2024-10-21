@@ -9,6 +9,10 @@ class Player : public ActorBase
 
 public:
 
+	// コンボの受付時間
+	const float COMBO_MAX_TIME;
+
+
 	enum class STATE
 	{
 		NONE,
@@ -24,9 +28,9 @@ public:
 	{
 		"NONE",
 		"IDLE",
+		"RUN",
 		"JAB",
-		"STRAIGHT",
-		"RUN"
+		"STRAIGHT"
 	};
 
 	Player(const VECTOR& pos);
@@ -43,6 +47,15 @@ private:
 
 	// 状態
 	STATE state_;
+
+	// コンボカウンタ
+	float comboCnt_;
+
+	// 攻撃1段階目
+	bool attack_;
+
+	// 攻撃2段階目
+	bool attack2_;
 
 	// 状態遷移
 	std::unordered_map<STATE, std::function<void()>> stateChange_;
@@ -84,7 +97,7 @@ private:
 	void Move()override;
 
 	// 攻撃処理
-	void Attack()override;
+	void Attack(const float deltaTime)override;
 
 };
 

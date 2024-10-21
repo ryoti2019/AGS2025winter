@@ -69,5 +69,8 @@ private:
 	// ˆÚ“®ˆ—
 	void Move()override;
 
+	// UŒ‚ˆ—
+	void Attack(const float deltaTime)override;
+
 };
 

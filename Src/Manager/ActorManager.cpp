@@ -10,13 +10,13 @@ ActorManager::ActorManager()
 	ActiveData(ActorType::PLAYER, { 0.0f,0.0f,0.0f });
 
 	// ìGÇê∂ê¨
-	for (int i = 0; i < 50; i++)
-	{
-		float x = std::rand() % 10000;
-		float z = std::rand() % 10000;
-		CreateActor<Enemy>();
-		ActiveData(ActorType::ENEMY, { -5000.0f + x,0.0f,-5000.0f + z });
-	}
+	//for (int i = 0; i < 50; i++)
+	//{
+	//	float x = std::rand() % 10000;
+	//	float z = std::rand() % 10000;
+	//	CreateActor<Enemy>();
+	//	ActiveData(ActorType::ENEMY, { -5000.0f + x,0.0f,-5000.0f + z });
+	//}
 
 }
 

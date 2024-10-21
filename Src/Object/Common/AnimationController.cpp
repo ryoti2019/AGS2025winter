@@ -300,6 +300,7 @@ bool AnimationController::GetIsPriority(void)
 
 bool AnimationController::IsEndPlayAnimation(void)
 {
+
 	const auto& data = animData_[state_];
 
 	// 今のアニメーションの再生が終了しているか判定
@@ -312,6 +313,7 @@ bool AnimationController::IsEndPlayAnimation(void)
 		return true;
 	}
 	return false;
+
 }
 
 bool AnimationController::IsBlendPlay(std::string state)

@@ -9,7 +9,8 @@
 
 Player::Player(const VECTOR& pos)
 	:
-	ActorBase(pos)
+	ActorBase(pos),
+	COMBO_MAX_TIME(1.0f)
 {
 
 	// 機能の初期化
@@ -68,6 +69,15 @@ void Player::InitParameter()
 	// アクターの種類
 	actorType_ = ActorType::PLAYER;
 
+	// コンボカウンタ
+	comboCnt_ = COMBO_MAX_TIME;
+
+	// 攻撃1段階目
+	attack_ = false;
+
+	// 攻撃2段階目
+	attack2_ = false;
+
 }
 
 void Player::InitAnimation()
@@ -83,10 +93,10 @@ void Player::InitAnimation()
 	animationController_->Add("RUN", "Data/Model/Player/Run.mv1", 0.0f, 30.0f, resMng_.LoadModelDuplicate(ResourceManager::SRC::PLAYER_RUN), true, 0, false);
 
 	// ジャブ
-	animationController_->Add("JAB", "Data/Model/Player/Run.mv1", 0.0f, 30.0f, resMng_.LoadModelDuplicate(ResourceManager::SRC::PLAYER_RUN), true, 0, false);
+	animationController_->Add("JAB", "Data/Model/Player/Jab.mv1", 0.0f, 60.0f, resMng_.LoadModelDuplicate(ResourceManager::SRC::PLAYER_JAB), false, 0, false);
 
 	// ストレート
-	animationController_->Add("STRAIGHT", "Data/Model/Player/Run.mv1", 0.0f, 30.0f, resMng_.LoadModelDuplicate(ResourceManager::SRC::PLAYER_RUN), true, 0, false);
+	animationController_->Add("STRAIGHT", "Data/Model/Player/Straight.mv1", 0.0f, 60.0f, resMng_.LoadModelDuplicate(ResourceManager::SRC::PLAYER_STRAIGHT), false, 0, false);
 
 	// アニメーション再生するキー
 	key_ = "IDLE";
@@ -105,6 +115,9 @@ void Player::Update(const float deltaTime)
 	// 移動処理
 	Move();
 
+	// 攻撃処理
+	Attack(deltaTime);
+
 	// 状態ごとの更新
 	stateUpdate_();
 
@@ -122,17 +135,21 @@ void Player::Move()
 	// 入力方向
 	VECTOR dir = inputController_->Dir();
 
-	// 入力していたら移動する
-	if (!Utility::EqualsVZero(dir))
+	// 攻撃中は移動できない
+	if (state_ != STATE::JAB && state_ != STATE::STRAIGHT)
 	{
-		// 方向を更新
-		dir_ = dir;
-		ChangeState(STATE::RUN);
-	}
-	// 入力していなければ待機状態にする
-	else if (Utility::EqualsVZero(dir))
-	{
-		ChangeState(STATE::IDLE);
+		// 入力していたら移動する
+		if (!Utility::EqualsVZero(dir))
+		{
+			// 方向を更新
+			dir_ = dir;
+			ChangeState(STATE::RUN);
+		}
+		// 入力していなければ待機状態にする
+		else if (Utility::EqualsVZero(dir))
+		{
+			ChangeState(STATE::IDLE);
+		}
 	}
 
 	// 方向を角度に変換する(XZ平面 Y軸)
@@ -146,8 +163,41 @@ void Player::Move()
 
 }
 
-void Player::Attack()
+void Player::Attack(const float deltaTime)
 {
+
+	// コンボ受付時間の処理
+	if (comboCnt_ > 0.0f)
+	{
+		comboCnt_ -= deltaTime;
+	}
+	// コンボ中に次の攻撃がなかったら待機状態に戻す
+	else
+	{
+		ChangeState(STATE::IDLE);
+		comboCnt_ = COMBO_MAX_TIME;
+	}
+
+	// 攻撃の先行入力
+	if (inputController_->Attack() && comboCnt_ > 0.0f)
+	{
+		if (state_ == STATE::IDLE)
+		{
+			attack_ = true;
+		}
+		else if (state_ == STATE::JAB)
+		{
+			attack2_ = true;
+		}
+	}
+
+	// ジャブに遷移
+	if (attack_)
+	{
+		attack_ = false;
+		ChangeState(STATE::JAB);
+	}
+
 }
 
 void Player::ChangeState(STATE state)
@@ -184,10 +234,24 @@ void Player::ChangeRun(void)
 
 void Player::ChangeJab()
 {
+
+	stateUpdate_ = std::bind(&Player::UpdateJab, this);
+	stateDraw_ = std::bind(&Player::DrawJab, this);
+
+	// コンボカウンタをもとに戻す
+	comboCnt_ = COMBO_MAX_TIME;
+
 }
 
 void Player::ChangeStraight()
 {
+
+	stateUpdate_ = std::bind(&Player::UpdateStraight, this);
+	stateDraw_ = std::bind(&Player::DrawStraight, this);
+
+	// コンボカウンタをもとに戻す
+	comboCnt_ = COMBO_MAX_TIME;
+
 }
 
 void Player::UpdateIdle(void)
@@ -202,10 +266,19 @@ void Player::UpdateRun(void)
 
 void Player::UpdateJab()
 {
+
+	// ストレートに遷移
+	if (animationController_->IsEndPlayAnimation() && attack2_)
+	{
+		attack2_ = false;
+		ChangeState(STATE::STRAIGHT);
+	}
+
 }
 
 void Player::UpdateStraight()
 {
+	attack2_ = false;
 }
 
 void Player::DrawIdle(void)

@@ -17,20 +17,11 @@ public:
 	// •ûŒü
 	VECTOR Dir();
 
-	// —­‚ß•à‚«
-	bool ChargeWalk();
-
 	// ‘–‚é
 	bool Run();
 
-	// ‰ñ”ğ
-	bool Roll();
-	
 	// UŒ‚
 	bool Attack();
-
-	// —­‚ßUŒ‚
-	bool ChargeAttack();
 
 private:
 

@@ -103,7 +103,7 @@ protected:
 	virtual void Move() = 0;
 
 	// UŒ‚ˆ—
-	virtual void Attack() = 0;
+	virtual void Attack(const float deltaTime) = 0;
 
 	// ’x‰„‰ñ“]
 	void LazyRotation(float goalRot);

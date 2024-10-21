@@ -61,34 +61,6 @@ VECTOR InputController::Dir()
 
 }
 
-bool InputController::ChargeWalk()
-{
-
-	auto& ins = InputManager::GetInstance();
-
-	//—­‚ß‚È‚ª‚ç•à‚­
-	if (!SceneManager::GetInstance().GetGamePad())
-	{
-
-		if (ins.IsClickMouseLeft() && (ins.IsNew(KEY_INPUT_W) || ins.IsNew(KEY_INPUT_A) ||
-			ins.IsNew(KEY_INPUT_S) || ins.IsNew(KEY_INPUT_D)) && !Utility::EqualsVZero(dir_))
-		{
-			return true;
-		}
-	}
-	if (SceneManager::GetInstance().GetGamePad())
-	{
-		if (ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::RIGHT) &&
-			!Utility::EqualsVZero(dir_))
-		{
-			return true;
-		}
-	}
-
-	return false;
-
-}
-
 bool InputController::Run()
 {
 
@@ -100,25 +72,6 @@ bool InputController::Run()
 	}
 	else if (SceneManager::GetInstance().GetGamePad() &&
 		ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN))
-	{
-		return true;
-	}
-
-	return false;
-
-}
-
-bool InputController::Roll()
-{
-
-	auto& ins = InputManager::GetInstance();
-
-	if (!SceneManager::GetInstance().GetGamePad() && ins.IsTrgDown(KEY_INPUT_SPACE))
-	{
-		return true;
-	}
-	else if (SceneManager::GetInstance().GetGamePad() &&
-		ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::R_BOTTON))
 	{
 		return true;
 	}
@@ -142,24 +95,6 @@ bool InputController::Attack()
 		return true;
 	}
 
-	return false;
-
-}
-
-bool InputController::ChargeAttack()
-{
-
-	auto& ins = InputManager::GetInstance();
-
-	if (!SceneManager::GetInstance().GetGamePad() && ins.IsClickMouseLeft())
-	{
-		return true;
-	}
-	else if (SceneManager::GetInstance().GetGamePad() &&
-		ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::RIGHT))
-	{
-		return true;
-	}
 	return false;
 
 }

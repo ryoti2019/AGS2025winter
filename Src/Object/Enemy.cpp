@@ -117,6 +117,10 @@ void Enemy::Move()
 {
 }
 
+void Enemy::Attack(const float deltaTime)
+{
+}
+
 void Enemy::ChangeState(STATE state)
 {
 
