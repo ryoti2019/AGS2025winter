@@ -7,11 +7,19 @@
 #include "../Object/Common/InputController.h"
 #include "Player.h"
 
-Player::Player(const VECTOR& pos) : ActorBase(pos)
+Player::Player(const VECTOR& pos)
+	:
+	ActorBase(pos)
 {
 
 	// 機能の初期化
 	InitFunction();
+
+	// モデルID
+	modelId_ = resMng_.LoadModelDuplicate(ResourceManager::SRC::PLAYER);
+
+	// モデルの大きさ
+	scl_ = 1.0f;
 
 	// 共通部分は基底クラスで初期化
 	ActorBase::Init(pos);
@@ -20,7 +28,7 @@ Player::Player(const VECTOR& pos) : ActorBase(pos)
 	InitFunctionPointer();
 
 	// パラメータの初期化
-	InitPrameter();
+	InitParameter();
 
 	// アニメーションの初期化
 	InitAnimation();
@@ -50,9 +58,11 @@ void Player::InitFunctionPointer()
 	//関数ポインタの初期化
 	stateChange_.emplace(STATE::IDLE, std::bind(&Player::ChangeIdle, this));
 	stateChange_.emplace(STATE::RUN, std::bind(&Player::ChangeRun, this));
+	stateChange_.emplace(STATE::JAB, std::bind(&Player::ChangeJab, this));
+	stateChange_.emplace(STATE::STRAIGHT, std::bind(&Player::ChangeStraight, this));
 }
 
-void Player::InitPrameter()
+void Player::InitParameter()
 {
 
 	// アクターの種類
@@ -67,12 +77,21 @@ void Player::InitAnimation()
 	animationController_ = std::make_unique<AnimationController>(transform_.modelId);
 
 	// 待機
-	animationController_->Add("IDLE", "Data/Model/Player.mv1", 0.0f, 30.0f, resMng_.LoadModelDuplicate(ResourceManager::SRC::PLAYER_IDLE), true, 0, false);
+	animationController_->Add("IDLE", "Data/Model/Player/Idle.mv1", 0.0f, 30.0f, resMng_.LoadModelDuplicate(ResourceManager::SRC::PLAYER_IDLE), true, 0, false);
 
 	// 走る
-	animationController_->Add("RUN", "Data/Model/Player.mv1", 0.0f, 30.0f, resMng_.LoadModelDuplicate(ResourceManager::SRC::PLAYER_RUN), true, 0, false);
+	animationController_->Add("RUN", "Data/Model/Player/Run.mv1", 0.0f, 30.0f, resMng_.LoadModelDuplicate(ResourceManager::SRC::PLAYER_RUN), true, 0, false);
 
+	// ジャブ
+	animationController_->Add("JAB", "Data/Model/Player/Run.mv1", 0.0f, 30.0f, resMng_.LoadModelDuplicate(ResourceManager::SRC::PLAYER_RUN), true, 0, false);
+
+	// ストレート
+	animationController_->Add("STRAIGHT", "Data/Model/Player/Run.mv1", 0.0f, 30.0f, resMng_.LoadModelDuplicate(ResourceManager::SRC::PLAYER_RUN), true, 0, false);
+
+	// アニメーション再生するキー
 	key_ = "IDLE";
+
+	// 1個前のアニメーション
 	preKey_ = key_;
 
 	// 初期状態
@@ -101,15 +120,17 @@ void Player::Move()
 {
 
 	// 入力方向
-	dir_ = inputController_->Dir();
+	VECTOR dir = inputController_->Dir();
 
 	// 入力していたら移動する
-	if (!Utility::EqualsVZero(dir_))
+	if (!Utility::EqualsVZero(dir))
 	{
+		// 方向を更新
+		dir_ = dir;
 		ChangeState(STATE::RUN);
 	}
 	// 入力していなければ待機状態にする
-	else if (Utility::EqualsVZero(dir_))
+	else if (Utility::EqualsVZero(dir))
 	{
 		ChangeState(STATE::IDLE);
 	}
@@ -123,6 +144,10 @@ void Player::Move()
 	// プレイヤーにカメラを追従するときはこっちに切り替える
 	//LazyRotation(cameraAngles.y + angle);
 
+}
+
+void Player::Attack()
+{
 }
 
 void Player::ChangeState(STATE state)
@@ -157,6 +182,14 @@ void Player::ChangeRun(void)
 	stateDraw_ = std::bind(&Player::DrawRun, this);
 }
 
+void Player::ChangeJab()
+{
+}
+
+void Player::ChangeStraight()
+{
+}
+
 void Player::UpdateIdle(void)
 {
 }
@@ -164,7 +197,15 @@ void Player::UpdateIdle(void)
 void Player::UpdateRun(void)
 {
 	// 移動処理
-	transform_.pos = VAdd(transform_.pos, VScale(dir_, 10.0f));
+	transform_.pos = VAdd(transform_.pos, VScale(dir_, 100.0f));
+}
+
+void Player::UpdateJab()
+{
+}
+
+void Player::UpdateStraight()
+{
 }
 
 void Player::DrawIdle(void)
@@ -172,5 +213,13 @@ void Player::DrawIdle(void)
 }
 
 void Player::DrawRun(void)
+{
+}
+
+void Player::DrawJab()
+{
+}
+
+void Player::DrawStraight()
 {
 }

@@ -14,6 +14,8 @@ public:
 		NONE,
 		IDLE,
 		RUN,
+		JAB,
+		STRAIGHT,
 		MAX
 	};
 
@@ -22,6 +24,8 @@ public:
 	{
 		"NONE",
 		"IDLE",
+		"JAB",
+		"STRAIGHT",
 		"RUN"
 	};
 
@@ -40,42 +44,47 @@ private:
 	// 状態
 	STATE state_;
 
-	// アニメーションコントローラーに状態を文字型で渡す変数
-	std::string key_;
-	std::string preKey_;
-
 	// 状態遷移
 	std::unordered_map<STATE, std::function<void()>> stateChange_;
 	void ChangeIdle();
 	void ChangeRun();
+	void ChangeJab();
+	void ChangeStraight();
 
 	// 状態の更新
 	std::function<void()> stateUpdate_;
 	void UpdateIdle();
 	void UpdateRun();
+	void UpdateJab();
+	void UpdateStraight();
 
 	// 状態の描画
 	std::function<void()> stateDraw_;
 	void DrawIdle();
 	void DrawRun();
+	void DrawJab();
+	void DrawStraight();
 
 	// 機能の初期化
-	void InitFunction();
+	void InitFunction()override;
 
 	// パラメータの初期化
-	void InitPrameter();
+	void InitParameter()override;
 
 	// アニメーションの初期化
-	void InitAnimation();
+	void InitAnimation()override;
 
 	// 関数ポインタの初期化
-	void InitFunctionPointer();
+	void InitFunctionPointer()override;
 
 	// 状態遷移
 	void ChangeState(STATE state);
 
 	// 移動処理
 	void Move()override;
+
+	// 攻撃処理
+	void Attack()override;
 
 };
 

@@ -29,12 +29,19 @@ void InputManager::Init(void)
 	InputManager::GetInstance().Add(KEY_INPUT_SPACE);
 	InputManager::GetInstance().Add(KEY_INPUT_LSHIFT);
 
+	// プレイヤーの移動キー
 	InputManager::GetInstance().Add(KEY_INPUT_W);
 	InputManager::GetInstance().Add(KEY_INPUT_A);
 	InputManager::GetInstance().Add(KEY_INPUT_S);
 	InputManager::GetInstance().Add(KEY_INPUT_D);
-	InputManager::GetInstance().Add(KEY_INPUT_Q);
-	InputManager::GetInstance().Add(KEY_INPUT_E);
+
+	// カメラの移動キー
+	InputManager::GetInstance().Add(KEY_INPUT_Y);
+	InputManager::GetInstance().Add(KEY_INPUT_G);
+	InputManager::GetInstance().Add(KEY_INPUT_H);
+	InputManager::GetInstance().Add(KEY_INPUT_J);
+	InputManager::GetInstance().Add(KEY_INPUT_T);
+	InputManager::GetInstance().Add(KEY_INPUT_U);
 
 	InputManager::GetInstance().Add(KEY_INPUT_UP);
 	InputManager::GetInstance().Add(KEY_INPUT_DOWN);

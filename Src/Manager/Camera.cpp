@@ -9,7 +9,7 @@
 
 Camera::Camera(void)
 {
-	mode_ = MODE::FIXED_POINT;
+	mode_ = MODE::FREE;
 	pos_ = { 0.0f, 0.0f, 0.0f };
 	targetPos_ = { 0.0f, 0.0f, 0.0f };
 	angle_ = { 0.0f, 0.0f, 0.0f };
@@ -113,12 +113,12 @@ void Camera::SetBeforeDrawFree(void)
 	// ˆÚ“®
 	//--------------------------------------
 	VECTOR moveDir = Utility::VECTOR_ZERO;
-	if (ins.IsNew(KEY_INPUT_W)) { moveDir = Utility::DIR_F; }
-	if (ins.IsNew(KEY_INPUT_A)) { moveDir = Utility::DIR_L; }
-	if (ins.IsNew(KEY_INPUT_S)) { moveDir = Utility::DIR_B; }
-	if (ins.IsNew(KEY_INPUT_D)) { moveDir = Utility::DIR_R; }
-	if (ins.IsNew(KEY_INPUT_Q)) { moveDir = Utility::DIR_U; }
-	if (ins.IsNew(KEY_INPUT_E)) { moveDir = Utility::DIR_D; }
+	if (ins.IsNew(KEY_INPUT_Y)) { moveDir = Utility::DIR_F; }
+	if (ins.IsNew(KEY_INPUT_G)) { moveDir = Utility::DIR_L; }
+	if (ins.IsNew(KEY_INPUT_H)) { moveDir = Utility::DIR_B; }
+	if (ins.IsNew(KEY_INPUT_J)) { moveDir = Utility::DIR_R; }
+	if (ins.IsNew(KEY_INPUT_T)) { moveDir = Utility::DIR_U; }
+	if (ins.IsNew(KEY_INPUT_U)) { moveDir = Utility::DIR_D; }
 	//---------------------------------------
 
 	if (!Utility::EqualsVZero(moveDir))
@@ -138,7 +138,6 @@ void Camera::SetBeforeDrawFree(void)
 	}
 
 #pragma endregion
-
 
 }
 

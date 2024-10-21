@@ -11,6 +11,7 @@ ActorBase::ActorBase(const VECTOR& pos)
 	isAlive_(false),
 	isActive_(false)
 {
+
 }
 
 void ActorBase::Init(const VECTOR& pos)
@@ -18,9 +19,9 @@ void ActorBase::Init(const VECTOR& pos)
 
 #pragma region オブジェクトの情報
 
-	transform_.SetModel(resMng_.LoadModelDuplicate(ResourceManager::SRC::PLAYER));
+	transform_.SetModel(modelId_);
 	SetPos(pos);
-	transform_.scl = { 1.0f,1.0f,1.0f };
+	transform_.scl = { scl_,scl_,scl_ };
 	transform_.quaRot = Quaternion::Euler({ Utility::Deg2RadF(0.0f) , Utility::Deg2RadF(0.0f),Utility::Deg2RadF(0.0f) });
 	transform_.quaRotLocal = Quaternion::Euler({ Utility::Deg2RadF(0.0f) , Utility::Deg2RadF(180.0f),Utility::Deg2RadF(0.0f) });
 	transform_.Update();
@@ -40,6 +41,22 @@ void ActorBase::Create(const VECTOR& pos)
 }
 
 void ActorBase::Update(const float deltaTime)
+{
+}
+
+void ActorBase::InitFunction()
+{
+}
+
+void ActorBase::InitParameter()
+{
+}
+
+void ActorBase::InitAnimation()
+{
+}
+
+void ActorBase::InitFunctionPointer()
 {
 }
 

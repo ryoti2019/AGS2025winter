@@ -1,11 +1,22 @@
 #include "ActorManager.h"
 #include "../Object/Player.h"
+#include "../Object/Enemy.h"
+
 ActorManager::ActorManager()
 {
 
 	// ƒvƒŒƒCƒ„[‚ğ¶¬
 	CreateActor<Player>();
 	ActiveData(ActorType::PLAYER, { 0.0f,0.0f,0.0f });
+
+	// “G‚ğ¶¬
+	for (int i = 0; i < 50; i++)
+	{
+		float x = std::rand() % 10000;
+		float z = std::rand() % 10000;
+		CreateActor<Enemy>();
+		ActiveData(ActorType::ENEMY, { -5000.0f + x,0.0f,-5000.0f + z });
+	}
 
 }
 

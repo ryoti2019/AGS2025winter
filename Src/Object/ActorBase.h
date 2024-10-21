@@ -60,11 +60,23 @@ protected:
 	// 目的の角度
 	Quaternion goalQuaRot_;
 
+	// アニメーションコントローラーに状態を文字型で渡す変数
+	std::string key_;
+
+	// 1個前のアニメーション
+	std::string preKey_;
+
 	// スピード
 	float speed_;
 
 	// HP
 	int hp_;
+
+	// モデルID
+	int modelId_;
+
+	// モデルの大きさ
+	float scl_;
 
 	// アクターの種類
 	ActorType actorType_;
@@ -75,8 +87,23 @@ protected:
 	// 回転する時間
 	float stepRotTime_;
 
+	// 機能の初期化
+	virtual void InitFunction() = 0;
+
+	// パラメータの初期化
+	virtual void InitParameter() = 0;
+
+	// アニメーションの初期化
+	virtual void InitAnimation() = 0;
+
+	// 関数ポインタの初期化
+	virtual void InitFunctionPointer() = 0;
+
 	// 移動処理
 	virtual void Move() = 0;
+
+	// 攻撃処理
+	virtual void Attack() = 0;
 
 	// 遅延回転
 	void LazyRotation(float goalRot);

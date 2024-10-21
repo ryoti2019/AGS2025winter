@@ -11,9 +11,27 @@ public:
 	// リソース名
 	enum class SRC
 	{
+
+#pragma region プレイヤーのアニメーション
+
 		PLAYER,
 		PLAYER_IDLE,
-		PLAYER_RUN
+		PLAYER_RUN,
+		PLAYER_JAB,
+		PLAYER_STRAIGHT,
+
+#pragma endregion
+
+#pragma region 敵のアニメーション
+
+		ENEMY,
+		ENEMY_IDLE,
+		ENEMY_RUN,
+		ENEMY_JAB,
+		ENEMY_STRAIGHT
+
+#pragma endregion
+
 	};
 
 	// 明示的にインステンスを生成する

@@ -24,6 +24,8 @@ void ResourceManager::Init(void)
 
 	Resource res;
 
+#pragma region プレイヤーのアニメーション
+
 	// プレイヤーのモデル
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Player/Player.mv1");
 	resourcesMap_.emplace(SRC::PLAYER, res);
@@ -35,6 +37,32 @@ void ResourceManager::Init(void)
 	// プレイヤーの走るアニメーション
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Player/Run.mv1");
 	resourcesMap_.emplace(SRC::PLAYER_RUN, res);
+
+	// プレイヤーのジャブアニメーション
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Player/Jab.mv1");
+	resourcesMap_.emplace(SRC::PLAYER_JAB, res);
+
+	// プレイヤーのストレートアニメーション
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Player/Straight.mv1");
+	resourcesMap_.emplace(SRC::PLAYER_STRAIGHT, res);
+
+#pragma endregion
+
+#pragma region 敵のアニメーション
+
+	// 敵のモデル
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Enemy/Enemy.mv1");
+	resourcesMap_.emplace(SRC::ENEMY , res);
+
+	// 敵の待機アニメーション
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Enemy/Idle.mv1");
+	resourcesMap_.emplace(SRC::ENEMY_IDLE, res);
+
+	// 敵の走るアニメーション
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Enemy/Run.mv1");
+	resourcesMap_.emplace(SRC::ENEMY_RUN, res);
+
+#pragma endregion
 
 }
 
