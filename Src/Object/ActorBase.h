@@ -48,6 +48,18 @@ public:
 		// 左足の座標
 		VECTOR leftFootPos;
 
+		// 右手の向き
+		Quaternion rightHandRot;
+
+		// 左手の向き
+		Quaternion leftHandRot;
+
+		// 右足の向き
+		Quaternion rightFootRot;
+
+		// 左足の向き
+		Quaternion leftFootRot;
+
 		// 当たり判定の半径
 		float collisionRadius;
 
@@ -56,6 +68,9 @@ public:
 
 	// 回転完了までの時間
 	const float ROTATION_POW;
+
+	// 当たり判定の半径
+	const float COLLISION_RADIUS;
 
 	ActorBase(const VECTOR& pos);
 
@@ -135,6 +150,12 @@ protected:
 	// 関数ポインタの初期化
 	virtual void InitFunctionPointer() = 0;
 
+	// 衝突判定の初期化
+	virtual void InitCollision() = 0;
+
+	// 衝突判定の更新
+	void CollisionUpdate();
+
 	// 移動処理
 	virtual void Move() = 0;
 
@@ -156,5 +177,8 @@ private:
 
 	// アクティブ状態かどうか
 	bool isActive_;
+
+	// デバッグ描画
+	void DrawDebug();
 
 };

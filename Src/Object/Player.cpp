@@ -33,6 +33,9 @@ Player::Player(const VECTOR& pos)
 	// アニメーションの初期化
 	InitAnimation();
 
+	// 衝突判定の初期化
+	InitCollision();
+
 }
 
 void Player::Init(const VECTOR& pos)
@@ -67,10 +70,20 @@ void Player::InitFunctionPointer()
 void Player::InitCollision()
 {
 
-	// 右手
-	collisionData_.rightHand = MV1SearchFrame(transform_.modelId, "RightHandMiddle1");
-	MATRIX matRighthandPos = MV1GetFrameLocalWorldMatrix(transform_.modelId, collisionData_.rightHand);
-	collisionData_.rightHandPos = MGetTranslateElem(matRighthandPos);
+	// 右手のフレーム番号を取得
+	collisionData_.rightHand = MV1SearchFrame(transform_.modelId, "mixamorig:RightHandMiddle1");
+
+	// 左手のフレーム番号を取得
+	collisionData_.leftHand = MV1SearchFrame(transform_.modelId, "mixamorig:LeftHandMiddle1");
+
+	// 右足のフレーム番号を取得
+	collisionData_.rightFoot = MV1SearchFrame(transform_.modelId, "mixamorig:RightToeBase");
+
+	// 左足のフレーム番号を取得
+	collisionData_.leftFoot = MV1SearchFrame(transform_.modelId, "mixamorig:LeftToeBase");
+
+	// 衝突判定の半径
+	collisionData_.collisionRadius = COLLISION_RADIUS;
 
 }
 
@@ -139,6 +152,9 @@ void Player::Update(const float deltaTime)
 	{
 		ChangeState(STATE::IDLE);
 	}
+
+	// 衝突判定の更新
+	ActorBase::CollisionUpdate();
 
 	// 状態ごとの更新
 	stateUpdate_();

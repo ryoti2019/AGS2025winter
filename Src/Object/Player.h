@@ -91,7 +91,7 @@ private:
 	void InitFunctionPointer()override;
 
 	// Õ“Ë”»’è‚Ì‰Šú‰»
-	void InitCollision();
+	void InitCollision()override;
 
 	// ó‘Ô‘JˆÚ
 	void ChangeState(STATE state);

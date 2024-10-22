@@ -73,6 +73,10 @@ void Enemy::InitFunctionPointer()
 	stateChange_.emplace(STATE::RUN, std::bind(&Enemy::ChangeRun, this));
 }
 
+void Enemy::InitCollision()
+{
+}
+
 void Enemy::InitAnimation()
 {
 
