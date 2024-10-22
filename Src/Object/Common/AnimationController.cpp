@@ -184,7 +184,6 @@ void AnimationController::Update(const float deltaTime)
 			animData.second.stepAnim = animData.second.animTotalTime;
 		}
 
-
 		// 再生するアニメーション時間の設定
 		MV1SetAttachAnimTime(modelId_, animData.second.attachNo, animData.second.stepAnim);
 
@@ -298,6 +297,22 @@ bool AnimationController::GetIsPriority(void)
 	return animData_[preState_].isPriority;
 }
 
+bool AnimationController::IsPlayNowAnimation(void)
+{
+
+	// すべてのアニメーションを再生しているかどうか判定する
+	auto& data = animData_[state_];
+
+	// stepAnimが0.0f以上だと再生判定
+	if (data.stepAnim > 0.0f)
+	{
+		return true;
+	}
+
+	return false;
+
+}
+
 bool AnimationController::IsEndPlayAnimation(void)
 {
 
@@ -308,7 +323,26 @@ bool AnimationController::IsEndPlayAnimation(void)
 	{
 		return true;
 	}
-	else if (!data.isLoop && data.stepAnim <= 4.0f && data.isReverse)
+	else if (!data.isLoop && data.stepAnim <= data.startTime && data.isReverse)
+	{
+		return true;
+	}
+
+	return false;
+
+}
+
+bool AnimationController::IsPreEndPlayAnimation(void)
+{
+
+	const auto& data = animData_[state_];
+
+	// 今のアニメーションの再生が終了しているか判定
+	if (!data.isLoop && data.stepAnim >= data.animTotalTime - 1.0f && !data.isReverse)
+	{
+		return true;
+	}
+	else if (!data.isLoop && data.stepAnim <= data.startTime + 1.0f && data.isReverse)
 	{
 		return true;
 	}

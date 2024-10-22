@@ -117,8 +117,13 @@ void Enemy::Move()
 {
 }
 
-void Enemy::Attack(const float deltaTime)
+void Enemy::ComboAttack(const float deltaTime)
 {
+}
+
+bool Enemy::AttackState()
+{
+	return false;
 }
 
 void Enemy::ChangeState(STATE state)

@@ -21,6 +21,39 @@ class ActorBase
 
 public:
 
+	struct CollisionData
+	{
+
+		// 右手のフレーム
+		int rightHand;
+
+		// 左手のフレーム
+		int leftHand;
+
+		// 右足のフレーム
+		int rightFoot;
+
+		// 左足のフレーム
+		int leftFoot;
+
+		// 右手の座標
+		VECTOR rightHandPos;
+
+		// 左手の座標
+		VECTOR leftHandPos;
+
+		// 右足の座標
+		VECTOR rightFootPos;
+
+		// 左足の座標
+		VECTOR leftFootPos;
+
+		// 当たり判定の半径
+		float collisionRadius;
+
+	};
+
+
 	// 回転完了までの時間
 	const float ROTATION_POW;
 
@@ -53,6 +86,9 @@ protected:
 
 	// モデル制御の基本情報
 	Transform transform_;
+
+	// 衝突判定のデータ
+	CollisionData collisionData_;
 
 	// 方向
 	VECTOR dir_;
@@ -103,10 +139,16 @@ protected:
 	virtual void Move() = 0;
 
 	// 攻撃処理
-	virtual void Attack(const float deltaTime) = 0;
+	virtual void ComboAttack(const float deltaTime) = 0;
+
+	// 攻撃状態
+	virtual bool AttackState() = 0;
 
 	// 遅延回転
 	void LazyRotation(float goalRot);
+
+	// 衝突判定で使うものを登録
+	void CollisionRegister();
 
 #pragma endregion
 

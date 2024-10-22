@@ -67,7 +67,7 @@ void Camera::SetBeforeDraw(void)
 
 void Camera::SetBeforeDrawFixedPoint(void)
 {
-	pos_ = { 0.0f,1000.0f,-5000.0f };
+	pos_ = { 0.0f,5000.0f,-5000.0f };
 }
 
 void Camera::SetBeforeDrawFree(void)

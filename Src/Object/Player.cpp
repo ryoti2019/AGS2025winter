@@ -9,8 +9,7 @@
 
 Player::Player(const VECTOR& pos)
 	:
-	ActorBase(pos),
-	COMBO_MAX_TIME(1.0f)
+	ActorBase(pos)
 {
 
 	// 機能の初期化
@@ -61,22 +60,33 @@ void Player::InitFunctionPointer()
 	stateChange_.emplace(STATE::RUN, std::bind(&Player::ChangeRun, this));
 	stateChange_.emplace(STATE::JAB, std::bind(&Player::ChangeJab, this));
 	stateChange_.emplace(STATE::STRAIGHT, std::bind(&Player::ChangeStraight, this));
+	stateChange_.emplace(STATE::KICK, std::bind(&Player::ChangeKick, this));
+	stateChange_.emplace(STATE::UPPER, std::bind(&Player::ChangeUpper, this));
+}
+
+void Player::InitCollision()
+{
+
+	// 右手
+	collisionData_.rightHand = MV1SearchFrame(transform_.modelId, "RightHandMiddle1");
+	MATRIX matRighthandPos = MV1GetFrameLocalWorldMatrix(transform_.modelId, collisionData_.rightHand);
+	collisionData_.rightHandPos = MGetTranslateElem(matRighthandPos);
+
 }
 
 void Player::InitParameter()
 {
 
+	dir_ = Utility::VECTOR_ZERO;
+
 	// アクターの種類
 	actorType_ = ActorType::PLAYER;
 
-	// コンボカウンタ
-	comboCnt_ = COMBO_MAX_TIME;
-
 	// 攻撃1段階目
-	attack_ = false;
+	jab_ = false;
 
 	// 攻撃2段階目
-	attack2_ = false;
+	straight_ = false;
 
 }
 
@@ -93,10 +103,16 @@ void Player::InitAnimation()
 	animationController_->Add("RUN", "Data/Model/Player/Run.mv1", 0.0f, 30.0f, resMng_.LoadModelDuplicate(ResourceManager::SRC::PLAYER_RUN), true, 0, false);
 
 	// ジャブ
-	animationController_->Add("JAB", "Data/Model/Player/Jab.mv1", 0.0f, 60.0f, resMng_.LoadModelDuplicate(ResourceManager::SRC::PLAYER_JAB), false, 0, false);
+	animationController_->Add("JAB", "Data/Model/Player/Jab.mv1", 0.0f, 80.0f, resMng_.LoadModelDuplicate(ResourceManager::SRC::PLAYER_JAB), false, 0, false);
 
 	// ストレート
 	animationController_->Add("STRAIGHT", "Data/Model/Player/Straight.mv1", 0.0f, 60.0f, resMng_.LoadModelDuplicate(ResourceManager::SRC::PLAYER_STRAIGHT), false, 0, false);
+
+	// キック
+	animationController_->Add("KICK", "Data/Model/Player/Kick.mv1", 0.0f, 40.0f, resMng_.LoadModelDuplicate(ResourceManager::SRC::PLAYER_KICK), false, 0, false);
+
+	// アッパー
+	animationController_->Add("UPPER", "Data/Model/Player/Upper.mv1", 0.0f, 50.0f, resMng_.LoadModelDuplicate(ResourceManager::SRC::PLAYER_UPPER), false, 0, false);
 
 	// アニメーション再生するキー
 	key_ = "IDLE";
@@ -116,7 +132,13 @@ void Player::Update(const float deltaTime)
 	Move();
 
 	// 攻撃処理
-	Attack(deltaTime);
+	ComboAttack(deltaTime);
+
+	// コンボ中に次の攻撃がなかったら待機状態に戻す
+	if (animationController_->IsEndPlayAnimation())
+	{
+		ChangeState(STATE::IDLE);
+	}
 
 	// 状態ごとの更新
 	stateUpdate_();
@@ -136,7 +158,7 @@ void Player::Move()
 	VECTOR dir = inputController_->Dir();
 
 	// 攻撃中は移動できない
-	if (state_ != STATE::JAB && state_ != STATE::STRAIGHT)
+	if (!AttackState())
 	{
 		// 入力していたら移動する
 		if (!Utility::EqualsVZero(dir))
@@ -163,40 +185,54 @@ void Player::Move()
 
 }
 
-void Player::Attack(const float deltaTime)
+void Player::ComboAttack(const float deltaTime)
 {
 
-	// コンボ受付時間の処理
-	if (comboCnt_ > 0.0f)
-	{
-		comboCnt_ -= deltaTime;
-	}
-	// コンボ中に次の攻撃がなかったら待機状態に戻す
-	else
-	{
-		ChangeState(STATE::IDLE);
-		comboCnt_ = COMBO_MAX_TIME;
-	}
-
 	// 攻撃の先行入力
-	if (inputController_->Attack() && comboCnt_ > 0.0f)
+	if (inputController_->ComboAttack())
 	{
+		// ジャブ
 		if (state_ == STATE::IDLE)
 		{
-			attack_ = true;
+			jab_ = true;
 		}
+		// ストレート
 		else if (state_ == STATE::JAB)
 		{
-			attack2_ = true;
+			straight_ = true;
+		}
+		// キック
+		else if (state_ == STATE::STRAIGHT)
+		{
+			kick_ = true;
 		}
 	}
 
 	// ジャブに遷移
-	if (attack_)
+	if (jab_)
 	{
-		attack_ = false;
+		jab_ = false;
 		ChangeState(STATE::JAB);
 	}
+
+	// アッパーに遷移
+	if (inputController_->Upper() && !animationController_->IsPlayNowAnimation())
+	{
+		ChangeState(STATE::UPPER);
+	}
+
+}
+
+bool Player::AttackState()
+{
+
+	// 攻撃中か判定
+	if (state_ == STATE::JAB || state_ == STATE::STRAIGHT || state_ == STATE::KICK || state_ == STATE::UPPER)
+	{
+		return true;
+	}
+
+	return false;
 
 }
 
@@ -223,23 +259,20 @@ void Player::ChangeState(STATE state)
 void Player::ChangeIdle(void)
 {
 	stateUpdate_ = std::bind(&Player::UpdateIdle, this);
-	stateDraw_ = std::bind(&Player::DrawIdle, this);
 }
 
 void Player::ChangeRun(void)
 {
 	stateUpdate_ = std::bind(&Player::UpdateRun, this);
-	stateDraw_ = std::bind(&Player::DrawRun, this);
 }
 
 void Player::ChangeJab()
 {
 
 	stateUpdate_ = std::bind(&Player::UpdateJab, this);
-	stateDraw_ = std::bind(&Player::DrawJab, this);
 
-	// コンボカウンタをもとに戻す
-	comboCnt_ = COMBO_MAX_TIME;
+	// 少し前に移動
+	transform_.pos = VAdd(transform_.pos, VScale(dir_, 100.0f));
 
 }
 
@@ -247,10 +280,24 @@ void Player::ChangeStraight()
 {
 
 	stateUpdate_ = std::bind(&Player::UpdateStraight, this);
-	stateDraw_ = std::bind(&Player::DrawStraight, this);
 
-	// コンボカウンタをもとに戻す
-	comboCnt_ = COMBO_MAX_TIME;
+	// 少し前に移動
+	transform_.pos = VAdd(transform_.pos, VScale(dir_, 100.0f));
+
+}
+
+void Player::ChangeKick()
+{
+	stateUpdate_ = std::bind(&Player::UpdateKick, this);
+}
+
+void Player::ChangeUpper()
+{
+
+	stateUpdate_ = std::bind(&Player::UpdateUpper, this);
+
+	// 少し前に移動
+	transform_.pos = VAdd(transform_.pos, VScale(dir_, 100.0f));
 
 }
 
@@ -268,9 +315,9 @@ void Player::UpdateJab()
 {
 
 	// ストレートに遷移
-	if (animationController_->IsEndPlayAnimation() && attack2_)
+	if (animationController_->IsPreEndPlayAnimation() && straight_)
 	{
-		attack2_ = false;
+		straight_ = false;
 		ChangeState(STATE::STRAIGHT);
 	}
 
@@ -278,21 +325,18 @@ void Player::UpdateJab()
 
 void Player::UpdateStraight()
 {
-	attack2_ = false;
+	// キックに遷移
+	if (animationController_->IsPreEndPlayAnimation() && kick_)
+	{
+		kick_ = false;
+		ChangeState(STATE::KICK);
+	}
 }
 
-void Player::DrawIdle(void)
+void Player::UpdateKick()
 {
 }
 
-void Player::DrawRun(void)
-{
-}
-
-void Player::DrawJab()
-{
-}
-
-void Player::DrawStraight()
+void Player::UpdateUpper()
 {
 }

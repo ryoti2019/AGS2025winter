@@ -44,26 +44,18 @@ void ActorBase::Update(const float deltaTime)
 {
 }
 
-void ActorBase::InitFunction()
-{
-}
-
-void ActorBase::InitParameter()
-{
-}
-
-void ActorBase::InitAnimation()
-{
-}
-
-void ActorBase::InitFunctionPointer()
-{
-}
-
 void ActorBase::LazyRotation(float goalRot)
 {
 	auto goal = Quaternion::Euler(0.0f, goalRot, 0.0f);
 	transform_.quaRot = Quaternion::Slerp(transform_.quaRot, goal, ROTATION_POW);
+}
+
+void ActorBase::CollisionRegister()
+{
+
+
+
+
 }
 
 void ActorBase::Draw()

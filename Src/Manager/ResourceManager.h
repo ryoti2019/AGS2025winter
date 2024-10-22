@@ -19,6 +19,8 @@ public:
 		PLAYER_RUN,
 		PLAYER_JAB,
 		PLAYER_STRAIGHT,
+		PLAYER_KICK,
+		PLAYER_UPPER,
 
 #pragma endregion
 

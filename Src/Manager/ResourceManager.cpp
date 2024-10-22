@@ -46,6 +46,14 @@ void ResourceManager::Init(void)
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Player/Straight.mv1");
 	resourcesMap_.emplace(SRC::PLAYER_STRAIGHT, res);
 
+	// プレイヤーのキックアニメーション
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Player/Kick.mv1");
+	resourcesMap_.emplace(SRC::PLAYER_KICK, res);
+
+	// プレイヤーのアッパーアニメーション
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Player/Upper.mv1");
+	resourcesMap_.emplace(SRC::PLAYER_UPPER, res);
+
 #pragma endregion
 
 #pragma region 敵のアニメーション

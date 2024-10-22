@@ -93,8 +93,14 @@ public:
 	// 優先されているアニメーションタイプを取得
 	bool GetIsPriority(void);
 
+	// アニメーションが再生されているかどうか
+	bool IsPlayNowAnimation(void);
+
 	// 今のアニメーションの再生が終了しているか判定
 	bool IsEndPlayAnimation(void);
+
+	// 今のアニメーションの総再生時間の-1.0前が終了しているか判定
+	bool IsPreEndPlayAnimation(void);
 
 	// 再生しているアニメーションがブレンドされているかどうか
 	bool IsBlendPlay(std::string state);

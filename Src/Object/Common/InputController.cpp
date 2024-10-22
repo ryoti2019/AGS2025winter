@@ -80,7 +80,7 @@ bool InputController::Run()
 
 }
 
-bool InputController::Attack()
+bool InputController::ComboAttack()
 {
 
 	auto& ins = InputManager::GetInstance();
@@ -91,6 +91,20 @@ bool InputController::Attack()
 	}
 	else if (SceneManager::GetInstance().GetGamePad() &&
 		ins.IsPadBtnTrgUp(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::RIGHT))
+	{
+		return true;
+	}
+
+	return false;
+
+}
+
+bool InputController::Upper()
+{
+
+	auto& ins = InputManager::GetInstance();
+
+	if (!SceneManager::GetInstance().GetGamePad() && ins.IsTrgUpMouseLeft() && ins.IsNew(KEY_INPUT_LSHIFT))
 	{
 		return true;
 	}

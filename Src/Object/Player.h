@@ -9,10 +9,6 @@ class Player : public ActorBase
 
 public:
 
-	// コンボの受付時間
-	const float COMBO_MAX_TIME;
-
-
 	enum class STATE
 	{
 		NONE,
@@ -20,6 +16,8 @@ public:
 		RUN,
 		JAB,
 		STRAIGHT,
+		KICK,
+		UPPER,
 		MAX
 	};
 
@@ -30,7 +28,9 @@ public:
 		"IDLE",
 		"RUN",
 		"JAB",
-		"STRAIGHT"
+		"STRAIGHT",
+		"KICK",
+		"UPPER"
 	};
 
 	Player(const VECTOR& pos);
@@ -48,14 +48,17 @@ private:
 	// 状態
 	STATE state_;
 
-	// コンボカウンタ
-	float comboCnt_;
-
 	// 攻撃1段階目
-	bool attack_;
+	bool jab_;
 
 	// 攻撃2段階目
-	bool attack2_;
+	bool straight_;
+
+	// 攻撃3段階目
+	bool kick_;
+
+	// 攻撃4段階目
+	bool upper_;
 
 	// 状態遷移
 	std::unordered_map<STATE, std::function<void()>> stateChange_;
@@ -63,6 +66,8 @@ private:
 	void ChangeRun();
 	void ChangeJab();
 	void ChangeStraight();
+	void ChangeKick();
+	void ChangeUpper();
 
 	// 状態の更新
 	std::function<void()> stateUpdate_;
@@ -70,13 +75,8 @@ private:
 	void UpdateRun();
 	void UpdateJab();
 	void UpdateStraight();
-
-	// 状態の描画
-	std::function<void()> stateDraw_;
-	void DrawIdle();
-	void DrawRun();
-	void DrawJab();
-	void DrawStraight();
+	void UpdateKick();
+	void UpdateUpper();
 
 	// 機能の初期化
 	void InitFunction()override;
@@ -90,6 +90,9 @@ private:
 	// 関数ポインタの初期化
 	void InitFunctionPointer()override;
 
+	// 衝突判定の初期化
+	void InitCollision();
+
 	// 状態遷移
 	void ChangeState(STATE state);
 
@@ -97,7 +100,10 @@ private:
 	void Move()override;
 
 	// 攻撃処理
-	void Attack(const float deltaTime)override;
+	void ComboAttack(const float deltaTime)override;
+
+	// 攻撃中か判定
+	bool AttackState()override;
 
 };
 

@@ -70,7 +70,10 @@ private:
 	void Move()override;
 
 	// UŒ‚ˆ—
-	void Attack(const float deltaTime)override;
+	void ComboAttack(const float deltaTime)override;
+
+	// UŒ‚ó‘Ô
+	bool AttackState()override;
 
 };
 

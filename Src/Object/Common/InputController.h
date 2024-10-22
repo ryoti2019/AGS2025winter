@@ -21,7 +21,10 @@ public:
 	bool Run();
 
 	// 攻撃
-	bool Attack();
+	bool ComboAttack();
+
+	// アッパー
+	bool Upper();
 
 private:
 
