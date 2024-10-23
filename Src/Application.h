@@ -17,6 +17,7 @@ public:
 	static const std::string PATH_MODEL;
 	static const std::string PATH_EFFECT;
 	static const std::string PATH_SOUND;
+	static const std::string PATH_JSON;
 	//-------------------------------------------
 
 	// 明示的にインスタンスを生成する

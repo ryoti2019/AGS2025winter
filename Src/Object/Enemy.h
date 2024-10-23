@@ -24,7 +24,7 @@ public:
 		"RUN"
 	};
 
-	Enemy(const VECTOR& pos);
+	Enemy(const VECTOR& pos, const json& data);
 
 	~Enemy() = default;
 
@@ -62,9 +62,6 @@ private:
 
 	// ŠÖ”ƒ|ƒCƒ“ƒ^‚Ì‰Šú‰»
 	void InitFunctionPointer()override;
-
-	// Õ“Ë”»’è‚Ì‰Šú‰»
-	void InitCollision()override;
 
 	// ó‘Ô‘JˆÚ
 	void ChangeState(STATE state);

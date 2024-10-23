@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <string>
 #include <vector>
+#include "../Lib/nlohmann/json.hpp"
 #include "../Object/ActorBase.h"
 #include "../Common/Vector2F.h"
 
@@ -24,7 +25,7 @@ public:
 
 	// Actorの派生クラスの実体の作成
 	template <typename actor>
-	void CreateActor();
+	void CreateActor(const json& data);
 
 	// アクティブになったものを格納
 	std::shared_ptr<ActorBase> ActiveData(const ActorType type, const VECTOR& pos);
@@ -45,11 +46,11 @@ private:
 };
 
 template<typename T>
-inline void ActorManager::CreateActor()
+inline void ActorManager::CreateActor(const json& data)
 {
 
 	const VECTOR pos = { 0.0f,0.0f,0.0f };
-	std::shared_ptr<ActorBase> actor = std::make_shared<T>(pos);
+	std::shared_ptr<ActorBase> actor = std::make_shared<T>(pos, data);
 
 	// ポインタを使うときはクラッシュしないようにNULLチェックを行うようにする
 	if (!actor) return;

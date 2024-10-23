@@ -7,22 +7,13 @@
 #include "../Object/Common/InputController.h"
 #include "Player.h"
 
-Player::Player(const VECTOR& pos)
+Player::Player(const VECTOR& pos, const json& data)
 	:
-	ActorBase(pos)
+	ActorBase(pos, data)
 {
 
 	// 機能の初期化
 	InitFunction();
-
-	// モデルID
-	modelId_ = resMng_.LoadModelDuplicate(ResourceManager::SRC::PLAYER);
-
-	// モデルの大きさ
-	scl_ = 1.0f;
-
-	// 共通部分は基底クラスで初期化
-	ActorBase::Init(pos);
 
 	// 関数ポインタの初期化
 	InitFunctionPointer();
@@ -30,11 +21,11 @@ Player::Player(const VECTOR& pos)
 	// パラメータの初期化
 	InitParameter();
 
+	// 共通部分は基底クラスで初期化
+	ActorBase::Init(pos);
+
 	// アニメーションの初期化
 	InitAnimation();
-
-	// 衝突判定の初期化
-	InitCollision();
 
 }
 
@@ -67,39 +58,32 @@ void Player::InitFunctionPointer()
 	stateChange_.emplace(STATE::UPPER, std::bind(&Player::ChangeUpper, this));
 }
 
-void Player::InitCollision()
-{
-
-	// 右手のフレーム番号を取得
-	collisionData_.rightHand = MV1SearchFrame(transform_.modelId, "mixamorig:RightHandMiddle1");
-
-	// 左手のフレーム番号を取得
-	collisionData_.leftHand = MV1SearchFrame(transform_.modelId, "mixamorig:LeftHandMiddle1");
-
-	// 右足のフレーム番号を取得
-	collisionData_.rightFoot = MV1SearchFrame(transform_.modelId, "mixamorig:RightToeBase");
-
-	// 左足のフレーム番号を取得
-	collisionData_.leftFoot = MV1SearchFrame(transform_.modelId, "mixamorig:LeftToeBase");
-
-	// 衝突判定の半径
-	collisionData_.collisionRadius = COLLISION_RADIUS;
-
-}
-
 void Player::InitParameter()
 {
 
-	dir_ = Utility::VECTOR_ZERO;
+	// モデルID
+	modelId_ = resMng_.LoadModelDuplicate(ResourceManager::SRC::PLAYER);
 
-	// アクターの種類
-	actorType_ = ActorType::PLAYER;
-
-	// 攻撃1段階目
+	// ジャブ
 	jab_ = false;
 
-	// 攻撃2段階目
+	// ストレート
 	straight_ = false;
+
+	// 右手のフレーム番号を取得
+	collisionData_.rightHand = MV1SearchFrame(transform_.modelId, jsonData_["RIGHT_HAND_FRAME_NAME"].dump().c_str());
+
+	// 左手のフレーム番号を取得
+	collisionData_.leftHand = MV1SearchFrame(transform_.modelId, jsonData_["LEFT_HAND_FRAME_NAME"].dump().c_str());
+
+	// 右足のフレーム番号を取得
+	collisionData_.rightFoot = MV1SearchFrame(transform_.modelId, jsonData_["RIGHT_FOOT_FRAME_NAME"].dump().c_str());
+
+	// 左足のフレーム番号を取得
+	collisionData_.leftFoot = MV1SearchFrame(transform_.modelId, jsonData_["LEFT_FOOT_FRAME_NAME"].dump().c_str());
+
+	// 衝突判定の半径
+	collisionData_.collisionRadius = COLLISION_RADIUS;
 
 }
 
@@ -109,23 +93,39 @@ void Player::InitAnimation()
 	// アニメーションコントローラの生成
 	animationController_ = std::make_unique<AnimationController>(transform_.modelId);
 
-	// 待機
-	animationController_->Add("IDLE", "Data/Model/Player/Idle.mv1", 0.0f, 30.0f, resMng_.LoadModelDuplicate(ResourceManager::SRC::PLAYER_IDLE), true, 0, false);
+	// アニメーションコントローラーにアニメーションを追加
+	for (int i = static_cast<int>(STATE::IDLE); i < static_cast<int>(STATE::MAX); ++i)
+	{
 
-	// 走る
-	animationController_->Add("RUN", "Data/Model/Player/Run.mv1", 0.0f, 30.0f, resMng_.LoadModelDuplicate(ResourceManager::SRC::PLAYER_RUN), true, 0, false);
+		// ループ再生するアニメーションだけisLoopをtrueにする
+		bool isLoop = i == static_cast<int>(STATE::IDLE) || i == static_cast<int>(STATE::RUN);
+			animationController_->Add(
 
-	// ジャブ
-	animationController_->Add("JAB", "Data/Model/Player/Jab.mv1", 0.0f, 80.0f, resMng_.LoadModelDuplicate(ResourceManager::SRC::PLAYER_JAB), false, 0, false);
+			// アニメーションの名前
+			jsonData_["ANIM"][i - 1]["NAME"],
 
-	// ストレート
-	animationController_->Add("STRAIGHT", "Data/Model/Player/Straight.mv1", 0.0f, 60.0f, resMng_.LoadModelDuplicate(ResourceManager::SRC::PLAYER_STRAIGHT), false, 0, false);
+			// アニメーションのパス
+			jsonData_["ANIM"][i - 1]["PATH"],
 
-	// キック
-	animationController_->Add("KICK", "Data/Model/Player/Kick.mv1", 0.0f, 40.0f, resMng_.LoadModelDuplicate(ResourceManager::SRC::PLAYER_KICK), false, 0, false);
+			// アニメーションが始まる時間
+			0.0f,
+			
+			// アニメーションスピード
+			jsonData_["ANIM"][i - 1]["SPEED"],
 
-	// アッパー
-	animationController_->Add("UPPER", "Data/Model/Player/Upper.mv1", 0.0f, 50.0f, resMng_.LoadModelDuplicate(ResourceManager::SRC::PLAYER_UPPER), false, 0, false);
+			// アニメーションハンドル
+			resMng_.LoadModelDuplicate(static_cast<ResourceManager::SRC>(i)),
+
+			// アニメーションのループ再生
+			isLoop,
+
+			// アニメーション番号
+			0,
+
+			// アニメーションの逆再生
+			false
+			);
+	}
 
 	// アニメーション再生するキー
 	key_ = "IDLE";
@@ -288,7 +288,7 @@ void Player::ChangeJab()
 	stateUpdate_ = std::bind(&Player::UpdateJab, this);
 
 	// 少し前に移動
-	transform_.pos = VAdd(transform_.pos, VScale(dir_, 100.0f));
+	transform_.pos = VAdd(transform_.pos, VScale(dir_, ATTACK_MOVE_POW));
 
 }
 
@@ -298,7 +298,7 @@ void Player::ChangeStraight()
 	stateUpdate_ = std::bind(&Player::UpdateStraight, this);
 
 	// 少し前に移動
-	transform_.pos = VAdd(transform_.pos, VScale(dir_, 100.0f));
+	transform_.pos = VAdd(transform_.pos, VScale(dir_, ATTACK_MOVE_POW));
 
 }
 
@@ -313,7 +313,7 @@ void Player::ChangeUpper()
 	stateUpdate_ = std::bind(&Player::UpdateUpper, this);
 
 	// 少し前に移動
-	transform_.pos = VAdd(transform_.pos, VScale(dir_, 100.0f));
+	transform_.pos = VAdd(transform_.pos, VScale(dir_, ATTACK_MOVE_POW));
 
 }
 
@@ -324,7 +324,7 @@ void Player::UpdateIdle(void)
 void Player::UpdateRun(void)
 {
 	// 移動処理
-	transform_.pos = VAdd(transform_.pos, VScale(dir_, 100.0f));
+	transform_.pos = VAdd(transform_.pos, VScale(dir_, ATTACK_MOVE_POW));
 }
 
 void Player::UpdateJab()

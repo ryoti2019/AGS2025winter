@@ -2,12 +2,15 @@
 #include <DxLib.h>
 #include <memory>
 #include <vector>
+#include "../Lib/nlohmann/json.hpp"
 #include "../Common/Vector2F.h"
 #include "../Object/Common/Transform.h"
 #include "../Manager/ResourceManager.h"
 #include "../Object/Common/AnimationController.h"
 
 class Camera;
+
+using json = nlohmann::json;
 
 enum class ActorType {
 	NONE = -1,
@@ -48,6 +51,30 @@ public:
 		// 左足の座標
 		VECTOR leftFootPos;
 
+		// 右手のカプセルの上座標
+		VECTOR rightHandCapsuleUpPos;
+
+		// 右手のカプセルの下座標
+		VECTOR rightHandCapsuleDownPos;
+
+		// 左手のカプセルの上座標
+		VECTOR leftHandCapsuleUpPos;
+
+		// 左手のカプセルの下座標
+		VECTOR leftHandCapsuleDownPos;
+
+		// 右足のカプセルの上座標
+		VECTOR rightFootCapsuleUpPos;
+
+		// 右足のカプセルの下座標
+		VECTOR rightFootCapsuleDownPos;
+
+		// 左足のカプセルの上座標
+		VECTOR leftFootCapsuleUpPos;
+
+		// 左足のカプセルの下座標
+		VECTOR leftFootCapsuleDownPos;
+
 		// 右手の向き
 		Quaternion rightHandRot;
 
@@ -65,14 +92,52 @@ public:
 
 	};
 
+	// 右手のカプセルの上の相対座標
+	const VECTOR RIGHT_HAND_RELATIVE_UP_POS;
 
-	// 回転完了までの時間
+	// 右手のカプセルの下の相対座標
+	const VECTOR RIGHT_HAND_RELATIVE_DOWN_POS;
+
+	// 左手のカプセルの上の相対座標
+	const VECTOR LEFT_HAND_RELATIVE_UP_POS;
+
+	// 左手のカプセルの下の相対座標
+	const VECTOR LEFT_HAND_RELATIVE_DOWN_POS;
+
+	// 右足のカプセルの上の相対座標
+	const VECTOR RIGHT_FOOT_RELATIVE_UP_POS;
+
+	// 右足のカプセルの下の相対座標
+	const VECTOR RIGHT_FOOT_RELATIVE_DOWN_POS;
+
+	// 左足のカプセルの上の相対座標
+	const VECTOR LEFT_FOOT_RELATIVE_UP_POS;
+
+	// 左足のカプセルの下の相対座標
+	const VECTOR LEFT_FOOT_RELATIVE_DOWN_POS;
+
+	// 右手のフレーム名
+	const std::string RIGHT_HAND_FRAME;
+
+	// 左手のフレーム名
+	const std::string LEFT_HAND_FRAME;
+
+	// 右足のフレーム名
+	const std::string RIGHT_FOOT_FRAME;
+
+	// 左足のフレーム名
+	const std::string LEFT_FOOT_FRAME;
+
+	// 攻撃するときに進む移動量
+	const float ATTACK_MOVE_POW;
+
+	// 回転量
 	const float ROTATION_POW;
 
 	// 当たり判定の半径
 	const float COLLISION_RADIUS;
 
-	ActorBase(const VECTOR& pos);
+	ActorBase(const VECTOR& pos, const json& data);
 
 	virtual ~ActorBase() = default;
 
@@ -117,6 +182,9 @@ protected:
 	// 1個前のアニメーション
 	std::string preKey_;
 
+	// JSONデータ
+	json jsonData_;
+
 	// スピード
 	float speed_;
 
@@ -149,9 +217,6 @@ protected:
 
 	// 関数ポインタの初期化
 	virtual void InitFunctionPointer() = 0;
-
-	// 衝突判定の初期化
-	virtual void InitCollision() = 0;
 
 	// 衝突判定の更新
 	void CollisionUpdate();

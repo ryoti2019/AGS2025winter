@@ -1,8 +1,8 @@
 #include "Enemy.h"
 
-Enemy::Enemy(const VECTOR& pos)
+Enemy::Enemy(const VECTOR& pos, const json& data)
 	:
-	ActorBase(pos)
+	ActorBase(pos, data)
 {
 
 	// 機能の初期化
@@ -13,9 +13,6 @@ Enemy::Enemy(const VECTOR& pos)
 
 	// モデルの大きさ
 	scl_ = 10.0f;
-
-	// 共通部分は基底クラスで初期化
-	ActorBase::Init(pos);
 
 	// 関数ポインタの初期化
 	InitFunctionPointer();
@@ -71,10 +68,6 @@ void Enemy::InitFunctionPointer()
 	//関数ポインタの初期化
 	stateChange_.emplace(STATE::IDLE, std::bind(&Enemy::ChangeIdle, this));
 	stateChange_.emplace(STATE::RUN, std::bind(&Enemy::ChangeRun, this));
-}
-
-void Enemy::InitCollision()
-{
 }
 
 void Enemy::InitAnimation()

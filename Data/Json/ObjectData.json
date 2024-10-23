@@ -1,0 +1,48 @@
+{
+	"ObjectData": [
+		{
+			"PlayerData": {
+				"RIGHT_HAND_FRAME_NAME": "mixamorig:RightHandMiddle1",
+				"LEFT_HAND_FRAME_NAME": "mixamorig:LeftHandMiddle1",
+				"RIGHT_FOOT_FRAME_NAME": "mixamorig:RightToeBase",
+				"LEFT_FOOT_FRAME_NAME": "mixamorig:LeftToeBase",
+				"ATTACK_MOVE_POW": 100.0,
+				"SCALE": 1.0,
+				"HP": 100,
+				"ACTOR_TYPE": 0,
+				"ANIM": [
+					{
+						"NAME": "IDLE",
+						"PATH": "Data/Model/Player/Idle.mv1",
+						"SPEED": 30.0
+					},
+					{
+						"NAME": "RUN",
+						"PATH": "Data/Model/Player/Run.mv1",
+						"SPEED": 30.0
+					},
+					{
+						"NAME": "JAB",
+						"PATH": "Data/Model/Player/Jab.mv1",
+						"SPEED": 80.0
+					},
+					{
+						"NAME": "STRAIGHT",
+						"PATH": "Data/Model/Player/Straight.mv1",
+						"SPEED": 60.0
+					},
+					{
+						"NAME": "KICK",
+						"PATH": "Data/Model/Player/Kick.mv1",
+						"SPEED": 40.0
+					},
+					{
+						"NAME": "UPPER",
+						"PATH": "Data/Model/Player/Upper.mv1",
+						"SPEED": 50.0
+					}
+				]
+			}
+		}
+	]
+}

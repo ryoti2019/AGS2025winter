@@ -65,7 +65,17 @@ public:
 	// デストラクタ
 	~AnimationController(void);
 
-	// アニメーション追加
+	/// <summary>
+	/// アニメーション追加
+	/// </summary>
+	/// <param name="state">アニメーションの名前</param>
+	/// <param name="path">アニメーションのパス</param>
+	/// <param name="startStep">アニメーションが始まる時間</param>
+	/// <param name="speed">アニメーションスピード</param>
+	/// <param name="animHandle">アニメーションハンドル</param>
+	/// <param name="isLoop">アニメーションのループ再生</param>
+	/// <param name="animIndex">アニメーションの番号</param>
+	/// <param name="isReverse">アニメーションの逆再生</param>
 	void Add(const std::string state, const std::string& path, float startStep,
 		 float speed, int animHandle, bool isLoop, int animIndex, bool isReverse);
 
