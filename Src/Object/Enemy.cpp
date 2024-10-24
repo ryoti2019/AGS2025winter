@@ -1,3 +1,6 @@
+#include "../Manager/SceneManager.h"
+#include "../Manager/CollisionManager.h"
+#include "../Scene/GameScene.h"
 #include "Enemy.h"
 
 Enemy::Enemy(const VECTOR& pos, const json& data)
@@ -53,13 +56,30 @@ void Enemy::Init(const VECTOR& pos)
 
 void Enemy::InitFunction()
 {
+
+	// 基底クラスから使いたい型へキャストする
+	std::shared_ptr<GameScene> gameScene =
+		std::dynamic_pointer_cast<GameScene>(SceneManager::GetInstance().GetNowScene());
+
+	// NULLチェック
+	if (!gameScene) return;
+
+	// コリジョンマネージャーを取得
+	std::shared_ptr<CollisionManager> collsionManager = gameScene->GetCollisionManager();
+
+	// アクターマネージャーを取得
+	std::shared_ptr<ActorManager> actorManager = gameScene->GetActorManager();
+
+	// アクティブなアクターだけを衝突判定の管理クラスに登録
+	collsionManager->Register(GetThis());
+
 }
 
 void Enemy::InitParameter()
 {
 
-	// アクターの種類
-	actorType_ = ActorType::ENEMY;
+	// 体のフレーム名
+	BODY_FRAME = jsonData_["BODY_FRAME_NAME"];
 
 }
 
@@ -98,6 +118,11 @@ void Enemy::Update(const float deltaTime)
 
 	// 移動処理
 	Move();
+
+	if (hp_ <= 0)
+	{
+		ChangeState(STATE::NONE);
+	}
 
 	// 状態ごとの更新
 	stateUpdate_();

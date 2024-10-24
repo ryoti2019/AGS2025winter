@@ -36,12 +36,15 @@ ActorManager::ActorManager()
 	CreateActor<Player>(playerData);
 	ActiveData(ActorType::PLAYER, { 0.0f,0.0f,0.0f });
 
+	// “G
+	const auto& enemyData = objectData[1]["EnemyData"];
+
 	// “G‚ğ¶¬
 	for (int i = 0; i < 50; i++)
 	{
 		float x = std::rand() % 10000;
 		float z = std::rand() % 10000;
-		CreateActor<Enemy>(playerData);
+		CreateActor<Enemy>(enemyData);
 		ActiveData(ActorType::ENEMY, { -5000.0f + x,0.0f,-5000.0f + z });
 	}
 

@@ -19,7 +19,7 @@ enum class ActorType {
 	MAX
 };
 
-class ActorBase
+class ActorBase : public std::enable_shared_from_this<ActorBase>
 {
 
 public:
@@ -39,6 +39,9 @@ public:
 		// 左足のフレーム
 		int leftFoot;
 
+		// 体全体のフレーム
+		int body;
+
 		// 右手の座標
 		VECTOR rightHandPos;
 
@@ -50,6 +53,9 @@ public:
 
 		// 左足の座標
 		VECTOR leftFootPos;
+
+		// 体全体の座標
+		VECTOR bodyPos;
 
 		// 右手のカプセルの上座標
 		VECTOR rightHandCapsuleUpPos;
@@ -75,6 +81,12 @@ public:
 		// 左足のカプセルの下座標
 		VECTOR leftFootCapsuleDownPos;
 
+		// 体のカプセルの上座標
+		VECTOR bodyCapsuleUpPos;
+
+		// 体のカプセルの下座標
+		VECTOR bodyCapsuleDownPos;
+
 		// 右手の向き
 		Quaternion rightHandRot;
 
@@ -87,8 +99,14 @@ public:
 		// 左足の向き
 		Quaternion leftFootRot;
 
-		// 当たり判定の半径
-		float collisionRadius;
+		// 体の向き
+		Quaternion bodyRot;
+
+		// 手足の当たり判定の半径
+		float handAndFootCollisionRadius;
+
+		// 体の当たり判定の半径
+		float bodyCollisionRadius;
 
 	};
 
@@ -116,17 +134,26 @@ public:
 	// 左足のカプセルの下の相対座標
 	const VECTOR LEFT_FOOT_RELATIVE_DOWN_POS;
 
+	// 体のカプセルの上の相対座標
+	const VECTOR BODY_RELATIVE_UP_POS;
+
+	// 体のカプセルの下の相対座標
+	const VECTOR BODY_RELATIVE_DOWN_POS;
+
 	// 右手のフレーム名
-	const std::string RIGHT_HAND_FRAME;
+	std::string RIGHT_HAND_FRAME;
 
 	// 左手のフレーム名
-	const std::string LEFT_HAND_FRAME;
+	std::string LEFT_HAND_FRAME;
 
 	// 右足のフレーム名
-	const std::string RIGHT_FOOT_FRAME;
+	std::string RIGHT_FOOT_FRAME;
 
 	// 左足のフレーム名
-	const std::string LEFT_FOOT_FRAME;
+	std::string LEFT_FOOT_FRAME;
+
+	// 体のフレーム名
+	std::string BODY_FRAME;
 
 	// 攻撃するときに進む移動量
 	const float ATTACK_MOVE_POW;
@@ -134,8 +161,11 @@ public:
 	// 回転量
 	const float ROTATION_POW;
 
-	// 当たり判定の半径
-	const float COLLISION_RADIUS;
+	// 手足の当たり判定の半径
+	const float HAND_AND_FOOT_COLLISION_RADIUS;
+
+	// 体の当たり判定の半径
+	const float BODY_COLLISION_RADIUS;
 
 	ActorBase(const VECTOR& pos, const json& data);
 
@@ -146,13 +176,29 @@ public:
 	virtual void Update(const float deltaTime);
 	virtual void Draw();
 
+	// 座標を設定
 	void SetPos(const VECTOR& pos) { transform_.pos = pos; };
 
+	// 生存判定を取得
 	const bool GetIsActive() const { return isActive_; }
 
+	// 生存判定を設定
 	void SetIsActive(const bool isActive) { isActive_ = isActive; }
 
-	const ActorType GetActorType() const { return actorType_; }
+	// HPを取得
+	const int GetHp()const { return hp_; };
+
+	// HPを設定
+	void SetHp(const int hp) { hp_ = hp; };
+
+	// HPを減らす
+	void SubHp(const int hp) { hp_ -= hp;};
+
+	// アクタータイプを取得
+	const ActorType& GetActorType() const { return actorType_; }
+
+	// コリジョンデータのを取得
+	const CollisionData& GetCollisionData() const { return collisionData_; };
 
 protected:
 
@@ -205,7 +251,10 @@ protected:
 
 	// 回転する時間
 	float stepRotTime_;
-
+	
+	// ポインタの取得
+	const std::shared_ptr<ActorBase>& GetThis() { return shared_from_this(); };
+	
 	// 機能の初期化
 	virtual void InitFunction() = 0;
 

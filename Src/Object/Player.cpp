@@ -3,6 +3,7 @@
 #include "../Utility/Utility.h"
 #include "../Scene/GameScene.h"
 #include "../Manager/SceneManager.h"
+#include "../Manager/CollisionManager.h"
 #include "../Manager/Camera.h"
 #include "../Object/Common/InputController.h"
 #include "Player.h"
@@ -15,14 +16,17 @@ Player::Player(const VECTOR& pos, const json& data)
 	// 機能の初期化
 	InitFunction();
 
+	// モデルID
+	modelId_ = resMng_.LoadModelDuplicate(ResourceManager::SRC::PLAYER);
+
 	// 関数ポインタの初期化
 	InitFunctionPointer();
 
-	// パラメータの初期化
-	InitParameter();
-
 	// 共通部分は基底クラスで初期化
 	ActorBase::Init(pos);
+
+	// パラメータの初期化
+	InitParameter();
 
 	// アニメーションの初期化
 	InitAnimation();
@@ -45,6 +49,22 @@ void Player::InitFunction()
 	// カメラのターゲットをプレイヤーに設定
 	camera.lock()->SetPlayer(&transform_);
 
+	// 基底クラスから使いたい型へキャストする
+	std::shared_ptr<GameScene> gameScene =
+		std::dynamic_pointer_cast<GameScene>(SceneManager::GetInstance().GetNowScene());
+
+	// NULLチェック
+	if (!gameScene) return;
+
+	// コリジョンマネージャーを取得
+	std::shared_ptr<CollisionManager> collisionManager = gameScene->GetCollisionManager();
+
+	// アクターマネージャーを取得
+	std::shared_ptr<ActorManager> actorManager = gameScene->GetActorManager();
+
+	// 衝突判定の管理クラスに登録
+	collisionManager->Register(GetThis());
+
 }
 
 void Player::InitFunctionPointer()
@@ -61,29 +81,46 @@ void Player::InitFunctionPointer()
 void Player::InitParameter()
 {
 
-	// モデルID
-	modelId_ = resMng_.LoadModelDuplicate(ResourceManager::SRC::PLAYER);
-
 	// ジャブ
 	jab_ = false;
 
 	// ストレート
 	straight_ = false;
 
+	// 右手のフレーム名
+	RIGHT_HAND_FRAME = jsonData_["RIGHT_HAND_FRAME_NAME"];
+
+	// 左手のフレーム名
+	LEFT_HAND_FRAME = jsonData_["LEFT_HAND_FRAME_NAME"];
+
+	// 右足のフレーム名
+	RIGHT_FOOT_FRAME = jsonData_["RIGHT_FOOT_FRAME_NAME"];
+
+	// 左足のフレーム名
+	LEFT_FOOT_FRAME = jsonData_["LEFT_FOOT_FRAME_NAME"];
+
+	// 体のフレーム名
+	BODY_FRAME = jsonData_["BODY_FRAME_NAME"];
+
 	// 右手のフレーム番号を取得
-	collisionData_.rightHand = MV1SearchFrame(transform_.modelId, jsonData_["RIGHT_HAND_FRAME_NAME"].dump().c_str());
+	collisionData_.rightHand = MV1SearchFrame(transform_.modelId, RIGHT_HAND_FRAME.c_str());
 
 	// 左手のフレーム番号を取得
-	collisionData_.leftHand = MV1SearchFrame(transform_.modelId, jsonData_["LEFT_HAND_FRAME_NAME"].dump().c_str());
+	collisionData_.leftHand = MV1SearchFrame(transform_.modelId, LEFT_HAND_FRAME.c_str());
 
 	// 右足のフレーム番号を取得
-	collisionData_.rightFoot = MV1SearchFrame(transform_.modelId, jsonData_["RIGHT_FOOT_FRAME_NAME"].dump().c_str());
+	collisionData_.rightFoot = MV1SearchFrame(transform_.modelId, RIGHT_FOOT_FRAME.c_str());
 
 	// 左足のフレーム番号を取得
-	collisionData_.leftFoot = MV1SearchFrame(transform_.modelId, jsonData_["LEFT_FOOT_FRAME_NAME"].dump().c_str());
+	collisionData_.leftFoot = MV1SearchFrame(transform_.modelId, LEFT_FOOT_FRAME.c_str());
+
+	// 体のフレーム番号を取得
+	collisionData_.body = MV1SearchFrame(transform_.modelId, BODY_FRAME.c_str());
 
 	// 衝突判定の半径
-	collisionData_.collisionRadius = COLLISION_RADIUS;
+	collisionData_.handAndFootCollisionRadius = HAND_AND_FOOT_COLLISION_RADIUS;
+
+	collisionData_.bodyCollisionRadius = BODY_COLLISION_RADIUS;
 
 }
 

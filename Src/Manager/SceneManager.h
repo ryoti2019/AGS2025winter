@@ -106,7 +106,7 @@ private:
 	// 外部から生成できない様にする
 	SceneManager();
 	// コピーコンストラクタも同様
-	SceneManager(const SceneManager&);
+	SceneManager(const SceneManager&) = delete;
 	// デストラクタも同様
 	~SceneManager() = default;
 

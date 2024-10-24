@@ -11,9 +11,12 @@ ActorBase::ActorBase(const VECTOR& pos, const json& data)
 	RIGHT_FOOT_RELATIVE_DOWN_POS({ 0.0f,-100.0f,0.0f }),
 	LEFT_FOOT_RELATIVE_UP_POS({ 0.0f,100.0f,0.0f }),
 	LEFT_FOOT_RELATIVE_DOWN_POS({ 0.0f,-100.0f,0.0f }),
+	BODY_RELATIVE_UP_POS({0.0f,500.0f,0.0f}),
+	BODY_RELATIVE_DOWN_POS({0.0f,-500.0f,0.0f}),
 	ATTACK_MOVE_POW(data["ATTACK_MOVE_POW"]),
 	ROTATION_POW(0.1f),
-	COLLISION_RADIUS(100.0f),
+	HAND_AND_FOOT_COLLISION_RADIUS(100.0f),
+	BODY_COLLISION_RADIUS(300.0f),
 	resMng_(ResourceManager::GetInstance()),
 	dir_({0.0f,0.0f,0.0f}),
 	modelId_(-1),
@@ -120,11 +123,17 @@ void ActorBase::CollisionUpdate()
 	// 回転を更新
 	collisionData_.leftHandRot = leftHandQua;
 
-	// 追従対象からの相対座標
-	VECTOR leftHandRotPos = collisionData_.leftHandRot.PosAxis({ 0.0f,0.0f,0.0f });
+	// カプセルの上の相対座標
+	VECTOR leftHandUpPos = collisionData_.leftHandRot.PosAxis(LEFT_HAND_RELATIVE_UP_POS);
 
-	// 回転を加えた当たり判定の座標を更新
-	collisionData_.leftHandPos = VAdd(collisionData_.leftHandPos, leftHandRotPos);
+	// カプセルの下の相対座標
+	VECTOR leftHandDownPos = collisionData_.leftHandRot.PosAxis(LEFT_HAND_RELATIVE_DOWN_POS);
+
+	// 当たり判定で使うカプセルの上の座標を更新
+	collisionData_.leftHandCapsuleUpPos = VAdd(collisionData_.leftHandPos, leftHandUpPos);
+
+	// 当たり判定で使うカプセルの下の座標を更新
+	collisionData_.leftHandCapsuleDownPos = VAdd(collisionData_.leftHandPos, leftHandDownPos);
 
 #pragma endregion
 
@@ -148,11 +157,17 @@ void ActorBase::CollisionUpdate()
 	// 回転を更新
 	collisionData_.rightFootRot = rightFootQua;
 
-	// 追従対象からの相対座標
-	VECTOR rightFootRotPos = collisionData_.rightFootRot.PosAxis({ 0.0f,0.0f,0.0f });
+	// カプセルの上の相対座標
+	VECTOR rightFootUpPos = collisionData_.rightFootRot.PosAxis(RIGHT_FOOT_RELATIVE_UP_POS);
 
-	// 回転を加えた当たり判定の座標を更新
-	collisionData_.rightFootPos = VAdd(collisionData_.rightFootPos, rightFootRotPos);
+	// カプセルの下の相対座標
+	VECTOR rightFootDownPos = collisionData_.rightFootRot.PosAxis(RIGHT_FOOT_RELATIVE_DOWN_POS);
+
+	// 当たり判定で使うカプセルの上の座標を更新
+	collisionData_.rightFootCapsuleUpPos = VAdd(collisionData_.rightFootPos, rightFootUpPos);
+
+	// 当たり判定で使うカプセルの下の座標を更新
+	collisionData_.rightFootCapsuleDownPos = VAdd(collisionData_.rightFootPos, rightFootDownPos);
 
 #pragma endregion
 
@@ -162,7 +177,7 @@ void ActorBase::CollisionUpdate()
 	MATRIX matLeftFootPos = MV1GetFrameLocalWorldMatrix(transform_.modelId, collisionData_.leftFoot);
 
 	// 行列の平行移動成分を取得する
-	VECTOR leftFootpos = MGetTranslateElem(matLeftFootPos);
+	VECTOR leftFootPos = MGetTranslateElem(matLeftFootPos);
 
 	// 行列の回転成分を取得する
 	MATRIX matLeftFootRot = MGetRotElem(matLeftFootPos);
@@ -171,16 +186,56 @@ void ActorBase::CollisionUpdate()
 	Quaternion leftFootQua = Quaternion::GetRotation(matLeftFootRot);
 
 	// 当たり判定の座標を更新
-	collisionData_.leftFootPos = leftFootpos;
+	collisionData_.leftFootPos = leftFootPos;
 
 	// 回転を更新
 	collisionData_.leftFootRot = leftFootQua;
 
-	// 追従対象からの相対座標
-	VECTOR leftFootRotPos = collisionData_.leftFootRot.PosAxis({ 0.0f,0.0f,0.0f });
+	// カプセルの上の相対座標
+	VECTOR leftFootUpPos = collisionData_.leftFootRot.PosAxis(LEFT_FOOT_RELATIVE_UP_POS);
 
-	// 回転を加えた当たり判定の座標を更新
-	collisionData_.leftFootPos = VAdd(collisionData_.leftFootPos, leftFootRotPos);
+	// カプセルの下の相対座標
+	VECTOR leftFootDownPos = collisionData_.leftFootRot.PosAxis(LEFT_FOOT_RELATIVE_DOWN_POS);
+
+	// 当たり判定で使うカプセルの上の座標を更新
+	collisionData_.leftFootCapsuleUpPos = VAdd(collisionData_.leftFootPos, leftFootUpPos);
+
+	// 当たり判定で使うカプセルの下の座標を更新
+	collisionData_.leftFootCapsuleDownPos = VAdd(collisionData_.leftFootPos, leftFootDownPos);
+
+#pragma endregion
+
+#pragma region 体
+
+	// 指定のフレームのローカル座標からワールド座標に変換する行列を得る
+	MATRIX matBodyPos = MV1GetFrameLocalWorldMatrix(transform_.modelId, collisionData_.body);
+
+	// 行列の平行移動成分を取得する
+	VECTOR bodyPos = MGetTranslateElem(matBodyPos);
+
+	// 行列の回転成分を取得する
+	MATRIX matBodyRot = MGetRotElem(matBodyPos);
+
+	// 行列からクォータニオンに変換
+	Quaternion bodyQua = Quaternion::GetRotation(matBodyRot);
+
+	// 当たり判定の座標を更新
+	collisionData_.bodyPos = bodyPos;
+
+	// 回転を更新
+	collisionData_.bodyRot = bodyQua;
+
+	// カプセルの上の相対座標
+	VECTOR bodyUpPos = collisionData_.bodyRot.PosAxis(BODY_RELATIVE_UP_POS);
+
+	// カプセルの下の相対座標
+	VECTOR bodyDownPos = collisionData_.bodyRot.PosAxis(BODY_RELATIVE_DOWN_POS);
+
+	// 当たり判定で使うカプセルの上の座標を更新
+	collisionData_.bodyCapsuleUpPos = VAdd(collisionData_.bodyPos, bodyUpPos);
+
+	// 当たり判定で使うカプセルの下の座標を更新
+	collisionData_.bodyCapsuleDownPos = VAdd(collisionData_.bodyPos, bodyDownPos);
 
 #pragma endregion
 
@@ -192,8 +247,11 @@ void ActorBase::CollisionRegister()
 
 void ActorBase::Draw()
 {
+	
+	// モデル描画
 	MV1DrawModel(transform_.modelId);
 
+	// デバッグ描画
 	DrawDebug();
 
 }
@@ -202,15 +260,18 @@ void ActorBase::DrawDebug()
 {
 
 	// 右手の当たり判定の描画
-	DrawCapsule3D(collisionData_.rightHandCapsuleUpPos, collisionData_.rightHandCapsuleDownPos, COLLISION_RADIUS, 10, 0xff0000, 0xff0000, true);
+	DrawCapsule3D(collisionData_.rightHandCapsuleUpPos, collisionData_.rightHandCapsuleDownPos, HAND_AND_FOOT_COLLISION_RADIUS, 10, 0xff0000, 0xff0000, false);
 
 	// 左手の当たり判定の描画
-	DrawCapsule3D(collisionData_.leftHandCapsuleUpPos, collisionData_.leftHandCapsuleDownPos, COLLISION_RADIUS, 10, 0xff0000, 0xff0000, true);
+	DrawCapsule3D(collisionData_.leftHandCapsuleUpPos, collisionData_.leftHandCapsuleDownPos, HAND_AND_FOOT_COLLISION_RADIUS, 10, 0xff0000, 0xff0000, false);
 
 	// 右足の当たり判定の描画
-	DrawCapsule3D(collisionData_.rightFootCapsuleUpPos, collisionData_.rightFootCapsuleDownPos, COLLISION_RADIUS, 10, 0xff0000, 0xff0000, true);
+	DrawCapsule3D(collisionData_.rightFootCapsuleUpPos, collisionData_.rightFootCapsuleDownPos, HAND_AND_FOOT_COLLISION_RADIUS, 10, 0xff0000, 0xff0000, false);
 
 	// 左足の当たり判定の描画
-	DrawCapsule3D(collisionData_.leftFootCapsuleUpPos, collisionData_.leftFootCapsuleDownPos, COLLISION_RADIUS, 10, 0xff0000, 0xff0000, true);
+	DrawCapsule3D(collisionData_.leftFootCapsuleUpPos, collisionData_.leftFootCapsuleDownPos, HAND_AND_FOOT_COLLISION_RADIUS, 10, 0xff0000, 0xff0000, false);
+
+	// 体の当たり判定の描画
+	DrawCapsule3D(collisionData_.bodyCapsuleUpPos, collisionData_.bodyCapsuleDownPos, BODY_COLLISION_RADIUS, 10, 0xff0000, 0xff0000, false);
 
 }

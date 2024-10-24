@@ -64,7 +64,7 @@ private:
 	Application();
 
 	// コピーコンストラクタも同様
-	Application(const Application&);
+	Application(const Application&) = delete;
 
 	// デストラクタも同様
 	~Application() = default;
