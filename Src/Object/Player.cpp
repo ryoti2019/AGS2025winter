@@ -1,4 +1,3 @@
-#include <iostream>
 #include <memory>
 #include "../Utility/Utility.h"
 #include "../Scene/GameScene.h"
@@ -48,22 +47,6 @@ void Player::InitFunction()
 
 	// カメラのターゲットをプレイヤーに設定
 	camera.lock()->SetPlayer(&transform_);
-
-	// 基底クラスから使いたい型へキャストする
-	std::shared_ptr<GameScene> gameScene =
-		std::dynamic_pointer_cast<GameScene>(SceneManager::GetInstance().GetNowScene());
-
-	// NULLチェック
-	if (!gameScene) return;
-
-	// コリジョンマネージャーを取得
-	std::shared_ptr<CollisionManager> collisionManager = gameScene->GetCollisionManager();
-
-	// アクターマネージャーを取得
-	std::shared_ptr<ActorManager> actorManager = gameScene->GetActorManager();
-
-	// 衝突判定の管理クラスに登録
-	collisionManager->Register(GetThis());
 
 }
 
@@ -117,9 +100,10 @@ void Player::InitParameter()
 	// 体のフレーム番号を取得
 	collisionData_.body = MV1SearchFrame(transform_.modelId, BODY_FRAME.c_str());
 
-	// 衝突判定の半径
+	// 手足の衝突判定の半径
 	collisionData_.handAndFootCollisionRadius = HAND_AND_FOOT_COLLISION_RADIUS;
 
+	// 体の衝突判定の半径
 	collisionData_.bodyCollisionRadius = BODY_COLLISION_RADIUS;
 
 }
@@ -201,6 +185,21 @@ void Player::Update(const float deltaTime)
 	
 	// モデル情報を更新
 	transform_.Update();
+
+}
+
+bool Player::GetAttackState()
+{
+
+	for (const auto state : attackState_)
+	{
+		if (state_ == state)
+		{
+			return true;
+		}
+	}
+
+	return false;
 
 }
 

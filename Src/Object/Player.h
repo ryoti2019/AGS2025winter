@@ -40,10 +40,20 @@ public:
 	void Init(const VECTOR& pos) override;
 	void Update(const float deltaTime) override;
 
+	bool GetAttackState()override;
+
 private:
 
 	// 入力用コントローラー
 	std::unique_ptr<InputController> inputController_;
+
+	const std::vector<STATE> attackState_ = 
+	{
+		{STATE::JAB},
+		{STATE::STRAIGHT},
+		{STATE::KICK},
+		{STATE::UPPER}
+	};
 
 	// 状態
 	STATE state_;

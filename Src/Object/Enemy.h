@@ -31,6 +31,8 @@ public:
 	void Init(const VECTOR& pos)override;
 	void Update(const float deltaTime)override;
 
+	bool GetAttackState()override;
+
 private:
 
 	// ó‘Ô

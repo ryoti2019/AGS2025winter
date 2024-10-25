@@ -9,6 +9,7 @@
 
 Camera::Camera(void)
 {
+
 	mode_ = MODE::FIXED_POINT;
 	pos_ = { 0.0f, 0.0f, 0.0f };
 	targetPos_ = { 0.0f, 0.0f, 0.0f };
@@ -167,75 +168,10 @@ void Camera::SetBeforeDrawLockOn(void)
 	// 同期先の位置
 	VECTOR playerPos = playerTransform_->pos;
 
-	// カメラの相対座標
-	VECTOR localRotPos;
+	// カメラの位置
+	pos_ = VAdd(playerPos, LOCAL_P2C_POS);
 
-	// +注視点をロックオン対象とする
-	auto goalPos = VAdd(enemyTransform_->pos, { 0.0f,200.0f,0.0f });
-
-	// 敵とプレイヤーの距離をとる
-	float dis = Utility::Distance(goalPos, playerPos);
-	
-	// 注視点の座標を目標の座標に近づける(ゆっくり目標の座標に近づける)
-	targetPos_ = Utility::Lerp(targetPos_, goalPos, 0.1f);
-
-	// +キャラクターから見た注視点の方向
-	auto followToTargetDir = VSub(targetPos_, playerPos);
-	followToTargetDir.y = 0.0f;
-
-	// その方向に向ける回転を作る
-	lockOnLook_ = Quaternion::LookRotation(VNorm(followToTargetDir));
-
-	// カメラ位置
-	lockOnLook_ = lockOnLook_.Mult(Quaternion::AngleAxis(lockOnAngles_.y, Utility::AXIS_Y));
-	lockOnLook_ = lockOnLook_.Mult(Quaternion::AngleAxis(-angle_.x + lockOnAngles_.x, Utility::AXIS_X));
-	localRotPos = lockOnLook_.PosAxis(LOCAL_LOCK_ON_F2C_POS);
-	auto goalCameraPos = VAdd(playerPos, localRotPos);
-	dis = Utility::Distance(goalCameraPos, targetPos_);
-
-	// 注視点とカメラの最低距離
-	float min = 500.0f;
-	isNearLockOnTarget_ = false;
-	if (dis < min)
-	{
-		float minmin = 400.0f;
-		if (dis < minmin)
-		{
-			isNearLockOnTarget_ = true;
-		}
-
-		// 注視点の距離が近すぎる場合、一定の距離を保つ
-		auto dir = lockOnLook_.GetBack();
-		goalCameraPos = VAdd(targetPos_, VScale(dir, min));
-
-		// どうするか
-		goalCameraPos_ = goalCameraPos;
-		pos_ = Utility::Lerp(pos_, goalCameraPos, 0.05f);
-
-	}
-	else
-	{
-		goalCameraPos_ = goalCameraPos;
-		pos_ = Utility::Lerp(pos_, goalCameraPos, 0.1f);
-	}
-
-	rotXY_ = Quaternion::LookRotation(VSub(goalPos, goalCameraPos_));
-
-	// クォータニオンからオイラー角に直す(Yだけ直す)
-	auto targetPosXZ = goalPos;
-	targetPosXZ.y = 0.0f;
-	auto posXZ = goalCameraPos_;
-	posXZ.y = 0.0f;
-	auto cameraDir = VSub(targetPosXZ, posXZ);
-	rotY_ = Quaternion::LookRotation(cameraDir);
-
-	angle_ = rotY_.ToEuler();
-
-	// カメラの上方向
-	cameraUp_ = { 0.0f,1.0f,0.0f };
-
-	// ステージの衝突判定
-	CollisionStage();
+	targetPos_ = VAdd(playerPos, LOCAL_P2T_POS);
 
 }
 

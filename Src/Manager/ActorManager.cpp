@@ -1,53 +1,11 @@
-#include <fstream>
-#include "../Lib/nlohmann/json.hpp"
-#include "../Application.h"
 #include "ActorManager.h"
 #include "ResourceManager.h"
+#include "../Utility/Utility.h"
 #include "../Object/Player.h"
 #include "../Object/Enemy.h"
 
 ActorManager::ActorManager()
 {
-
-	// 外部ファイルの読み込み
-	std::ifstream ifs;
-
-	ifs.open(Application::PATH_JSON + "ObjectData.json");
-
-	if (!ifs)
-	{
-		// 外部ファイルの読み込み失敗
-		return;
-	}
-
-	// ファイルストリームからjsonオブジェクトに変換
-	nlohmann::json objectJson = nlohmann::json::parse(ifs);
-
-	const auto& objectData = objectJson["ObjectData"];
-
-	// スコープが切れる際に 自動的にファイルクローズして貰えますが、
-	// お行儀良く、明示的にファイルストリームを閉じる
-	ifs.close();
-
-	// プレイヤー
-	const auto& playerData = objectData[0]["PlayerData"];
-
-	// プレイヤーを生成
-	CreateActor<Player>(playerData);
-	ActiveData(ActorType::PLAYER, { 0.0f,0.0f,0.0f });
-
-	// 敵
-	const auto& enemyData = objectData[1]["EnemyData"];
-
-	// 敵を生成
-	for (int i = 0; i < 50; i++)
-	{
-		float x = std::rand() % 10000;
-		float z = std::rand() % 10000;
-		CreateActor<Enemy>(enemyData);
-		ActiveData(ActorType::ENEMY, { -5000.0f + x,0.0f,-5000.0f + z });
-	}
-
 }
 
 void ActorManager::Init()
@@ -77,7 +35,8 @@ void ActorManager::Update(const float deltaTime)
 		}
 	}
 
-	for (auto& data : activeActorData_)
+	// activeActorData_の更新
+	for (const auto& data : activeActorData_)
 	{
 		for (const std::shared_ptr<ActorBase>& actor : data.second)
 		{
@@ -85,11 +44,81 @@ void ActorManager::Update(const float deltaTime)
 		}
 	}
 
+	// 敵がロックオンしているものがあるか確認する処理
+	for (const auto& data : activeActorData_)
+	{
+		for (const auto& actor : data.second)
+		{
+
+			// 敵
+			const auto& enemys = activeActorData_.find(ActorType::ENEMY);
+
+			for (const std::shared_ptr<ActorBase>& enemy : enemys->second)
+			{
+				// 敵の中で1つでもtrueだったら処理しない
+				if (enemy->GetIsLockOn())return;
+			}
+		}
+	}
+
+	// 敵をロックオンするための処理
+	for (const auto& data : activeActorData_)
+	{
+		for (const auto& actor : data.second)
+		{
+
+			// プレイヤー
+			const auto& players = activeActorData_.find(ActorType::PLAYER);
+
+			// 敵
+			const auto& enemys = activeActorData_.find(ActorType::ENEMY);
+
+			if (players == activeActorData_.end())continue;
+			if (enemys == activeActorData_.end())continue;
+
+			for (const std::shared_ptr<ActorBase>& player : players->second)
+			{
+				for (const std::shared_ptr<ActorBase>& enemy : enemys->second)
+				{
+
+					// ポインタが入っているか確認
+					if (!player)return;
+					if (!enemy)return;
+
+					// プレイヤーから敵に向けてのベクトル
+					const VECTOR& vec = VSub(enemy->GetPos(), player->GetPos());
+
+					// ベクトルの距離
+					const float distance = Utility::MagnitudeF(vec);
+
+					// 一番小さい敵との距離
+					float minDistance;
+
+					// 一番距離が小さい敵
+					std::shared_ptr<ActorBase> minEnemy;
+
+					// 一番小さい距離と比べて今比較しているほうが小さかったら今のを一番小さい値に設定する
+					if (distance < minDistance)
+					{
+						minDistance = distance;
+						minEnemy = enemy;
+					}
+
+					// この敵をロックオンする
+					minEnemy->SetIsLockOn(true);
+
+				}
+			}
+		}
+	}
+
+
 }
 
 void ActorManager::Draw()
 {
 
+	// activeActorData_の描画
 	for (auto& data : activeActorData_)
 	{
 		for (const std::shared_ptr<ActorBase>& actor : data.second)

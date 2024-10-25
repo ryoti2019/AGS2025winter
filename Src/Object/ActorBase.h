@@ -177,28 +177,40 @@ public:
 	virtual void Draw();
 
 	// 座標を設定
-	void SetPos(const VECTOR& pos) { transform_.pos = pos; };
-
-	// 生存判定を取得
-	const bool GetIsActive() const { return isActive_; }
+	void SetPos(const VECTOR& pos) { transform_.pos = pos; }
 
 	// 生存判定を設定
 	void SetIsActive(const bool isActive) { isActive_ = isActive; }
 
-	// HPを取得
-	const int GetHp()const { return hp_; };
-
 	// HPを設定
-	void SetHp(const int hp) { hp_ = hp; };
+	void SetHp(const int hp) { hp_ = hp; }
 
 	// HPを減らす
-	void SubHp(const int hp) { hp_ -= hp;};
+	void SubHp(const int hp) { hp_ -= hp;}
+
+	// ロックオンされているか判定を設定
+	void SetIsLockOn(const bool isLockOn);
 
 	// アクタータイプを取得
 	const ActorType& GetActorType() const { return actorType_; }
 
 	// コリジョンデータのを取得
-	const CollisionData& GetCollisionData() const { return collisionData_; };
+	const CollisionData& GetCollisionData() const { return collisionData_; }
+
+	// 座標を取得
+	const VECTOR& GetPos() const { return transform_.pos; }
+
+	// 生存判定を取得
+	bool GetIsActive() const { return isActive_; }
+
+	// 攻撃状態を取得
+	virtual bool GetAttackState() = 0;
+
+	// HPを取得
+	const int GetHp()const { return hp_; }
+
+	// ロックオンされているか判定を取得
+	bool GetIsLockOn();
 
 protected:
 
@@ -216,6 +228,12 @@ protected:
 	// 衝突判定のデータ
 	CollisionData collisionData_;
 
+	// JSONデータ
+	json jsonData_;
+
+	// アクターの種類
+	ActorType actorType_;
+
 	// 方向
 	VECTOR dir_;
 
@@ -228,29 +246,26 @@ protected:
 	// 1個前のアニメーション
 	std::string preKey_;
 
-	// JSONデータ
-	json jsonData_;
-
-	// スピード
-	float speed_;
-
 	// HP
 	int hp_;
 
 	// モデルID
 	int modelId_;
 
+	// スピード
+	float speed_;
+
 	// モデルの大きさ
 	float scl_;
 
-	// アクターの種類
-	ActorType actorType_;
-
-	// 生きているかどうか
-	bool isAlive_;
-
 	// 回転する時間
 	float stepRotTime_;
+
+	// 生きているか
+	bool isAlive_;
+
+	// ロックオンされているか(敵のみ)
+	bool isLockOn_;
 	
 	// ポインタの取得
 	const std::shared_ptr<ActorBase>& GetThis() { return shared_from_this(); };

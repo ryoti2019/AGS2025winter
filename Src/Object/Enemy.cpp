@@ -61,18 +61,6 @@ void Enemy::InitFunction()
 	std::shared_ptr<GameScene> gameScene =
 		std::dynamic_pointer_cast<GameScene>(SceneManager::GetInstance().GetNowScene());
 
-	// NULLチェック
-	if (!gameScene) return;
-
-	// コリジョンマネージャーを取得
-	std::shared_ptr<CollisionManager> collsionManager = gameScene->GetCollisionManager();
-
-	// アクターマネージャーを取得
-	std::shared_ptr<ActorManager> actorManager = gameScene->GetActorManager();
-
-	// アクティブなアクターだけを衝突判定の管理クラスに登録
-	collsionManager->Register(GetThis());
-
 }
 
 void Enemy::InitParameter()
@@ -80,6 +68,12 @@ void Enemy::InitParameter()
 
 	// 体のフレーム名
 	BODY_FRAME = jsonData_["BODY_FRAME_NAME"];
+
+	// 体のフレーム番号を取得
+	collisionData_.body = MV1SearchFrame(transform_.modelId, BODY_FRAME.c_str());
+
+	// 体の衝突判定の半径
+	collisionData_.bodyCollisionRadius = BODY_COLLISION_RADIUS;
 
 }
 
@@ -109,7 +103,7 @@ void Enemy::InitAnimation()
 	preKey_ = key_;
 
 	// 初期状態
-	ChangeState(STATE::IDLE);
+	ChangeState(STATE::RUN);
 
 }
 
@@ -121,8 +115,11 @@ void Enemy::Update(const float deltaTime)
 
 	if (hp_ <= 0)
 	{
-		ChangeState(STATE::NONE);
+		ChangeState(STATE::IDLE);
 	}
+
+	// 衝突判定の更新
+	ActorBase::CollisionUpdate();
 
 	// 状態ごとの更新
 	stateUpdate_();
@@ -133,6 +130,11 @@ void Enemy::Update(const float deltaTime)
 	// モデル情報を更新
 	transform_.Update();
 
+}
+
+bool Enemy::GetAttackState()
+{
+	return false;
 }
 
 void Enemy::Move()

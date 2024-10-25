@@ -27,6 +27,7 @@ ActorBase::ActorBase(const VECTOR& pos, const json& data)
 	actorType_(static_cast<ActorType>(data["ACTOR_TYPE"])),
 	isAlive_(false),
 	isActive_(false),
+	isLockOn_(false),
 	jsonData_(data)
 {
 }
@@ -254,6 +255,16 @@ void ActorBase::Draw()
 	// デバッグ描画
 	DrawDebug();
 
+}
+
+void ActorBase::SetIsLockOn(const bool isLockOn)
+{
+	isLockOn_ = isLockOn;
+}
+
+bool ActorBase::GetIsLockOn()
+{
+	return isLockOn_;
 }
 
 void ActorBase::DrawDebug()

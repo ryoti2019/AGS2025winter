@@ -10,6 +10,25 @@ class Camera
 
 public:
 
+	// カメラの初期座標
+	static constexpr VECTOR DEFAULT_CAMERA_POS = { 0.0f, 500.0f, -500.0f };
+
+	// プレイヤーからカメラの位置までの相対座標
+	static constexpr VECTOR LOCAL_P2C_POS = { 1000.0f, 1000.0f,-3000.0f };
+
+	// プレイヤーから注視点までの相対座標
+	static constexpr VECTOR LOCAL_P2T_POS = { 0.0f,1000.0f,5000.0f };
+
+	// 敵からカメラの位置までの相対座標
+	static constexpr VECTOR LOCAL_E2C_POS = { 0.0f, 500.0f,-400.0f };
+
+	static constexpr VECTOR LOCAL_POS = { 0.0f,300.0f,-500.0f };
+
+	// 敵から注視点までの相対座標
+	static constexpr VECTOR LOCAL_E2T_POS = { 0.0f,0.0f,500.0f };
+
+	static constexpr VECTOR LOCAL_LOCK_ON_F2C_POS = { 0.0f,300.0f,-500.0f };
+
 	// カメラの高さ
 	static constexpr float HEIGHT = 250.0f;
 
@@ -27,26 +46,6 @@ public:
 
 	// カメラクリップ：NEAR
 	static constexpr float CAMERA_FAR = 15000.0f;
-
-	// カメラの初期座標
-	static constexpr VECTOR DEFAULT_CAMERA_POS = { 0.0f, 500.0f, -500.0f };
-
-	// プレイヤーからカメラの位置までの相対座標
-	static constexpr VECTOR LOCAL_P2C_POS = { 0.0f, 500.0f,-400.0f };
-
-	// 敵からカメラの位置までの相対座標
-	static constexpr VECTOR LOCAL_E2C_POS = { 0.0f, 500.0f,-400.0f };
-
-	// プレイヤーから注視点までの相対座標
-	static constexpr VECTOR LOCAL_P2T_POS = { 0.0f,0.0f,500.0f };
-
-	static constexpr VECTOR LOCAL_POS = { 0.0f,300.0f,-500.0f };
-
-	// 敵から注視点までの相対座標
-	static constexpr VECTOR LOCAL_E2T_POS = { 0.0f,0.0f,500.0f };
-
-	static constexpr VECTOR LOCAL_LOCK_ON_F2C_POS = { 0.0f,300.0f,-500.0f };
-
 
 	// カメラモード
 	enum class MODE
@@ -70,14 +69,8 @@ public:
 	void Draw(void);
 	void Release(void);
 
-	VECTOR GetPos(void) const;
-
-	VECTOR GetAngles(void) const;
-
 	// プレイヤーが向いている角度
 	void SetLazyAngles(const VECTOR angles);
-
-	VECTOR GetTargetPos(void) const;
 
 	void SetBeforeDrawFollow(void);
 	
@@ -93,15 +86,8 @@ public:
 	// カメラモードの変更
 	void ChangeMode(MODE mode);
 
-	Quaternion GetRotY(void) const;
-
 	// 遅延回転
 	void LazyRotation(void);
-
-	// ロックオンの取得
-	bool GetLockOn(void);
-
-	Camera::MODE GetMode(void);
 
 	//	ロックオン中のY軸の角度を足す
 	void AddLockOnAnglesY(float rad);
@@ -109,18 +95,28 @@ public:
 	// ステージのモデルIDを設定
 	void SetStageID(const int modelId);
 
+	Camera::MODE GetMode(void);
+
+	VECTOR GetPos(void) const;
+
+	VECTOR GetAngles(void) const;
+
+	VECTOR GetTargetPos(void) const;
+
+	Quaternion GetRotY(void) const;
+
+	// ロックオンの取得
+	bool GetLockOn(void);
+
+
 private:
 
-	// ステージのID
-	int stageId_;
-
-	// ロックオンのフラグ
-	bool lockOn_;
+	// 追従対象
+	const Transform* playerTransform_;
+	const Transform* enemyTransform_;
 
 	// カメラモード
 	MODE mode_;
-
-	Transform transform_;
 
 	// カメラの位置
 	VECTOR pos_;
@@ -134,6 +130,17 @@ private:
 	// カメラの上方向
 	VECTOR cameraUp_;
 
+	// ロックオン専用コントローラ制御角
+	VECTOR lockOnAngles_;
+
+	VECTOR goalCameraPos_;
+
+	// カメラの回転
+	VECTOR angle_;
+
+	// 追従対象からカメラまでの相対座標	
+	VECTOR relativeCPos_;
+
 	// カメラの回転
 	Quaternion rotXY_;
 	Quaternion rotY_;
@@ -141,20 +148,13 @@ private:
 	// Y軸のゴールの角度
 	Quaternion lazyGoalRotY_;
 
-	// SetLazyAngleに値が入ったらtrue
-	bool isLazy_ = false;
-
-	// カメラの回転
-	VECTOR angle_;
-
 	Quaternion lockOnLook_;
 
-	// ロックオン専用コントローラ制御角
-	VECTOR lockOnAngles_;
+	// ステージのID
+	int stageId_;
 
-	bool isNearLockOnTarget_;
-
-	VECTOR goalCameraPos_;
+	// 決定音
+	int musicDecisionId_;
 
 	// マウスの横移動
 	float rotPowY_;
@@ -162,27 +162,25 @@ private:
 	// マウスの縦移動
 	float rotPowX_;
 
-	// 追従対象からカメラまでの相対座標	
-	VECTOR relativeCPos_;
-
-	// ポリゴンと当たっているか
-	bool pHit_;
-
 	// 操作説明をスキップさせないようにするカウンタ
 	float operationCnt_;
 
-	// 決定音
-	int musicDecisionId_;
+	// SetLazyAngleに値が入ったらtrue
+	bool isLazy_ = false;
+
+	// ロックオンのフラグ
+	bool lockOn_;
+
+	bool isNearLockOnTarget_;
+
+	// ポリゴンと当たっているか
+	bool pHit_;
 
 	// カメラを初期位置に戻す
 	void SetDefault(void);
 
 	// 注視点をキャラクター前方位置に設定
 	void SetTargetPosFollowForward(void);
-
-	// 追従対象
-	const Transform* playerTransform_;
-	const Transform* enemyTransform_;
 
 	// キーボードの操作
 	void KeybordContoroller(void);

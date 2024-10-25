@@ -1,17 +1,12 @@
 #include <DxLib.h>
 #include "../Manager/ActorManager.h"
 #include "../Manager/CollisionManager.h"
+#include "../Manager/SceneManager.h"
+#include "../Object/Common/ActorCreate.h"
 #include "GameScene.h"
 
 GameScene::GameScene()
 {
-
-	// アクター管理クラス
-	actorManager_ = std::make_shared<ActorManager>();
-
-	// 衝突判定管理クラス
-	collisionManager_ = std::make_shared<CollisionManager>();
-
 }
 
 GameScene::~GameScene()
@@ -20,6 +15,18 @@ GameScene::~GameScene()
 
 void GameScene::Init()
 {
+
+	// アクター管理クラス
+	actorManager_ = std::make_shared<ActorManager>();
+
+	// 衝突判定管理クラス
+	collisionManager_ = std::make_shared<CollisionManager>();
+
+	// アクターの生成クラス
+	actorCreate_ = std::make_shared<ActorCreate>();
+
+	SceneManager::GetInstance().GetCamera().lock()->ChangeMode(Camera::MODE::LOCKON);
+
 }
 
 void GameScene::Update(const float deltaTime)
