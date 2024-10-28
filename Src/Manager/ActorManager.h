@@ -44,6 +44,12 @@ private:
 
 	// すべてのアクターをまとめたデータ
 	std::unordered_map<ActorType, std::vector<std::shared_ptr<ActorBase>>> deactiveActorData_;
+	
+	// 距離が一番短い敵のポインタ
+	std::shared_ptr<ActorBase> minEnemy_;
+
+	// 一番短い距離を保持するポインタ
+	float minDistance_;
 
 };
 

@@ -1,10 +1,14 @@
 #include "ActorManager.h"
+#include "SceneManager.h"
 #include "ResourceManager.h"
 #include "../Utility/Utility.h"
 #include "../Object/Player.h"
 #include "../Object/Enemy.h"
 
 ActorManager::ActorManager()
+	:
+	minEnemy_(nullptr),
+	minDistance_(10000.0f)
 {
 }
 
@@ -53,6 +57,9 @@ void ActorManager::Update(const float deltaTime)
 			// 敵
 			const auto& enemys = activeActorData_.find(ActorType::ENEMY);
 
+			// 中身が入っているか確認
+			if (enemys == activeActorData_.end())continue;
+
 			for (const std::shared_ptr<ActorBase>& enemy : enemys->second)
 			{
 				// 敵の中で1つでもtrueだったら処理しない
@@ -73,6 +80,7 @@ void ActorManager::Update(const float deltaTime)
 			// 敵
 			const auto& enemys = activeActorData_.find(ActorType::ENEMY);
 
+			// 中身が入っているか確認
 			if (players == activeActorData_.end())continue;
 			if (enemys == activeActorData_.end())continue;
 
@@ -91,27 +99,30 @@ void ActorManager::Update(const float deltaTime)
 					// ベクトルの距離
 					const float distance = Utility::MagnitudeF(vec);
 
-					// 一番小さい敵との距離
-					float minDistance;
-
-					// 一番距離が小さい敵
-					std::shared_ptr<ActorBase> minEnemy;
-
 					// 一番小さい距離と比べて今比較しているほうが小さかったら今のを一番小さい値に設定する
-					if (distance < minDistance)
-					{
-						minDistance = distance;
-						minEnemy = enemy;
-					}
+					if (distance > minDistance_)continue;
+
+					minDistance_ = distance;
+					minEnemy_ = enemy;
+					
 
 					// この敵をロックオンする
-					minEnemy->SetIsLockOn(true);
+					minEnemy_->SetIsLockOn(true);
+
+					// カメラにこの敵を追従させるためTransformを渡す
+					SceneManager::GetInstance().GetCamera().lock()->SetEnemy(&minEnemy_->GetTransform());
+
+					// カメラにロックオン機能をONにする
+ 					SceneManager::GetInstance().GetCamera().lock()->SetLockOn(true);
+
+					// 決まったら距離を初期化する
+					minDistance_ = 10000.0f;
+					return;
 
 				}
 			}
 		}
 	}
-
 
 }
 

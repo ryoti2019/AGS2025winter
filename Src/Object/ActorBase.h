@@ -191,6 +191,9 @@ public:
 	// ロックオンされているか判定を設定
 	void SetIsLockOn(const bool isLockOn);
 
+	// モデルの基本情報を取得
+	const Transform& GetTransform() const { return transform_; }
+
 	// アクタータイプを取得
 	const ActorType& GetActorType() const { return actorType_; }
 

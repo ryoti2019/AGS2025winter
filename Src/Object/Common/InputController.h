@@ -17,6 +17,9 @@ public:
 	// •ûŒü
 	VECTOR Dir();
 
+	// ƒƒbƒNƒIƒ“‚Ì•ûŒü
+	VECTOR LockOnDir(Transform transform);
+
 	// ‘–‚é
 	bool Run();
 

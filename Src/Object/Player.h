@@ -70,6 +70,9 @@ private:
 	// 攻撃4段階目
 	bool upper_;
 
+	// ロックオンしているか
+	bool isLockOn_;
+
 	// 状態遷移
 	std::unordered_map<STATE, std::function<void()>> stateChange_;
 	void ChangeIdle();

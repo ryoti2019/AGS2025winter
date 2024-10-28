@@ -14,6 +14,7 @@ Camera::Camera(void)
 	pos_ = { 0.0f, 0.0f, 0.0f };
 	targetPos_ = { 0.0f, 0.0f, 0.0f };
 	angle_ = { 0.0f, 0.0f, 0.0f };
+	lockOn_ = false;
 
 	// カメラの初期設定
 	SetDefault();
@@ -168,10 +169,39 @@ void Camera::SetBeforeDrawLockOn(void)
 	// 同期先の位置
 	VECTOR playerPos = playerTransform_->pos;
 
-	// カメラの位置
-	pos_ = VAdd(playerPos, LOCAL_P2C_POS);
+	// 敵の位置
+	VECTOR enemyPos = { 0.0f,1000.0f,5000.0f };
 
-	targetPos_ = VAdd(playerPos, LOCAL_P2T_POS);
+	if (lockOn_)
+	{
+		enemyPos = enemyTransform_->pos;
+		enemyPos = VAdd(enemyPos, { 0.0f,1000.0f,0.0f });
+	}
+
+	// プレイヤーと敵の中間地点を設定
+	VECTOR centerPos = VAdd(playerPos, enemyPos);
+
+
+
+	// プレイヤーとロックオン対象の距離を計算
+	float distance = VSize(VSub(playerPos, enemyPos));
+
+	// カメラのオフセット量を計算
+	float cameraDistance = distance * 1.5f; // 調整可能な係数（1.5倍で両方が視野に収まるように）
+	VECTOR cameraPos = VAdd(centerPos, VGet(0.0f, cameraDistance * 0.5f, -cameraDistance));
+
+	centerPos = VScale(centerPos, 0.5f);
+
+	VECTOR pos = rotXY_.PosAxis(LOCAL_P2C_POS);
+	
+	// カメラの位置
+	pos_ = VAdd(playerPos, pos);
+
+	// 注視点を設定
+	targetPos_ = centerPos;
+
+	// カメラの上方向
+	cameraUp_ = Utility::DIR_U;
 
 }
 
@@ -189,7 +219,7 @@ VECTOR Camera::GetPos(void) const
 	return pos_;
 }
 
-VECTOR Camera::GetAngles(void) const
+VECTOR Camera::GetAngle(void) const
 {
 	return angle_;
 }
@@ -217,25 +247,9 @@ void Camera::SetEnemy(const Transform* follow)
 	enemyTransform_ = follow;
 }
 
-void Camera::ChangeLockOnFlag(void)
+void Camera::SetLockOn(const bool lockOn)
 {
-
-	// ロックオンする
-	if(!lockOn_ && mode_ == Camera::MODE::FOLLOW)
-	{
-		ChangeMode(Camera::MODE::LOCKON);
-		lockOn_ = true;
-		return;
-	}
-	
-	// ロックオンを解除する
-	if (lockOn_ && mode_ == Camera::MODE::LOCKON)
-	{
-		ChangeMode(Camera::MODE::FOLLOW);
-		lockOn_ = false;
-		return;
-	}
-
+	lockOn_ = lockOn;
 }
 
 void Camera::ChangeMode(MODE mode)

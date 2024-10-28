@@ -80,8 +80,8 @@ public:
 	// 追従対象の設定
 	void SetEnemy(const Transform* follow);
 
-	// ロックオンのフラグを変える
-	void ChangeLockOnFlag(void);
+	// ロックオンの設定
+	void SetLockOn(const bool lockOn);
 
 	// カメラモードの変更
 	void ChangeMode(MODE mode);
@@ -99,7 +99,7 @@ public:
 
 	VECTOR GetPos(void) const;
 
-	VECTOR GetAngles(void) const;
+	VECTOR GetAngle(void) const;
 
 	VECTOR GetTargetPos(void) const;
 

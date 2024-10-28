@@ -57,10 +57,6 @@ void Enemy::Init(const VECTOR& pos)
 void Enemy::InitFunction()
 {
 
-	// 基底クラスから使いたい型へキャストする
-	std::shared_ptr<GameScene> gameScene =
-		std::dynamic_pointer_cast<GameScene>(SceneManager::GetInstance().GetNowScene());
-
 }
 
 void Enemy::InitParameter()

@@ -5,6 +5,7 @@
 #include "../Manager/CollisionManager.h"
 #include "../Manager/Camera.h"
 #include "../Object/Common/InputController.h"
+#include "../Manager/ActorManager.h"
 #include "Player.h"
 
 Player::Player(const VECTOR& pos, const json& data)
@@ -165,6 +166,49 @@ void Player::Update(const float deltaTime)
 	// 移動処理
 	Move();
 
+	// カメラの角度
+	VECTOR cameraAngle = SceneManager::GetInstance().GetCamera().lock()->GetAngle();
+
+	// 基底クラスから使いたい型へキャストする
+	std::shared_ptr<GameScene> gameScene =
+		std::dynamic_pointer_cast<GameScene>(SceneManager::GetInstance().GetNowScene());
+
+	auto activeData = gameScene->GetActorManager()->GetActiveActorData();
+
+	// 敵の方向
+	VECTOR dir = Utility::VECTOR_ZERO;;
+
+	for (auto& data : activeData)
+	{
+		for (const std::shared_ptr<ActorBase>& actor : data.second)
+		{
+
+			// 敵
+			const auto& enemys = activeData.find(ActorType::ENEMY);
+
+			// 中身が入っているか確認
+			if (enemys == activeData.end())continue;
+
+			for (const std::shared_ptr<ActorBase>& enemy : enemys->second)
+			{
+				// trueだったらこの敵をロックオンする
+				if (enemy->GetIsLockOn())
+				{
+					dir = VSub(enemy->GetPos(), transform_.pos);
+					dir = VNorm(dir);
+					isLockOn_ = true;
+				}
+			}
+
+		}
+	}
+
+	// 方向を角度に変換する(XZ平面 Y軸)
+	float angle = atan2f(dir.x, dir.z);
+
+	// プレイヤーにカメラを追従するときはこっちに切り替える
+	LazyRotation(cameraAngle.y + angle);
+
 	// 攻撃処理
 	ComboAttack(deltaTime);
 
@@ -182,7 +226,7 @@ void Player::Update(const float deltaTime)
 
 	// アニメーション再生
 	animationController_->Update(deltaTime);
-	
+
 	// モデル情報を更新
 	transform_.Update();
 
@@ -209,6 +253,14 @@ void Player::Move()
 	// 入力方向
 	VECTOR dir = inputController_->Dir();
 
+	if (isLockOn_)
+	{
+		dir = inputController_->LockOnDir(transform_);
+	}
+
+	//// カメラの角度
+	//VECTOR cameraAngle = SceneManager::GetInstance().GetCamera().lock()->GetAngle();
+
 	// 攻撃中は移動できない
 	if (!AttackState())
 	{
@@ -226,14 +278,11 @@ void Player::Move()
 		}
 	}
 
-	// 方向を角度に変換する(XZ平面 Y軸)
-	float angle = atan2f(dir_.x, dir_.z);
+	//// 方向を角度に変換する(XZ平面 Y軸)
+	//float angle = atan2f(dir_.x, dir_.z);
 
-	// 回転処理(代用)
-	LazyRotation(angle);
-
-	// プレイヤーにカメラを追従するときはこっちに切り替える
-	//LazyRotation(cameraAngles.y + angle);
+	//// プレイヤーにカメラを追従するときはこっちに切り替える
+	//LazyRotation(cameraAngle.y + angle);
 
 }
 
