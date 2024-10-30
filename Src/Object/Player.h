@@ -70,9 +70,6 @@ private:
 	// 攻撃4段階目
 	bool upper_;
 
-	// ロックオンしているか
-	bool isLockOn_;
-
 	// 状態遷移
 	std::unordered_map<STATE, std::function<void()>> stateChange_;
 	void ChangeIdle();
@@ -102,6 +99,9 @@ private:
 
 	// 関数ポインタの初期化
 	void InitFunctionPointer()override;
+
+	// ImGuiのデバッグ描画の更新
+	virtual void UpdateDebugImGui();
 
 	// 状態遷移
 	void ChangeState(STATE state);

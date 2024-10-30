@@ -7,6 +7,7 @@
 #include "../Scene/GameScene.h"
 #include "../Object/Player.h"
 #include "../Object/Enemy.h"
+#include "../Object/Stage.h"
 #include "ActorCreate.h"
 
 ActorCreate::ActorCreate()
@@ -32,9 +33,6 @@ ActorCreate::ActorCreate()
 	// お行儀良く、明示的にファイルストリームを閉じる
 	ifs.close();
 
-	// プレイヤー
-	const auto& playerData = objectData[0]["PlayerData"];
-
 	// 基底クラスから使いたい型へキャストする
 	std::shared_ptr<GameScene> gameScene =
 		std::dynamic_pointer_cast<GameScene>(SceneManager::GetInstance().GetNowScene());
@@ -44,6 +42,9 @@ ActorCreate::ActorCreate()
 
 	// アクターマネージャーを取得
 	std::shared_ptr<ActorManager> actorManager = gameScene->GetActorManager();
+
+	// プレイヤー
+	const auto& playerData = objectData[0]["PlayerData"];
 
 	// プレイヤーを生成
 	actorManager->CreateActor<Player>(playerData);
@@ -60,5 +61,12 @@ ActorCreate::ActorCreate()
 		actorManager->CreateActor<Enemy>(enemyData);
 		actorManager->ActiveData(ActorType::ENEMY, { -5000.0f + x,0.0f,-5000.0f + z });
 	}
+
+	// ステージ
+	const auto& stageData = objectData[2]["StageData"];
+
+	// ステージを生成
+	actorManager->CreateActor<Stage>(stageData);
+	actorManager->ActiveData(ActorType::STAGE, { stageData["POS"]["x"], stageData["POS"]["y"] ,stageData["POS"]["z"] });
 
 }

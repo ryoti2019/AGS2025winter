@@ -65,6 +65,19 @@
 					}
 				]
 			}
+		},
+		{
+			"StageData": {
+				"ATTACK_MOVE_POW": 0.0,
+				"SCALE": 3.0,
+				"HP": 0,
+				"ACTOR_TYPE": 2,
+				"POS": {
+					"x": 0.0,
+					"y": -2000.0,
+					"z": 0.0
+				}
+			}
 		}
 	]
 }

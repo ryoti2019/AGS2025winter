@@ -30,7 +30,13 @@ public:
 		ENEMY_IDLE,
 		ENEMY_RUN,
 		ENEMY_JAB,
-		ENEMY_STRAIGHT
+		ENEMY_STRAIGHT,
+
+#pragma endregion
+
+#pragma region ステージ
+
+		STAGE
 
 #pragma endregion
 

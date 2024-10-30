@@ -25,7 +25,7 @@ void GameScene::Init()
 	// アクターの生成クラス
 	actorCreate_ = std::make_shared<ActorCreate>();
 
-	SceneManager::GetInstance().GetCamera().lock()->ChangeMode(Camera::MODE::LOCKON);
+	SceneManager::GetInstance().GetCamera().lock()->ChangeMode(Camera::MODE::FIXED_POINT);
 
 }
 

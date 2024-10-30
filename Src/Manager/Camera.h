@@ -14,10 +14,10 @@ public:
 	static constexpr VECTOR DEFAULT_CAMERA_POS = { 0.0f, 500.0f, -500.0f };
 
 	// プレイヤーからカメラの位置までの相対座標
-	static constexpr VECTOR LOCAL_P2C_POS = { 1000.0f, 1000.0f,-3000.0f };
+	static constexpr VECTOR LOCAL_P2C_POS = { 0.0f, 1500.0f,-3000.0f };
 
 	// プレイヤーから注視点までの相対座標
-	static constexpr VECTOR LOCAL_P2T_POS = { 0.0f,1000.0f,5000.0f };
+	static constexpr VECTOR LOCAL_P2T_POS = { 0.0f,800.0f,0.0f };
 
 	// 敵からカメラの位置までの相対座標
 	static constexpr VECTOR LOCAL_E2C_POS = { 0.0f, 500.0f,-400.0f };
@@ -38,14 +38,14 @@ public:
 	// 追従対象から注視点までの距離
 	static constexpr float DIS_FOLLOW2TARGET = 350.0f;
 
-	// カメラスピード：NEAR
+	// カメラスピード
 	static constexpr float SPEED = 20.0f;
 
 	// カメラクリップ：NEAR
 	static constexpr float CAMERA_NEAR = 40.0f;
 
-	// カメラクリップ：NEAR
-	static constexpr float CAMERA_FAR = 15000.0f;
+	// カメラクリップ：FAR
+	static constexpr float CAMERA_FAR = 50000.0f;
 
 	// カメラモード
 	enum class MODE

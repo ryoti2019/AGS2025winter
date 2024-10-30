@@ -67,6 +67,26 @@ bool ActorBase::AttackState()
 	return false;
 }
 
+void ActorBase::InitFunction()
+{
+}
+
+void ActorBase::InitParameter()
+{
+}
+
+void ActorBase::InitAnimation()
+{
+}
+
+void ActorBase::InitFunctionPointer()
+{
+}
+
+void ActorBase::UpdateDebugImGui()
+{
+}
+
 void ActorBase::CollisionUpdate()
 {
 
@@ -242,6 +262,14 @@ void ActorBase::CollisionUpdate()
 
 }
 
+void ActorBase::Move()
+{
+}
+
+void ActorBase::ComboAttack(const float deltaTime)
+{
+}
+
 void ActorBase::CollisionRegister()
 {
 }
@@ -260,6 +288,11 @@ void ActorBase::Draw()
 void ActorBase::SetIsLockOn(const bool isLockOn)
 {
 	isLockOn_ = isLockOn;
+}
+
+bool ActorBase::GetAttackState()
+{
+	return false;
 }
 
 bool ActorBase::GetIsLockOn()

@@ -1,4 +1,5 @@
 #include <memory>
+#include "../Lib/ImGui/imgui.h"
 #include "../Utility/Utility.h"
 #include "../Scene/GameScene.h"
 #include "../Manager/SceneManager.h"
@@ -163,51 +164,11 @@ void Player::InitAnimation()
 void Player::Update(const float deltaTime)
 {
 
+	// ImGuiのデバッグ描画の更新
+	UpdateDebugImGui();
+
 	// 移動処理
 	Move();
-
-	// カメラの角度
-	VECTOR cameraAngle = SceneManager::GetInstance().GetCamera().lock()->GetAngle();
-
-	// 基底クラスから使いたい型へキャストする
-	std::shared_ptr<GameScene> gameScene =
-		std::dynamic_pointer_cast<GameScene>(SceneManager::GetInstance().GetNowScene());
-
-	auto activeData = gameScene->GetActorManager()->GetActiveActorData();
-
-	// 敵の方向
-	VECTOR dir = Utility::VECTOR_ZERO;;
-
-	for (auto& data : activeData)
-	{
-		for (const std::shared_ptr<ActorBase>& actor : data.second)
-		{
-
-			// 敵
-			const auto& enemys = activeData.find(ActorType::ENEMY);
-
-			// 中身が入っているか確認
-			if (enemys == activeData.end())continue;
-
-			for (const std::shared_ptr<ActorBase>& enemy : enemys->second)
-			{
-				// trueだったらこの敵をロックオンする
-				if (enemy->GetIsLockOn())
-				{
-					dir = VSub(enemy->GetPos(), transform_.pos);
-					dir = VNorm(dir);
-					isLockOn_ = true;
-				}
-			}
-
-		}
-	}
-
-	// 方向を角度に変換する(XZ平面 Y軸)
-	float angle = atan2f(dir.x, dir.z);
-
-	// プレイヤーにカメラを追従するときはこっちに切り替える
-	LazyRotation(cameraAngle.y + angle);
 
 	// 攻撃処理
 	ComboAttack(deltaTime);
@@ -232,6 +193,35 @@ void Player::Update(const float deltaTime)
 
 }
 
+void Player::UpdateDebugImGui()
+{
+
+	// ウィンドウタイトル&開始処理
+	ImGui::Begin("Player");
+	// 大きさ
+	ImGui::Text("scale");
+	ImGui::InputFloat("Scl", &scl_);
+	// 角度
+	VECTOR rotDeg = VECTOR();
+	rotDeg.x = Utility::Rad2DegF(transform_.rot.x);
+	rotDeg.y = Utility::Rad2DegF(transform_.rot.y);
+	rotDeg.z = Utility::Rad2DegF(transform_.rot.z);
+	ImGui::Text("angle(deg)");
+	ImGui::SliderFloat("RotX", &rotDeg.x, 0.0f, 360.0f);
+	ImGui::SliderFloat("RotY", &rotDeg.y, 0.0f, 360.0f);
+	ImGui::SliderFloat("RotZ", &rotDeg.z, 0.0f, 360.0f);
+	transform_.rot.x = Utility::Deg2RadF(rotDeg.x);
+	transform_.rot.y = Utility::Deg2RadF(rotDeg.y);
+	transform_.rot.z = Utility::Deg2RadF(rotDeg.z);
+	// 位置
+	ImGui::Text("position");
+	// 構造体の先頭ポインタを渡し、xyzと連続したメモリ配置へアクセス
+	ImGui::InputFloat3("Pos", &transform_.pos.x);
+	// 終了処理
+	ImGui::End();
+
+}
+
 bool Player::GetAttackState()
 {
 
@@ -253,14 +243,6 @@ void Player::Move()
 	// 入力方向
 	VECTOR dir = inputController_->Dir();
 
-	if (isLockOn_)
-	{
-		dir = inputController_->LockOnDir(transform_);
-	}
-
-	//// カメラの角度
-	//VECTOR cameraAngle = SceneManager::GetInstance().GetCamera().lock()->GetAngle();
-
 	// 攻撃中は移動できない
 	if (!AttackState())
 	{
@@ -269,6 +251,7 @@ void Player::Move()
 		{
 			// 方向を更新
 			dir_ = dir;
+
 			ChangeState(STATE::RUN);
 		}
 		// 入力していなければ待機状態にする
@@ -278,11 +261,7 @@ void Player::Move()
 		}
 	}
 
-	//// 方向を角度に変換する(XZ平面 Y軸)
-	//float angle = atan2f(dir_.x, dir_.z);
 
-	//// プレイヤーにカメラを追従するときはこっちに切り替える
-	//LazyRotation(cameraAngle.y + angle);
 
 }
 
@@ -408,8 +387,33 @@ void Player::UpdateIdle(void)
 
 void Player::UpdateRun(void)
 {
+
+	// カメラの角度
+	VECTOR cameraAngle = SceneManager::GetInstance().GetCamera().lock()->GetAngle();
+
+	// Y軸の行列
+	MATRIX mat = MGetIdent();
+	mat = MMult(mat, MGetRotY(cameraAngle.y));
+
+	// 回転行列を使用して、ベクトルを回転させる
+	moveDir_ = VTransform(dir_, mat);
+
+	// 移動量
+	speed_ = 100.0f;
+
+	// 移動量
+	movePow_ = VScale(moveDir_, speed_);
+
 	// 移動処理
-	transform_.pos = VAdd(transform_.pos, VScale(dir_, ATTACK_MOVE_POW));
+	transform_.pos = VAdd(transform_.pos, movePow_);
+
+	// 方向を角度に変換する(XZ平面 Y軸)
+	float angle = atan2f(dir_.x, dir_.z);
+
+	// プレイヤーにカメラを追従するときはこっちに切り替える
+	LazyRotation(cameraAngle.y + angle);
+
+
 }
 
 void Player::UpdateJab()

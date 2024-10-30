@@ -16,6 +16,7 @@ enum class ActorType {
 	NONE = -1,
 	PLAYER,
 	ENEMY,
+	STAGE,
 	MAX
 };
 
@@ -172,9 +173,9 @@ public:
 	virtual ~ActorBase() = default;
 
 	virtual void Init(const VECTOR& pos);
-	virtual void Create(const VECTOR& pos);
+	void Create(const VECTOR& pos);
 	virtual void Update(const float deltaTime);
-	virtual void Draw();
+	void Draw();
 
 	// 座標を設定
 	void SetPos(const VECTOR& pos) { transform_.pos = pos; }
@@ -207,7 +208,7 @@ public:
 	bool GetIsActive() const { return isActive_; }
 
 	// 攻撃状態を取得
-	virtual bool GetAttackState() = 0;
+	virtual bool GetAttackState();
 
 	// HPを取得
 	const int GetHp()const { return hp_; }
@@ -239,6 +240,12 @@ protected:
 
 	// 方向
 	VECTOR dir_;
+
+	// 実際に動く方向
+	VECTOR moveDir_;
+
+	// 移動量
+	VECTOR movePow_;
 
 	// 目的の角度
 	Quaternion goalQuaRot_;
@@ -274,28 +281,31 @@ protected:
 	const std::shared_ptr<ActorBase>& GetThis() { return shared_from_this(); };
 	
 	// 機能の初期化
-	virtual void InitFunction() = 0;
+	virtual void InitFunction();
 
 	// パラメータの初期化
-	virtual void InitParameter() = 0;
+	virtual void InitParameter();
 
 	// アニメーションの初期化
-	virtual void InitAnimation() = 0;
+	virtual void InitAnimation();
 
 	// 関数ポインタの初期化
-	virtual void InitFunctionPointer() = 0;
+	virtual void InitFunctionPointer();
+
+	// ImGuiのデバッグ描画の更新
+	virtual void UpdateDebugImGui();
 
 	// 衝突判定の更新
 	void CollisionUpdate();
 
 	// 移動処理
-	virtual void Move() = 0;
+	virtual void Move();
 
 	// 攻撃処理
-	virtual void ComboAttack(const float deltaTime) = 0;
+	virtual void ComboAttack(const float deltaTime);
 
 	// 攻撃状態
-	virtual bool AttackState() = 0;
+	virtual bool AttackState();
 
 	// 遅延回転
 	void LazyRotation(float goalRot);

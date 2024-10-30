@@ -110,7 +110,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(DXLIB_DIR_324);$(ProjectDir)Src/Lib/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(DXLIB_DIR_324);$(ProjectDir)Src/Lib</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
@@ -128,7 +128,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(DXLIB_DIR_324);$(ProjectDir)Src/Lib/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(DXLIB_DIR_324);$(ProjectDir)Src/Lib</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
@@ -141,7 +141,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Lib\ImGui\backends\imgui_impl_dx11.cpp" />
+    <ClCompile Include="Src\Lib\ImGui\backends\imgui_impl_win32.cpp" />
+    <ClCompile Include="Src\Lib\ImGui\imgui.cpp" />
+    <ClCompile Include="Src\Lib\ImGui\imgui_demo.cpp" />
+    <ClCompile Include="Src\Lib\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="Src\Lib\ImGui\imgui_tables.cpp" />
+    <ClCompile Include="Src\Lib\ImGui\imgui_widgets.cpp" />
     <ClCompile Include="Src\Manager\CollisionManager.cpp" />
+    <ClCompile Include="Src\Lib\ImGuiWrapper.cpp" />
     <ClCompile Include="Src\Object\Common\ActorCreate.cpp" />
     <ClCompile Include="Src\Object\Enemy.cpp" />
     <ClCompile Include="Src\Object\Common\AnimationController.cpp" />
@@ -166,8 +174,17 @@
     <ClCompile Include="Src\Scene\SceneBase.cpp" />
     <ClCompile Include="Src\Utility\Utility.cpp" />
     <ClCompile Include="Src\Scene\TitleScene.cpp" />
+    <ClCompile Include="Src\Object\Stage.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Lib\ImGui\backends\imgui_impl_dx11.h" />
+    <ClInclude Include="Src\Lib\ImGui\backends\imgui_impl_win32.h" />
+    <ClInclude Include="Src\Lib\ImGui\imconfig.h" />
+    <ClInclude Include="Src\Lib\ImGui\imgui.h" />
+    <ClInclude Include="Src\Lib\ImGui\imgui_internal.h" />
+    <ClInclude Include="Src\Lib\ImGui\imstb_rectpack.h" />
+    <ClInclude Include="Src\Lib\ImGui\imstb_textedit.h" />
+    <ClInclude Include="Src\Lib\ImGui\imstb_truetype.h" />
     <ClInclude Include="Src\Manager\CollisionManager.h" />
     <ClInclude Include="Src\Lib\nlohmann\adl_serializer.hpp" />
     <ClInclude Include="Src\Lib\nlohmann\byte_container_with_subtype.hpp" />
@@ -214,6 +231,7 @@
     <ClInclude Include="Src\Lib\nlohmann\ordered_map.hpp" />
     <ClInclude Include="Src\Lib\nlohmann\thirdparty\hedley\hedley.hpp" />
     <ClInclude Include="Src\Lib\nlohmann\thirdparty\hedley\hedley_undef.hpp" />
+    <ClInclude Include="Src\Lib\ImGuiWrapper.h" />
     <ClInclude Include="Src\Object\Common\ActorCreate.h" />
     <ClInclude Include="Src\Object\Enemy.h" />
     <ClInclude Include="Src\Object\Common\AnimationController.h" />
@@ -237,6 +255,7 @@
     <ClInclude Include="Src\Scene\SceneBase.h" />
     <ClInclude Include="Src\Utility\Utility.h" />
     <ClInclude Include="Src\Scene\TitleScene.h" />
+    <ClInclude Include="Src\Object\Stage.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

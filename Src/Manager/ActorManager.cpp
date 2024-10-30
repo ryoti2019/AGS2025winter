@@ -4,6 +4,7 @@
 #include "../Utility/Utility.h"
 #include "../Object/Player.h"
 #include "../Object/Enemy.h"
+#include "../Object/Stage.h"
 
 ActorManager::ActorManager()
 	:

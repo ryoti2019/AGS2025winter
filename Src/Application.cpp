@@ -3,6 +3,7 @@
 #include "Manager/ResourceManager.h"
 #include "Manager/InputManager.h"
 #include "Manager/SceneManager.h"
+#include "../Lib/ImGuiWrapper.h"
 #include "Application.h"
 
 Application* Application::instance_ = nullptr;
@@ -36,6 +37,7 @@ void Application::Run()
 
 	auto& inputManager = InputManager::GetInstance();
 	auto& sceneManager = SceneManager::GetInstance();
+	auto& imGuiWrapper = ImGuiWrapper::GetInstance();
 
 	// ゲームループ
 	while (ProcessMessage() == 0 && CheckHitKey(KEY_INPUT_ESCAPE) == 0)
@@ -48,9 +50,20 @@ void Application::Run()
 		preTime_ = nowTime;
 
 		inputManager.Update();
+		imGuiWrapper.Update();
 		sceneManager.Update(deltaTime_);
 
 		sceneManager.Draw();
+
+		// 頂点バッファに溜まった頂点データを描画する
+		// DxLibは特定条件のもと、まとめて描画する機能がある
+		// そのため、ScreenFlip関数で溜まっていたDxLib分の描画が実行され、
+		// imGuiの描画が上書きされてしまう場合がある
+		// それを無くすために、RenderVertex関数で、溜め分を描画しておく
+		// 処理速度的にはちょっと懸念
+		RenderVertex();
+
+		imGuiWrapper.Draw();
 
 		ScreenFlip();
 
@@ -64,6 +77,7 @@ void Application::Destroy()
 	InputManager::GetInstance().Destroy();
 	ResourceManager::GetInstance().Destroy();
 	SceneManager::GetInstance().Destroy();
+	ImGuiWrapper::GetInstance().Destroy();
 
 	Effkseer_End();
 
@@ -118,5 +132,8 @@ Application::Application()
 
 	// シーン管理初期化
 	SceneManager::CreateInstance();
+
+	// デバッグ描画初期化
+	ImGuiWrapper::CreateInstance();
 
 }

@@ -150,16 +150,85 @@ void Camera::SetBeforeDrawFollow(void)
 
 	auto& sce = SceneManager::GetInstance();
 
-	VECTOR playerPos = playerTransform_->pos;
+	// マウスカーソルを非表示にする
+	SetMouseDispFlag(false);
 
-	// Qキーを押したらtrueになる
-	if (isLazy_)
+	// 回転
+	//-------------------------------------
+	VECTOR axisDeg = Utility::VECTOR_ZERO;
+
+	// マウス回転量
+	float rotPow = 4.0f;
+
+	// マウス位置
+	Vector2 mousePos;
+
+	// 画面の中心位置
+	Vector2 center = { Application::SCREEN_SIZE_X / 2,Application::SCREEN_SIZE_Y / 2 };
+
+	// マウス位置の取得
+	GetMousePoint(&mousePos.x, &mousePos.y);
+
+	// カメラ回転の計算(マウスカーソル位置と画面の中心の差分を計算し、回転量/FPSを乗算する)
+	// これが回転量
+	rotPowY_ = float(std::clamp(mousePos.x - center.x, -120, 120)) * rotPow / GetFPS();	// マウス横移動
+	rotPowX_ = float(std::clamp(mousePos.y - center.y, -120, 120)) * rotPow / GetFPS();	// マウス縦移動
+
+	// カメラ位置を中心にセット
+	SetMousePoint(center.x, center.y);
+
+	if (center.x <= mousePos.x) { axisDeg.y += rotPowY_; }
+	if (center.x >= mousePos.x) { axisDeg.y += rotPowY_; }
+
+	if (center.y >= mousePos.y && Utility::Rad2DegF(angle_.x) >= -30.0f)
 	{
-		LazyRotation();
+		axisDeg.x += rotPowX_;
+	}
+	if (center.y <= mousePos.y && Utility::Rad2DegF(angle_.x) <= 10.0f)
+	{
+		axisDeg.x += rotPowX_;
 	}
 
-	// ステージの衝突判定
-	CollisionStage();
+	if (!Utility::EqualsVZero(axisDeg))
+	{
+
+		// カメラを回転させる
+		// X軸のカメラの移動制御
+		angle_.x += Utility::Deg2RadF(axisDeg.x);
+		angle_.y += Utility::Deg2RadF(axisDeg.y);
+
+		rotY_ = Quaternion::AngleAxis(angle_.y, Utility::AXIS_Y);
+
+		rotXY_ = rotY_.Mult(Quaternion::AngleAxis(angle_.x, Utility::AXIS_X));
+
+	}
+
+	// 追従対象の位置
+	VECTOR followPos = playerTransform_->pos;
+
+	// 追従対象から注視点までの相対座標を回転
+	VECTOR relativeTPos = rotY_.PosAxis(LOCAL_P2T_POS);
+
+	// 追従対象からカメラまでの相対座標
+	VECTOR relativeCPos = rotXY_.PosAxis(LOCAL_P2C_POS);
+
+	// カメラ座標をゆっくり移動させる
+	pos_ = Utility::Lerp(pos_, VAdd(followPos, relativeCPos), 0.1f);
+
+	// 注視点をゆっくり移動させる
+	targetPos_ = Utility::Lerp(targetPos_, VAdd(followPos, relativeTPos), 0.1f);
+
+	// カメラの上方向
+	cameraUp_ = Utility::DIR_U;
+
+	//// Qキーを押したらtrueになる
+	//if (isLazy_)
+	//{
+	//	LazyRotation();
+	//}
+
+	//// ステージの衝突判定
+	//CollisionStage();
 
 }
 
@@ -181,18 +250,12 @@ void Camera::SetBeforeDrawLockOn(void)
 	// プレイヤーと敵の中間地点を設定
 	VECTOR centerPos = VAdd(playerPos, enemyPos);
 
-
-
 	// プレイヤーとロックオン対象の距離を計算
 	float distance = VSize(VSub(playerPos, enemyPos));
 
-	// カメラのオフセット量を計算
-	float cameraDistance = distance * 1.5f; // 調整可能な係数（1.5倍で両方が視野に収まるように）
-	VECTOR cameraPos = VAdd(centerPos, VGet(0.0f, cameraDistance * 0.5f, -cameraDistance));
-
 	centerPos = VScale(centerPos, 0.5f);
 
-	VECTOR pos = rotXY_.PosAxis(LOCAL_P2C_POS);
+	VECTOR pos = rotY_.PosAxis(LOCAL_P2C_POS);
 	
 	// カメラの位置
 	pos_ = VAdd(playerPos, pos);

@@ -72,6 +72,15 @@ void ResourceManager::Init(void)
 
 #pragma endregion
 
+#pragma region ステージ
+
+	// 敵のモデル
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Stage/Stage.mv1");
+	resourcesMap_.emplace(SRC::STAGE, res);
+
+#pragma endregion
+
+
 }
 
 void ResourceManager::Release(void)
