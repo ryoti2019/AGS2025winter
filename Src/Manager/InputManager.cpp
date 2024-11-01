@@ -26,7 +26,11 @@ void InputManager::Init(void)
 
 	// ゲームで使用したいキーを、
 	// 事前にここで登録しておいてください
+
+	// シーン遷移キー
 	InputManager::GetInstance().Add(KEY_INPUT_SPACE);
+
+	// カメラの制御を止めるキー
 	InputManager::GetInstance().Add(KEY_INPUT_LSHIFT);
 
 	// プレイヤーの移動キー

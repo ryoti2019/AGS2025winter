@@ -19,6 +19,7 @@ ActorBase::ActorBase(const VECTOR& pos, const json& data)
 	BODY_COLLISION_RADIUS(300.0f),
 	resMng_(ResourceManager::GetInstance()),
 	dir_({0.0f,0.0f,0.0f}),
+	moveDir_({ 0.0f,0.0f,0.0f }),
 	modelId_(-1),
 	scl_(data["SCALE"]),
 	stepRotTime_(0.0f),

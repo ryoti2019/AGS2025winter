@@ -25,22 +25,44 @@
 					{
 						"NAME": "JAB",
 						"PATH": "Data/Model/Player/Jab.mv1",
-						"SPEED": 70.0
+						"SPEED": 50.0,
+						"ACCEPT_START": 0.0,
+						"ACCEPT_END": 40.0
 					},
 					{
 						"NAME": "STRAIGHT",
 						"PATH": "Data/Model/Player/Straight.mv1",
-						"SPEED": 50.0
+						"SPEED": 60.0,
+						"ACCEPT_START": 0.0,
+						"ACCEPT_END": 40.0
 					},
 					{
-						"NAME": "KICK",
-						"PATH": "Data/Model/Player/Kick.mv1",
-						"SPEED": 40.0
+						"NAME": "HOOK",
+						"PATH": "Data/Model/Player/Hook.mv1",
+						"SPEED": 40.0,
+						"ACCEPT_START": 0.0,
+						"ACCEPT_END": 40.0
+					},
+					{
+						"NAME": "LEFT_KICK",
+						"PATH": "Data/Model/Player/LeftKick.mv1",
+						"SPEED": 40.0,
+						"ACCEPT_START": 0.0,
+						"ACCEPT_END": 40.0
+					},
+					{
+						"NAME": "RIGHT_KICK",
+						"PATH": "Data/Model/Player/RightKick.mv1",
+						"SPEED": 40.0,
+						"ACCEPT_START": 0.0,
+						"ACCEPT_END": 40.0
 					},
 					{
 						"NAME": "UPPER",
 						"PATH": "Data/Model/Player/Upper.mv1",
-						"SPEED": 50.0
+						"SPEED": 50.0,
+						"ACCEPT_START": 0.0,
+						"ACCEPT_END": 40.0
 					}
 				]
 			}

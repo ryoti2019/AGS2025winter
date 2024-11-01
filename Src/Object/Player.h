@@ -9,6 +9,8 @@ class Player : public ActorBase
 
 public:
 
+
+
 	enum class STATE
 	{
 		NONE,
@@ -16,7 +18,9 @@ public:
 		RUN,
 		JAB,
 		STRAIGHT,
-		KICK,
+		HOOK,
+		LEFT_KICK,
+		RIGHT_KICK,
 		UPPER,
 		MAX
 	};
@@ -29,8 +33,24 @@ public:
 		"RUN",
 		"JAB",
 		"STRAIGHT",
-		"KICK",
+		"HOOK",
+		"LEFT_KICK",
+		"RIGHT_KICK",
 		"UPPER"
+	};
+
+	struct ANIM_ACCEPT_TIME
+	{
+
+		// アニメーション
+		STATE key;
+
+		// アニメーションの受付開始時間
+		float animAcceptStartTime;
+
+		// アニメーションの受付終了時間
+		float animAcceptEndTime;
+
 	};
 
 	Player(const VECTOR& pos, const json& data);
@@ -51,24 +71,38 @@ private:
 	{
 		{STATE::JAB},
 		{STATE::STRAIGHT},
-		{STATE::KICK},
+		{STATE::HOOK},
+		{STATE::LEFT_KICK},
+		{STATE::RIGHT_KICK},
 		{STATE::UPPER}
 	};
 
 	// 状態
 	STATE state_;
 
-	// 攻撃1段階目
+	// アニメーションの受付時間
+	std::vector<ANIM_ACCEPT_TIME> animAcceptTime_;
+
+	// ジャブ
 	bool jab_;
 
-	// 攻撃2段階目
+	// ストレート
 	bool straight_;
 
-	// 攻撃3段階目
-	bool kick_;
+	// フック
+	bool hook_;
+
+	// 左キック
+	bool leftKick_;
+
+	// 右キック
+	bool rightKick_;
 
 	// 攻撃4段階目
 	bool upper_;
+
+	// 入力カウンタ
+	float acceptCnt_;
 
 	// 状態遷移
 	std::unordered_map<STATE, std::function<void()>> stateChange_;
@@ -76,7 +110,9 @@ private:
 	void ChangeRun();
 	void ChangeJab();
 	void ChangeStraight();
-	void ChangeKick();
+	void ChangeHook();
+	void ChangeLeftKick();
+	void ChangeRightKick();
 	void ChangeUpper();
 
 	// 状態の更新
@@ -85,7 +121,9 @@ private:
 	void UpdateRun();
 	void UpdateJab();
 	void UpdateStraight();
-	void UpdateKick();
+	void UpdateHook();
+	void UpdateLeftKick();
+	void UpdateRightKick();
 	void UpdateUpper();
 
 	// 機能の初期化
@@ -111,9 +149,6 @@ private:
 
 	// 攻撃処理
 	void ComboAttack(const float deltaTime)override;
-
-	// 攻撃中か判定
-	bool AttackState()override;
 
 };
 

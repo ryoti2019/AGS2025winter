@@ -46,9 +46,17 @@ void ResourceManager::Init(void)
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Player/Straight.mv1");
 	resourcesMap_.emplace(SRC::PLAYER_STRAIGHT, res);
 
-	// プレイヤーのキックアニメーション
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Player/Kick.mv1");
-	resourcesMap_.emplace(SRC::PLAYER_KICK, res);
+	// プレイヤーのフックアニメーション
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Player/Hook.mv1");
+	resourcesMap_.emplace(SRC::PLAYER_HOOK, res);
+
+	// プレイヤーの左キックアニメーション
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Player/LeftKick.mv1");
+	resourcesMap_.emplace(SRC::PLAYER_LEFT_KICK, res);
+
+	// プレイヤーの右キックアニメーション
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Player/RightKick.mv1");
+	resourcesMap_.emplace(SRC::PLAYER_RIGHT_KICK, res);
 
 	// プレイヤーのアッパーアニメーション
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Player/Upper.mv1");

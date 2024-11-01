@@ -151,48 +151,71 @@ void Camera::SetBeforeDrawFollow(void)
 	auto& sce = SceneManager::GetInstance();
 
 	// マウスカーソルを非表示にする
-	SetMouseDispFlag(false);
+	//SetMouseDispFlag(false);
 
 	// 回転
 	//-------------------------------------
 	VECTOR axisDeg = Utility::VECTOR_ZERO;
 
 	// マウス回転量
-	float rotPow = 4.0f;
+	//float rotPow = 4.0f;
 
 	// マウス位置
-	Vector2 mousePos;
+	//Vector2 mousePos;
 
 	// 画面の中心位置
 	Vector2 center = { Application::SCREEN_SIZE_X / 2,Application::SCREEN_SIZE_Y / 2 };
 
 	// マウス位置の取得
-	GetMousePoint(&mousePos.x, &mousePos.y);
+	//GetMousePoint(&mousePos.x, &mousePos.y);
 
 	// カメラ回転の計算(マウスカーソル位置と画面の中心の差分を計算し、回転量/FPSを乗算する)
 	// これが回転量
-	rotPowY_ = float(std::clamp(mousePos.x - center.x, -120, 120)) * rotPow / GetFPS();	// マウス横移動
-	rotPowX_ = float(std::clamp(mousePos.y - center.y, -120, 120)) * rotPow / GetFPS();	// マウス縦移動
+	//rotPowY_ = float(std::clamp(mousePos.x - center.x, -120, 120)) * rotPow / GetFPS();	// マウス横移動
+	//rotPowX_ = float(std::clamp(mousePos.y - center.y, -120, 120)) * rotPow / GetFPS();	// マウス縦移動
 
 	// カメラ位置を中心にセット
-	SetMousePoint(center.x, center.y);
+	//SetMousePoint(center.x, center.y);
 
-	if (center.x <= mousePos.x) { axisDeg.y += rotPowY_; }
-	if (center.x >= mousePos.x) { axisDeg.y += rotPowY_; }
+	//if (center.x <= mousePos.x) { axisDeg.y += rotPowY_; }
+	//if (center.x >= mousePos.x) { axisDeg.y += rotPowY_; }
 
-	if (center.y >= mousePos.y && Utility::Rad2DegF(angle_.x) >= -30.0f)
+	//if (center.y >= mousePos.y && Utility::Rad2DegF(angle_.x) >= -30.0f)
+	//{
+	//	axisDeg.x += rotPowX_;
+	//}
+	//if (center.y <= mousePos.y && Utility::Rad2DegF(angle_.x) <= 10.0f)
+	//{
+	//	axisDeg.x += rotPowX_;
+	//}
+
+	// キーボード操作
+	if (ins.IsNew(KEY_INPUT_UP)) { axisDeg.x += 1.0f; }
+	if (ins.IsNew(KEY_INPUT_DOWN)) { axisDeg.x += -1.0f; }
+	if (ins.IsNew(KEY_INPUT_LEFT)) { axisDeg.y += -1.0f; }
+	if (ins.IsNew(KEY_INPUT_RIGHT)) { axisDeg.y += 1.0f; }
+
+	if (ins.IsNew(KEY_INPUT_RIGHT))
 	{
-		axisDeg.x += rotPowX_;
+		angle_.y += Utility::Deg2RadF(axisDeg.y);
 	}
-	if (center.y <= mousePos.y && Utility::Rad2DegF(angle_.x) <= 10.0f)
+	if (ins.IsNew(KEY_INPUT_LEFT))
 	{
-		axisDeg.x += rotPowX_;
+		angle_.y += Utility::Deg2RadF(axisDeg.y);
+	}
+	if (ins.IsNew(KEY_INPUT_UP) && Utility::Rad2DegF(angle_.x) <= 40.0f)
+	{
+		angle_.x += Utility::Deg2RadF(axisDeg.x);
+	}
+	if (ins.IsNew(KEY_INPUT_DOWN) && Utility::Rad2DegF(angle_.x) >= -15.0f)
+	{
+		angle_.x += Utility::Deg2RadF(axisDeg.x);
 	}
 
+	// カメラを回転させる
 	if (!Utility::EqualsVZero(axisDeg))
 	{
 
-		// カメラを回転させる
 		// X軸のカメラの移動制御
 		angle_.x += Utility::Deg2RadF(axisDeg.x);
 		angle_.y += Utility::Deg2RadF(axisDeg.y);
