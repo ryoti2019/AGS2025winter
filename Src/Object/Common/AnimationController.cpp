@@ -12,7 +12,7 @@ static constexpr float SLOW_RATE = 5.0f;
 static constexpr float DEFAULT_SPEED = 1.0f;
 
 // ブレンドレート
-static constexpr float BLEND_RATE = 0.5f;
+static constexpr float BLEND_RATE = 0.3f;
 
 
 #pragma endregion
@@ -150,7 +150,6 @@ void AnimationController::Update(const float deltaTime)
 			{
 				animData.second.stepAnim += (slowTime * animData.second.speedAnim) * gameSpeed_;
 			}
-
 
 		}
 		// 逆再生

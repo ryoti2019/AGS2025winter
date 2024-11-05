@@ -25,7 +25,10 @@ private:
 
 	const std::vector<collisionChannnelInfo> collisionChannelList_ =
 	{
-		{{ActorType::PLAYER,ActorType::ENEMY}}
+		{
+			{ActorType::PLAYER,ActorType::ENEMY},
+			{ActorType::ENEMY,ActorType::PLAYER}
+		}
 	};
 
 	// すべてのアクターの衝突判定をまとめたデータ

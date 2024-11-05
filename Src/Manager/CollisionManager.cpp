@@ -63,32 +63,32 @@ void CollisionManager::CollisionCheck()
 					actor1->GetCollisionData().handAndFootCollisionRadius,
 					actor2->GetCollisionData().bodyCapsuleUpPos, actor2->GetCollisionData().bodyCapsuleDownPos, actor2->GetCollisionData().bodyCollisionRadius))
 				{
-					// HP‚ðŒ¸‚ç‚·
-					actor2->SubHp(10);
+					// UŒ‚‚ª“–‚½‚Á‚½ˆ—
+					actor2->AttackHit();
 				}
 				// ¶Žè‚Ì”»’è
 				if (HitCheck_Capsule_Capsule(actor1->GetCollisionData().leftHandCapsuleUpPos, actor1->GetCollisionData().leftHandCapsuleDownPos,
 					actor1->GetCollisionData().handAndFootCollisionRadius,
 					actor2->GetCollisionData().bodyCapsuleUpPos, actor2->GetCollisionData().bodyCapsuleDownPos, actor2->GetCollisionData().bodyCollisionRadius))
 				{
-					// HP‚ðŒ¸‚ç‚·
-					actor2->SubHp(10);
+					// UŒ‚‚ª“–‚½‚Á‚½ˆ—
+					actor2->AttackHit();
 				}
 				// ‰E‘«‚Ì”»’è
 				if (HitCheck_Capsule_Capsule(actor1->GetCollisionData().rightFootCapsuleUpPos, actor1->GetCollisionData().rightFootCapsuleDownPos,
 					actor1->GetCollisionData().handAndFootCollisionRadius,
 					actor2->GetCollisionData().bodyCapsuleUpPos, actor2->GetCollisionData().bodyCapsuleDownPos, actor2->GetCollisionData().bodyCollisionRadius))
 				{
-					// HP‚ðŒ¸‚ç‚·
-					actor2->SubHp(10);
+					// UŒ‚‚ª“–‚½‚Á‚½ˆ—
+					actor2->AttackHit();
 				}
 				// ¶‘«‚Ì”»’è
 				if (HitCheck_Capsule_Capsule(actor1->GetCollisionData().leftFootCapsuleUpPos, actor1->GetCollisionData().leftFootCapsuleDownPos,
 					actor1->GetCollisionData().handAndFootCollisionRadius,
 					actor2->GetCollisionData().bodyCapsuleUpPos, actor2->GetCollisionData().bodyCapsuleDownPos, actor2->GetCollisionData().bodyCollisionRadius))
 				{
-					// HP‚ðŒ¸‚ç‚·
-					actor2->SubHp(10);
+					// UŒ‚‚ª“–‚½‚Á‚½ˆ—
+					actor2->AttackHit();
 				}
 			}
 		}

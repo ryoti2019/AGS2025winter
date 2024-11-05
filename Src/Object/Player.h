@@ -9,8 +9,6 @@ class Player : public ActorBase
 
 public:
 
-
-
 	enum class STATE
 	{
 		NONE,
@@ -39,20 +37,6 @@ public:
 		"UPPER"
 	};
 
-	struct ANIM_ACCEPT_TIME
-	{
-
-		// アニメーション
-		STATE key;
-
-		// アニメーションの受付開始時間
-		float animAcceptStartTime;
-
-		// アニメーションの受付終了時間
-		float animAcceptEndTime;
-
-	};
-
 	Player(const VECTOR& pos, const json& data);
 
 	~Player() = default;
@@ -60,14 +44,19 @@ public:
 	void Init(const VECTOR& pos) override;
 	void Update(const float deltaTime) override;
 
+	// 攻撃中の状態かを取得
 	bool GetAttackState()override;
+
+	// コンボ中の状態かを取得
+	bool GetComboState();
 
 private:
 
 	// 入力用コントローラー
 	std::unique_ptr<InputController> inputController_;
 
-	const std::vector<STATE> attackState_ = 
+	// 攻撃中の状態
+	const std::vector<STATE> attackState_ =
 	{
 		{STATE::JAB},
 		{STATE::STRAIGHT},
@@ -77,29 +66,21 @@ private:
 		{STATE::UPPER}
 	};
 
+	// コンボ中の判定
+	const std::vector<STATE> comboState_=
+	{
+		{STATE::JAB},
+		{ STATE::STRAIGHT },
+		{ STATE::HOOK },
+		{ STATE::LEFT_KICK },
+		{ STATE::RIGHT_KICK }
+	};
+
 	// 状態
 	STATE state_;
 
-	// アニメーションの受付時間
-	std::vector<ANIM_ACCEPT_TIME> animAcceptTime_;
-
-	// ジャブ
-	bool jab_;
-
-	// ストレート
-	bool straight_;
-
-	// フック
-	bool hook_;
-
-	// 左キック
-	bool leftKick_;
-
-	// 右キック
-	bool rightKick_;
-
-	// 攻撃4段階目
-	bool upper_;
+	// 攻撃を入力しているか
+	std::map<STATE, bool> isCombo_;
 
 	// 入力カウンタ
 	float acceptCnt_;

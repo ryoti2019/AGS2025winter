@@ -31,22 +31,22 @@ VECTOR InputController::Dir()
 		// ‘O•ûŒü
 		if (ins.IsNew(KEY_INPUT_W))
 		{
-			dir_ = Utility::DIR_F;
+			dir_.z += 1.0f;
 		}
 		// ¶•ûŒü
 		if (ins.IsNew(KEY_INPUT_A))
 		{
-			dir_ = Utility::DIR_L;
+			dir_.x -= 1.0f;
 		}
 		// Œã‚ë•ûŒü
 		if (ins.IsNew(KEY_INPUT_S))
 		{
-			dir_ = Utility::DIR_B;
+			dir_.z -= 1.0f;
 		}
 		// ‰E•ûŒü
 		if (ins.IsNew(KEY_INPUT_D))
 		{
-			dir_ = Utility::DIR_R;
+			dir_.x += 1.0f;
 		}
 	}
 	else

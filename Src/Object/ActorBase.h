@@ -216,6 +216,9 @@ public:
 	// ロックオンされているか判定を取得
 	bool GetIsLockOn();
 
+	// 攻撃のヒット処理
+	virtual void AttackHit();
+
 protected:
 
 	// リソース管理
@@ -228,6 +231,9 @@ protected:
 
 	// モデル制御の基本情報
 	Transform transform_;
+
+	// 追従対象
+	Transform followTransform_;
 
 	// 衝突判定のデータ
 	CollisionData collisionData_;

@@ -7,7 +7,7 @@
 				"RIGHT_FOOT_FRAME_NAME": "mixamorig:RightFoot",
 				"LEFT_FOOT_FRAME_NAME": "mixamorig:LeftFoot",
 				"BODY_FRAME_NAME": "mixamorig:Hips",
-				"ATTACK_MOVE_POW": 100.0,
+				"ATTACK_MOVE_POW": 200.0,
 				"SCALE": 1.0,
 				"HP": 100,
 				"ACTOR_TYPE": 0,
@@ -70,20 +70,25 @@
 		{
 			"EnemyData": {
 				"BODY_FRAME_NAME": "mixamorig1:Hips",
-				"ATTACK_MOVE_POW": 100.0,
+				"ATTACK_MOVE_POW": 200.0,
 				"SCALE": 1.0,
 				"HP": 10,
 				"ACTOR_TYPE": 1,
 				"ANIM": [
 					{
 						"NAME": "IDLE",
-						"PATH": "Data/Model/Player/Idle.mv1",
+						"PATH": "Data/Model/Enemy/Idle.mv1",
 						"SPEED": 30.0
 					},
 					{
 						"NAME": "RUN",
-						"PATH": "Data/Model/Player/Run.mv1",
+						"PATH": "Data/Model/Enemy/Run.mv1",
 						"SPEED": 30.0
+					},
+					{
+						"NAME": "HIT",
+						"PATH": "Data/Model/Enemy/Hit.mv1",
+						"SPEED": 50.0
 					}
 				]
 			}

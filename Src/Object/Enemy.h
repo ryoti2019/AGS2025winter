@@ -13,6 +13,7 @@ public:
 		NONE,
 		IDLE,
 		RUN,
+		HIT,
 		MAX
 	};
 
@@ -21,7 +22,8 @@ public:
 	{
 		"NONE",
 		"IDLE",
-		"RUN"
+		"RUN",
+		"HIT"
 	};
 
 	Enemy(const VECTOR& pos, const json& data);
@@ -31,7 +33,11 @@ public:
 	void Init(const VECTOR& pos)override;
 	void Update(const float deltaTime)override;
 
+	// 攻撃中か取得
 	bool GetAttackState()override;
+
+	// 攻撃のヒット処理
+	void AttackHit()override;
 
 private:
 
@@ -42,16 +48,13 @@ private:
 	std::unordered_map<STATE, std::function<void()>> stateChange_;
 	void ChangeIdle();
 	void ChangeRun();
+	void ChangeHit();
 
 	// 状態の更新
 	std::function<void()> stateUpdate_;
 	void UpdateIdle();
 	void UpdateRun();
-
-	// 状態の描画
-	std::function<void()> stateDraw_;
-	void DrawIdle();
-	void DrawRun();
+	void UpdateHit();
 
 	// 機能の初期化
 	void InitFunction()override;

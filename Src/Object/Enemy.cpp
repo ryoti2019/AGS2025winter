@@ -1,5 +1,6 @@
 #include "../Manager/SceneManager.h"
 #include "../Manager/CollisionManager.h"
+#include "../Manager/ActorManager.h"
 #include "../Scene/GameScene.h"
 #include "Enemy.h"
 
@@ -78,6 +79,7 @@ void Enemy::InitFunctionPointer()
 	//関数ポインタの初期化
 	stateChange_.emplace(STATE::IDLE, std::bind(&Enemy::ChangeIdle, this));
 	stateChange_.emplace(STATE::RUN, std::bind(&Enemy::ChangeRun, this));
+	stateChange_.emplace(STATE::HIT, std::bind(&Enemy::ChangeHit, this));
 }
 
 void Enemy::InitAnimation()
@@ -86,11 +88,39 @@ void Enemy::InitAnimation()
 	// アニメーションコントローラの生成
 	animationController_ = std::make_unique<AnimationController>(transform_.modelId);
 
-	// 待機
-	animationController_->Add("IDLE", "Data/Model/Enemy/Idle.mv1", 0.0f, 30.0f, resMng_.LoadModelDuplicate(ResourceManager::SRC::ENEMY_IDLE), true, 0, false);
+	// アニメーションコントローラーにアニメーションを追加
+	for (int i = static_cast<int>(STATE::IDLE); i < static_cast<int>(STATE::MAX); ++i)
+	{
 
-	// 走る
-	animationController_->Add("RUN", "Data/Model/Enemy/Run.mv1", 0.0f, 30.0f, resMng_.LoadModelDuplicate(ResourceManager::SRC::ENEMY_RUN), true, 0, false);
+		// ループ再生するアニメーションだけisLoopをtrueにする
+		bool isLoop = i == static_cast<int>(STATE::IDLE) || i == static_cast<int>(STATE::RUN);
+		animationController_->Add(
+
+			// アニメーションの名前
+			jsonData_["ANIM"][i - 1]["NAME"],
+
+			// アニメーションのパス
+			jsonData_["ANIM"][i - 1]["PATH"],
+
+			// アニメーションが始まる時間
+			0.0f,
+
+			// アニメーションスピード
+			jsonData_["ANIM"][i - 1]["SPEED"],
+
+			// アニメーションハンドル
+			resMng_.LoadModelDuplicate(static_cast<ResourceManager::SRC>(static_cast<int>(ResourceManager::SRC::ENEMY) + i)),
+
+			// アニメーションのループ再生
+			isLoop,
+
+			// アニメーション番号
+			0,
+
+			// アニメーションの逆再生
+			false
+		);
+	}
 
 	// アニメーション再生するキー
 	key_ = "IDLE";
@@ -99,7 +129,7 @@ void Enemy::InitAnimation()
 	preKey_ = key_;
 
 	// 初期状態
-	ChangeState(STATE::RUN);
+	ChangeState(STATE::IDLE);
 
 }
 
@@ -108,11 +138,6 @@ void Enemy::Update(const float deltaTime)
 
 	// 移動処理
 	Move();
-
-	if (hp_ <= 0)
-	{
-		ChangeState(STATE::IDLE);
-	}
 
 	// 衝突判定の更新
 	ActorBase::CollisionUpdate();
@@ -131,6 +156,14 @@ void Enemy::Update(const float deltaTime)
 bool Enemy::GetAttackState()
 {
 	return false;
+}
+
+void Enemy::AttackHit()
+{
+
+	hp_ -= 10;
+	ChangeState(STATE::HIT);
+
 }
 
 void Enemy::Move()
@@ -169,27 +202,92 @@ void Enemy::ChangeState(STATE state)
 void Enemy::ChangeIdle()
 {
 	stateUpdate_ = std::bind(&Enemy::UpdateIdle, this);
-	stateDraw_ = std::bind(&Enemy::DrawIdle, this);
 }
 
 void Enemy::ChangeRun()
 {
 	stateUpdate_ = std::bind(&Enemy::UpdateRun, this);
-	stateDraw_ = std::bind(&Enemy::DrawRun, this);
+}
+
+void Enemy::ChangeHit()
+{
+
+	stateUpdate_ = std::bind(&Enemy::UpdateHit, this);
+
+	// ゲームシーンの情報を持ってくる
+	std::shared_ptr<GameScene> gameScene =
+		std::dynamic_pointer_cast<GameScene>(SceneManager::GetInstance().GetNowScene());
+
+	// NULLチェック
+	if (!gameScene) return;
+
+	// アクターマネージャーを取得
+	auto actorManager = gameScene->GetActorManager();
+
+	// 追従対象
+	auto players = actorManager->GetActiveActorData().find(ActorType::PLAYER);
+
+	for (const auto& player : players->second)
+	{
+
+		// プレイヤーの方向を求める
+		VECTOR vec = VSub(player->GetPos(), transform_.pos);
+
+		// 正規化
+		vec = VNorm(vec);
+
+		vec = { -vec.x, vec.y,-vec.z };
+
+		// 少し前に移動
+		transform_.pos = VAdd(transform_.pos, VScale(vec, ATTACK_MOVE_POW));
+
+	}
+
 }
 
 void Enemy::UpdateIdle()
 {
+
+	// ゲームシーンの情報を持ってくる
+	std::shared_ptr<GameScene> gameScene =
+		std::dynamic_pointer_cast<GameScene>(SceneManager::GetInstance().GetNowScene());
+
+	// NULLチェック
+	if (!gameScene) return;
+
+	// アクターマネージャーを取得
+	auto actorManager = gameScene->GetActorManager();
+
+	// 追従対象
+	auto players = actorManager->GetActiveActorData().find(ActorType::PLAYER);
+
+	for (const auto& player : players->second)
+	{
+
+		// プレイヤーの方向を求める
+		VECTOR vec = VSub(player->GetPos(), transform_.pos);
+
+		// 正規化
+		vec = VNorm(vec);
+
+		// 方向を角度に変換する
+		float angle = atan2f(vec.x,vec.z);
+
+		// プレイヤー方向に回転
+		LazyRotation(angle);
+
+	}
+
 }
 
 void Enemy::UpdateRun()
 {
 }
 
-void Enemy::DrawIdle()
+void Enemy::UpdateHit()
 {
-}
-
-void Enemy::DrawRun()
-{
+	if (animationController_->IsEndPlayAnimation())
+	{
+		ChangeState(STATE::IDLE);
+	}
 }

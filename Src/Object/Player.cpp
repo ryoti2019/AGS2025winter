@@ -68,23 +68,11 @@ void Player::InitFunctionPointer()
 void Player::InitParameter()
 {
 
-	// ジャブ
-	jab_ = false;
-
-	// ストレート
-	straight_ = false;
-
-	// フック
-	hook_ = false;
-
-	// 左キック
-	leftKick_ = false;
-
-	// 右キック
-	rightKick_ = false;
-
-	// アッパー
-	upper_ = false;
+	// 攻撃の入力を初期化
+	for (int i = static_cast<int>(STATE::JAB); i < static_cast<int>(STATE::MAX); i++)
+	{
+		isCombo_.emplace(static_cast<STATE>(i), false);
+	}
 
 	// 右手のフレーム名
 	RIGHT_HAND_FRAME = jsonData_["RIGHT_HAND_FRAME_NAME"];
@@ -122,24 +110,6 @@ void Player::InitParameter()
 	// 体の衝突判定の半径
 	collisionData_.bodyCollisionRadius = BODY_COLLISION_RADIUS;
 
-	ANIM_ACCEPT_TIME data;
-	for (int i = static_cast<int>(STATE::JAB); i < static_cast<int>(STATE::MAX); ++i)
-	{
-
-		// アニメーションの状態
-		data.key = static_cast<STATE>(i);
-
-		// アニメーションの受付開始時間
-		data.animAcceptStartTime = jsonData_["ANIM"][i-1]["ACCEPT_START"];
-
-		// アニメーションの受付終了時間
-		data.animAcceptEndTime = jsonData_["ANIM"][i - 1]["ACCEPT_END"];
-
-		// アニメーションの受付時間を追加
-		animAcceptTime_.emplace_back(data);
-
-	}
-
 	// 入力カウンタの初期化
 	acceptCnt_ = 0.0f;
 
@@ -157,7 +127,7 @@ void Player::InitAnimation()
 
 		// ループ再生するアニメーションだけisLoopをtrueにする
 		bool isLoop = i == static_cast<int>(STATE::IDLE) || i == static_cast<int>(STATE::RUN);
-			animationController_->Add(
+		animationController_->Add(
 
 			// アニメーションの名前
 			jsonData_["ANIM"][i - 1]["NAME"],
@@ -167,7 +137,7 @@ void Player::InitAnimation()
 
 			// アニメーションが始まる時間
 			0.0f,
-			
+
 			// アニメーションスピード
 			jsonData_["ANIM"][i - 1]["SPEED"],
 
@@ -182,7 +152,7 @@ void Player::InitAnimation()
 
 			// アニメーションの逆再生
 			false
-			);
+		);
 	}
 
 	// アニメーション再生するキー
@@ -210,17 +180,6 @@ void Player::Update(const float deltaTime)
 
 	// 入力受付時間をカウント
 	acceptCnt_++;
-
-	// コンボ中に次の攻撃がなかったら待機状態に戻す
-	for (const auto& stateData : animAcceptTime_)
-	{
-		if (state_ != stateData.key)continue;
-		if (acceptCnt_ >= stateData.animAcceptEndTime)
-		{
-			ChangeState(STATE::IDLE);
-			acceptCnt_ = 0.0f;
-		}
-	}
 
 	// 衝突判定の更新
 	ActorBase::CollisionUpdate();
@@ -280,6 +239,21 @@ bool Player::GetAttackState()
 
 }
 
+bool Player::GetComboState()
+{
+
+	for (const auto state : comboState_)
+	{
+		if (state_ == state)
+		{
+			return true;
+		}
+	}
+
+	return false;
+
+}
+
 void Player::Move()
 {
 
@@ -312,44 +286,52 @@ void Player::ComboAttack(const float deltaTime)
 	// 攻撃の先行入力
 	if (inputController_->ComboAttack())
 	{
-		// ジャブ
-		if (state_ == STATE::IDLE)
+		// コンボの先行入力の処理
+		for (auto& data : isCombo_)
 		{
-			jab_ = true;
+			if (!data.second)
+			{
+				data.second = true;
+				break;
+			}
 		}
-		// ストレート
-		else if (state_ == STATE::JAB)
-		{
-			straight_ = true;
-		}
-		// フック
-		else if (state_ == STATE::STRAIGHT)
-		{
-			hook_ = true;
-		}
-		// 左キック
-		else if (state_ == STATE::HOOK)
-		{
-			leftKick_ = true;
-		}
-		// 右キック
-		else if (state_ == STATE::LEFT_KICK)
-		{
-			rightKick_ = true;
-		}
-	}
 
-	// ジャブに遷移
-	if (jab_)
-	{
-		jab_ = false;
-		ChangeState(STATE::JAB);
+		// ジャブに遷移
+		if (isCombo_.at(STATE::JAB) && !isCombo_.at(STATE::STRAIGHT))
+		{
+			ChangeState(STATE::JAB);
+		}
+
 	}
 
 	// アッパーに遷移
 	if (inputController_->Upper() && !animationController_->IsPlayNowAnimation())
 	{
 		ChangeState(STATE::UPPER);
+	}
+
+
+	//コンボ中か判定
+	if (!GetComboState())return;
+
+	// 次の入力がなければコンボをキャンセルする
+	for(int i = static_cast<int>(STATE::JAB); i < static_cast<int>(STATE::RIGHT_KICK); i++)
+	{
+
+		// 次の状態の入力を見るための計算
+		const int nextState = static_cast<int>(state_) + 1;
+
+		// falseだったらコンボをキャンセル
+		if (!isCombo_.at(static_cast<STATE>(nextState)))
+		{
+			// 待機状態に遷移
+			if (animationController_->IsEndPlayAnimation())
+			{
+				ChangeState(STATE::IDLE);
+				return;
+			}
+		}
+
 	}
 
 }
@@ -388,9 +370,6 @@ void Player::ChangeJab()
 {
 
 	stateUpdate_ = std::bind(&Player::UpdateJab, this);
-
-	// 少し前に移動
-	transform_.pos = VAdd(transform_.pos, VScale(moveDir_, ATTACK_MOVE_POW));
 
 	// 入力受付時間をリセット
 	acceptCnt_ = 0.0f;
@@ -464,6 +443,13 @@ void Player::ChangeUpper()
 
 void Player::UpdateIdle(void)
 {
+
+	// 攻撃の入力を初期化
+	for (int i = static_cast<int>(STATE::JAB); i < static_cast<int>(STATE::MAX); i++)
+	{
+		isCombo_.at(static_cast<STATE>(i)) = false;
+	}
+
 }
 
 void Player::UpdateRun(void)
@@ -498,20 +484,23 @@ void Player::UpdateRun(void)
 
 void Player::UpdateJab()
 {
+
+	// 少し前に移動
+	transform_.pos = Utility::Lerp(transform_.pos, VScale(moveDir_, ATTACK_MOVE_POW), 0.1f);
+
 	// ストレートに遷移
-	if (animationController_->IsPreEndPlayAnimation() && straight_)
+	if (animationController_->IsEndPlayAnimation() && isCombo_.at(STATE::STRAIGHT))
 	{
-		straight_ = false;
 		ChangeState(STATE::STRAIGHT);
 	}
 }
 
 void Player::UpdateStraight()
 {
+
 	// フックに遷移
-	if (animationController_->IsPreEndPlayAnimation() && hook_)
+	if (animationController_->IsEndPlayAnimation() && isCombo_.at(STATE::HOOK))
 	{
-		hook_ = false;
 		ChangeState(STATE::HOOK);
 	}
 }
@@ -519,9 +508,8 @@ void Player::UpdateStraight()
 void Player::UpdateHook()
 {
 	// 左キックに遷移
-	if (animationController_->IsPreEndPlayAnimation() && leftKick_)
+	if (animationController_->IsEndPlayAnimation() && isCombo_.at(STATE::LEFT_KICK))
 	{
-		leftKick_ = false;
 		ChangeState(STATE::LEFT_KICK);
 	}
 }
@@ -529,15 +517,19 @@ void Player::UpdateHook()
 void Player::UpdateLeftKick()
 {
 	// 右キックに遷移
-	if (animationController_->IsPreEndPlayAnimation() && rightKick_)
+	if (animationController_->IsEndPlayAnimation() && isCombo_.at(STATE::RIGHT_KICK))
 	{
-		rightKick_ = false;
 		ChangeState(STATE::RIGHT_KICK);
 	}
 }
 
 void Player::UpdateRightKick()
 {
+	// 待機状態に遷移
+	if (animationController_->IsEndPlayAnimation())
+	{
+		ChangeState(STATE::IDLE);
+	}
 }
 
 void Player::UpdateUpper()
