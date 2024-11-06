@@ -159,6 +159,9 @@ public:
 	// 攻撃するときに進む移動量
 	const float ATTACK_MOVE_POW;
 
+	// 攻撃を受けたときに進む移動量
+	float HIT_MOVE_POW;
+
 	// 回転量
 	const float ROTATION_POW;
 
@@ -218,6 +221,9 @@ public:
 
 	// 攻撃のヒット処理
 	virtual void AttackHit();
+
+	// 攻撃のヒットで飛んでいく処理
+	virtual void AttackHitFly();
 
 protected:
 

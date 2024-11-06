@@ -23,6 +23,16 @@ public:
 		MAX
 	};
 
+	enum class ATTACK_STATE
+	{
+		JAB,
+		STRAIGHT,
+		HOOK,
+		LEFT_KICK,
+		RIGHT_KICK,
+		UPPER
+	};
+
 	// アニメーションコントローラーに渡す引数
 	std::string ANIM_DATA_KEY[static_cast<int>(STATE::MAX)] =
 	{
@@ -36,6 +46,36 @@ public:
 		"RIGHT_KICK",
 		"UPPER"
 	};
+
+	// ジャブを打っている間に動き始めるフレーム数
+	const float JAB_MOVE_START_FRAME;
+
+	// ジャブを打っている間に動き終わるフレーム数
+	const float JAB_MOVE_END_FRAME;
+
+	// ストレートを打っている間に動き始めるフレーム数
+	const float STRAIGHT_MOVE_START_FRAME;
+
+	// ストレートを打っている間に動き終わるフレーム数
+	const float STRAIGHT_MOVE_END_FRAME;
+
+	// フックを打っている間に動き始めるフレーム数
+	const float HOOK_MOVE_START_FRAME;
+
+	// フックを打っている間に動き終わるフレーム数
+	const float HOOK_MOVE_END_FRAME;
+
+	// 左キックを打っている間に動き始めるフレーム数
+	const float LEFT_KICK_MOVE_START_FRAME;
+
+	// 左キックを打っている間に動き終わるフレーム数
+	const float LEFT_KICK_MOVE_END_FRAME;
+
+	// 右キックを打っている間に動き始めるフレーム数
+	const float RIGHT_KICK_MOVE_START_FRAME;
+
+	// 右キックを打っている間に動き終わるフレーム数
+	const float RIGHT_KICK_MOVE_END_FRAME;
 
 	Player(const VECTOR& pos, const json& data);
 

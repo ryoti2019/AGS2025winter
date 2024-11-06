@@ -11,7 +11,17 @@
 
 Player::Player(const VECTOR& pos, const json& data)
 	:
-	ActorBase(pos, data)
+	ActorBase(pos, data),
+	JAB_MOVE_START_FRAME(data["ATTACK_MOVE_FRAME"][static_cast<int>(ATTACK_STATE::JAB)]["START"]),
+	JAB_MOVE_END_FRAME(data["ATTACK_MOVE_FRAME"][static_cast<int>(ATTACK_STATE::JAB)]["END"]),
+	STRAIGHT_MOVE_START_FRAME(data["ATTACK_MOVE_FRAME"][static_cast<int>(ATTACK_STATE::STRAIGHT)]["START"]),
+	STRAIGHT_MOVE_END_FRAME(data["ATTACK_MOVE_FRAME"][static_cast<int>(ATTACK_STATE::STRAIGHT)]["END"]),
+	HOOK_MOVE_START_FRAME(data["ATTACK_MOVE_FRAME"][static_cast<int>(ATTACK_STATE::HOOK)]["START"]),
+	HOOK_MOVE_END_FRAME(data["ATTACK_MOVE_FRAME"][static_cast<int>(ATTACK_STATE::HOOK)]["END"]),
+	LEFT_KICK_MOVE_START_FRAME(data["ATTACK_MOVE_FRAME"][static_cast<int>(ATTACK_STATE::LEFT_KICK)]["START"]),
+	LEFT_KICK_MOVE_END_FRAME(data["ATTACK_MOVE_FRAME"][static_cast<int>(ATTACK_STATE::LEFT_KICK)]["END"]),
+	RIGHT_KICK_MOVE_START_FRAME(data["ATTACK_MOVE_FRAME"][static_cast<int>(ATTACK_STATE::RIGHT_KICK)]["START"]),
+	RIGHT_KICK_MOVE_END_FRAME(data["ATTACK_MOVE_FRAME"][static_cast<int>(ATTACK_STATE::RIGHT_KICK)]["END"])
 {
 
 	// 機能の初期化
@@ -73,6 +83,9 @@ void Player::InitParameter()
 	{
 		isCombo_.emplace(static_cast<STATE>(i), false);
 	}
+
+	// 動く方向
+	moveDir_ = { 0.0f,0.0f,1.0f };
 
 	// 右手のフレーム名
 	RIGHT_HAND_FRAME = jsonData_["RIGHT_HAND_FRAME_NAME"];
@@ -200,9 +213,11 @@ void Player::UpdateDebugImGui()
 
 	// ウィンドウタイトル&開始処理
 	ImGui::Begin("Player");
+
 	// 大きさ
 	ImGui::Text("scale");
 	ImGui::InputFloat("Scl", &scl_);
+
 	// 角度
 	VECTOR rotDeg = VECTOR();
 	rotDeg.x = Utility::Rad2DegF(transform_.quaRot.x);
@@ -215,6 +230,7 @@ void Player::UpdateDebugImGui()
 	transform_.quaRot.x = Utility::Deg2RadF(rotDeg.x);
 	transform_.quaRot.y = Utility::Deg2RadF(rotDeg.y);
 	transform_.quaRot.z = Utility::Deg2RadF(rotDeg.z);
+
 	// 位置
 	ImGui::Text("position");
 	// 構造体の先頭ポインタを渡し、xyzと連続したメモリ配置へアクセス
@@ -371,6 +387,9 @@ void Player::ChangeJab()
 
 	stateUpdate_ = std::bind(&Player::UpdateJab, this);
 
+	// どれだけ進むか計算
+	movePow_ = VAdd(transform_.pos, VScale(moveDir_, ATTACK_MOVE_POW));
+
 	// 入力受付時間をリセット
 	acceptCnt_ = 0.0f;
 
@@ -381,8 +400,8 @@ void Player::ChangeStraight()
 
 	stateUpdate_ = std::bind(&Player::UpdateStraight, this);
 
-	// 少し前に移動
-	transform_.pos = VAdd(transform_.pos, VScale(moveDir_, ATTACK_MOVE_POW));
+	// どれだけ進むか計算
+	movePow_ = VAdd(transform_.pos, VScale(moveDir_, ATTACK_MOVE_POW));
 
 	// 入力受付時間をリセット
 	acceptCnt_ = 0.0f;
@@ -394,8 +413,8 @@ void Player::ChangeHook()
 
 	stateUpdate_ = std::bind(&Player::UpdateHook, this);
 
-	// 少し前に移動
-	transform_.pos = VAdd(transform_.pos, VScale(moveDir_, ATTACK_MOVE_POW));
+	// どれだけ進むか計算
+	movePow_ = VAdd(transform_.pos, VScale(moveDir_, ATTACK_MOVE_POW));
 
 	// 入力受付時間をリセット
 	acceptCnt_ = 0.0f;
@@ -407,8 +426,8 @@ void Player::ChangeLeftKick()
 
 	stateUpdate_ = std::bind(&Player::UpdateLeftKick, this);
 
-	// 少し前に移動
-	transform_.pos = VAdd(transform_.pos, VScale(moveDir_, ATTACK_MOVE_POW));
+	// どれだけ進むか計算
+	movePow_ = VAdd(transform_.pos, VScale(moveDir_, ATTACK_MOVE_POW));
 
 	// 入力受付時間をリセット
 	acceptCnt_ = 0.0f;
@@ -420,8 +439,8 @@ void Player::ChangeRightKick()
 
 	stateUpdate_ = std::bind(&Player::UpdateRightKick, this);
 
-	// 少し前に移動
-	transform_.pos = VAdd(transform_.pos, VScale(moveDir_, ATTACK_MOVE_POW));
+	// どれだけ進むか計算
+	movePow_ = VAdd(transform_.pos, VScale(moveDir_, ATTACK_MOVE_POW));
 
 	// 入力受付時間をリセット
 	acceptCnt_ = 0.0f;
@@ -433,8 +452,8 @@ void Player::ChangeUpper()
 
 	stateUpdate_ = std::bind(&Player::UpdateUpper, this);
 
-	// 少し前に移動
-	transform_.pos = VAdd(transform_.pos, VScale(moveDir_, ATTACK_MOVE_POW));
+	// どれだけ進むか計算
+	movePow_ = VAdd(transform_.pos, VScale(moveDir_, ATTACK_MOVE_POW));
 
 	// 入力受付時間をリセット
 	acceptCnt_ = 0.0f;
@@ -465,6 +484,9 @@ void Player::UpdateRun(void)
 	// 回転行列を使用して、ベクトルを回転させる
 	moveDir_ = VTransform(dir_, mat);
 
+	// 正規化
+	moveDir_ = VNorm(moveDir_);
+
 	// 移動量
 	speed_ = 100.0f;
 
@@ -485,51 +507,71 @@ void Player::UpdateRun(void)
 void Player::UpdateJab()
 {
 
-	// 少し前に移動
-	transform_.pos = Utility::Lerp(transform_.pos, VScale(moveDir_, ATTACK_MOVE_POW), 0.1f);
+	// 少し前にゆっくり移動
+	transform_.pos = Utility::Lerp(transform_.pos, movePow_, 0.1f);
 
 	// ストレートに遷移
 	if (animationController_->IsEndPlayAnimation() && isCombo_.at(STATE::STRAIGHT))
 	{
 		ChangeState(STATE::STRAIGHT);
 	}
+
 }
 
 void Player::UpdateStraight()
 {
+
+	// 少し前にゆっくり移動
+	transform_.pos = Utility::Lerp(transform_.pos, movePow_, 0.1f);
 
 	// フックに遷移
 	if (animationController_->IsEndPlayAnimation() && isCombo_.at(STATE::HOOK))
 	{
 		ChangeState(STATE::HOOK);
 	}
+
 }
 
 void Player::UpdateHook()
 {
+
+	// 少し前にゆっくり移動
+	transform_.pos = Utility::Lerp(transform_.pos, movePow_, 0.1f);
+
 	// 左キックに遷移
 	if (animationController_->IsEndPlayAnimation() && isCombo_.at(STATE::LEFT_KICK))
 	{
 		ChangeState(STATE::LEFT_KICK);
 	}
+
 }
 
 void Player::UpdateLeftKick()
 {
+
+	// 少し前にゆっくり移動
+	transform_.pos = Utility::Lerp(transform_.pos, movePow_, 0.1f);
+
 	// 右キックに遷移
 	if (animationController_->IsEndPlayAnimation() && isCombo_.at(STATE::RIGHT_KICK))
 	{
 		ChangeState(STATE::RIGHT_KICK);
 	}
+
 }
 
 void Player::UpdateRightKick()
 {
+
+	// 少し前にゆっくり移動
+	transform_.pos = Utility::Lerp(transform_.pos, movePow_, 0.1f);
+
 	// 待機状態に遷移
 	if (animationController_->IsEndPlayAnimation())
 	{
 		ChangeState(STATE::IDLE);
 	}
+
 }
 
 void Player::UpdateUpper()

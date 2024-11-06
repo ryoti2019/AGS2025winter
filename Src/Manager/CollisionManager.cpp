@@ -80,7 +80,7 @@ void CollisionManager::CollisionCheck()
 					actor2->GetCollisionData().bodyCapsuleUpPos, actor2->GetCollisionData().bodyCapsuleDownPos, actor2->GetCollisionData().bodyCollisionRadius))
 				{
 					// UŒ‚‚ª“–‚½‚Á‚½ˆ—
-					actor2->AttackHit();
+					actor2->AttackHitFly();
 				}
 				// ¶‘«‚Ì”»’è
 				if (HitCheck_Capsule_Capsule(actor1->GetCollisionData().leftFootCapsuleUpPos, actor1->GetCollisionData().leftFootCapsuleDownPos,

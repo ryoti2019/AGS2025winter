@@ -72,6 +72,8 @@ void Enemy::InitParameter()
 	// 体の衝突判定の半径
 	collisionData_.bodyCollisionRadius = BODY_COLLISION_RADIUS;
 
+	HIT_MOVE_POW = 2000.0f;
+
 }
 
 void Enemy::InitFunctionPointer()
@@ -80,6 +82,7 @@ void Enemy::InitFunctionPointer()
 	stateChange_.emplace(STATE::IDLE, std::bind(&Enemy::ChangeIdle, this));
 	stateChange_.emplace(STATE::RUN, std::bind(&Enemy::ChangeRun, this));
 	stateChange_.emplace(STATE::HIT, std::bind(&Enemy::ChangeHit, this));
+	stateChange_.emplace(STATE::HIT_FLY, std::bind(&Enemy::ChangeHitFly, this));
 }
 
 void Enemy::InitAnimation()
@@ -166,6 +169,11 @@ void Enemy::AttackHit()
 
 }
 
+void Enemy::AttackHitFly()
+{
+	ChangeState(STATE::HIT_FLY);
+}
+
 void Enemy::Move()
 {
 }
@@ -236,10 +244,50 @@ void Enemy::ChangeHit()
 		// 正規化
 		vec = VNorm(vec);
 
+		// プレイヤーの方向と逆方向のベクトル
 		vec = { -vec.x, vec.y,-vec.z };
 
 		// 少し前に移動
-		transform_.pos = VAdd(transform_.pos, VScale(vec, ATTACK_MOVE_POW));
+		movePow_ = VAdd(transform_.pos, VScale(vec, ATTACK_MOVE_POW));
+
+	}
+
+}
+
+void Enemy::ChangeHitFly()
+{
+	stateUpdate_ = std::bind(&Enemy::UpdateHitFly, this);
+
+	// ゲームシーンの情報を持ってくる
+	std::shared_ptr<GameScene> gameScene =
+		std::dynamic_pointer_cast<GameScene>(SceneManager::GetInstance().GetNowScene());
+
+	// NULLチェック
+	if (!gameScene) return;
+
+	// アクターマネージャーを取得
+	auto actorManager = gameScene->GetActorManager();
+
+	// 追従対象
+	auto players = actorManager->GetActiveActorData().find(ActorType::PLAYER);
+
+	for (const auto& player : players->second)
+	{
+
+		// プレイヤーの方向を求める
+		VECTOR vec = VSub(player->GetPos(), transform_.pos);
+
+		// 正規化
+		vec = VNorm(vec);
+
+		// プレイヤーの方向と逆方向のベクトル
+		vec = { -vec.x, vec.y,-vec.z };
+
+		// 上方向に飛ばす
+		vec.y = 1.0f;
+
+		// 少し前に移動
+		movePow_ = VAdd(transform_.pos, VScale(vec, HIT_MOVE_POW));
 
 	}
 
@@ -286,8 +334,27 @@ void Enemy::UpdateRun()
 
 void Enemy::UpdateHit()
 {
+
+	// 少し前にゆっくり移動
+	transform_.pos = Utility::Lerp(transform_.pos, movePow_, 0.1f);
+
+	// アニメーションが終了したら待機状態へ遷移する
 	if (animationController_->IsEndPlayAnimation())
 	{
 		ChangeState(STATE::IDLE);
 	}
+
+}
+
+void Enemy::UpdateHitFly()
+{
+
+	// 少し前にゆっくり移動
+	transform_.pos = Utility::Lerp(transform_.pos, movePow_, 0.1f);
+
+	if (animationController_->IsEndPlayAnimation())
+	{
+		ChangeState(STATE::IDLE);
+	}
+
 }

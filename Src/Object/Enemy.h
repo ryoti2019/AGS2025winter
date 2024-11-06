@@ -14,6 +14,7 @@ public:
 		IDLE,
 		RUN,
 		HIT,
+		HIT_FLY,
 		MAX
 	};
 
@@ -23,7 +24,8 @@ public:
 		"NONE",
 		"IDLE",
 		"RUN",
-		"HIT"
+		"HIT",
+		"HIT_FLY"
 	};
 
 	Enemy(const VECTOR& pos, const json& data);
@@ -39,6 +41,9 @@ public:
 	// 攻撃のヒット処理
 	void AttackHit()override;
 
+	// 攻撃のヒットで飛んでいく処理
+	void AttackHitFly()override;
+
 private:
 
 	// 状態
@@ -49,12 +54,14 @@ private:
 	void ChangeIdle();
 	void ChangeRun();
 	void ChangeHit();
+	void ChangeHitFly();
 
 	// 状態の更新
 	std::function<void()> stateUpdate_;
 	void UpdateIdle();
 	void UpdateRun();
 	void UpdateHit();
+	void UpdateHitFly();
 
 	// 機能の初期化
 	void InitFunction()override;

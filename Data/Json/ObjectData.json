@@ -64,6 +64,33 @@
 						"ACCEPT_START": 0.0,
 						"ACCEPT_END": 40.0
 					}
+				],
+				"ATTACK_MOVE_FRAME": [
+					{
+						"NAME": "JAB",
+						"START": 0.0,
+						"END": 10.0
+					},
+					{
+						"NAME": "STRAIGHT",
+						"START": 0.0,
+						"END": 10.0
+					},
+					{
+						"NAME": "HOOK",
+						"START": 0.0,
+						"END": 10.0
+					},
+					{
+						"NAME": "LEFT_KICK",
+						"START": 0.0,
+						"END": 10.0
+					},
+					{
+						"NAME": "RIGHT_KICK",
+						"START": 0.0,
+						"END": 10.0
+					}
 				]
 			}
 		},
@@ -89,6 +116,11 @@
 						"NAME": "HIT",
 						"PATH": "Data/Model/Enemy/Hit.mv1",
 						"SPEED": 50.0
+					},
+					{
+						"NAME": "HIT_FLY",
+						"PATH": "Data/Model/Enemy/HitFly.mv1",
+						"SPEED": 30.0
 					}
 				]
 			}

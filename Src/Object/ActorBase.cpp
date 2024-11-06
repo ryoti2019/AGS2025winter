@@ -305,6 +305,11 @@ void ActorBase::AttackHit()
 {
 }
 
+void ActorBase::AttackHitFly()
+{
+
+}
+
 void ActorBase::DrawDebug()
 {
 

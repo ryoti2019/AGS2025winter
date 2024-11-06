@@ -13,10 +13,20 @@ void TitleScene::Init()
 
 void TitleScene::Update(const float deltaTime)
 {
+
+	InputManager& ins = InputManager::GetInstance();
+
+	// ÉVÅ[ÉìëJà⁄
 	if (InputManager::GetInstance().IsTrgDown(KEY_INPUT_SPACE))
 	{
 		SceneManager::GetInstance().DoChangeScene(SCENE_ID::GAME);
 	}
+	else if (ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::RIGHT))
+	{
+		SceneManager::GetInstance().DoChangeScene(SCENE_ID::GAME);
+		SceneManager::GetInstance().SetGamePad(true);
+	}
+
 }
 
 void TitleScene::Draw()

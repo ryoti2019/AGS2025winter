@@ -78,9 +78,13 @@ void ResourceManager::Init(void)
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Enemy/Run.mv1");
 	resourcesMap_.emplace(SRC::ENEMY_RUN, res);
 
-	// 敵の走るアニメーション
+	// 敵の攻撃ヒットアニメーション
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Enemy/Hit.mv1");
 	resourcesMap_.emplace(SRC::ENEMY_HIT, res);
+
+	// 敵の攻撃ヒットで飛んでいくアニメーション
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Enemy/HitFly.mv1");
+	resourcesMap_.emplace(SRC::ENEMY_HIT_FLY, res);
 
 #pragma endregion
 
