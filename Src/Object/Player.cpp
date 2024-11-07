@@ -189,7 +189,7 @@ void Player::Update(const float deltaTime)
 	Move();
 
 	// 攻撃処理
-	ComboAttack(deltaTime);
+	Attack();
 
 	// 入力受付時間をカウント
 	acceptCnt_++;
@@ -296,7 +296,7 @@ void Player::Move()
 
 }
 
-void Player::ComboAttack(const float deltaTime)
+void Player::Attack()
 {
 
 	// 攻撃の先行入力
@@ -576,4 +576,14 @@ void Player::UpdateRightKick()
 
 void Player::UpdateUpper()
 {
+
+	// 少し前にゆっくり移動
+	transform_.pos = Utility::Lerp(transform_.pos, movePow_, 0.1f);
+
+	// 待機状態に遷移
+	if (animationController_->IsEndPlayAnimation())
+	{
+		ChangeState(STATE::IDLE);
+	}
+
 }

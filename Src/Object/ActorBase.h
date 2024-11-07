@@ -156,6 +156,9 @@ public:
 	// 体のフレーム名
 	std::string BODY_FRAME;
 
+	// アニメーションを固定するフレーム名
+	std::string FIXATION_FRAME;
+
 	// 攻撃するときに進む移動量
 	const float ATTACK_MOVE_POW;
 
@@ -274,6 +277,9 @@ protected:
 	// モデルID
 	int modelId_;
 
+	// アニメーションを固定するフレーム
+	int fixationFrame_;
+
 	// スピード
 	float speed_;
 
@@ -314,16 +320,16 @@ protected:
 	virtual void Move();
 
 	// 攻撃処理
-	virtual void ComboAttack(const float deltaTime);
-
-	// 攻撃状態
-	virtual bool AttackState();
+	virtual void Attack();
 
 	// 遅延回転
 	void LazyRotation(float goalRot);
 
 	// 衝突判定で使うものを登録
 	void CollisionRegister();
+
+	// アニメーションのフレーム固定
+	virtual void AnimationFrame();
 
 #pragma endregion
 

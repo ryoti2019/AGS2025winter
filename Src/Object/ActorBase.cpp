@@ -63,11 +63,6 @@ void ActorBase::LazyRotation(float goalRot)
 	transform_.quaRot = Quaternion::Slerp(transform_.quaRot, goal, ROTATION_POW);
 }
 
-bool ActorBase::AttackState()
-{
-	return false;
-}
-
 void ActorBase::InitFunction()
 {
 }
@@ -267,12 +262,17 @@ void ActorBase::Move()
 {
 }
 
-void ActorBase::ComboAttack(const float deltaTime)
+void ActorBase::Attack()
 {
 }
 
 void ActorBase::CollisionRegister()
 {
+}
+
+void ActorBase::AnimationFrame()
+{
+
 }
 
 void ActorBase::Draw()

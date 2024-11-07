@@ -183,7 +183,7 @@ private:
 	void SetTargetPosFollowForward(void);
 
 	// キーボードの操作
-	void KeybordContoroller(void);
+	void KeybordController(void);
 	void KeybordLockOnContoroller(void);
 
 	// ゲームパッドの操作

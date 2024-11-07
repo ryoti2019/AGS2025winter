@@ -78,6 +78,14 @@ void ResourceManager::Init(void)
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Enemy/Run.mv1");
 	resourcesMap_.emplace(SRC::ENEMY_RUN, res);
 
+	// 敵のパンチアニメーション
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Enemy/Punch.mv1");
+	resourcesMap_.emplace(SRC::ENEMY_PUNCH, res);
+
+	// 敵のキックアニメーション
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Enemy/Kick.mv1");
+	resourcesMap_.emplace(SRC::ENEMY_KICK, res);
+
 	// 敵の攻撃ヒットアニメーション
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Enemy/Hit.mv1");
 	resourcesMap_.emplace(SRC::ENEMY_HIT, res);
@@ -85,6 +93,10 @@ void ResourceManager::Init(void)
 	// 敵の攻撃ヒットで飛んでいくアニメーション
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Enemy/HitFly.mv1");
 	resourcesMap_.emplace(SRC::ENEMY_HIT_FLY, res);
+
+	// 敵の起き上がるアニメーション
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Enemy/KipUp.mv1");
+	resourcesMap_.emplace(SRC::ENEMY_KIP_UP, res);
 
 #pragma endregion
 
@@ -95,7 +107,6 @@ void ResourceManager::Init(void)
 	resourcesMap_.emplace(SRC::STAGE, res);
 
 #pragma endregion
-
 
 }
 

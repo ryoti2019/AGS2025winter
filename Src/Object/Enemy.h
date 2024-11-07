@@ -13,8 +13,11 @@ public:
 		NONE,
 		IDLE,
 		RUN,
+		PUNCH,
+		KICK,
 		HIT,
 		HIT_FLY,
+		KIP_UP,
 		MAX
 	};
 
@@ -24,8 +27,11 @@ public:
 		"NONE",
 		"IDLE",
 		"RUN",
+		"PUNCH",
+		"KICK",
 		"HIT",
-		"HIT_FLY"
+		"HIT_FLY",
+		"KIP_UP"
 	};
 
 	Enemy(const VECTOR& pos, const json& data);
@@ -49,19 +55,28 @@ private:
 	// 状態
 	STATE state_;
 
+	// 行動を決めたかどうか
+	bool isActionDecided_;
+
 	// 状態遷移
 	std::unordered_map<STATE, std::function<void()>> stateChange_;
 	void ChangeIdle();
 	void ChangeRun();
+	void ChangePunch();
+	void ChangeKick();
 	void ChangeHit();
 	void ChangeHitFly();
+	void ChangeKipUp();
 
 	// 状態の更新
 	std::function<void()> stateUpdate_;
 	void UpdateIdle();
 	void UpdateRun();
+	void UpdatePunch();
+	void UpdateKick();
 	void UpdateHit();
 	void UpdateHitFly();
+	void UpdateKipUp();
 
 	// 機能の初期化
 	void InitFunction()override;
@@ -78,14 +93,20 @@ private:
 	// 状態遷移
 	void ChangeState(STATE state);
 
+	// どの行動をするか決める
+	void SelsectAction();
+
 	// 移動処理
 	void Move()override;
 
 	// 攻撃処理
-	void ComboAttack(const float deltaTime)override;
+	void Attack()override;
 
-	// 攻撃状態
-	bool AttackState()override;
+	// アニメーションのフレームを固定
+	void AnimationFrame()override;
+
+	// プレイヤーの座標を取得
+	std::optional<VECTOR> GetPlayerPos();
 
 };
 

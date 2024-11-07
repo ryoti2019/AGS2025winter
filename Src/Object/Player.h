@@ -169,7 +169,7 @@ private:
 	void Move()override;
 
 	// UŒ‚ˆ—
-	void ComboAttack(const float deltaTime)override;
+	void Attack()override;
 
 };
 

@@ -150,99 +150,17 @@ void Camera::SetBeforeDrawFollow(void)
 
 	auto& sce = SceneManager::GetInstance();
 
-	// マウスカーソルを非表示にする
-	//SetMouseDispFlag(false);
-
-	// 回転
-	//-------------------------------------
-	VECTOR axisDeg = Utility::VECTOR_ZERO;
-
-	// マウス回転量
-	//float rotPow = 4.0f;
-
-	// マウス位置
-	//Vector2 mousePos;
-
-	// 画面の中心位置
-	Vector2 center = { Application::SCREEN_SIZE_X / 2,Application::SCREEN_SIZE_Y / 2 };
-
-	// マウス位置の取得
-	//GetMousePoint(&mousePos.x, &mousePos.y);
-
-	// カメラ回転の計算(マウスカーソル位置と画面の中心の差分を計算し、回転量/FPSを乗算する)
-	// これが回転量
-	//rotPowY_ = float(std::clamp(mousePos.x - center.x, -120, 120)) * rotPow / GetFPS();	// マウス横移動
-	//rotPowX_ = float(std::clamp(mousePos.y - center.y, -120, 120)) * rotPow / GetFPS();	// マウス縦移動
-
-	// カメラ位置を中心にセット
-	//SetMousePoint(center.x, center.y);
-
-	//if (center.x <= mousePos.x) { axisDeg.y += rotPowY_; }
-	//if (center.x >= mousePos.x) { axisDeg.y += rotPowY_; }
-
-	//if (center.y >= mousePos.y && Utility::Rad2DegF(angle_.x) >= -30.0f)
-	//{
-	//	axisDeg.x += rotPowX_;
-	//}
-	//if (center.y <= mousePos.y && Utility::Rad2DegF(angle_.x) <= 10.0f)
-	//{
-	//	axisDeg.x += rotPowX_;
-	//}
-
-	// キーボード操作
-	if (ins.IsNew(KEY_INPUT_UP)) { axisDeg.x += 1.0f; }
-	if (ins.IsNew(KEY_INPUT_DOWN)) { axisDeg.x += -1.0f; }
-	if (ins.IsNew(KEY_INPUT_LEFT)) { axisDeg.y += -1.0f; }
-	if (ins.IsNew(KEY_INPUT_RIGHT)) { axisDeg.y += 1.0f; }
-
-	if (ins.IsNew(KEY_INPUT_RIGHT))
+	// マウスでの操作
+	if (!SceneManager::GetInstance().GetGamePad())
 	{
-		angle_.y += Utility::Deg2RadF(axisDeg.y);
-	}
-	if (ins.IsNew(KEY_INPUT_LEFT))
-	{
-		angle_.y += Utility::Deg2RadF(axisDeg.y);
-	}
-	if (ins.IsNew(KEY_INPUT_UP) && Utility::Rad2DegF(angle_.x) <= 40.0f)
-	{
-		angle_.x += Utility::Deg2RadF(axisDeg.x);
-	}
-	if (ins.IsNew(KEY_INPUT_DOWN) && Utility::Rad2DegF(angle_.x) >= -15.0f)
-	{
-		angle_.x += Utility::Deg2RadF(axisDeg.x);
+		KeybordController();
 	}
 
-	// カメラを回転させる
-	if (!Utility::EqualsVZero(axisDeg))
+	// ゲームパッドでの操作
+	if (SceneManager::GetInstance().GetGamePad())
 	{
-
-		// X軸のカメラの移動制御
-		angle_.x += Utility::Deg2RadF(axisDeg.x);
-		angle_.y += Utility::Deg2RadF(axisDeg.y);
-
-		rotY_ = Quaternion::AngleAxis(angle_.y, Utility::AXIS_Y);
-
-		rotXY_ = rotY_.Mult(Quaternion::AngleAxis(angle_.x, Utility::AXIS_X));
-
+		GamePadController();
 	}
-
-	// 追従対象の位置
-	VECTOR followPos = playerTransform_->pos;
-
-	// 追従対象から注視点までの相対座標を回転
-	VECTOR relativeTPos = rotY_.PosAxis(LOCAL_P2T_POS);
-
-	// 追従対象からカメラまでの相対座標
-	VECTOR relativeCPos = rotXY_.PosAxis(LOCAL_P2C_POS);
-
-	// カメラ座標をゆっくり移動させる
-	pos_ = Utility::Lerp(pos_, VAdd(followPos, relativeCPos), 0.1f);
-
-	// 注視点をゆっくり移動させる
-	targetPos_ = Utility::Lerp(targetPos_, VAdd(followPos, relativeTPos), 0.1f);
-
-	// カメラの上方向
-	cameraUp_ = Utility::DIR_U;
 
 	//// Qキーを押したらtrueになる
 	//if (isLazy_)
@@ -441,50 +359,112 @@ void Camera::SetTargetPosFollowForward(void)
 
 }
 
-void Camera::KeybordContoroller(void)
+void Camera::KeybordController(void)
 {
 
 	auto& ins = InputManager::GetInstance();
 
-	// マウスカーソルを非表示にする
-	SetMouseDispFlag(false);
-
 	// 回転
-	//-------------------------------------
+//-------------------------------------
 	VECTOR axisDeg = Utility::VECTOR_ZERO;
-
-	// マウス回転量
-	float rotPow = 4.0f;
-	//float rotPow = 0.0f;
-
-	// マウス位置
-	Vector2 mousePos;
 
 	// 画面の中心位置
 	Vector2 center = { Application::SCREEN_SIZE_X / 2,Application::SCREEN_SIZE_Y / 2 };
 
-	// マウス位置の取得
-	GetMousePoint(&mousePos.x, &mousePos.y);
+	// キーボード操作
+	if (ins.IsNew(KEY_INPUT_UP)) { axisDeg.x += 1.0f; }
+	if (ins.IsNew(KEY_INPUT_DOWN)) { axisDeg.x += -1.0f; }
+	if (ins.IsNew(KEY_INPUT_LEFT)) { axisDeg.y += -1.0f; }
+	if (ins.IsNew(KEY_INPUT_RIGHT)) { axisDeg.y += 1.0f; }
 
-	// カメラ回転の計算(マウスカーソル位置と画面の中心の差分を計算し、回転量/FPSを乗算する)
-	// これが回転量
-	rotPowY_ = float(std::clamp(mousePos.x - center.x, -120, 120)) * rotPow / GetFPS();	// マウス横移動
-	rotPowX_ = float(std::clamp(mousePos.y - center.y, -120, 120)) * rotPow / GetFPS();	// マウス縦移動
-
-	// カメラ位置を中心にセット
-	SetMousePoint(center.x, center.y);
-
-	if (center.x <= mousePos.x) { axisDeg.y += rotPowY_; }
-	if (center.x >= mousePos.x) { axisDeg.y += rotPowY_; }
-
-	if (center.y >= mousePos.y && Utility::Rad2DegF(angle_.x) >= -30.0f)
+	if (ins.IsNew(KEY_INPUT_RIGHT))
 	{
-		axisDeg.x += rotPowX_;
+		angle_.y += Utility::Deg2RadF(axisDeg.y);
 	}
-	if (center.y <= mousePos.y && Utility::Rad2DegF(angle_.x) <= 10.0f)
+	if (ins.IsNew(KEY_INPUT_LEFT))
 	{
-		axisDeg.x += rotPowX_;
+		angle_.y += Utility::Deg2RadF(axisDeg.y);
 	}
+	if (ins.IsNew(KEY_INPUT_UP) && Utility::Rad2DegF(angle_.x) <= 40.0f)
+	{
+		angle_.x += Utility::Deg2RadF(axisDeg.x);
+	}
+	if (ins.IsNew(KEY_INPUT_DOWN) && Utility::Rad2DegF(angle_.x) >= -15.0f)
+	{
+		angle_.x += Utility::Deg2RadF(axisDeg.x);
+	}
+
+	//// カメラを回転させる
+	//if (!Utility::EqualsVZero(axisDeg))
+	//{
+
+	//	// X軸のカメラの移動制御
+	//	angle_.x += Utility::Deg2RadF(axisDeg.x);
+	//	angle_.y += Utility::Deg2RadF(axisDeg.y);
+
+	//	rotY_ = Quaternion::AngleAxis(angle_.y, Utility::AXIS_Y);
+
+	//	rotXY_ = rotY_.Mult(Quaternion::AngleAxis(angle_.x, Utility::AXIS_X));
+
+	//}
+
+	//// 追従対象の位置
+	//VECTOR followPos = playerTransform_->pos;
+
+	//// 追従対象から注視点までの相対座標を回転
+	//VECTOR relativeTPos = rotY_.PosAxis(LOCAL_P2T_POS);
+
+	//// 追従対象からカメラまでの相対座標
+	//VECTOR relativeCPos = rotXY_.PosAxis(LOCAL_P2C_POS);
+
+	//// カメラ座標をゆっくり移動させる
+	//pos_ = Utility::Lerp(pos_, VAdd(followPos, relativeCPos), 0.1f);
+
+	//// 注視点をゆっくり移動させる
+	//targetPos_ = Utility::Lerp(targetPos_, VAdd(followPos, relativeTPos), 0.1f);
+
+	//// カメラの上方向
+	//cameraUp_ = Utility::DIR_U;
+
+	//// マウスカーソルを非表示にする
+	//SetMouseDispFlag(false);
+
+	//// 回転
+	////-------------------------------------
+	//VECTOR axisDeg = Utility::VECTOR_ZERO;
+
+	//// マウス回転量
+	//float rotPow = 4.0f;
+	////float rotPow = 0.0f;
+
+	//// マウス位置
+	//Vector2 mousePos;
+
+	//// 画面の中心位置
+	//Vector2 center = { Application::SCREEN_SIZE_X / 2,Application::SCREEN_SIZE_Y / 2 };
+
+	//// マウス位置の取得
+	//GetMousePoint(&mousePos.x, &mousePos.y);
+
+	//// カメラ回転の計算(マウスカーソル位置と画面の中心の差分を計算し、回転量/FPSを乗算する)
+	//// これが回転量
+	//rotPowY_ = float(std::clamp(mousePos.x - center.x, -120, 120)) * rotPow / GetFPS();	// マウス横移動
+	//rotPowX_ = float(std::clamp(mousePos.y - center.y, -120, 120)) * rotPow / GetFPS();	// マウス縦移動
+
+	//// カメラ位置を中心にセット
+	//SetMousePoint(center.x, center.y);
+
+	//if (center.x <= mousePos.x) { axisDeg.y += rotPowY_; }
+	//if (center.x >= mousePos.x) { axisDeg.y += rotPowY_; }
+
+	//if (center.y >= mousePos.y && Utility::Rad2DegF(angle_.x) >= -30.0f)
+	//{
+	//	axisDeg.x += rotPowX_;
+	//}
+	//if (center.y <= mousePos.y && Utility::Rad2DegF(angle_.x) <= 10.0f)
+	//{
+	//	axisDeg.x += rotPowX_;
+	//}
 
 	if (!Utility::EqualsVZero(axisDeg))
 	{
@@ -506,14 +486,8 @@ void Camera::KeybordContoroller(void)
 	// 追従対象から注視点までの相対座標を回転
 	VECTOR relativeTPos = rotY_.PosAxis(LOCAL_P2T_POS);
 
-	// 注視点の更新
-	//targetPos_ = VAdd(followPos, relativeTPos);
-
 	// 追従対象からカメラまでの相対座標
 	VECTOR relativeCPos = rotXY_.PosAxis(LOCAL_P2C_POS);
-
-	// カメラ位置の更新
-	//pos_ = VAdd(followPos, relativeCPos);
 
 	// カメラ座標をゆっくり移動させる
 	pos_ = Utility::Lerp(pos_, VAdd(followPos, relativeCPos), 0.1f);
@@ -618,7 +592,7 @@ void Camera::GamePadController(void)
 	// 上方向
 	if (pad.AKeyRZ < 0 && Utility::Rad2DegF(angle_.x) <= 30.0f)
 	{
-		axisDeg.x = -pad.AKeyRZ;
+		axisDeg.x = pad.AKeyRZ;
 		// 方向を正規化
 		axisDeg = VNorm(axisDeg);
 		axisDeg = VScale(axisDeg, 3.0f);
@@ -626,12 +600,11 @@ void Camera::GamePadController(void)
 	// 下方向
 	if (pad.AKeyRZ > 0 && Utility::Rad2DegF(angle_.x) >= -30.0f)
 	{
-		axisDeg.x = -pad.AKeyRZ;
+		axisDeg.x = pad.AKeyRZ;
 		// 方向を正規化
 		axisDeg = VNorm(axisDeg);
 		axisDeg = VScale(axisDeg, 3.0f);
 	}
-
 
 	if (axisDeg.x != 0.0f || axisDeg.y != 0.0f)
 	{
