@@ -7,7 +7,8 @@
 
 Enemy::Enemy(const VECTOR& pos, const json& data)
 	:
-	ActorBase(pos, data)
+	ActorBase(pos, data),
+	COOL_TIME(jsonData_["COOL_TIME"])
 {
 
 	// 機能の初期化
@@ -58,29 +59,58 @@ void Enemy::Init(const VECTOR& pos)
 
 void Enemy::InitFunction()
 {
-
 }
 
 void Enemy::InitParameter()
 {
 
+	// 右手のフレーム名
+	RIGHT_HAND_FRAME = jsonData_["RIGHT_HAND_FRAME_NAME"];
+
+	// 左手のフレーム名
+	LEFT_HAND_FRAME = jsonData_["LEFT_HAND_FRAME_NAME"];
+
+	// 右足のフレーム名
+	RIGHT_FOOT_FRAME = jsonData_["RIGHT_FOOT_FRAME_NAME"];
+
+	// 左足のフレーム名
+	LEFT_FOOT_FRAME = jsonData_["LEFT_FOOT_FRAME_NAME"];
+
 	// 体のフレーム名
 	BODY_FRAME = jsonData_["BODY_FRAME_NAME"];
 
-	// アニメーションを固定するフレーム名
-	FIXATION_FRAME = jsonData_["FIXATION_FRAME_NAME"];
+	// 右手のフレーム番号を取得
+	collisionData_.rightHand = MV1SearchFrame(transform_.modelId, RIGHT_HAND_FRAME.c_str());
+
+	// 左手のフレーム番号を取得
+	collisionData_.leftHand = MV1SearchFrame(transform_.modelId, LEFT_HAND_FRAME.c_str());
+
+	// 右足のフレーム番号を取得
+	collisionData_.rightFoot = MV1SearchFrame(transform_.modelId, RIGHT_FOOT_FRAME.c_str());
+
+	// 左足のフレーム番号を取得
+	collisionData_.leftFoot = MV1SearchFrame(transform_.modelId, LEFT_FOOT_FRAME.c_str());
 
 	// 体のフレーム番号を取得
 	collisionData_.body = MV1SearchFrame(transform_.modelId, BODY_FRAME.c_str());
 
-	// アニメーションを固定するフレーム番号を取得
-	fixationFrame_ = MV1SearchFrame(transform_.modelId, FIXATION_FRAME.c_str());
+	// 攻撃判定があるか
+	collisionData_.isAttack = false;
+
+	// プレイヤーの座標
+	std::optional<VECTOR> playerPos = GetPlayerPos();
+
+	// 相手の座標
+	targetPos_ = playerPos.value();
 
 	// 体の衝突判定の半径
 	collisionData_.bodyCollisionRadius = BODY_COLLISION_RADIUS;
 
 	// 攻撃を受けたときに進む力
 	HIT_MOVE_POW = 20000.0f;
+
+	// クールタイム
+	coolTime_ = 0.0f;
 
 	// 行動を決めたかどうか
 	isActionDecided_ = false;
@@ -153,8 +183,11 @@ void Enemy::InitAnimation()
 void Enemy::Update(const float deltaTime)
 {
 
+	// クールタイムを計算
+	coolTime_ -= deltaTime;
+
 	// どの行動をするか決める
-	if (!isActionDecided_)
+	if (!isActionDecided_ && coolTime_ <= 0.0f)
 	{
 		SelsectAction();
 	}
@@ -178,19 +211,47 @@ void Enemy::Update(const float deltaTime)
 
 bool Enemy::GetAttackState()
 {
+
+	// 攻撃の状態か判定
+	for (const auto state : attackState_)
+	{
+		if (state_ == state)
+		{
+			return true;
+		}
+	}
+
 	return false;
+
+}
+
+bool Enemy::GetHitState()
+{
+
+	// 攻撃を受けている状態か判定
+	for (const auto state : hitState_)
+	{
+		if (state_ == state)
+		{
+			return true;
+		}
+	}
+
+	return false;
+
 }
 
 void Enemy::AttackHit()
 {
 
-	hp_ -= 10;
+	SubHp(10);
 	ChangeState(STATE::HIT);
 
 }
 
 void Enemy::AttackHitFly()
 {
+	SubHp(10);
 	ChangeState(STATE::HIT_FLY);
 }
 
@@ -198,14 +259,14 @@ void Enemy::AnimationFrame()
 {
 
 	// 対象フレームのローカル行列を初期値にリセットする
-	MV1ResetFrameUserLocalMatrix(transform_.modelId, fixationFrame_);
+	MV1ResetFrameUserLocalMatrix(transform_.modelId, collisionData_.body);
 
 	// ジャンプ攻撃時に座標を固定する
 	if (animationController_->IsBlendPlay("HIT_FLY"))
 	{
 
 		// 対象フレームのローカル行列(大きさ、回転、位置)を取得する
-		auto mat = MV1GetFrameLocalMatrix(transform_.modelId, fixationFrame_);
+		auto mat = MV1GetFrameLocalMatrix(transform_.modelId, collisionData_.body);
 
 		auto scl = MGetSize(mat); // 行列から大きさを取り出す
 		auto rot = MGetRotElem(mat); // 行列から回転を取り出す
@@ -222,7 +283,7 @@ void Enemy::AnimationFrame()
 
 		// 合成した行列を対象フレームにセットし直して、
 		// アニメーションの移動値を無効化
-		MV1SetFrameUserLocalMatrix(transform_.modelId, fixationFrame_, mix);
+		MV1SetFrameUserLocalMatrix(transform_.modelId, collisionData_.body, mix);
 
 	}
 
@@ -278,6 +339,7 @@ void Enemy::ChangeState(STATE state)
 void Enemy::SelsectAction()
 {
 
+	// ヒット中は行動できない
 	if (state_ == STATE::HIT || state_ == STATE::HIT_FLY)return;
 
 	// 乱数
@@ -310,11 +372,10 @@ void Enemy::Move()
 
 	// プレイヤーの座標
 	std::optional<VECTOR> playerPos = GetPlayerPos();
-
-	VECTOR pos = playerPos.value();
+	targetPos_ = playerPos.value();
 
 	// 敵からプレイヤーへのベクトル
-	VECTOR vec = VSub(pos, transform_.pos);
+	VECTOR vec = VSub(targetPos_, transform_.pos);
 
 	// ベクトルの長さ
 	float length = Utility::Magnitude(vec);
@@ -350,10 +411,11 @@ void Enemy::Attack()
 	// プレイヤーの座標
 	std::optional<VECTOR> playerPos = GetPlayerPos();
 
-	VECTOR pos = playerPos.value();
+	// 相手の座標
+	targetPos_ = playerPos.value();
 
 	// 敵からプレイヤーへのベクトル
-	VECTOR vec = VSub(pos, transform_.pos);
+	VECTOR vec = VSub(targetPos_, transform_.pos);
 
 	// ベクトルの長さ
 	float length = Utility::Magnitude(vec);
@@ -407,13 +469,8 @@ void Enemy::ChangeHit()
 
 	stateUpdate_ = std::bind(&Enemy::UpdateHit, this);
 
-	// プレイヤーの座標
-	std::optional<VECTOR> playerPos = GetPlayerPos();
-
-	VECTOR pos = playerPos.value();
-
 	// プレイヤーの方向を求める
-	VECTOR vec = VSub(pos, transform_.pos);
+	VECTOR vec = VSub(targetPos_, transform_.pos);
 
 	// 正規化
 	vec = VNorm(vec);
@@ -430,13 +487,8 @@ void Enemy::ChangeHitFly()
 {
 	stateUpdate_ = std::bind(&Enemy::UpdateHitFly, this);
 
-	// プレイヤーの座標
-	std::optional<VECTOR> playerPos = GetPlayerPos();
-
-	VECTOR pos = playerPos.value();
-
 	// プレイヤーの方向を求める
-	VECTOR vec = VSub(pos, transform_.pos);
+	VECTOR vec = VSub(targetPos_, transform_.pos);
 
 	// 正規化
 	vec = VNorm(vec);
@@ -460,17 +512,8 @@ void Enemy::ChangeKipUp()
 void Enemy::UpdateIdle()
 {
 
-	// ゲームシーンの情報を持ってくる
-	std::shared_ptr<GameScene> gameScene =
-		std::dynamic_pointer_cast<GameScene>(SceneManager::GetInstance().GetNowScene());
-
-	// プレイヤーの座標
-	std::optional<VECTOR> playerPos = GetPlayerPos();
-
-	VECTOR pos = playerPos.value();
-
 	// プレイヤーの方向を求める
-	VECTOR vec = VSub(pos, transform_.pos);
+	VECTOR vec = VSub(targetPos_, transform_.pos);
 
 	// 正規化
 	vec = VNorm(vec);
@@ -489,13 +532,8 @@ void Enemy::UpdateIdle()
 void Enemy::UpdateRun()
 {
 
-	// プレイヤーの座標
-	std::optional<VECTOR> playerPos = GetPlayerPos();
-
-	VECTOR pos = playerPos.value();
-
 	// プレイヤーの方向を求める
-	VECTOR vec = VSub(pos, transform_.pos);
+	VECTOR vec = VSub(targetPos_, transform_.pos);
 
 	// ベクトルの長さ
 	float length = Utility::Magnitude(vec);
@@ -528,7 +566,12 @@ void Enemy::UpdatePunch()
 	// アニメーションが終了したら待機状態へ遷移する
 	if (animationController_->IsEndPlayAnimation())
 	{
+
 		ChangeState(STATE::IDLE);
+
+		// クールタイムを設定
+		coolTime_ = COOL_TIME;
+
 	}
 
 }
@@ -539,7 +582,12 @@ void Enemy::UpdateKick()
 	// アニメーションが終了したら待機状態へ遷移する
 	if (animationController_->IsEndPlayAnimation())
 	{
+
 		ChangeState(STATE::IDLE);
+
+		// クールタイムを設定
+		coolTime_ = COOL_TIME;
+
 	}
 
 }

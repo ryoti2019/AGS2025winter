@@ -296,6 +296,11 @@ bool ActorBase::GetAttackState()
 	return false;
 }
 
+bool ActorBase::GetHitState()
+{
+	return false;
+}
+
 bool ActorBase::GetIsLockOn()
 {
 	return isLockOn_;

@@ -291,6 +291,11 @@ void AnimationController::SetStartStepAnim(std::string state, int stepAnim)
 	animData_[state].stepAnim = static_cast<float>(stepAnim);
 }
 
+float AnimationController::GetStepAnim()
+{
+	return ;
+}
+
 bool AnimationController::GetIsPriority(void)
 {
 	return animData_[preState_].isPriority;

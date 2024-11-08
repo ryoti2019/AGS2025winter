@@ -100,6 +100,9 @@ public:
 	// アニメーションが始まる時間を設定
 	void SetStartStepAnim(std::string state, int stepAnim);
 
+	// 今のアニメーション時間
+	float GetStepAnim();
+
 	// 優先されているアニメーションタイプを取得
 	bool GetIsPriority(void);
 

@@ -56,41 +56,64 @@ void CollisionManager::CollisionCheck()
 				if (!actor1)return;
 				if (!actor2)return;
 
-				if (!actor1->GetAttackState())return;
+				// UŒ‚ó‘Ô‚É“ü‚Á‚Ä‚¢‚È‚©‚Á‚½‚ç“–‚½‚è”»’è‚ð’Ê‚ç‚È‚¢
+				if (!actor1->GetAttackState())continue;
+				if (actor2->GetHitState())continue;
 
 				// ‰EŽè‚Ì”»’è
 				if (HitCheck_Capsule_Capsule(actor1->GetCollisionData().rightHandCapsuleUpPos, actor1->GetCollisionData().rightHandCapsuleDownPos,
 					actor1->GetCollisionData().handAndFootCollisionRadius,
 					actor2->GetCollisionData().bodyCapsuleUpPos, actor2->GetCollisionData().bodyCapsuleDownPos, actor2->GetCollisionData().bodyCollisionRadius))
 				{
+
 					// UŒ‚‚ª“–‚½‚Á‚½ˆ—
 					actor2->AttackHit();
+
+					// ‘ŠŽè‚ÌÀ•W‚ðÝ’è
+					actor2->SetTargetPos(actor1->GetPos());
+
 				}
 				// ¶Žè‚Ì”»’è
 				if (HitCheck_Capsule_Capsule(actor1->GetCollisionData().leftHandCapsuleUpPos, actor1->GetCollisionData().leftHandCapsuleDownPos,
 					actor1->GetCollisionData().handAndFootCollisionRadius,
 					actor2->GetCollisionData().bodyCapsuleUpPos, actor2->GetCollisionData().bodyCapsuleDownPos, actor2->GetCollisionData().bodyCollisionRadius))
 				{
+
 					// UŒ‚‚ª“–‚½‚Á‚½ˆ—
 					actor2->AttackHit();
+
+					// ‘ŠŽè‚ÌÀ•W‚ðÝ’è
+					actor2->SetTargetPos(actor1->GetPos());
+
 				}
 				// ‰E‘«‚Ì”»’è
 				if (HitCheck_Capsule_Capsule(actor1->GetCollisionData().rightFootCapsuleUpPos, actor1->GetCollisionData().rightFootCapsuleDownPos,
 					actor1->GetCollisionData().handAndFootCollisionRadius,
 					actor2->GetCollisionData().bodyCapsuleUpPos, actor2->GetCollisionData().bodyCapsuleDownPos, actor2->GetCollisionData().bodyCollisionRadius))
 				{
+
 					// UŒ‚‚ª“–‚½‚Á‚½ˆ—
 					actor2->AttackHitFly();
+
+					// ‘ŠŽè‚ÌÀ•W‚ðÝ’è
+					actor2->SetTargetPos(actor1->GetPos());
+
 				}
 				// ¶‘«‚Ì”»’è
 				if (HitCheck_Capsule_Capsule(actor1->GetCollisionData().leftFootCapsuleUpPos, actor1->GetCollisionData().leftFootCapsuleDownPos,
 					actor1->GetCollisionData().handAndFootCollisionRadius,
 					actor2->GetCollisionData().bodyCapsuleUpPos, actor2->GetCollisionData().bodyCapsuleDownPos, actor2->GetCollisionData().bodyCollisionRadius))
 				{
+
 					// UŒ‚‚ª“–‚½‚Á‚½ˆ—
 					actor2->AttackHit();
+
+					// ‘ŠŽè‚ÌÀ•W‚ðÝ’è
+					actor2->SetTargetPos(actor1->GetPos());
+
 				}
 			}
 		}
 	}
+
 }

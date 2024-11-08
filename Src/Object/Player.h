@@ -20,6 +20,7 @@ public:
 		LEFT_KICK,
 		RIGHT_KICK,
 		UPPER,
+		HIT,
 		MAX
 	};
 
@@ -44,38 +45,15 @@ public:
 		"HOOK",
 		"LEFT_KICK",
 		"RIGHT_KICK",
-		"UPPER"
+		"UPPER",
+		"HIT"
 	};
 
-	// ジャブを打っている間に動き始めるフレーム数
-	const float JAB_MOVE_START_FRAME;
+	// ジャブの攻撃開始フレーム
+	const float JAB_ATTACK_START_FRAME;
 
-	// ジャブを打っている間に動き終わるフレーム数
-	const float JAB_MOVE_END_FRAME;
-
-	// ストレートを打っている間に動き始めるフレーム数
-	const float STRAIGHT_MOVE_START_FRAME;
-
-	// ストレートを打っている間に動き終わるフレーム数
-	const float STRAIGHT_MOVE_END_FRAME;
-
-	// フックを打っている間に動き始めるフレーム数
-	const float HOOK_MOVE_START_FRAME;
-
-	// フックを打っている間に動き終わるフレーム数
-	const float HOOK_MOVE_END_FRAME;
-
-	// 左キックを打っている間に動き始めるフレーム数
-	const float LEFT_KICK_MOVE_START_FRAME;
-
-	// 左キックを打っている間に動き終わるフレーム数
-	const float LEFT_KICK_MOVE_END_FRAME;
-
-	// 右キックを打っている間に動き始めるフレーム数
-	const float RIGHT_KICK_MOVE_START_FRAME;
-
-	// 右キックを打っている間に動き終わるフレーム数
-	const float RIGHT_KICK_MOVE_END_FRAME;
+	// ジャブの攻撃終了フレーム
+	const float JAB_ATTACK_END_FRAME;
 
 	Player(const VECTOR& pos, const json& data);
 
@@ -87,8 +65,17 @@ public:
 	// 攻撃中の状態かを取得
 	bool GetAttackState()override;
 
+	// 攻撃を受けている状態を取得
+	bool GetHitState()override;
+
 	// コンボ中の状態かを取得
 	bool GetComboState();
+
+	// 攻撃のヒット処理
+	void AttackHit()override;
+
+	// 攻撃のヒットで飛んでいく処理
+	void AttackHitFly()override;
 
 private:
 
@@ -116,6 +103,12 @@ private:
 		{ STATE::RIGHT_KICK }
 	};
 
+	// 攻撃を受けている状態
+	const std::vector<STATE> hitState_ =
+	{
+		{STATE::HIT}
+	};
+
 	// 状態
 	STATE state_;
 
@@ -135,6 +128,7 @@ private:
 	void ChangeLeftKick();
 	void ChangeRightKick();
 	void ChangeUpper();
+	void ChangeHit();
 
 	// 状態の更新
 	std::function<void()> stateUpdate_;
@@ -146,6 +140,7 @@ private:
 	void UpdateLeftKick();
 	void UpdateRightKick();
 	void UpdateUpper();
+	void UpdateHit();
 
 	// 機能の初期化
 	void InitFunction()override;

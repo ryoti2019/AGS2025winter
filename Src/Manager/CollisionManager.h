@@ -1,7 +1,6 @@
 #pragma once
 #include "../Object/ActorBase.h"
 
-
 class CollisionManager
 {
 

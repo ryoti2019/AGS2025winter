@@ -15,7 +15,7 @@
 					{
 						"NAME": "IDLE",
 						"PATH": "Data/Model/Player/Idle.mv1",
-						"SPEED": 30.0
+						"SPEED": 30.0,
 					},
 					{
 						"NAME": "RUN",
@@ -26,79 +26,51 @@
 						"NAME": "JAB",
 						"PATH": "Data/Model/Player/Jab.mv1",
 						"SPEED": 50.0,
-						"ACCEPT_START": 0.0,
-						"ACCEPT_END": 40.0
+						"ATTACK_START_FRAME": 10.0,
+						"ATTACK_END_FRAME": 20.0
 					},
 					{
 						"NAME": "STRAIGHT",
 						"PATH": "Data/Model/Player/Straight.mv1",
-						"SPEED": 60.0,
-						"ACCEPT_START": 0.0,
-						"ACCEPT_END": 40.0
+						"SPEED": 60.0
 					},
 					{
 						"NAME": "HOOK",
 						"PATH": "Data/Model/Player/Hook.mv1",
-						"SPEED": 40.0,
-						"ACCEPT_START": 0.0,
-						"ACCEPT_END": 40.0
+						"SPEED": 40.0
 					},
 					{
 						"NAME": "LEFT_KICK",
 						"PATH": "Data/Model/Player/LeftKick.mv1",
-						"SPEED": 40.0,
-						"ACCEPT_START": 0.0,
-						"ACCEPT_END": 40.0
+						"SPEED": 40.0
 					},
 					{
 						"NAME": "RIGHT_KICK",
 						"PATH": "Data/Model/Player/RightKick.mv1",
-						"SPEED": 40.0,
-						"ACCEPT_START": 0.0,
-						"ACCEPT_END": 40.0
+						"SPEED": 40.0
 					},
 					{
 						"NAME": "UPPER",
 						"PATH": "Data/Model/Player/Upper.mv1",
-						"SPEED": 50.0,
-						"ACCEPT_START": 0.0,
-						"ACCEPT_END": 40.0
-					}
-				],
-				"ATTACK_MOVE_FRAME": [
-					{
-						"NAME": "JAB",
-						"START": 0.0,
-						"END": 10.0
+						"SPEED": 50.0
 					},
 					{
-						"NAME": "STRAIGHT",
-						"START": 0.0,
-						"END": 10.0
-					},
-					{
-						"NAME": "HOOK",
-						"START": 0.0,
-						"END": 10.0
-					},
-					{
-						"NAME": "LEFT_KICK",
-						"START": 0.0,
-						"END": 10.0
-					},
-					{
-						"NAME": "RIGHT_KICK",
-						"START": 0.0,
-						"END": 10.0
+						"NAME": "HIT",
+						"PATH": "Data/Model/Player/Hit.mv1",
+						"SPEED": 50.0
 					}
 				]
 			}
 		},
 		{
 			"EnemyData": {
+				"RIGHT_HAND_FRAME_NAME": "mixamorig1:RightHand",
+				"LEFT_HAND_FRAME_NAME": "mixamorig1:LeftHand",
+				"RIGHT_FOOT_FRAME_NAME": "mixamorig1:RightFoot",
+				"LEFT_FOOT_FRAME_NAME": "mixamorig1:LeftFoot",
 				"BODY_FRAME_NAME": "mixamorig1:Hips",
-				"FIXATION_FRAME_NAME": "mixamorig1:Hips",
 				"ATTACK_MOVE_POW": 200.0,
+				"COOL_TIME": 5.0,
 				"SCALE": 1.0,
 				"HP": 10,
 				"ACTOR_TYPE": 1,

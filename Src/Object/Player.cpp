@@ -12,16 +12,8 @@
 Player::Player(const VECTOR& pos, const json& data)
 	:
 	ActorBase(pos, data),
-	JAB_MOVE_START_FRAME(data["ATTACK_MOVE_FRAME"][static_cast<int>(ATTACK_STATE::JAB)]["START"]),
-	JAB_MOVE_END_FRAME(data["ATTACK_MOVE_FRAME"][static_cast<int>(ATTACK_STATE::JAB)]["END"]),
-	STRAIGHT_MOVE_START_FRAME(data["ATTACK_MOVE_FRAME"][static_cast<int>(ATTACK_STATE::STRAIGHT)]["START"]),
-	STRAIGHT_MOVE_END_FRAME(data["ATTACK_MOVE_FRAME"][static_cast<int>(ATTACK_STATE::STRAIGHT)]["END"]),
-	HOOK_MOVE_START_FRAME(data["ATTACK_MOVE_FRAME"][static_cast<int>(ATTACK_STATE::HOOK)]["START"]),
-	HOOK_MOVE_END_FRAME(data["ATTACK_MOVE_FRAME"][static_cast<int>(ATTACK_STATE::HOOK)]["END"]),
-	LEFT_KICK_MOVE_START_FRAME(data["ATTACK_MOVE_FRAME"][static_cast<int>(ATTACK_STATE::LEFT_KICK)]["START"]),
-	LEFT_KICK_MOVE_END_FRAME(data["ATTACK_MOVE_FRAME"][static_cast<int>(ATTACK_STATE::LEFT_KICK)]["END"]),
-	RIGHT_KICK_MOVE_START_FRAME(data["ATTACK_MOVE_FRAME"][static_cast<int>(ATTACK_STATE::RIGHT_KICK)]["START"]),
-	RIGHT_KICK_MOVE_END_FRAME(data["ATTACK_MOVE_FRAME"][static_cast<int>(ATTACK_STATE::RIGHT_KICK)]["END"])
+	JAB_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(STATE::JAB)]["ATTACK_START_FRAME"]),
+	JAB_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(STATE::JAB)]["ATTACK_END_FRAME"])
 {
 
 	// 機能の初期化
@@ -64,6 +56,7 @@ void Player::InitFunction()
 
 void Player::InitFunctionPointer()
 {
+
 	//関数ポインタの初期化
 	stateChange_.emplace(STATE::IDLE, std::bind(&Player::ChangeIdle, this));
 	stateChange_.emplace(STATE::RUN, std::bind(&Player::ChangeRun, this));
@@ -73,6 +66,8 @@ void Player::InitFunctionPointer()
 	stateChange_.emplace(STATE::LEFT_KICK, std::bind(&Player::ChangeLeftKick, this));
 	stateChange_.emplace(STATE::RIGHT_KICK, std::bind(&Player::ChangeRightKick, this));
 	stateChange_.emplace(STATE::UPPER, std::bind(&Player::ChangeUpper, this));
+	stateChange_.emplace(STATE::HIT, std::bind(&Player::ChangeHit, this));
+
 }
 
 void Player::InitParameter()
@@ -243,7 +238,24 @@ void Player::UpdateDebugImGui()
 bool Player::GetAttackState()
 {
 
+	// 攻撃の状態か判定
 	for (const auto state : attackState_)
+	{
+		if (state_ == state)
+		{
+			return true;
+		}
+	}
+
+	return false;
+
+}
+
+bool Player::GetHitState()
+{
+
+	// 攻撃を受けている状態か判定
+	for (const auto state : hitState_)
 	{
 		if (state_ == state)
 		{
@@ -258,6 +270,7 @@ bool Player::GetAttackState()
 bool Player::GetComboState()
 {
 
+	// コンボ中か判定
 	for (const auto state : comboState_)
 	{
 		if (state_ == state)
@@ -270,8 +283,23 @@ bool Player::GetComboState()
 
 }
 
+void Player::AttackHit()
+{
+
+	SubHp(10);
+	ChangeState(STATE::HIT);
+
+}
+
+void Player::AttackHitFly()
+{
+}
+
 void Player::Move()
 {
+
+	// ヒット中は行動できない
+	if (state_ == STATE::HIT)return;
 
 	// 入力方向
 	VECTOR dir = inputController_->Dir();
@@ -299,6 +327,7 @@ void Player::Move()
 void Player::Attack()
 {
 
+	// ヒット中は行動できない
 	// 攻撃の先行入力
 	if (inputController_->ComboAttack())
 	{
@@ -460,6 +489,25 @@ void Player::ChangeUpper()
 
 }
 
+void Player::ChangeHit()
+{
+
+	stateUpdate_ = std::bind(&Player::UpdateHit, this);
+
+	// プレイヤーの方向を求める
+	VECTOR vec = VSub(targetPos_, transform_.pos);
+
+	// 正規化
+	vec = VNorm(vec);
+
+	// プレイヤーの方向と逆方向のベクトル
+	vec = { -vec.x, vec.y,-vec.z };
+
+	// 移動量
+	movePow_ = VAdd(transform_.pos, VScale(vec, ATTACK_MOVE_POW));
+
+}
+
 void Player::UpdateIdle(void)
 {
 
@@ -509,6 +557,17 @@ void Player::UpdateJab()
 
 	// 少し前にゆっくり移動
 	transform_.pos = Utility::Lerp(transform_.pos, movePow_, 0.1f);
+
+	// 攻撃判定があるフレーム
+	if (animationController_->)
+	{
+		collisionData_.isAttack = true;
+	}
+	else
+	{
+		collisionData_.isAttack = false;
+	}
+
 
 	// ストレートに遷移
 	if (animationController_->IsEndPlayAnimation() && isCombo_.at(STATE::STRAIGHT))
@@ -579,6 +638,17 @@ void Player::UpdateUpper()
 
 	// 少し前にゆっくり移動
 	transform_.pos = Utility::Lerp(transform_.pos, movePow_, 0.1f);
+
+	// 待機状態に遷移
+	if (animationController_->IsEndPlayAnimation())
+	{
+		ChangeState(STATE::IDLE);
+	}
+
+}
+
+void Player::UpdateHit()
+{
 
 	// 待機状態に遷移
 	if (animationController_->IsEndPlayAnimation())

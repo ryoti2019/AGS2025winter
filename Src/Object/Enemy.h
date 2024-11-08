@@ -34,6 +34,9 @@ public:
 		"KIP_UP"
 	};
 
+	// クールタイム
+	const float COOL_TIME;
+
 	Enemy(const VECTOR& pos, const json& data);
 
 	~Enemy() = default;
@@ -44,6 +47,9 @@ public:
 	// 攻撃中か取得
 	bool GetAttackState()override;
 
+	// 攻撃を受けている状態を取得
+	bool GetHitState()override;
+
 	// 攻撃のヒット処理
 	void AttackHit()override;
 
@@ -52,11 +58,28 @@ public:
 
 private:
 
+	// 攻撃中の状態
+	const std::vector<STATE> attackState_ =
+	{
+		{STATE::PUNCH},
+		{STATE::KICK}
+	};
+
+	// 攻撃を受けている状態
+	const std::vector<STATE> hitState_ =
+	{
+		{STATE::HIT},
+		{STATE::HIT_FLY},
+	};
+
 	// 状態
 	STATE state_;
 
 	// 行動を決めたかどうか
 	bool isActionDecided_;
+
+	// クールタイム
+	float coolTime_;
 
 	// 状態遷移
 	std::unordered_map<STATE, std::function<void()>> stateChange_;

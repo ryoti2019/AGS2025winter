@@ -23,6 +23,7 @@ public:
 		PLAYER_LEFT_KICK,
 		PLAYER_RIGHT_KICK,
 		PLAYER_UPPER,
+		PLAYER_HIT,
 #pragma endregion
 
 #pragma region 敵のアニメーション

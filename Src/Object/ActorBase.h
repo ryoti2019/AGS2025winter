@@ -109,6 +109,9 @@ public:
 		// 体の当たり判定の半径
 		float bodyCollisionRadius;
 
+		// 攻撃判定があるか
+		bool isAttack;
+
 	};
 
 	// 右手のカプセルの上の相対座標
@@ -156,9 +159,6 @@ public:
 	// 体のフレーム名
 	std::string BODY_FRAME;
 
-	// アニメーションを固定するフレーム名
-	std::string FIXATION_FRAME;
-
 	// 攻撃するときに進む移動量
 	const float ATTACK_MOVE_POW;
 
@@ -185,6 +185,9 @@ public:
 
 	// 座標を設定
 	void SetPos(const VECTOR& pos) { transform_.pos = pos; }
+
+	// 相手の座標を設定
+	void SetTargetPos(const VECTOR& pos) { targetPos_ = pos; }
 
 	// 生存判定を設定
 	void SetIsActive(const bool isActive) { isActive_ = isActive; }
@@ -215,6 +218,9 @@ public:
 
 	// 攻撃状態を取得
 	virtual bool GetAttackState();
+
+	// 攻撃を受けている状態を取得
+	virtual bool GetHitState();
 
 	// HPを取得
 	const int GetHp()const { return hp_; }
@@ -262,6 +268,9 @@ protected:
 	// 移動量
 	VECTOR movePow_;
 
+	// 相手の座標
+	VECTOR targetPos_;
+
 	// 目的の角度
 	Quaternion goalQuaRot_;
 
@@ -276,9 +285,6 @@ protected:
 
 	// モデルID
 	int modelId_;
-
-	// アニメーションを固定するフレーム
-	int fixationFrame_;
 
 	// スピード
 	float speed_;
