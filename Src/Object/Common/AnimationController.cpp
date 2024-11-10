@@ -12,7 +12,7 @@ static constexpr float SLOW_RATE = 5.0f;
 static constexpr float DEFAULT_SPEED = 1.0f;
 
 // ブレンドレート
-static constexpr float BLEND_RATE = 0.3f;
+static constexpr float BLEND_TIME = 0.3f;
 
 
 #pragma endregion
@@ -21,7 +21,6 @@ static constexpr float BLEND_RATE = 0.3f;
 AnimationController::AnimationController(int modelId)
 	:
 	modelId_(modelId),
-	LoadModel_(false),
 	state_(""),
 	preState_(""),
 	AttachNum_(0),
@@ -41,25 +40,37 @@ AnimationController::~AnimationController(void)
 void AnimationController::Add(const std::string state, const std::string& path, float startStep,
 	float speed, int animHandle, bool isLoop, int animIndex, bool isReverse)
 {
+	// 1つのアニメーションデータの情報を入れていく
 	AnimationData anim;
 
-	// 追加
-	if (LoadModel_)
-	{
-		modelId_ = MV1LoadModel(path.c_str());
-		Attatch(state);
-		LoadModel_ = false;
-	}
-
+	// アニメーションスピード
 	anim.speedAnim = speed;
+
+	// アニメーションが始まる時間
 	anim.startTime = startStep;
+
+	// アニメーションハンドル
 	anim.animHandle = animHandle;
-	anim.blendTime = BLEND_RATE;
+
+	// ブレンドタイム
+	anim.blendTime = BLEND_TIME;
+
+	// ブレンドレート
 	anim.blendRate = 0.0f;
+
+	// ループ再生するかしないか
 	anim.isLoop = isLoop;
+
+	// アニメーション番号
 	anim.animIndex = animIndex;
+
+	// 逆再生するかしないか
 	anim.isReverse = isReverse;
+
+	// アニメーションの状態
 	anim.state = state;
+
+	// アニメーション情報を格納
 	animData_.emplace(state, anim);
 
 }
@@ -293,7 +304,11 @@ void AnimationController::SetStartStepAnim(std::string state, int stepAnim)
 
 float AnimationController::GetStepAnim()
 {
-	return ;
+
+	// 今のアニメーションの再生時間を取得
+	auto& data = animData_[state_];
+	return data.stepAnim;
+
 }
 
 bool AnimationController::GetIsPriority(void)
@@ -304,7 +319,7 @@ bool AnimationController::GetIsPriority(void)
 bool AnimationController::IsPlayNowAnimation(void)
 {
 
-	// すべてのアニメーションを再生しているかどうか判定する
+	// 今のアニメーションを再生しているかどうか判定する
 	auto& data = animData_[state_];
 
 	// stepAnimが0.0f以上だと再生判定

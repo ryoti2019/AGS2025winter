@@ -58,13 +58,20 @@ void CollisionManager::CollisionCheck()
 
 				// UŒ‚ó‘Ô‚É“ü‚Á‚Ä‚¢‚È‚©‚Á‚½‚ç“–‚½‚è”»’è‚ð’Ê‚ç‚È‚¢
 				if (!actor1->GetAttackState())continue;
-				if (actor2->GetHitState())continue;
+				if (actor1->GetIsAttackHit())continue;
+
+				// UŒ‚‚ðŽó‚¯‚Ä‚¢‚éó‘Ô‚¾‚Á‚½‚ç“–‚½‚è”»’è‚ð’Ê‚ç‚È‚¢
+				//if (actor2->GetHitState())continue;
 
 				// ‰EŽè‚Ì”»’è
 				if (HitCheck_Capsule_Capsule(actor1->GetCollisionData().rightHandCapsuleUpPos, actor1->GetCollisionData().rightHandCapsuleDownPos,
 					actor1->GetCollisionData().handAndFootCollisionRadius,
-					actor2->GetCollisionData().bodyCapsuleUpPos, actor2->GetCollisionData().bodyCapsuleDownPos, actor2->GetCollisionData().bodyCollisionRadius))
+					actor2->GetCollisionData().bodyCapsuleUpPos, actor2->GetCollisionData().bodyCapsuleDownPos, actor2->GetCollisionData().bodyCollisionRadius)
+					&& actor1->GetCollisionData().isRightHandAttack)
 				{
+
+					// UŒ‚‚ª‚¸‚Á‚Æ“–‚½‚ç‚È‚¢‚æ‚¤‚É‚·‚é
+					actor1->SetIsAttackHit(true);
 
 					// UŒ‚‚ª“–‚½‚Á‚½ˆ—
 					actor2->AttackHit();
@@ -76,8 +83,12 @@ void CollisionManager::CollisionCheck()
 				// ¶Žè‚Ì”»’è
 				if (HitCheck_Capsule_Capsule(actor1->GetCollisionData().leftHandCapsuleUpPos, actor1->GetCollisionData().leftHandCapsuleDownPos,
 					actor1->GetCollisionData().handAndFootCollisionRadius,
-					actor2->GetCollisionData().bodyCapsuleUpPos, actor2->GetCollisionData().bodyCapsuleDownPos, actor2->GetCollisionData().bodyCollisionRadius))
+					actor2->GetCollisionData().bodyCapsuleUpPos, actor2->GetCollisionData().bodyCapsuleDownPos, actor2->GetCollisionData().bodyCollisionRadius)
+					&& actor1->GetCollisionData().isLeftHandAttack)
 				{
+
+					// UŒ‚‚ª‚¸‚Á‚Æ“–‚½‚ç‚È‚¢‚æ‚¤‚É‚·‚é
+					actor1->SetIsAttackHit(true);
 
 					// UŒ‚‚ª“–‚½‚Á‚½ˆ—
 					actor2->AttackHit();
@@ -89,8 +100,12 @@ void CollisionManager::CollisionCheck()
 				// ‰E‘«‚Ì”»’è
 				if (HitCheck_Capsule_Capsule(actor1->GetCollisionData().rightFootCapsuleUpPos, actor1->GetCollisionData().rightFootCapsuleDownPos,
 					actor1->GetCollisionData().handAndFootCollisionRadius,
-					actor2->GetCollisionData().bodyCapsuleUpPos, actor2->GetCollisionData().bodyCapsuleDownPos, actor2->GetCollisionData().bodyCollisionRadius))
+					actor2->GetCollisionData().bodyCapsuleUpPos, actor2->GetCollisionData().bodyCapsuleDownPos, actor2->GetCollisionData().bodyCollisionRadius)
+					&& actor1->GetCollisionData().isRightFootAttack)
 				{
+
+					// UŒ‚‚ª‚¸‚Á‚Æ“–‚½‚ç‚È‚¢‚æ‚¤‚É‚·‚é
+					actor1->SetIsAttackHit(true);
 
 					// UŒ‚‚ª“–‚½‚Á‚½ˆ—
 					actor2->AttackHitFly();
@@ -102,8 +117,12 @@ void CollisionManager::CollisionCheck()
 				// ¶‘«‚Ì”»’è
 				if (HitCheck_Capsule_Capsule(actor1->GetCollisionData().leftFootCapsuleUpPos, actor1->GetCollisionData().leftFootCapsuleDownPos,
 					actor1->GetCollisionData().handAndFootCollisionRadius,
-					actor2->GetCollisionData().bodyCapsuleUpPos, actor2->GetCollisionData().bodyCapsuleDownPos, actor2->GetCollisionData().bodyCollisionRadius))
+					actor2->GetCollisionData().bodyCapsuleUpPos, actor2->GetCollisionData().bodyCapsuleDownPos, actor2->GetCollisionData().bodyCollisionRadius)
+					&& actor1->GetCollisionData().isLeftFootAttack)
 				{
+
+					// UŒ‚‚ª‚¸‚Á‚Æ“–‚½‚ç‚È‚¢‚æ‚¤‚É‚·‚é
+					actor1->SetIsAttackHit(true);
 
 					// UŒ‚‚ª“–‚½‚Á‚½ˆ—
 					actor2->AttackHit();

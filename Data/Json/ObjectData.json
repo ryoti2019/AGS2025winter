@@ -15,7 +15,7 @@
 					{
 						"NAME": "IDLE",
 						"PATH": "Data/Model/Player/Idle.mv1",
-						"SPEED": 30.0,
+						"SPEED": 30.0
 					},
 					{
 						"NAME": "RUN",
@@ -26,33 +26,43 @@
 						"NAME": "JAB",
 						"PATH": "Data/Model/Player/Jab.mv1",
 						"SPEED": 50.0,
-						"ATTACK_START_FRAME": 10.0,
-						"ATTACK_END_FRAME": 20.0
+						"ATTACK_START_FRAME": 12.0,
+						"ATTACK_END_FRAME": 18.0
 					},
 					{
 						"NAME": "STRAIGHT",
 						"PATH": "Data/Model/Player/Straight.mv1",
-						"SPEED": 60.0
+						"SPEED": 60.0,
+						"ATTACK_START_FRAME": 3.0,
+						"ATTACK_END_FRAME": 10.0
 					},
 					{
 						"NAME": "HOOK",
 						"PATH": "Data/Model/Player/Hook.mv1",
-						"SPEED": 40.0
+						"SPEED": 40.0,
+						"ATTACK_START_FRAME": 6.0,
+						"ATTACK_END_FRAME": 12.0
 					},
 					{
 						"NAME": "LEFT_KICK",
 						"PATH": "Data/Model/Player/LeftKick.mv1",
-						"SPEED": 40.0
+						"SPEED": 40.0,
+						"ATTACK_START_FRAME": 8.0,
+						"ATTACK_END_FRAME": 13.0
 					},
 					{
 						"NAME": "RIGHT_KICK",
 						"PATH": "Data/Model/Player/RightKick.mv1",
-						"SPEED": 40.0
+						"SPEED": 40.0,
+						"ATTACK_START_FRAME": 7.0,
+						"ATTACK_END_FRAME": 16.0
 					},
 					{
 						"NAME": "UPPER",
 						"PATH": "Data/Model/Player/Upper.mv1",
-						"SPEED": 50.0
+						"SPEED": 50.0,
+						"ATTACK_START_FRAME": 12.0,
+						"ATTACK_END_FRAME": 20.0
 					},
 					{
 						"NAME": "HIT",
@@ -72,7 +82,7 @@
 				"ATTACK_MOVE_POW": 200.0,
 				"COOL_TIME": 5.0,
 				"SCALE": 1.0,
-				"HP": 10,
+				"HP": 100,
 				"ACTOR_TYPE": 1,
 				"ANIM": [
 					{
@@ -117,7 +127,7 @@
 			"StageData": {
 				"ATTACK_MOVE_POW": 0.0,
 				"SCALE": 3.0,
-				"HP": 0,
+				"HP": 10,
 				"ACTOR_TYPE": 2,
 				"POS": {
 					"x": 0.0,

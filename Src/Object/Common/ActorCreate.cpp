@@ -43,6 +43,13 @@ ActorCreate::ActorCreate()
 	// アクターマネージャーを取得
 	std::shared_ptr<ActorManager> actorManager = gameScene->GetActorManager();
 
+	// ステージ
+	const auto& stageData = objectData[2]["StageData"];
+
+	// ステージを生成
+	actorManager->CreateActor<Stage>(stageData);
+	actorManager->ActiveData(ActorType::STAGE, { stageData["POS"]["x"], stageData["POS"]["y"] ,stageData["POS"]["z"] });
+
 	// プレイヤー
 	const auto& playerData = objectData[0]["PlayerData"];
 
@@ -61,12 +68,5 @@ ActorCreate::ActorCreate()
 		actorManager->CreateActor<Enemy>(enemyData);
 		actorManager->ActiveData(ActorType::ENEMY, { -5000.0f + x,0.0f,-5000.0f + z });
 	}
-
-	// ステージ
-	const auto& stageData = objectData[2]["StageData"];
-
-	// ステージを生成
-	actorManager->CreateActor<Stage>(stageData);
-	actorManager->ActiveData(ActorType::STAGE, { stageData["POS"]["x"], stageData["POS"]["y"] ,stageData["POS"]["z"] });
 
 }

@@ -43,6 +43,7 @@ public:
 
 	void Init(const VECTOR& pos)override;
 	void Update(const float deltaTime)override;
+	void Draw()override;
 
 	// UŒ‚’†‚©æ“¾
 	bool GetAttackState()override;

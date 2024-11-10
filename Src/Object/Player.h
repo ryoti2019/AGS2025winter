@@ -55,6 +55,36 @@ public:
 	// ジャブの攻撃終了フレーム
 	const float JAB_ATTACK_END_FRAME;
 
+	// ストレートの攻撃開始フレーム
+	const float STRAIGHT_ATTACK_START_FRAME;
+
+	// ストレートの攻撃終了フレーム
+	const float STRAIGHT_ATTACK_END_FRAME;
+
+	// フックの攻撃開始フレーム
+	const float HOOK_ATTACK_START_FRAME;
+
+	// フックの攻撃終了フレーム
+	const float HOOK_ATTACK_END_FRAME;
+
+	// 左キックの攻撃開始フレーム
+	const float LEFT_KICK_ATTACK_START_FRAME;
+
+	// 左キックの攻撃終了フレーム
+	const float LEFT_KICK_ATTACK_END_FRAME;
+
+	// 右キックの攻撃開始フレーム
+	const float RIGHT_KICK_ATTACK_START_FRAME;
+
+	// 右キックの攻撃終了フレーム
+	const float RIGHT_KICK_ATTACK_END_FRAME;
+
+	// アッパーの攻撃開始フレーム
+	const float UPPER_ATTACK_START_FRAME;
+
+	// アッパーの攻撃終了フレーム
+	const float UPPER_ATTACK_END_FRAME;
+
 	Player(const VECTOR& pos, const json& data);
 
 	~Player() = default;

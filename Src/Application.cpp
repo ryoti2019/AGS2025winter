@@ -43,11 +43,16 @@ void Application::Run()
 	while (ProcessMessage() == 0 && CheckHitKey(KEY_INPUT_ESCAPE) == 0)
 	{
 
+		// 本番は上にする
 		// デルタタイム
-		auto nowTime = std::chrono::system_clock::now();
-		deltaTime_ = static_cast<float>(
-			std::chrono::duration_cast<std::chrono::nanoseconds>(nowTime - preTime_).count() / 1000000000.0);
-		preTime_ = nowTime;
+		//auto nowTime = std::chrono::system_clock::now();
+		//deltaTime_ = static_cast<float>(
+			//std::chrono::duration_cast<std::chrono::nanoseconds>(nowTime - preTime_).count() / 1000000000.0);
+			
+		//preTime_ = nowTime;
+		
+		// デバッグの時使う
+		deltaTime_ = 1.0f / 60.0f;
 
 		inputManager.Update();
 		imGuiWrapper.Update();

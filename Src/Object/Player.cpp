@@ -1,4 +1,5 @@
 #include <memory>
+//#include <ranges>
 #include "../Lib/ImGui/imgui.h"
 #include "../Utility/Utility.h"
 #include "../Scene/GameScene.h"
@@ -12,8 +13,18 @@
 Player::Player(const VECTOR& pos, const json& data)
 	:
 	ActorBase(pos, data),
-	JAB_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(STATE::JAB)]["ATTACK_START_FRAME"]),
-	JAB_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(STATE::JAB)]["ATTACK_END_FRAME"])
+	JAB_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(STATE::JAB) - 1]["ATTACK_START_FRAME"]),
+	JAB_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(STATE::JAB) - 1]["ATTACK_END_FRAME"]),
+	STRAIGHT_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(STATE::STRAIGHT) - 1]["ATTACK_START_FRAME"]),
+	STRAIGHT_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(STATE::STRAIGHT) - 1]["ATTACK_END_FRAME"]),
+	HOOK_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(STATE::HOOK) - 1]["ATTACK_START_FRAME"]),
+	HOOK_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(STATE::HOOK) - 1]["ATTACK_END_FRAME"]),
+	LEFT_KICK_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(STATE::LEFT_KICK) - 1]["ATTACK_START_FRAME"]),
+	LEFT_KICK_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(STATE::LEFT_KICK) - 1]["ATTACK_END_FRAME"]),
+	RIGHT_KICK_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(STATE::RIGHT_KICK) - 1]["ATTACK_START_FRAME"]),
+	RIGHT_KICK_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(STATE::RIGHT_KICK) - 1]["ATTACK_END_FRAME"]),
+	UPPER_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(STATE::UPPER) - 1]["ATTACK_START_FRAME"]),
+	UPPER_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(STATE::UPPER) - 1]["ATTACK_END_FRAME"])
 {
 
 	// 機能の初期化
@@ -117,6 +128,18 @@ void Player::InitParameter()
 
 	// 体の衝突判定の半径
 	collisionData_.bodyCollisionRadius = BODY_COLLISION_RADIUS;
+
+	// 右手に攻撃判定があるかどうか
+	collisionData_.isRightHandAttack = false;
+
+	// 左手に攻撃判定があるかどうか
+	collisionData_.isLeftHandAttack = false;
+
+	// 右足に攻撃判定があるかどうか
+	collisionData_.isRightFootAttack = false;
+
+	// 左足に攻撃判定があるかどうか
+	collisionData_.isLeftFootAttack = false;
 
 	// 入力カウンタの初期化
 	acceptCnt_ = 0.0f;
@@ -403,7 +426,24 @@ void Player::ChangeState(STATE state)
 
 void Player::ChangeIdle(void)
 {
+
 	stateUpdate_ = std::bind(&Player::UpdateIdle, this);
+
+	// 右手の攻撃判定をなくす
+	collisionData_.isRightHandAttack = false;
+
+	// 左手の攻撃判定をなくす
+	collisionData_.isLeftHandAttack = false;
+
+	// 右足の攻撃判定をなくす
+	collisionData_.isRightFootAttack = false;
+
+	// 左足の攻撃判定をなくす
+	collisionData_.isLeftFootAttack = false;
+
+	// 攻撃が当たっているかをリセットする
+	isAttackHit_ = false;
+
 }
 
 void Player::ChangeRun(void)
@@ -422,6 +462,9 @@ void Player::ChangeJab()
 	// 入力受付時間をリセット
 	acceptCnt_ = 0.0f;
 
+	// 攻撃が当たっているかをリセットする
+	isAttackHit_ = false;
+
 }
 
 void Player::ChangeStraight()
@@ -434,6 +477,9 @@ void Player::ChangeStraight()
 
 	// 入力受付時間をリセット
 	acceptCnt_ = 0.0f;
+
+	// 攻撃が当たっているかをリセットする
+	isAttackHit_ = false;
 
 }
 
@@ -448,6 +494,9 @@ void Player::ChangeHook()
 	// 入力受付時間をリセット
 	acceptCnt_ = 0.0f;
 
+	// 攻撃が当たっているかをリセットする
+	isAttackHit_ = false;
+
 }
 
 void Player::ChangeLeftKick()
@@ -460,6 +509,9 @@ void Player::ChangeLeftKick()
 
 	// 入力受付時間をリセット
 	acceptCnt_ = 0.0f;
+
+	// 攻撃が当たっているかをリセットする
+	isAttackHit_ = false;
 
 }
 
@@ -474,6 +526,9 @@ void Player::ChangeRightKick()
 	// 入力受付時間をリセット
 	acceptCnt_ = 0.0f;
 
+	// 攻撃が当たっているかをリセットする
+	isAttackHit_ = false;
+
 }
 
 void Player::ChangeUpper()
@@ -486,6 +541,9 @@ void Player::ChangeUpper()
 
 	// 入力受付時間をリセット
 	acceptCnt_ = 0.0f;
+
+	// 攻撃が当たっているかをリセットする
+	isAttackHit_ = false;
 
 }
 
@@ -559,15 +617,14 @@ void Player::UpdateJab()
 	transform_.pos = Utility::Lerp(transform_.pos, movePow_, 0.1f);
 
 	// 攻撃判定があるフレーム
-	if (animationController_->)
+	if (JAB_ATTACK_START_FRAME <= animationController_->GetStepAnim() && animationController_->GetStepAnim() <= JAB_ATTACK_END_FRAME)
 	{
-		collisionData_.isAttack = true;
+		collisionData_.isLeftHandAttack = true;
 	}
 	else
 	{
-		collisionData_.isAttack = false;
+		collisionData_.isLeftHandAttack = false;
 	}
-
 
 	// ストレートに遷移
 	if (animationController_->IsEndPlayAnimation() && isCombo_.at(STATE::STRAIGHT))
@@ -583,6 +640,16 @@ void Player::UpdateStraight()
 	// 少し前にゆっくり移動
 	transform_.pos = Utility::Lerp(transform_.pos, movePow_, 0.1f);
 
+	// 攻撃判定があるフレーム
+	if (STRAIGHT_ATTACK_START_FRAME <= animationController_->GetStepAnim() && animationController_->GetStepAnim() <= STRAIGHT_ATTACK_END_FRAME)
+	{
+		collisionData_.isRightHandAttack = true;
+	}
+	else
+	{
+		collisionData_.isRightHandAttack = false;
+	}
+
 	// フックに遷移
 	if (animationController_->IsEndPlayAnimation() && isCombo_.at(STATE::HOOK))
 	{
@@ -596,6 +663,16 @@ void Player::UpdateHook()
 
 	// 少し前にゆっくり移動
 	transform_.pos = Utility::Lerp(transform_.pos, movePow_, 0.1f);
+
+	// 攻撃判定があるフレーム
+	if (HOOK_ATTACK_START_FRAME <= animationController_->GetStepAnim() && animationController_->GetStepAnim() <= HOOK_ATTACK_END_FRAME)
+	{
+		collisionData_.isLeftHandAttack = true;
+	}
+	else
+	{
+		collisionData_.isLeftHandAttack = false;
+	}
 
 	// 左キックに遷移
 	if (animationController_->IsEndPlayAnimation() && isCombo_.at(STATE::LEFT_KICK))
@@ -611,6 +688,16 @@ void Player::UpdateLeftKick()
 	// 少し前にゆっくり移動
 	transform_.pos = Utility::Lerp(transform_.pos, movePow_, 0.1f);
 
+	// 攻撃判定があるフレーム
+	if (LEFT_KICK_ATTACK_START_FRAME <= animationController_->GetStepAnim() && animationController_->GetStepAnim() <= LEFT_KICK_ATTACK_END_FRAME)
+	{
+		collisionData_.isLeftFootAttack = true;
+	}
+	else
+	{
+		collisionData_.isLeftFootAttack = false;
+	}
+
 	// 右キックに遷移
 	if (animationController_->IsEndPlayAnimation() && isCombo_.at(STATE::RIGHT_KICK))
 	{
@@ -625,6 +712,16 @@ void Player::UpdateRightKick()
 	// 少し前にゆっくり移動
 	transform_.pos = Utility::Lerp(transform_.pos, movePow_, 0.1f);
 
+	// 攻撃判定があるフレーム
+	if (RIGHT_KICK_ATTACK_START_FRAME <= animationController_->GetStepAnim() && animationController_->GetStepAnim() <= RIGHT_KICK_ATTACK_END_FRAME)
+	{
+		collisionData_.isRightFootAttack = true;
+	}
+	else
+	{
+		collisionData_.isRightFootAttack = false;
+	}
+
 	// 待機状態に遷移
 	if (animationController_->IsEndPlayAnimation())
 	{
@@ -638,6 +735,16 @@ void Player::UpdateUpper()
 
 	// 少し前にゆっくり移動
 	transform_.pos = Utility::Lerp(transform_.pos, movePow_, 0.1f);
+
+	// 攻撃判定があるフレーム
+	if (UPPER_ATTACK_START_FRAME <= animationController_->GetStepAnim() && animationController_->GetStepAnim() <= UPPER_ATTACK_END_FRAME)
+	{
+		collisionData_.isRightHandAttack = true;
+	}
+	else
+	{
+		collisionData_.isRightHandAttack = false;
+	}
 
 	// 待機状態に遷移
 	if (animationController_->IsEndPlayAnimation())

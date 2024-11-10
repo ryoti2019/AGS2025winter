@@ -94,8 +94,17 @@ void Enemy::InitParameter()
 	// 体のフレーム番号を取得
 	collisionData_.body = MV1SearchFrame(transform_.modelId, BODY_FRAME.c_str());
 
-	// 攻撃判定があるか
-	collisionData_.isAttack = false;
+	// 右手に攻撃判定があるかどうか
+	collisionData_.isRightHandAttack = false;
+
+	// 左手に攻撃判定があるかどうか
+	collisionData_.isLeftHandAttack = false;
+
+	// 右足に攻撃判定があるかどうか
+	collisionData_.isRightFootAttack = false;
+
+	// 左足に攻撃判定があるかどうか
+	collisionData_.isLeftFootAttack = false;
 
 	// プレイヤーの座標
 	std::optional<VECTOR> playerPos = GetPlayerPos();
@@ -162,7 +171,7 @@ void Enemy::InitAnimation()
 			isLoop,
 
 			// アニメーション番号
-			0,
+			1,
 
 			// アニメーションの逆再生
 			false
@@ -206,6 +215,22 @@ void Enemy::Update(const float deltaTime)
 
 	// アニメーションのフレームを固定
 	AnimationFrame();
+
+}
+
+void Enemy::Draw()
+{
+
+	ActorBase::Draw();
+
+	// HPバー
+	int hpLength = 200;
+	int hpGauge;
+
+	hpGauge = hpLength * hp_ / HP_MAX;
+
+	// HPを描画
+	DrawBox(0, 100, 0 + hpGauge, 120, 0xff0000, true);
 
 }
 
@@ -446,7 +471,21 @@ void Enemy::Attack()
 
 void Enemy::ChangeIdle()
 {
+
 	stateUpdate_ = std::bind(&Enemy::UpdateIdle, this);
+
+	// 右手の攻撃判定をなくす
+	collisionData_.isRightHandAttack = false;
+
+	// 左手の攻撃判定をなくす
+	collisionData_.isLeftHandAttack = false;
+
+	// 右足の攻撃判定をなくす
+	collisionData_.isRightFootAttack = false;
+
+	// 左足の攻撃判定をなくす
+	collisionData_.isLeftFootAttack = false;
+
 }
 
 void Enemy::ChangeRun()

@@ -109,8 +109,17 @@ public:
 		// ‘Ì‚Ì“–‚½‚è”»’è‚Ì”¼Œa
 		float bodyCollisionRadius;
 
-		// UŒ‚”»’è‚ª‚ ‚é‚©
-		bool isAttack;
+		// ‰Eè‚ÉUŒ‚”»’è‚ª‚ ‚é‚©‚Ç‚¤‚©
+		bool isRightHandAttack;
+
+		// ¶è‚ÉUŒ‚”»’è‚ª‚ ‚é‚©‚Ç‚¤‚©
+		bool isLeftHandAttack;
+
+		// ‰E‘«‚ÉUŒ‚”»’è‚ª‚ ‚é‚©‚Ç‚¤‚©
+		bool isRightFootAttack;
+
+		// ¶‘«‚ÉUŒ‚”»’è‚ª‚ ‚é‚©‚Ç‚¤‚©
+		bool isLeftFootAttack;
 
 	};
 
@@ -174,6 +183,9 @@ public:
 	// ‘Ì‚Ì“–‚½‚è”»’è‚Ì”¼Œa
 	const float BODY_COLLISION_RADIUS;
 
+	// HP‚ÌÅ‘å’l
+	int HP_MAX;
+
 	ActorBase(const VECTOR& pos, const json& data);
 
 	virtual ~ActorBase() = default;
@@ -181,7 +193,7 @@ public:
 	virtual void Init(const VECTOR& pos);
 	void Create(const VECTOR& pos);
 	virtual void Update(const float deltaTime);
-	void Draw();
+	virtual void Draw();
 
 	// À•W‚ğİ’è
 	void SetPos(const VECTOR& pos) { transform_.pos = pos; }
@@ -221,6 +233,12 @@ public:
 
 	// UŒ‚‚ğó‚¯‚Ä‚¢‚éó‘Ô‚ğæ“¾
 	virtual bool GetHitState();
+
+	// UŒ‚‚ª“–‚½‚Á‚Ä‚¢‚é‚©İ’è
+	void SetIsAttackHit(const bool hit) { isAttackHit_ = hit; }
+
+	// UŒ‚‚ª“–‚½‚Á‚Ä‚¢‚é‚©
+	const bool GetIsAttackHit()const { return isAttackHit_; }
 
 	// HP‚ğæ“¾
 	const int GetHp()const { return hp_; }
@@ -297,6 +315,9 @@ protected:
 
 	// ¶‚«‚Ä‚¢‚é‚©
 	bool isAlive_;
+
+	// UŒ‚‚ª“–‚½‚Á‚Ä‚¢‚é‚©
+	bool isAttackHit_;
 
 	// ƒƒbƒNƒIƒ“‚³‚ê‚Ä‚¢‚é‚©(“G‚Ì‚İ)
 	bool isLockOn_;

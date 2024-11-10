@@ -15,7 +15,7 @@ public:
 		// アニメーションハンドル
 		int animHandle = -1;
 
-		// アニメーションタイプ
+		// アニメーションの状態
 		std::string state = "";
 
 		// アタッチNo
@@ -27,7 +27,7 @@ public:
 		// アニメーションの総再生時間
 		float animTotalTime = 0.0f;
 
-		// アニメーション速度
+		// アニメーションスピード
 		float speedAnim = 0.0f;
 
 		// 再生中のアニメーション時間
@@ -45,13 +45,13 @@ public:
 		// ブレンドタイム
 		float blendTime = 0.0f;
 
-		// ループするかしないか
+		// ループ再生するかどうか
 		bool isLoop = false;
 
-		// ストップするかしないか
+		// ストップするかどうか
 		bool isStop = false;
 
-		// 逆再生
+		// 逆再生するかどうか
 		bool isReverse = false;
 
 		// アニメーション番号
@@ -134,9 +134,6 @@ private:
 
 	// モデルのハンドルID
 	int modelId_;
-
-	// モデルを読み込んだかのフラグ
-	bool LoadModel_;
 
 	// 種類別のアニメーションデータ
 	std::map <std::string, AnimationData> animData_;
