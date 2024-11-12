@@ -2,37 +2,39 @@
 #include <DxLib.h>
 #include <functional>
 #include "ActorBase.h"
+#include "EnemyState.h"
+#include "Player.h"
 
 class Enemy : public ActorBase
 {
 
 public:
 
-	enum class STATE
-	{
-		NONE,
-		IDLE,
-		RUN,
-		PUNCH,
-		KICK,
-		HIT,
-		HIT_FLY,
-		KIP_UP,
-		MAX
-	};
-
 	// アニメーションコントローラーに渡す引数
-	std::string ANIM_DATA_KEY[static_cast<int>(STATE::MAX)] =
+	std::string ANIM_DATA_KEY[static_cast<int>(EnemyState::MAX)] =
 	{
 		"NONE",
 		"IDLE",
 		"RUN",
 		"PUNCH",
 		"KICK",
-		"HIT",
+		"HIT_HEAD",
+		"HIT_BODY",
 		"HIT_FLY",
 		"KIP_UP"
 	};
+
+	// パンチの攻撃開始フレーム
+	const float PUNCH_ATTACK_START_FRAME;
+
+	// パンチの攻撃終了フレーム
+	const float PUNCH_ATTACK_END_FRAME;
+
+	// キックの攻撃開始フレーム
+	const float KICK_ATTACK_START_FRAME;
+
+	// キックの攻撃終了フレーム
+	const float KICK_ATTACK_END_FRAME;
 
 	// クールタイム
 	const float COOL_TIME;
@@ -52,29 +54,54 @@ public:
 	bool GetHitState()override;
 
 	// 攻撃のヒット処理
-	void AttackHit()override;
+	void AttackHit(const int damage, const int state)override;
 
-	// 攻撃のヒットで飛んでいく処理
-	void AttackHitFly()override;
+	// 今の状態を取得
+	int GetState()override { return static_cast<int>(state_); }
+
+	// ダメージ量を取得
+	int GetDamage()override { return damage_; }
 
 private:
 
 	// 攻撃中の状態
-	const std::vector<STATE> attackState_ =
+	const std::vector<EnemyState> attackState_ =
 	{
-		{STATE::PUNCH},
-		{STATE::KICK}
+		{EnemyState::PUNCH},
+		{EnemyState::KICK}
 	};
 
 	// 攻撃を受けている状態
-	const std::vector<STATE> hitState_ =
+	const std::vector<EnemyState> hitState_ =
 	{
-		{STATE::HIT},
-		{STATE::HIT_FLY},
+		{EnemyState::HIT_HEAD},
+		{EnemyState::HIT_BODY},
+		{EnemyState::HIT_FLY},
+		{EnemyState::KIP_UP}
+	};
+
+	// 頭にヒットするプレイヤーの攻撃
+	const std::vector<PlayerState> hitHeadState_ =
+	{
+		{PlayerState::JAB},
+		{PlayerState::STRAIGHT},
+		{PlayerState::HOOK}
+	};
+
+	// 体にヒットするプレイヤーの攻撃
+	const std::vector<PlayerState> hitBodyState_ =
+	{
+		{PlayerState::LEFT_KICK}
+	};
+
+	// 吹っ飛ばされるプレイヤーの攻撃
+	const std::vector<PlayerState> hitFlyState_ =
+	{
+		{PlayerState::RIGHT_KICK}
 	};
 
 	// 状態
-	STATE state_;
+	EnemyState state_;
 
 	// 行動を決めたかどうか
 	bool isActionDecided_;
@@ -83,12 +110,13 @@ private:
 	float coolTime_;
 
 	// 状態遷移
-	std::unordered_map<STATE, std::function<void()>> stateChange_;
+	std::unordered_map<EnemyState, std::function<void()>> stateChange_;
 	void ChangeIdle();
 	void ChangeRun();
 	void ChangePunch();
 	void ChangeKick();
-	void ChangeHit();
+	void ChangeHitHead();
+	void ChangeHitBody();
 	void ChangeHitFly();
 	void ChangeKipUp();
 
@@ -98,7 +126,8 @@ private:
 	void UpdateRun();
 	void UpdatePunch();
 	void UpdateKick();
-	void UpdateHit();
+	void UpdateHitHead();
+	void UpdateHitBody();
 	void UpdateHitFly();
 	void UpdateKipUp();
 
@@ -115,7 +144,7 @@ private:
 	void InitFunctionPointer()override;
 
 	// 状態遷移
-	void ChangeState(STATE state);
+	void ChangeState(EnemyState state);
 
 	// どの行動をするか決める
 	void SelsectAction();

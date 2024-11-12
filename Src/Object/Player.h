@@ -3,26 +3,13 @@
 #include <functional>
 #include "ActorBase.h"
 #include "Common/InputController.h"
+#include "PlayerState.h"
+#include "EnemyState.h"
 
 class Player : public ActorBase
 {
 
 public:
-
-	enum class STATE
-	{
-		NONE,
-		IDLE,
-		RUN,
-		JAB,
-		STRAIGHT,
-		HOOK,
-		LEFT_KICK,
-		RIGHT_KICK,
-		UPPER,
-		HIT,
-		MAX
-	};
 
 	enum class ATTACK_STATE
 	{
@@ -35,7 +22,7 @@ public:
 	};
 
 	// アニメーションコントローラーに渡す引数
-	std::string ANIM_DATA_KEY[static_cast<int>(STATE::MAX)] =
+	std::string ANIM_DATA_KEY[static_cast<int>(PlayerState::MAX)] =
 	{
 		"NONE",
 		"IDLE",
@@ -46,7 +33,8 @@ public:
 		"LEFT_KICK",
 		"RIGHT_KICK",
 		"UPPER",
-		"HIT"
+		"HIT_HEAD",
+		"HIT_BODY"
 	};
 
 	// ジャブの攻撃開始フレーム
@@ -55,11 +43,17 @@ public:
 	// ジャブの攻撃終了フレーム
 	const float JAB_ATTACK_END_FRAME;
 
+	// ジャブのダメージ量
+	const int JAB_DAMAGE;
+
 	// ストレートの攻撃開始フレーム
 	const float STRAIGHT_ATTACK_START_FRAME;
 
 	// ストレートの攻撃終了フレーム
 	const float STRAIGHT_ATTACK_END_FRAME;
+
+	// ジャブのダメージ量
+	const int STRAIGHT_DAMAGE;
 
 	// フックの攻撃開始フレーム
 	const float HOOK_ATTACK_START_FRAME;
@@ -67,11 +61,17 @@ public:
 	// フックの攻撃終了フレーム
 	const float HOOK_ATTACK_END_FRAME;
 
+	// ジャブのダメージ量
+	const int HOOK_DAMAGE;
+
 	// 左キックの攻撃開始フレーム
 	const float LEFT_KICK_ATTACK_START_FRAME;
 
 	// 左キックの攻撃終了フレーム
 	const float LEFT_KICK_ATTACK_END_FRAME;
+
+	// ジャブのダメージ量
+	const int LEFT_KICK_DAMAGE;
 
 	// 右キックの攻撃開始フレーム
 	const float RIGHT_KICK_ATTACK_START_FRAME;
@@ -79,11 +79,17 @@ public:
 	// 右キックの攻撃終了フレーム
 	const float RIGHT_KICK_ATTACK_END_FRAME;
 
+	// ジャブのダメージ量
+	const int RIGHT_KICK_DAMAGE;
+
 	// アッパーの攻撃開始フレーム
 	const float UPPER_ATTACK_START_FRAME;
 
 	// アッパーの攻撃終了フレーム
 	const float UPPER_ATTACK_END_FRAME;
+
+	// ジャブのダメージ量
+	const int UPPER_DAMAGE;
 
 	Player(const VECTOR& pos, const json& data);
 
@@ -102,10 +108,13 @@ public:
 	bool GetComboState();
 
 	// 攻撃のヒット処理
-	void AttackHit()override;
+	void AttackHit(const int damage, const int state)override;
 
-	// 攻撃のヒットで飛んでいく処理
-	void AttackHitFly()override;
+	// 今の状態を取得
+	int GetState()override { return static_cast<int>(state_); }
+
+	// ダメージ量を取得
+	int GetDamage()override { return damage_; }
 
 private:
 
@@ -113,43 +122,56 @@ private:
 	std::unique_ptr<InputController> inputController_;
 
 	// 攻撃中の状態
-	const std::vector<STATE> attackState_ =
+	const std::vector<PlayerState> attackState_ =
 	{
-		{STATE::JAB},
-		{STATE::STRAIGHT},
-		{STATE::HOOK},
-		{STATE::LEFT_KICK},
-		{STATE::RIGHT_KICK},
-		{STATE::UPPER}
+		{PlayerState::JAB},
+		{PlayerState::STRAIGHT},
+		{PlayerState::HOOK},
+		{PlayerState::LEFT_KICK},
+		{PlayerState::RIGHT_KICK},
+		{PlayerState::UPPER}
 	};
 
 	// コンボ中の判定
-	const std::vector<STATE> comboState_=
+	const std::vector<PlayerState> comboState_=
 	{
-		{STATE::JAB},
-		{ STATE::STRAIGHT },
-		{ STATE::HOOK },
-		{ STATE::LEFT_KICK },
-		{ STATE::RIGHT_KICK }
+		{PlayerState::JAB},
+		{ PlayerState::STRAIGHT },
+		{ PlayerState::HOOK },
+		{ PlayerState::LEFT_KICK },
+		{ PlayerState::RIGHT_KICK }
 	};
 
 	// 攻撃を受けている状態
-	const std::vector<STATE> hitState_ =
+	const std::vector<PlayerState> hitState_ =
 	{
-		{STATE::HIT}
+		{PlayerState::HIT_HEAD},
+		{PlayerState::HIT_BODY}
+	};
+
+	// 頭にヒットする敵の攻撃
+	const std::vector<EnemyState> hitHeadState_ =
+	{
+		{EnemyState::PUNCH}
+	};
+
+	// 体にヒットする敵の攻撃
+	const std::vector<EnemyState> hitBodyState_ =
+	{
+		{EnemyState::KICK}
 	};
 
 	// 状態
-	STATE state_;
+	PlayerState state_;
 
 	// 攻撃を入力しているか
-	std::map<STATE, bool> isCombo_;
+	std::map<PlayerState, bool> isCombo_;
 
 	// 入力カウンタ
 	float acceptCnt_;
 
 	// 状態遷移
-	std::unordered_map<STATE, std::function<void()>> stateChange_;
+	std::unordered_map<PlayerState, std::function<void()>> stateChange_;
 	void ChangeIdle();
 	void ChangeRun();
 	void ChangeJab();
@@ -158,7 +180,8 @@ private:
 	void ChangeLeftKick();
 	void ChangeRightKick();
 	void ChangeUpper();
-	void ChangeHit();
+	void ChangeHitHead();
+	void ChangeHitBody();
 
 	// 状態の更新
 	std::function<void()> stateUpdate_;
@@ -170,7 +193,8 @@ private:
 	void UpdateLeftKick();
 	void UpdateRightKick();
 	void UpdateUpper();
-	void UpdateHit();
+	void UpdateHitHead();
+	void UpdateHitBody();
 
 	// 機能の初期化
 	void InitFunction()override;
@@ -188,7 +212,7 @@ private:
 	virtual void UpdateDebugImGui();
 
 	// 状態遷移
-	void ChangeState(STATE state);
+	void ChangeState(PlayerState state);
 
 	// 移動処理
 	void Move()override;

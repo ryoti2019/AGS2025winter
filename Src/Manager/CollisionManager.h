@@ -12,17 +12,20 @@ public:
 	void Init();
 	void Update();
 
+	// 当たり判定を見たいものを登録する
 	void Register(const std::shared_ptr<ActorBase>& actor);
 
 private:
 
+	// ２つのActorの当たり判定を見るために組み合わせを登録する型
 	struct collisionChannnelInfo
 	{
 		ActorType type1;
 		ActorType type2;
 	};
 
-	const std::vector<collisionChannnelInfo> collisionChannelList_ =
+	// 敵とプレイヤーの攻撃が当たっているかの組み合わせを登録する
+	const std::vector<collisionChannnelInfo> attackCollisionChannelList_ =
 	{
 		{
 			{ActorType::PLAYER,ActorType::ENEMY},
@@ -30,10 +33,23 @@ private:
 		}
 	};
 
+	// 敵とプレイヤーがステージに当たっているかの組み合わせを登録する
+	const std::vector<collisionChannnelInfo> stageCollisionChannelList_ =
+	{
+		{
+			{ActorType::PLAYER,ActorType::STAGE},
+			{ActorType::ENEMY,ActorType::STAGE}
+		}
+	};
+
 	// すべてのアクターの衝突判定をまとめたデータ
 	std::unordered_map<ActorType, std::vector<std::shared_ptr<ActorBase>>> collisionActorData_;
 
-	void CollisionCheck();
+	// プレイヤーと敵の攻撃の当たり判定
+	void CheckAttackCollision();
+
+	// プレイヤーと敵のステージとの当たり判定
+	void CheckStageCollision();
 
 };
 

@@ -236,9 +236,11 @@
     <ClInclude Include="Src\Object\Enemy.h" />
     <ClInclude Include="Src\Object\Common\AnimationController.h" />
     <ClInclude Include="Src\Object\Common\InputController.h" />
+    <ClInclude Include="Src\Object\EnemyState.h" />
     <ClInclude Include="Src\Object\Player.h" />
     <ClInclude Include="Src\Manager\ActorManager.h" />
     <ClInclude Include="Src\Object\ActorBase.h" />
+    <ClInclude Include="Src\Object\PlayerState.h" />
     <ClInclude Include="Src\Scene\GameScene.h" />
     <ClInclude Include="Src\Application.h" />
     <ClInclude Include="Src\Common\Fader.h" />

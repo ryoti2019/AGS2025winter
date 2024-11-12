@@ -191,7 +191,7 @@ private:
 	void GamePadLockOnContoroller(void);
 
 	// ステージとの当たり判定
-	void CollisionStage(void);
+	void CheckStageCollision(void);
 
 };
 

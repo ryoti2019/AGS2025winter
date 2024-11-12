@@ -297,9 +297,9 @@ const std::map<std::string, AnimationController::AnimationData>& AnimationContro
 	return animData_;
 }
 
-void AnimationController::SetStartStepAnim(std::string state, int stepAnim)
+void AnimationController::ResetStepAnim()
 {
-	animData_[state].stepAnim = static_cast<float>(stepAnim);
+	animData_[state_].stepAnim = 0.0f;
 }
 
 float AnimationController::GetStepAnim()

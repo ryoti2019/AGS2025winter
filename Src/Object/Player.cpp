@@ -1,5 +1,4 @@
 #include <memory>
-//#include <ranges>
 #include "../Lib/ImGui/imgui.h"
 #include "../Utility/Utility.h"
 #include "../Scene/GameScene.h"
@@ -13,18 +12,24 @@
 Player::Player(const VECTOR& pos, const json& data)
 	:
 	ActorBase(pos, data),
-	JAB_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(STATE::JAB) - 1]["ATTACK_START_FRAME"]),
-	JAB_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(STATE::JAB) - 1]["ATTACK_END_FRAME"]),
-	STRAIGHT_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(STATE::STRAIGHT) - 1]["ATTACK_START_FRAME"]),
-	STRAIGHT_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(STATE::STRAIGHT) - 1]["ATTACK_END_FRAME"]),
-	HOOK_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(STATE::HOOK) - 1]["ATTACK_START_FRAME"]),
-	HOOK_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(STATE::HOOK) - 1]["ATTACK_END_FRAME"]),
-	LEFT_KICK_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(STATE::LEFT_KICK) - 1]["ATTACK_START_FRAME"]),
-	LEFT_KICK_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(STATE::LEFT_KICK) - 1]["ATTACK_END_FRAME"]),
-	RIGHT_KICK_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(STATE::RIGHT_KICK) - 1]["ATTACK_START_FRAME"]),
-	RIGHT_KICK_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(STATE::RIGHT_KICK) - 1]["ATTACK_END_FRAME"]),
-	UPPER_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(STATE::UPPER) - 1]["ATTACK_START_FRAME"]),
-	UPPER_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(STATE::UPPER) - 1]["ATTACK_END_FRAME"])
+	JAB_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(PlayerState::JAB) - 1]["ATTACK_START_FRAME"]),
+	JAB_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(PlayerState::JAB) - 1]["ATTACK_END_FRAME"]),
+	JAB_DAMAGE(data["ANIM"][static_cast<int>(PlayerState::JAB) - 1]["DAMAGE"]),
+	STRAIGHT_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(PlayerState::STRAIGHT) - 1]["ATTACK_START_FRAME"]),
+	STRAIGHT_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(PlayerState::STRAIGHT) - 1]["ATTACK_END_FRAME"]),
+	STRAIGHT_DAMAGE(data["ANIM"][static_cast<int>(PlayerState::STRAIGHT) - 1]["DAMAGE"]),
+	HOOK_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(PlayerState::HOOK) - 1]["ATTACK_START_FRAME"]),
+	HOOK_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(PlayerState::HOOK) - 1]["ATTACK_END_FRAME"]),
+	HOOK_DAMAGE(data["ANIM"][static_cast<int>(PlayerState::HOOK) - 1]["DAMAGE"]),
+	LEFT_KICK_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(PlayerState::LEFT_KICK) - 1]["ATTACK_START_FRAME"]),
+	LEFT_KICK_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(PlayerState::LEFT_KICK) - 1]["ATTACK_END_FRAME"]),
+	LEFT_KICK_DAMAGE(data["ANIM"][static_cast<int>(PlayerState::LEFT_KICK) - 1]["DAMAGE"]),
+	RIGHT_KICK_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(PlayerState::RIGHT_KICK) - 1]["ATTACK_START_FRAME"]),
+	RIGHT_KICK_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(PlayerState::RIGHT_KICK) - 1]["ATTACK_END_FRAME"]),
+	RIGHT_KICK_DAMAGE(data["ANIM"][static_cast<int>(PlayerState::RIGHT_KICK) - 1]["DAMAGE"]),
+	UPPER_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(PlayerState::UPPER) - 1]["ATTACK_START_FRAME"]),
+	UPPER_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(PlayerState::UPPER) - 1]["ATTACK_END_FRAME"]),
+	UPPER_DAMAGE(data["ANIM"][static_cast<int>(PlayerState::UPPER) - 1]["DAMAGE"])
 {
 
 	// 機能の初期化
@@ -69,15 +74,16 @@ void Player::InitFunctionPointer()
 {
 
 	//関数ポインタの初期化
-	stateChange_.emplace(STATE::IDLE, std::bind(&Player::ChangeIdle, this));
-	stateChange_.emplace(STATE::RUN, std::bind(&Player::ChangeRun, this));
-	stateChange_.emplace(STATE::JAB, std::bind(&Player::ChangeJab, this));
-	stateChange_.emplace(STATE::STRAIGHT, std::bind(&Player::ChangeStraight, this));
-	stateChange_.emplace(STATE::HOOK, std::bind(&Player::ChangeHook, this));
-	stateChange_.emplace(STATE::LEFT_KICK, std::bind(&Player::ChangeLeftKick, this));
-	stateChange_.emplace(STATE::RIGHT_KICK, std::bind(&Player::ChangeRightKick, this));
-	stateChange_.emplace(STATE::UPPER, std::bind(&Player::ChangeUpper, this));
-	stateChange_.emplace(STATE::HIT, std::bind(&Player::ChangeHit, this));
+	stateChange_.emplace(PlayerState::IDLE, std::bind(&Player::ChangeIdle, this));
+	stateChange_.emplace(PlayerState::RUN, std::bind(&Player::ChangeRun, this));
+	stateChange_.emplace(PlayerState::JAB, std::bind(&Player::ChangeJab, this));
+	stateChange_.emplace(PlayerState::STRAIGHT, std::bind(&Player::ChangeStraight, this));
+	stateChange_.emplace(PlayerState::HOOK, std::bind(&Player::ChangeHook, this));
+	stateChange_.emplace(PlayerState::LEFT_KICK, std::bind(&Player::ChangeLeftKick, this));
+	stateChange_.emplace(PlayerState::RIGHT_KICK, std::bind(&Player::ChangeRightKick, this));
+	stateChange_.emplace(PlayerState::UPPER, std::bind(&Player::ChangeUpper, this));
+	stateChange_.emplace(PlayerState::HIT_HEAD, std::bind(&Player::ChangeHitHead, this));
+	stateChange_.emplace(PlayerState::HIT_BODY, std::bind(&Player::ChangeHitBody, this));
 
 }
 
@@ -85,9 +91,9 @@ void Player::InitParameter()
 {
 
 	// 攻撃の入力を初期化
-	for (int i = static_cast<int>(STATE::JAB); i < static_cast<int>(STATE::MAX); i++)
+	for (int i = static_cast<int>(PlayerState::JAB); i < static_cast<int>(PlayerState::MAX); i++)
 	{
-		isCombo_.emplace(static_cast<STATE>(i), false);
+		isCombo_.emplace(static_cast<PlayerState>(i), false);
 	}
 
 	// 動く方向
@@ -153,11 +159,11 @@ void Player::InitAnimation()
 	animationController_ = std::make_unique<AnimationController>(transform_.modelId);
 
 	// アニメーションコントローラーにアニメーションを追加
-	for (int i = static_cast<int>(STATE::IDLE); i < static_cast<int>(STATE::MAX); ++i)
+	for (int i = static_cast<int>(PlayerState::IDLE); i < static_cast<int>(PlayerState::MAX); ++i)
 	{
 
 		// ループ再生するアニメーションだけisLoopをtrueにする
-		bool isLoop = i == static_cast<int>(STATE::IDLE) || i == static_cast<int>(STATE::RUN);
+		bool isLoop = i == static_cast<int>(PlayerState::IDLE) || i == static_cast<int>(PlayerState::RUN);
 		animationController_->Add(
 
 			// アニメーションの名前
@@ -193,7 +199,7 @@ void Player::InitAnimation()
 	preKey_ = key_;
 
 	// 初期状態
-	ChangeState(STATE::IDLE);
+	ChangeState(PlayerState::IDLE);
 
 }
 
@@ -208,6 +214,9 @@ void Player::Update(const float deltaTime)
 
 	// 攻撃処理
 	Attack();
+
+	// 重力
+	Gravity();
 
 	// 入力受付時間をカウント
 	acceptCnt_++;
@@ -306,23 +315,46 @@ bool Player::GetComboState()
 
 }
 
-void Player::AttackHit()
+void Player::AttackHit(const int damage, const int state)
 {
 
-	SubHp(10);
-	ChangeState(STATE::HIT);
+	// 頭にヒットするアニメーションかチェック
+	for (const auto hitState : hitHeadState_)
+	{
+		if (hitState == static_cast<EnemyState>(state))
+		{
+			ChangeState(PlayerState::HIT_HEAD);
+		}
+	}
 
-}
+	// 体にヒットするアニメーションかチェック
+	for (const auto hitState : hitBodyState_)
+	{
+		if (hitState == static_cast<EnemyState>(state))
+		{
+			ChangeState(PlayerState::HIT_BODY);
+		}
+	}
 
-void Player::AttackHitFly()
-{
+	// HPを減らす
+	SubHp(damage);
+	
+	// アニメーションの再生時間をリセットする
+	animationController_->ResetStepAnim();
+
 }
 
 void Player::Move()
 {
 
 	// ヒット中は行動できない
-	if (state_ == STATE::HIT)return;
+	for (const auto hitState : hitState_)
+	{
+		if (hitState == state_)
+		{
+			return;
+		}
+	}
 
 	// 入力方向
 	VECTOR dir = inputController_->Dir();
@@ -336,12 +368,12 @@ void Player::Move()
 			// 方向を更新
 			dir_ = dir;
 
-			ChangeState(STATE::RUN);
+			ChangeState(PlayerState::RUN);
 		}
 		// 入力していなければ待機状態にする
 		else if (Utility::EqualsVZero(dir))
 		{
-			ChangeState(STATE::IDLE);
+			ChangeState(PlayerState::IDLE);
 		}
 	}
 
@@ -351,6 +383,15 @@ void Player::Attack()
 {
 
 	// ヒット中は行動できない
+	for (const auto hitState : hitState_)
+	{
+		if (hitState == state_)
+		{
+			return;
+		}
+	}
+
+
 	// 攻撃の先行入力
 	if (inputController_->ComboAttack())
 	{
@@ -365,9 +406,9 @@ void Player::Attack()
 		}
 
 		// ジャブに遷移
-		if (isCombo_.at(STATE::JAB) && !isCombo_.at(STATE::STRAIGHT))
+		if (isCombo_.at(PlayerState::JAB) && !isCombo_.at(PlayerState::STRAIGHT))
 		{
-			ChangeState(STATE::JAB);
+			ChangeState(PlayerState::JAB);
 		}
 
 	}
@@ -375,7 +416,7 @@ void Player::Attack()
 	// アッパーに遷移
 	if (inputController_->Upper() && !animationController_->IsPlayNowAnimation())
 	{
-		ChangeState(STATE::UPPER);
+		ChangeState(PlayerState::UPPER);
 	}
 
 
@@ -383,19 +424,19 @@ void Player::Attack()
 	if (!GetComboState())return;
 
 	// 次の入力がなければコンボをキャンセルする
-	for(int i = static_cast<int>(STATE::JAB); i < static_cast<int>(STATE::RIGHT_KICK); i++)
+	for(int i = static_cast<int>(PlayerState::JAB); i < static_cast<int>(PlayerState::RIGHT_KICK); i++)
 	{
 
 		// 次の状態の入力を見るための計算
 		const int nextState = static_cast<int>(state_) + 1;
 
 		// falseだったらコンボをキャンセル
-		if (!isCombo_.at(static_cast<STATE>(nextState)))
+		if (!isCombo_.at(static_cast<PlayerState>(nextState)))
 		{
 			// 待機状態に遷移
 			if (animationController_->IsEndPlayAnimation())
 			{
-				ChangeState(STATE::IDLE);
+				ChangeState(PlayerState::IDLE);
 				return;
 			}
 		}
@@ -404,7 +445,7 @@ void Player::Attack()
 
 }
 
-void Player::ChangeState(STATE state)
+void Player::ChangeState(PlayerState state)
 {
 
 	// 状態遷移
@@ -465,6 +506,9 @@ void Player::ChangeJab()
 	// 攻撃が当たっているかをリセットする
 	isAttackHit_ = false;
 
+	// ダメージ量
+	damage_ = JAB_DAMAGE;
+
 }
 
 void Player::ChangeStraight()
@@ -480,6 +524,9 @@ void Player::ChangeStraight()
 
 	// 攻撃が当たっているかをリセットする
 	isAttackHit_ = false;
+
+	// ダメージ量
+	damage_ = STRAIGHT_DAMAGE;
 
 }
 
@@ -497,6 +544,9 @@ void Player::ChangeHook()
 	// 攻撃が当たっているかをリセットする
 	isAttackHit_ = false;
 
+	// ダメージ量
+	damage_ = HOOK_DAMAGE;
+
 }
 
 void Player::ChangeLeftKick()
@@ -512,6 +562,9 @@ void Player::ChangeLeftKick()
 
 	// 攻撃が当たっているかをリセットする
 	isAttackHit_ = false;
+
+	// ダメージ量
+	damage_ = LEFT_KICK_DAMAGE;
 
 }
 
@@ -529,6 +582,9 @@ void Player::ChangeRightKick()
 	// 攻撃が当たっているかをリセットする
 	isAttackHit_ = false;
 
+	// ダメージ量
+	damage_ = RIGHT_KICK_DAMAGE;
+
 }
 
 void Player::ChangeUpper()
@@ -545,12 +601,34 @@ void Player::ChangeUpper()
 	// 攻撃が当たっているかをリセットする
 	isAttackHit_ = false;
 
+	// ダメージ量
+	damage_ = UPPER_DAMAGE;
+
 }
 
-void Player::ChangeHit()
+void Player::ChangeHitHead()
 {
 
-	stateUpdate_ = std::bind(&Player::UpdateHit, this);
+	stateUpdate_ = std::bind(&Player::UpdateHitHead, this);
+
+	// プレイヤーの方向を求める
+	VECTOR vec = VSub(targetPos_, transform_.pos);
+
+	// 正規化
+	vec = VNorm(vec);
+
+	// プレイヤーの方向と逆方向のベクトル
+	vec = { -vec.x, vec.y,-vec.z };
+
+	// 移動量
+	movePow_ = VAdd(transform_.pos, VScale(vec, ATTACK_MOVE_POW));
+
+}
+
+void Player::ChangeHitBody()
+{
+
+	stateUpdate_ = std::bind(&Player::UpdateHitBody, this);
 
 	// プレイヤーの方向を求める
 	VECTOR vec = VSub(targetPos_, transform_.pos);
@@ -570,9 +648,9 @@ void Player::UpdateIdle(void)
 {
 
 	// 攻撃の入力を初期化
-	for (int i = static_cast<int>(STATE::JAB); i < static_cast<int>(STATE::MAX); i++)
+	for (int i = static_cast<int>(PlayerState::JAB); i < static_cast<int>(PlayerState::MAX); i++)
 	{
-		isCombo_.at(static_cast<STATE>(i)) = false;
+		isCombo_.at(static_cast<PlayerState>(i)) = false;
 	}
 
 }
@@ -627,9 +705,9 @@ void Player::UpdateJab()
 	}
 
 	// ストレートに遷移
-	if (animationController_->IsEndPlayAnimation() && isCombo_.at(STATE::STRAIGHT))
+	if (animationController_->IsEndPlayAnimation() && isCombo_.at(PlayerState::STRAIGHT))
 	{
-		ChangeState(STATE::STRAIGHT);
+		ChangeState(PlayerState::STRAIGHT);
 	}
 
 }
@@ -651,9 +729,9 @@ void Player::UpdateStraight()
 	}
 
 	// フックに遷移
-	if (animationController_->IsEndPlayAnimation() && isCombo_.at(STATE::HOOK))
+	if (animationController_->IsEndPlayAnimation() && isCombo_.at(PlayerState::HOOK))
 	{
-		ChangeState(STATE::HOOK);
+		ChangeState(PlayerState::HOOK);
 	}
 
 }
@@ -675,9 +753,9 @@ void Player::UpdateHook()
 	}
 
 	// 左キックに遷移
-	if (animationController_->IsEndPlayAnimation() && isCombo_.at(STATE::LEFT_KICK))
+	if (animationController_->IsEndPlayAnimation() && isCombo_.at(PlayerState::LEFT_KICK))
 	{
-		ChangeState(STATE::LEFT_KICK);
+		ChangeState(PlayerState::LEFT_KICK);
 	}
 
 }
@@ -699,9 +777,9 @@ void Player::UpdateLeftKick()
 	}
 
 	// 右キックに遷移
-	if (animationController_->IsEndPlayAnimation() && isCombo_.at(STATE::RIGHT_KICK))
+	if (animationController_->IsEndPlayAnimation() && isCombo_.at(PlayerState::RIGHT_KICK))
 	{
-		ChangeState(STATE::RIGHT_KICK);
+		ChangeState(PlayerState::RIGHT_KICK);
 	}
 
 }
@@ -725,7 +803,7 @@ void Player::UpdateRightKick()
 	// 待機状態に遷移
 	if (animationController_->IsEndPlayAnimation())
 	{
-		ChangeState(STATE::IDLE);
+		ChangeState(PlayerState::IDLE);
 	}
 
 }
@@ -749,18 +827,29 @@ void Player::UpdateUpper()
 	// 待機状態に遷移
 	if (animationController_->IsEndPlayAnimation())
 	{
-		ChangeState(STATE::IDLE);
+		ChangeState(PlayerState::IDLE);
 	}
 
 }
 
-void Player::UpdateHit()
+void Player::UpdateHitHead()
 {
 
 	// 待機状態に遷移
 	if (animationController_->IsEndPlayAnimation())
 	{
-		ChangeState(STATE::IDLE);
+		ChangeState(PlayerState::IDLE);
+	}
+
+}
+
+void Player::UpdateHitBody()
+{
+
+	// 待機状態に遷移
+	if (animationController_->IsEndPlayAnimation())
+	{
+		ChangeState(PlayerState::IDLE);
 	}
 
 }

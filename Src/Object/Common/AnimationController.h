@@ -97,8 +97,8 @@ public:
 	// すべてのアニメーションデータを取得
 	const std::map <std::string, AnimationData>& GetAnimDatas(void) const;
 
-	// アニメーションが始まる時間を設定
-	void SetStartStepAnim(std::string state, int stepAnim);
+	// アニメーションが始まる時間をリセット
+	void ResetStepAnim();
 
 	// 今のアニメーション時間
 	float GetStepAnim();

@@ -62,9 +62,13 @@ void ResourceManager::Init(void)
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Player/Upper.mv1");
 	resourcesMap_.emplace(SRC::PLAYER_UPPER, res);
 
-	// プレイヤーのヒットアニメーション
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Player/Hit.mv1");
-	resourcesMap_.emplace(SRC::PLAYER_HIT, res);
+	// プレイヤーの攻撃が頭に当たった時のアニメーション
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Player/HitHead.mv1");
+	resourcesMap_.emplace(SRC::PLAYER_HIT_HEAD, res);
+
+	// プレイヤーの攻撃が体に当たった時のアニメーション
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Player/HitBody.mv1");
+	resourcesMap_.emplace(SRC::PLAYER_HIT_BODY, res);
 
 #pragma endregion
 
@@ -90,11 +94,15 @@ void ResourceManager::Init(void)
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Enemy/Kick.mv1");
 	resourcesMap_.emplace(SRC::ENEMY_KICK, res);
 
-	// 敵の攻撃ヒットアニメーション
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Enemy/Hit.mv1");
-	resourcesMap_.emplace(SRC::ENEMY_HIT, res);
+	// 敵の攻撃が頭に当たった時のアニメーション
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Enemy/HitHead.mv1");
+	resourcesMap_.emplace(SRC::ENEMY_HIT_HEAD, res);
 
-	// 敵の攻撃ヒットで飛んでいくアニメーション
+	// 敵の攻撃が体に当たった時のアニメーション
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Enemy/HitBody.mv1");
+	resourcesMap_.emplace(SRC::ENEMY_HIT_BODY, res);
+
+	// 敵の攻撃が当たった時飛んでいくアニメーション
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Enemy/HitFly.mv1");
 	resourcesMap_.emplace(SRC::ENEMY_HIT_FLY, res);
 

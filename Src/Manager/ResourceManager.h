@@ -23,7 +23,8 @@ public:
 		PLAYER_LEFT_KICK,
 		PLAYER_RIGHT_KICK,
 		PLAYER_UPPER,
-		PLAYER_HIT,
+		PLAYER_HIT_HEAD,
+		PLAYER_HIT_BODY,
 #pragma endregion
 
 #pragma region 敵のアニメーション
@@ -33,7 +34,8 @@ public:
 		ENEMY_RUN,
 		ENEMY_PUNCH,
 		ENEMY_KICK,
-		ENEMY_HIT,
+		ENEMY_HIT_HEAD,
+		ENEMY_HIT_BODY,
 		ENEMY_HIT_FLY,
 		ENEMY_KIP_UP,
 		ENEMY_JAB,

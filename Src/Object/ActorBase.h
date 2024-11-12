@@ -170,6 +170,9 @@ public:
 
 	// 攻撃するときに進む移動量
 	const float ATTACK_MOVE_POW;
+	
+	// 重力加速度
+	const float GRAVITY;
 
 	// 攻撃を受けたときに進む移動量
 	float HIT_MOVE_POW;
@@ -225,6 +228,9 @@ public:
 	// 座標を取得
 	const VECTOR& GetPos() const { return transform_.pos; }
 
+	// アクターの重力方向の速度
+	const VECTOR& GetVelocity()const { return velocity_; }
+
 	// 生存判定を取得
 	bool GetIsActive() const { return isActive_; }
 
@@ -247,10 +253,13 @@ public:
 	bool GetIsLockOn();
 
 	// 攻撃のヒット処理
-	virtual void AttackHit();
+	virtual void AttackHit(const int damage, const int state);
 
-	// 攻撃のヒットで飛んでいく処理
-	virtual void AttackHitFly();
+	// 今の状態を取得
+	virtual int GetState() { return 0; }
+
+	// ダメージ量を取得
+	virtual int GetDamage() { return 0; }
 
 protected:
 
@@ -289,6 +298,12 @@ protected:
 	// 相手の座標
 	VECTOR targetPos_;
 
+	// 物体の速度
+	VECTOR velocity_;
+
+	// 物体の加速度(重力)
+	VECTOR acceleration_;
+
 	// 目的の角度
 	Quaternion goalQuaRot_;
 
@@ -303,6 +318,9 @@ protected:
 
 	// モデルID
 	int modelId_;
+
+	// ダメージ量
+	int damage_;
 
 	// スピード
 	float speed_;
@@ -357,6 +375,9 @@ protected:
 
 	// アニメーションのフレーム固定
 	virtual void AnimationFrame();
+
+	// 重力
+	void Gravity();
 
 #pragma endregion
 

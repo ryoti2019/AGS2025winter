@@ -27,47 +27,58 @@
 						"PATH": "Data/Model/Player/Jab.mv1",
 						"SPEED": 50.0,
 						"ATTACK_START_FRAME": 12.0,
-						"ATTACK_END_FRAME": 18.0
+						"ATTACK_END_FRAME": 18.0,
+						"DAMAGE": 10
 					},
 					{
 						"NAME": "STRAIGHT",
 						"PATH": "Data/Model/Player/Straight.mv1",
 						"SPEED": 60.0,
 						"ATTACK_START_FRAME": 3.0,
-						"ATTACK_END_FRAME": 10.0
+						"ATTACK_END_FRAME": 10.0,
+						"DAMAGE": 10
 					},
 					{
 						"NAME": "HOOK",
 						"PATH": "Data/Model/Player/Hook.mv1",
 						"SPEED": 40.0,
 						"ATTACK_START_FRAME": 6.0,
-						"ATTACK_END_FRAME": 12.0
+						"ATTACK_END_FRAME": 12.0,
+						"DAMAGE": 10
 					},
 					{
 						"NAME": "LEFT_KICK",
 						"PATH": "Data/Model/Player/LeftKick.mv1",
 						"SPEED": 40.0,
 						"ATTACK_START_FRAME": 8.0,
-						"ATTACK_END_FRAME": 13.0
+						"ATTACK_END_FRAME": 13.0,
+						"DAMAGE": 10
 					},
 					{
 						"NAME": "RIGHT_KICK",
 						"PATH": "Data/Model/Player/RightKick.mv1",
 						"SPEED": 40.0,
 						"ATTACK_START_FRAME": 7.0,
-						"ATTACK_END_FRAME": 16.0
+						"ATTACK_END_FRAME": 16.0,
+						"DAMAGE": 10
 					},
 					{
 						"NAME": "UPPER",
 						"PATH": "Data/Model/Player/Upper.mv1",
 						"SPEED": 50.0,
 						"ATTACK_START_FRAME": 12.0,
-						"ATTACK_END_FRAME": 20.0
+						"ATTACK_END_FRAME": 20.0,
+						"DAMAGE": 10
 					},
 					{
-						"NAME": "HIT",
-						"PATH": "Data/Model/Player/Hit.mv1",
+						"NAME": "HIT_HEAD",
+						"PATH": "Data/Model/Player/HitHead.mv1",
 						"SPEED": 50.0
+					},
+					{
+						"NAME": "HIT_BODY",
+						"PATH": "Data/Model/Player/HitBody.mv1",
+						"SPEED": 30.0
 					}
 				]
 			}
@@ -98,17 +109,26 @@
 					{
 						"NAME": "PUNCH",
 						"PATH": "Data/Model/Enemy/Punch.mv1",
-						"SPEED": 30.0
+						"SPEED": 30.0,
+						"ATTACK_START_FRAME": 26.0,
+						"ATTACK_END_FRAME": 35.0
 					},
 					{
 						"NAME": "KICK",
 						"PATH": "Data/Model/Enemy/Kick.mv1",
-						"SPEED": 30.0
+						"SPEED": 30.0,
+						"ATTACK_START_FRAME": 15.0,
+						"ATTACK_END_FRAME": 22.0
 					},
 					{
-						"NAME": "HIT",
-						"PATH": "Data/Model/Enemy/Hit.mv1",
+						"NAME": "HIT_HEAD",
+						"PATH": "Data/Model/Enemy/HitHead.mv1",
 						"SPEED": 50.0
+					},
+					{
+						"NAME": "HIT_BODY",
+						"PATH": "Data/Model/Enemy/HitBody.mv1",
+						"SPEED": 30.0
 					},
 					{
 						"NAME": "HIT_FLY",

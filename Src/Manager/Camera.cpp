@@ -699,7 +699,7 @@ void Camera::GamePadLockOnContoroller(void)
 
 }
 
-void Camera::CollisionStage(void)
+void Camera::CheckStageCollision(void)
 {
 
 	// ‹…‘Ì‚Æ‚ÌÕ“Ë”»’è

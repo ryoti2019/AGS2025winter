@@ -14,6 +14,7 @@ ActorBase::ActorBase(const VECTOR& pos, const json& data)
 	BODY_RELATIVE_UP_POS({ 0.0f,500.0f,0.0f }),
 	BODY_RELATIVE_DOWN_POS({ 0.0f,-500.0f,0.0f }),
 	ATTACK_MOVE_POW(data["ATTACK_MOVE_POW"]),
+	GRAVITY(9.8f),
 	ROTATION_POW(0.2f),
 	HAND_AND_FOOT_COLLISION_RADIUS(100.0f),
 	BODY_COLLISION_RADIUS(300.0f),
@@ -22,9 +23,12 @@ ActorBase::ActorBase(const VECTOR& pos, const json& data)
 	dir_({ 0.0f,0.0f,0.0f }),
 	moveDir_({ 0.0f,0.0f,0.0f }),
 	modelId_(-1),
+	damage_(0),
 	scl_(data["SCALE"]),
 	stepRotTime_(0.0f),
 	speed_(0.0f),
+	velocity_({ 0.0f,0.0f,0.0f }),
+	acceleration_({ 0.0f,-GRAVITY,0.0f }),
 	hp_(HP_MAX),
 	actorType_(static_cast<ActorType>(data["ACTOR_TYPE"])),
 	isAlive_(false),
@@ -277,6 +281,17 @@ void ActorBase::AnimationFrame()
 
 }
 
+void ActorBase::Gravity()
+{
+
+	// 速度に加速度（重力）を加える
+	velocity_ = VAdd(velocity_, acceleration_);
+
+	// 位置に速度を加える
+	transform_.pos = VAdd(transform_.pos, velocity_);
+
+}
+
 void ActorBase::Draw()
 {
 	
@@ -308,13 +323,8 @@ bool ActorBase::GetIsLockOn()
 	return isLockOn_;
 }
 
-void ActorBase::AttackHit()
+void ActorBase::AttackHit(const int damage, const int state)
 {
-}
-
-void ActorBase::AttackHitFly()
-{
-
 }
 
 void ActorBase::DrawDebug()
