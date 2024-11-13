@@ -221,9 +221,6 @@ void Player::Update(const float deltaTime)
 	// 入力受付時間をカウント
 	acceptCnt_++;
 
-	// 衝突判定の更新
-	ActorBase::CollisionUpdate();
-
 	// 状態ごとの更新
 	stateUpdate_();
 
@@ -233,6 +230,8 @@ void Player::Update(const float deltaTime)
 	// モデル情報を更新
 	transform_.Update();
 
+	// 衝突判定の更新
+	ActorBase::CollisionUpdate();
 }
 
 void Player::UpdateDebugImGui()

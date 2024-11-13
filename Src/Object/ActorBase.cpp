@@ -11,8 +11,8 @@ ActorBase::ActorBase(const VECTOR& pos, const json& data)
 	RIGHT_FOOT_RELATIVE_DOWN_POS({ 0.0f,-100.0f,0.0f }),
 	LEFT_FOOT_RELATIVE_UP_POS({ 0.0f,100.0f,0.0f }),
 	LEFT_FOOT_RELATIVE_DOWN_POS({ 0.0f,-100.0f,0.0f }),
-	BODY_RELATIVE_UP_POS({ 0.0f,500.0f,0.0f }),
-	BODY_RELATIVE_DOWN_POS({ 0.0f,-500.0f,0.0f }),
+	BODY_RELATIVE_UP_POS({ 0.0f,1500.0f,0.0f }),
+	BODY_RELATIVE_DOWN_POS({ 0.0f,0.0f,0.0f }),
 	ATTACK_MOVE_POW(data["ATTACK_MOVE_POW"]),
 	GRAVITY(9.8f),
 	ROTATION_POW(0.2f),
@@ -35,6 +35,7 @@ ActorBase::ActorBase(const VECTOR& pos, const json& data)
 	isActive_(false),
 	isLockOn_(false),
 	isAttackHit_(false),
+	isOnGround_(false),
 	jsonData_(data)
 {
 }
@@ -243,16 +244,16 @@ void ActorBase::CollisionUpdate()
 	Quaternion bodyQua = Quaternion::GetRotation(matBodyRot);
 
 	// 当たり判定の座標を更新
-	collisionData_.bodyPos = bodyPos;
+	collisionData_.bodyPos = transform_.pos;
 
 	// 回転を更新
 	collisionData_.bodyRot = bodyQua;
 
 	// カプセルの上の相対座標
-	VECTOR bodyUpPos = collisionData_.bodyRot.PosAxis(BODY_RELATIVE_UP_POS);
+	VECTOR bodyUpPos = BODY_RELATIVE_UP_POS;
 
 	// カプセルの下の相対座標
-	VECTOR bodyDownPos = collisionData_.bodyRot.PosAxis(BODY_RELATIVE_DOWN_POS);
+	VECTOR bodyDownPos = BODY_RELATIVE_DOWN_POS;
 
 	// 当たり判定で使うカプセルの上の座標を更新
 	collisionData_.bodyCapsuleUpPos = VAdd(collisionData_.bodyPos, bodyUpPos);
@@ -284,10 +285,11 @@ void ActorBase::AnimationFrame()
 void ActorBase::Gravity()
 {
 
+
 	// 速度に加速度（重力）を加える
 	velocity_ = VAdd(velocity_, acceleration_);
 
-	// 位置に速度を加える
+	// 座標を更新
 	transform_.pos = VAdd(transform_.pos, velocity_);
 
 }
@@ -344,5 +346,10 @@ void ActorBase::DrawDebug()
 
 	// 体の当たり判定の描画
 	DrawCapsule3D(collisionData_.bodyCapsuleUpPos, collisionData_.bodyCapsuleDownPos, BODY_COLLISION_RADIUS, 10, 0xff0000, 0xff0000, false);
+
+	// 地面との当たり判定の時の線の描画
+	DrawLine3D(
+		VAdd(collisionData_.bodyCapsuleUpPos,VGet(0.0f, collisionData_.bodyCollisionRadius,0.0f)), 
+		VAdd(collisionData_.bodyCapsuleDownPos, VGet(0.0f, -collisionData_.bodyCollisionRadius, 0.0f)), 0x00ff00);
 
 }

@@ -213,26 +213,24 @@ void CollisionManager::CheckStageCollision()
 					}
 				}
 
+				// 検出した地面ポリゴン情報の後始末
+				MV1CollResultPolyDimTerminate(hits);
+				
 				// 地面との衝突
 				auto hit = MV1CollCheck_Line(
-					stage->GetTransform().modelId, -1, target->GetCollisionData().bodyCapsuleUpPos, target->GetCollisionData().bodyCapsuleDownPos);
-				//if (hit.HitFlag > 0)
+					stage->GetTransform().modelId, -1,
+					VAdd(target->GetCollisionData().bodyCapsuleUpPos, VECTOR(0.0f,target->GetCollisionData().bodyCollisionRadius,0.0f)),
+					VAdd(target->GetCollisionData().bodyCapsuleDownPos, VECTOR(0.0f, -target->GetCollisionData().bodyCollisionRadius, 0.0f)));
 				if (hit.HitFlag > 0 && VDot({0.0f,-1.0f,0.0f}, target->GetVelocity()) > 0.9f)
 				{
 
-					// 傾斜計算用に衝突判定を保存しておく
-					hitNormal_ = hit.Normal;
-					hitPos_ = hit.HitPosition;
-
 					// 衝突地点から、少し上に移動
-					transformBody_.pos = VAdd(hit.HitPosition, VScale(dirUpGravity, 70.0f));
+					target->SetPos(hit.HitPosition);
 
 					// ジャンプリセット
-					jumpPow_ = AsoUtility::VECTOR_ZERO;
-				}
+					target->SetVelocity(Utility::VECTOR_ZERO);
 
-				// 検出した地面ポリゴン情報の後始末
-				MV1CollResultPolyDimTerminate(hits);
+				}
 			}
 		}
 	}

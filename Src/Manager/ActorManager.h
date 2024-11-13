@@ -27,7 +27,7 @@ public:
 
 	// Actorの派生クラスの実体の作成
 	template <typename actor>
-	void CreateActor(const json& data);
+	void CreateActor(const json& data, const VECTOR& pos);
 
 	// アクティブになったものを格納
 	std::shared_ptr<ActorBase> ActiveData(const ActorType type, const VECTOR& pos);
@@ -54,10 +54,9 @@ private:
 };
 
 template<typename T>
-inline void ActorManager::CreateActor(const json& data)
+inline void ActorManager::CreateActor(const json& data, const VECTOR& pos)
 {
 
-	const VECTOR pos = { 0.0f,0.0f,0.0f };
 	std::shared_ptr<ActorBase> actor = std::make_shared<T>(pos, data);
 
 	// ポインタを使うときはクラッシュしないようにNULLチェックを行うようにする

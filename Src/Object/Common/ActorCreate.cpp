@@ -47,15 +47,15 @@ ActorCreate::ActorCreate()
 	const auto& stageData = objectData[2]["StageData"];
 
 	// ステージを生成
-	actorManager->CreateActor<Stage>(stageData);
+	actorManager->CreateActor<Stage>(stageData, { 0.0f,0.0f,0.0f });
 	actorManager->ActiveData(ActorType::STAGE, { stageData["POS"]["x"], stageData["POS"]["y"] ,stageData["POS"]["z"] });
 
 	// プレイヤー
 	const auto& playerData = objectData[0]["PlayerData"];
 
 	// プレイヤーを生成
-	actorManager->CreateActor<Player>(playerData);
-	actorManager->ActiveData(ActorType::PLAYER, { 0.0f,0.0f,0.0f });
+	actorManager->CreateActor<Player>(playerData, { 0.0f,-1960.0f,0.0f });
+	actorManager->ActiveData(ActorType::PLAYER, { 0.0f,-1960.0f,0.0f });
 
 	// 敵
 	const auto& enemyData = objectData[1]["EnemyData"];
@@ -65,7 +65,7 @@ ActorCreate::ActorCreate()
 	{
 		float x = std::rand() % 10000;
 		float z = std::rand() % 10000;
-		actorManager->CreateActor<Enemy>(enemyData);
+		actorManager->CreateActor<Enemy>(enemyData, { 0.0f,-1500.0f,0.0f });
 		actorManager->ActiveData(ActorType::ENEMY, { -5000.0f + x,0.0f,-5000.0f + z });
 	}
 

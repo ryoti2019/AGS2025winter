@@ -206,13 +206,8 @@ void Enemy::Update(const float deltaTime)
 	// どの行動をするか決める
 	if (!isActionDecided_ && coolTime_ <= 0.0f)
 	{
-		SelsectAction();
+		//SelsectAction();
 	}
-
-
-
-	// 衝突判定の更新
-	ActorBase::CollisionUpdate();
 
 	// 状態ごとの更新
 	stateUpdate_();
@@ -225,6 +220,9 @@ void Enemy::Update(const float deltaTime)
 
 	// モデル情報を更新
 	transform_.Update();
+
+	// 衝突判定の更新
+	ActorBase::CollisionUpdate();
 
 	// アニメーションのフレームを固定
 	AnimationFrame();
@@ -244,6 +242,8 @@ void Enemy::Draw()
 
 	// HPを描画
 	DrawBox(0, 100, 0 + hpGauge, 120, 0xff0000, true);
+
+	DrawFormatString(0, 15, 0xff0000, "velocity:(%0.2f,%0.2f,%0.2f)", velocity_.x, velocity_.y, velocity_.z);
 
 }
 
@@ -323,7 +323,7 @@ void Enemy::AnimationFrame()
 	// 対象フレームのローカル行列を初期値にリセットする
 	MV1ResetFrameUserLocalMatrix(transform_.modelId, collisionData_.body);
 
-	// ジャンプ攻撃時に座標を固定する
+	// 座標を固定する
 	if (animationController_->IsBlendPlay("HIT_FLY"))
 	{
 
@@ -341,7 +341,7 @@ void Enemy::AnimationFrame()
 
 		// ここでローカル座標を行列に、そのまま戻さず、
 		// 調整したローカル座標を設定する
-		mix = MMult(mix, MGetTranslate({ pos.x, pos.y, 0.0f }));
+		mix = MMult(mix, MGetTranslate({ 0.0f, 0.0f, 0.0f }));
 
 		// 合成した行列を対象フレームにセットし直して、
 		// アニメーションの移動値を無効化
@@ -601,7 +601,7 @@ void Enemy::ChangeHitFly()
 
 	// プレイヤーの方向を求める
 	VECTOR vec = VSub(targetPos_, transform_.pos);
-
+	
 	// 正規化
 	vec = VNorm(vec);
 
@@ -609,11 +609,13 @@ void Enemy::ChangeHitFly()
 	vec = { -vec.x, vec.y,-vec.z };
 
 	// 上方向に飛ばす
-	acceleration_ += 20.0f;
-	vec.y = gravityPow_;
+	velocity_.y += 11.0f;
+	vec.y = velocity_.y;
 
 	// 移動量
-	movePow_ = VAdd(transform_.pos, VScale(vec, 1.0f));
+	movePow_ = VScale(vec,10000.0f);
+
+	movePow_ = VAdd(transform_.pos, movePow_);
 
 }
 
@@ -756,8 +758,13 @@ void Enemy::UpdateHitBody()
 void Enemy::UpdateHitFly()
 {
 
-	// 後ろにゆっくり移動
-	transform_.pos = VAdd(transform_.pos, movePow_);
+	if (transform_.pos.x != movePow_.x || transform_.pos.y != movePow_.y || transform_.pos.z != movePow_.z)
+	{
+		// 後ろにゆっくり移動
+		transform_.pos = Utility::Lerp(transform_.pos, movePow_, 0.5f);
+	}
+
+	//transform_.pos = VAdd(transform_.pos, movePow_);
 
 	// アニメーションが終了したら起き上がり状態へ遷移する
 	if (animationController_->IsEndPlayAnimation())

@@ -199,7 +199,12 @@ public:
 	virtual void Draw();
 
 	// 座標を設定
-	void SetPos(const VECTOR& pos) { transform_.pos = pos; }
+	void SetPos(const VECTOR& pos) {
+		transform_.pos = pos;
+		transform_.Update();
+		// 衝突判定の更新
+		ActorBase::CollisionUpdate();
+	}
 
 	// 相手の座標を設定
 	void SetTargetPos(const VECTOR& pos) { targetPos_ = pos; }
@@ -228,8 +233,11 @@ public:
 	// 座標を取得
 	const VECTOR& GetPos() const { return transform_.pos; }
 
-	// アクターの重力方向の速度
+	// アクターの重力方向の速度の取得
 	const VECTOR& GetVelocity()const { return velocity_; }
+
+	// アクターの重力方向の速度の設定
+	void SetVelocity(const VECTOR& velocity) { velocity_ = velocity; }
 
 	// 生存判定を取得
 	bool GetIsActive() const { return isActive_; }
@@ -245,6 +253,9 @@ public:
 
 	// 攻撃が当たっているか
 	const bool GetIsAttackHit()const { return isAttackHit_; }
+
+	// 地面に当たっているか
+	void SetIsOnGround(const bool isOnGround) { isOnGround_ = isOnGround; }
 
 	// HPを取得
 	const int GetHp()const { return hp_; }
@@ -336,6 +347,9 @@ protected:
 
 	// 攻撃が当たっているか
 	bool isAttackHit_;
+
+	// 地面に当たっているか
+	bool isOnGround_;
 
 	// ロックオンされているか(敵のみ)
 	bool isLockOn_;
