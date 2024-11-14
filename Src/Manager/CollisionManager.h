@@ -29,7 +29,7 @@ private:
 	{
 		{
 			{ActorType::PLAYER,ActorType::ENEMY},
-			{ActorType::ENEMY,ActorType::PLAYER}
+			//{ActorType::ENEMY,ActorType::PLAYER}
 		}
 	};
 
@@ -44,6 +44,12 @@ private:
 
 	// すべてのアクターの衝突判定をまとめたデータ
 	std::unordered_map<ActorType, std::vector<std::shared_ptr<ActorBase>>> collisionActorData_;
+
+	// 攻撃が当たった敵をまとめたデータ
+	std::unordered_map<ActorType, std::vector<std::shared_ptr<ActorBase>>> attackCollisionData_;
+
+	// アクターの状態をまとめたデータ
+
 
 	// プレイヤーと敵の攻撃の当たり判定
 	void CheckAttackCollision();

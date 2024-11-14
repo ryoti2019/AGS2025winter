@@ -139,8 +139,7 @@ bool InputController::ComboAttack()
 	{
 		return true;
 	}
-	else if (SceneManager::GetInstance().GetGamePad() &&
-		ins.IsPadBtnTrgUp(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::RIGHT))
+	else if (SceneManager::GetInstance().GetGamePad() && ins.IsPadBtnTrgUp(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::RIGHT))
 	{
 		return true;
 	}
@@ -158,7 +157,11 @@ bool InputController::Upper()
 	{
 		return true;
 	}
-
+	else if (SceneManager::GetInstance().GetGamePad()/* && ins.IsPadBtnTrgUp(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::RIGHT)*/
+		&& ins.IsPadBtnTrgUp(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::R_BOTTON))
+	{
+		return true;
+	}
 	return false;
 
 }

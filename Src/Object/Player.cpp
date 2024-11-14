@@ -150,6 +150,12 @@ void Player::InitParameter()
 	// 入力カウンタの初期化
 	acceptCnt_ = 0.0f;
 
+	// 走るときの移動量
+	RUN_MOVE_POW = jsonData_["RUN_MOVE_POW"];
+
+	// アニメーション番号
+	ANIM_INDEX = jsonData_["ANIM_INDEX"];
+
 }
 
 void Player::InitAnimation()
@@ -185,7 +191,7 @@ void Player::InitAnimation()
 			isLoop,
 
 			// アニメーション番号
-			0,
+			ANIM_INDEX,
 
 			// アニメーションの逆再生
 			false
@@ -390,7 +396,6 @@ void Player::Attack()
 		}
 	}
 
-
 	// 攻撃の先行入力
 	if (inputController_->ComboAttack())
 	{
@@ -413,11 +418,10 @@ void Player::Attack()
 	}
 
 	// アッパーに遷移
-	if (inputController_->Upper() && !animationController_->IsPlayNowAnimation())
+	if (inputController_->Upper() && state_ != PlayerState::UPPER)
 	{
 		ChangeState(PlayerState::UPPER);
 	}
-
 
 	//コンボ中か判定
 	if (!GetComboState())return;
@@ -671,7 +675,7 @@ void Player::UpdateRun(void)
 	moveDir_ = VNorm(moveDir_);
 
 	// 移動量
-	speed_ = 100.0f;
+	speed_ = RUN_MOVE_POW;
 
 	// 移動量
 	movePow_ = VScale(moveDir_, speed_);

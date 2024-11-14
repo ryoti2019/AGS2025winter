@@ -39,6 +39,15 @@ public:
 	// クールタイム
 	const float COOL_TIME;
 
+	// プレイヤーから一定距離離れたら移動してくる距離
+	const float ACTIVATION_DISTANCE;
+
+	// 吹っ飛ぶ時の移動量
+	const float HIT_FLY_MOVE_POW;
+
+	// 追いかける最大の時間
+	const float TRACKING_MAX_TIME;
+
 	Enemy(const VECTOR& pos, const json& data);
 
 	~Enemy() = default;
@@ -85,7 +94,8 @@ private:
 	{
 		{PlayerState::JAB},
 		{PlayerState::STRAIGHT},
-		{PlayerState::HOOK}
+		{PlayerState::HOOK},
+		{PlayerState::UPPER}
 	};
 
 	// 体にヒットするプレイヤーの攻撃
@@ -109,6 +119,9 @@ private:
 	// クールタイム
 	float coolTime_;
 
+	// 追いかけている時間
+	float trackingTime_;
+
 	// 状態遷移
 	std::unordered_map<EnemyState, std::function<void()>> stateChange_;
 	void ChangeIdle();
@@ -121,15 +134,15 @@ private:
 	void ChangeKipUp();
 
 	// 状態の更新
-	std::function<void()> stateUpdate_;
-	void UpdateIdle();
-	void UpdateRun();
-	void UpdatePunch();
-	void UpdateKick();
-	void UpdateHitHead();
-	void UpdateHitBody();
-	void UpdateHitFly();
-	void UpdateKipUp();
+	std::function<void(const float deltaTime)> stateUpdate_;
+	void UpdateIdle(const float deltaTime);
+	void UpdateRun(const float deltaTime);
+	void UpdatePunch(const float deltaTime);
+	void UpdateKick(const float deltaTime);
+	void UpdateHitHead(const float deltaTime);
+	void UpdateHitBody(const float deltaTime);
+	void UpdateHitFly(const float deltaTime);
+	void UpdateKipUp(const float deltaTime);
 
 	// 機能の初期化
 	void InitFunction()override;

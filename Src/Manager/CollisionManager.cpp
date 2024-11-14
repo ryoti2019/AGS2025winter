@@ -1,3 +1,4 @@
+#include <map>
 #include "CollisionManager.h"
 
 void CollisionManager::Init()
@@ -65,11 +66,21 @@ void CollisionManager::CheckAttackCollision()
 				// 攻撃状態に入っていなかったら当たり判定を通らない
 				if (!attacker->GetAttackState())continue;
 
+				//// 中身があるか確認
+				//auto hitData = attackCollisionData_.find(target->GetActorType());
+
+				//// 中身があれば処理する
+				//if (hitData != attackCollisionData_.end())
+				//{
+				//	// すでに当たっていたら処理しない
+				//	if (std::find(hitData->second.begin(), hitData->second.end(), target) != hitData->second.end())continue;
+				//}
+
 				// 攻撃がすでに当たっていたら当たり判定を通らない
-				if (attacker->GetIsAttackHit())continue;
+				//if (attacker->GetIsAttackHit())continue;
 
 				// 攻撃を受けている状態だったら当たり判定を通らない
-				//if (actor2->GetHitState())continue;
+				//if (target->GetHitState())continue;
 
 				// 右手の判定
 				if (HitCheck_Capsule_Capsule(attacker->GetCollisionData().rightHandCapsuleUpPos, attacker->GetCollisionData().rightHandCapsuleDownPos,
@@ -86,6 +97,13 @@ void CollisionManager::CheckAttackCollision()
 
 					// 相手の座標を設定
 					target->SetTargetPos(attacker->GetPos());
+
+					//// 当たったもののデータを作る
+					//std::vector<std::shared_ptr<ActorBase>> data;
+					//data.emplace_back(target);
+
+					//// 当たったものを格納
+					//attackCollisionData_.emplace(target->GetActorType(), data);
 
 				}
 				// 左手の判定
@@ -104,6 +122,13 @@ void CollisionManager::CheckAttackCollision()
 					// 相手の座標を設定
 					target->SetTargetPos(attacker->GetPos());
 
+					//// 当たったもののデータを作る
+					//std::vector<std::shared_ptr<ActorBase>> data;
+					//data.emplace_back(target);
+
+					//// 当たったものを格納
+					//attackCollisionData_.emplace(target->GetActorType(), data);
+
 				}
 				// 右足の判定
 				if (HitCheck_Capsule_Capsule(attacker->GetCollisionData().rightFootCapsuleUpPos, attacker->GetCollisionData().rightFootCapsuleDownPos,
@@ -121,6 +146,13 @@ void CollisionManager::CheckAttackCollision()
 					// 相手の座標を設定
 					target->SetTargetPos(attacker->GetPos());
 
+					//// 当たったもののデータを作る
+					//std::vector<std::shared_ptr<ActorBase>> data;
+					//data.emplace_back(target);
+
+					//// 当たったものを格納
+					//attackCollisionData_.emplace(target->GetActorType(), data);
+
 				}
 				// 左足の判定
 				if (HitCheck_Capsule_Capsule(attacker->GetCollisionData().leftFootCapsuleUpPos, attacker->GetCollisionData().leftFootCapsuleDownPos,
@@ -137,6 +169,13 @@ void CollisionManager::CheckAttackCollision()
 
 					// 相手の座標を設定
 					target->SetTargetPos(attacker->GetPos());
+
+					//// 当たったもののデータを作る
+					//std::vector<std::shared_ptr<ActorBase>> data;
+					//data.emplace_back(target);
+
+					//// 当たったものを格納
+					//attackCollisionData_.emplace(target->GetActorType(), data);
 
 				}
 			}
@@ -202,7 +241,7 @@ void CollisionManager::CheckStageCollision()
 							VECTOR pos = target->GetTransform().pos;
 
 							// 法線の方向にちょっとだけ移動させる
-							pos = VAdd(pos, VScale(hit.Normal, 5.0f));
+							pos = VAdd(pos, VScale(hit.Normal, 30.0f));
 
 							// カプセルも一緒に移動させる
 							target->SetPos(pos);

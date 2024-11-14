@@ -7,7 +7,9 @@
 				"RIGHT_FOOT_FRAME_NAME": "mixamorig:RightFoot",
 				"LEFT_FOOT_FRAME_NAME": "mixamorig:LeftFoot",
 				"BODY_FRAME_NAME": "mixamorig:Hips",
-				"ATTACK_MOVE_POW": 200.0,
+				"RUN_MOVE_POW": 100.0,
+				"ATTACK_MOVE_POW": 500.0,
+				"ANIM_INDEX": 0,
 				"SCALE": 1.0,
 				"HP": 100,
 				"ACTOR_TYPE": 0,
@@ -66,8 +68,8 @@
 						"NAME": "UPPER",
 						"PATH": "Data/Model/Player/Upper.mv1",
 						"SPEED": 50.0,
-						"ATTACK_START_FRAME": 12.0,
-						"ATTACK_END_FRAME": 20.0,
+						"ATTACK_START_FRAME": 8.0,
+						"ATTACK_END_FRAME": 15.0,
 						"DAMAGE": 10
 					},
 					{
@@ -90,9 +92,15 @@
 				"RIGHT_FOOT_FRAME_NAME": "mixamorig1:RightFoot",
 				"LEFT_FOOT_FRAME_NAME": "mixamorig1:LeftFoot",
 				"BODY_FRAME_NAME": "mixamorig1:Hips",
-				"ATTACK_MOVE_POW": 200.0,
+				"ATTACK_MOVE_POW": 400.0,
+				"HIT_MOVE_POW": 200.0,
+				"HIT_FLY_MOVE_POW": 300.0,
+				"RUN_MOVE_POW": 100.0,
+				"ACTIVATION_DISTANCE": 1000.0,
 				"COOL_TIME": 5.0,
-				"SCALE": 1.0,
+				"TRACKING_MAX_TIME": 5.0,
+				"ANIM_INDEX": 1,
+				"SCALE": 10.0,
 				"HP": 100,
 				"ACTOR_TYPE": 1,
 				"ANIM": [
@@ -146,7 +154,7 @@
 		{
 			"StageData": {
 				"ATTACK_MOVE_POW": 0.0,
-				"SCALE": 3.0,
+				"SCALE": 10.0,
 				"HP": 10,
 				"ACTOR_TYPE": 2,
 				"POS": {

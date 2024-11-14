@@ -12,7 +12,10 @@ Enemy::Enemy(const VECTOR& pos, const json& data)
 	PUNCH_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(EnemyState::PUNCH) - 1]["ATTACK_END_FRAME"]),
 	KICK_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(EnemyState::KICK) - 1]["ATTACK_START_FRAME"]),
 	KICK_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(EnemyState::KICK) - 1]["ATTACK_END_FRAME"]),
-	COOL_TIME(data["COOL_TIME"])
+	COOL_TIME(data["COOL_TIME"]),
+	ACTIVATION_DISTANCE(data["ACTIVATION_DISTANCE"]),
+	HIT_FLY_MOVE_POW(data["HIT_FLY_MOVE_POW"]),
+	TRACKING_MAX_TIME(data["TRACKING_MAX_TIME"])
 {
 
 	// 機能の初期化
@@ -20,9 +23,6 @@ Enemy::Enemy(const VECTOR& pos, const json& data)
 
 	// モデルID
 	modelId_ = resMng_.LoadModelDuplicate(ResourceManager::SRC::ENEMY);
-
-	// モデルの大きさ
-	scl_ = 10.0f;
 
 	// 関数ポインタの初期化
 	InitFunctionPointer();
@@ -43,9 +43,6 @@ void Enemy::Init(const VECTOR& pos)
 
 	// モデルID
 	modelId_ = resMng_.LoadModelDuplicate(ResourceManager::SRC::ENEMY);
-
-	// モデルの大きさ
-	scl_ = 10.0f;
 
 	// 共通部分は基底クラスで初期化
 	ActorBase::Init(pos);
@@ -122,11 +119,20 @@ void Enemy::InitParameter()
 	// 相手の座標
 	targetPos_ = playerPos.value();
 
+	// 走るときの移動量
+	RUN_MOVE_POW = jsonData_["RUN_MOVE_POW"];
+
 	// 攻撃を受けたときに進む力
-	HIT_MOVE_POW = 20000.0f;
+	HIT_MOVE_POW = jsonData_["HIT_MOVE_POW"];
+
+	// アニメーション番号
+	ANIM_INDEX = jsonData_["ANIM_INDEX"];
 
 	// クールタイム
 	coolTime_ = 0.0f;
+
+	// 追いかけている時間
+	trackingTime_ = 0.0f;
 
 	// 行動を決めたかどうか
 	isActionDecided_ = false;
@@ -179,7 +185,7 @@ void Enemy::InitAnimation()
 			isLoop,
 
 			// アニメーション番号
-			1,
+			ANIM_INDEX,
 
 			// アニメーションの逆再生
 			false
@@ -206,11 +212,11 @@ void Enemy::Update(const float deltaTime)
 	// どの行動をするか決める
 	if (!isActionDecided_ && coolTime_ <= 0.0f)
 	{
-		//SelsectAction();
+		SelsectAction();
 	}
 
 	// 状態ごとの更新
-	stateUpdate_();
+	stateUpdate_(deltaTime);
 
 	// 重力
 	Gravity();
@@ -449,7 +455,7 @@ void Enemy::Move()
 	float length = Utility::Magnitude(vec);
 
 	// プレイヤーの近くに移動
-	if (length >= 1000.0f)
+	if (length >= ACTIVATION_DISTANCE)
 	{
 
 		ChangeState(EnemyState::RUN);
@@ -490,7 +496,7 @@ void Enemy::Attack()
 	float length = Utility::Magnitude(vec);
 
 	// プレイヤーとの距離が遠かったら攻撃できない
-	if (length >= 1000.0f) return;
+	if (length >= ACTIVATION_DISTANCE) return;
 
 	if (number == 0)
 	{
@@ -516,7 +522,7 @@ void Enemy::Attack()
 void Enemy::ChangeIdle()
 {
 
-	stateUpdate_ = std::bind(&Enemy::UpdateIdle, this);
+	stateUpdate_ = std::bind(&Enemy::UpdateIdle, this, std::placeholders::_1);
 
 	// 右手の攻撃判定をなくす
 	collisionData_.isRightHandAttack = false;
@@ -534,13 +540,18 @@ void Enemy::ChangeIdle()
 
 void Enemy::ChangeRun()
 {
-	stateUpdate_ = std::bind(&Enemy::UpdateRun, this);
+
+	stateUpdate_ = std::bind(&Enemy::UpdateRun, this, std::placeholders::_1);
+
+	// 追いかけている時間をリセット
+	trackingTime_ = 0.0f;
+
 }
 
 void Enemy::ChangePunch()
 {
 
-	stateUpdate_ = std::bind(&Enemy::UpdatePunch, this);
+	stateUpdate_ = std::bind(&Enemy::UpdatePunch, this, std::placeholders::_1);
 
 	// 攻撃が当たっているかをリセットする
 	isAttackHit_ = false;
@@ -550,7 +561,7 @@ void Enemy::ChangePunch()
 void Enemy::ChangeKick()
 {
 
-	stateUpdate_ = std::bind(&Enemy::UpdateKick, this);
+	stateUpdate_ = std::bind(&Enemy::UpdateKick, this, std::placeholders::_1);
 
 	// 攻撃が当たっているかをリセットする
 	isAttackHit_ = false;
@@ -560,7 +571,7 @@ void Enemy::ChangeKick()
 void Enemy::ChangeHitHead()
 {
 
-	stateUpdate_ = std::bind(&Enemy::UpdateHitHead, this);
+	stateUpdate_ = std::bind(&Enemy::UpdateHitHead, this, std::placeholders::_1);
 
 	// プレイヤーの方向を求める
 	VECTOR vec = VSub(targetPos_, transform_.pos);
@@ -579,7 +590,7 @@ void Enemy::ChangeHitHead()
 void Enemy::ChangeHitBody()
 {
 
-	stateUpdate_ = std::bind(&Enemy::UpdateHitBody, this);
+	stateUpdate_ = std::bind(&Enemy::UpdateHitBody, this, std::placeholders::_1);
 
 	// プレイヤーの方向を求める
 	VECTOR vec = VSub(targetPos_, transform_.pos);
@@ -597,7 +608,7 @@ void Enemy::ChangeHitBody()
 
 void Enemy::ChangeHitFly()
 {
-	stateUpdate_ = std::bind(&Enemy::UpdateHitFly, this);
+	stateUpdate_ = std::bind(&Enemy::UpdateHitFly, this, std::placeholders::_1);
 
 	// プレイヤーの方向を求める
 	VECTOR vec = VSub(targetPos_, transform_.pos);
@@ -609,23 +620,25 @@ void Enemy::ChangeHitFly()
 	vec = { -vec.x, vec.y,-vec.z };
 
 	// 上方向に飛ばす
-	velocity_.y += 11.0f;
+	velocity_.y = 1.0f;
 	vec.y = velocity_.y;
 
 	// 移動量
-	movePow_ = VScale(vec,10000.0f);
-
-	movePow_ = VAdd(transform_.pos, movePow_);
+	movePow_ = VScale(vec,HIT_FLY_MOVE_POW);
 
 }
 
 void Enemy::ChangeKipUp()
 {
-	stateUpdate_ = std::bind(&Enemy::UpdateKipUp, this);
+	stateUpdate_ = std::bind(&Enemy::UpdateKipUp, this, std::placeholders::_1);
 }
 
-void Enemy::UpdateIdle()
+void Enemy::UpdateIdle(const float deltaTime)
 {
+
+	// プレイヤーの座標
+	std::optional<VECTOR> playerPos = GetPlayerPos();
+	targetPos_ = playerPos.value();
 
 	// プレイヤーの方向を求める
 	VECTOR vec = VSub(targetPos_, transform_.pos);
@@ -644,8 +657,12 @@ void Enemy::UpdateIdle()
 
 }
 
-void Enemy::UpdateRun()
+void Enemy::UpdateRun(const float deltaTime)
 {
+
+	// プレイヤーの座標
+	std::optional<VECTOR> playerPos = GetPlayerPos();
+	targetPos_ = playerPos.value();
 
 	// プレイヤーの方向を求める
 	VECTOR vec = VSub(targetPos_, transform_.pos);
@@ -653,11 +670,6 @@ void Enemy::UpdateRun()
 	// ベクトルの長さ
 	float length = Utility::Magnitude(vec);
 
-	// プレイヤーの近くに来たら待機に遷移
-	if (length <= 1000.0f)
-	{
-		ChangeState(EnemyState::IDLE);
-	}
 	// 正規化
 	vec = VNorm(vec);
 
@@ -668,14 +680,31 @@ void Enemy::UpdateRun()
 	LazyRotation(angle);
 
 	// 移動量
-	movePow_ = VScale(vec, 100.0f);
+	movePow_ = VScale(vec, RUN_MOVE_POW);
 
 	// プレイヤー方向に移動
  	transform_.pos = VAdd(transform_.pos, movePow_);
 
+	// プレイヤーの近くに来たら次の行動を決める
+	if (length <= ACTIVATION_DISTANCE)
+	{
+		isActionDecided_ = false;
+	}
+	// プレイヤーに追いつけなかったら待機に遷移
+	else if (trackingTime_ >= TRACKING_MAX_TIME)
+	{
+
+		ChangeState(EnemyState::IDLE);
+
+		// クールタイムを設定
+		coolTime_ = COOL_TIME;
+
+	}
+
+	trackingTime_ += deltaTime;
 }
 
-void Enemy::UpdatePunch()
+void Enemy::UpdatePunch(const float deltaTime)
 {
 
 	// 攻撃判定があるフレーム
@@ -701,7 +730,7 @@ void Enemy::UpdatePunch()
 
 }
 
-void Enemy::UpdateKick()
+void Enemy::UpdateKick(const float deltaTime)
 {
 
 	// 攻撃判定があるフレーム
@@ -727,7 +756,7 @@ void Enemy::UpdateKick()
 
 }
 
-void Enemy::UpdateHitHead()
+void Enemy::UpdateHitHead(const float deltaTime)
 {
 
 	// 少し後ろにゆっくり移動
@@ -741,7 +770,7 @@ void Enemy::UpdateHitHead()
 
 }
 
-void Enemy::UpdateHitBody()
+void Enemy::UpdateHitBody(const float deltaTime)
 {
 
 	// 少し後ろにゆっくり移動
@@ -755,16 +784,15 @@ void Enemy::UpdateHitBody()
 
 }
 
-void Enemy::UpdateHitFly()
+void Enemy::UpdateHitFly(const float deltaTime)
 {
 
-	if (transform_.pos.x != movePow_.x || transform_.pos.y != movePow_.y || transform_.pos.z != movePow_.z)
+	// 地面につくまで加算する
+	if (velocity_.y != 0.0f)
 	{
-		// 後ろにゆっくり移動
-		transform_.pos = Utility::Lerp(transform_.pos, movePow_, 0.5f);
+		// 後ろに飛んでいきながら移動
+		transform_.pos = VAdd(transform_.pos, movePow_);
 	}
-
-	//transform_.pos = VAdd(transform_.pos, movePow_);
 
 	// アニメーションが終了したら起き上がり状態へ遷移する
 	if (animationController_->IsEndPlayAnimation())
@@ -774,7 +802,7 @@ void Enemy::UpdateHitFly()
 
 }
 
-void Enemy::UpdateKipUp()
+void Enemy::UpdateKipUp(const float deltaTime)
 {
 
 	// アニメーションが終了したら待機状態へ遷移する

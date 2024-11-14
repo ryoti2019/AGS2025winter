@@ -590,7 +590,7 @@ void Camera::GamePadController(void)
 		axisDeg = VScale(axisDeg, 3.0f);
 	}
 	// ã•ûŒü
-	if (pad.AKeyRZ < 0 && Utility::Rad2DegF(angle_.x) <= 30.0f)
+	if (pad.AKeyRZ < 0 && Utility::Rad2DegF(angle_.x) >= -30.0f)
 	{
 		axisDeg.x = pad.AKeyRZ;
 		// •ûŒü‚ğ³‹K‰»
@@ -598,13 +598,14 @@ void Camera::GamePadController(void)
 		axisDeg = VScale(axisDeg, 3.0f);
 	}
 	// ‰º•ûŒü
-	if (pad.AKeyRZ > 0 && Utility::Rad2DegF(angle_.x) >= -30.0f)
+	if (pad.AKeyRZ > 0 && Utility::Rad2DegF(angle_.x) <= 30.0f)
 	{
 		axisDeg.x = pad.AKeyRZ;
 		// •ûŒü‚ğ³‹K‰»
 		axisDeg = VNorm(axisDeg);
 		axisDeg = VScale(axisDeg, 3.0f);
 	}
+
 
 	if (axisDeg.x != 0.0f || axisDeg.y != 0.0f)
 	{

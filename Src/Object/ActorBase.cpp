@@ -16,7 +16,7 @@ ActorBase::ActorBase(const VECTOR& pos, const json& data)
 	ATTACK_MOVE_POW(data["ATTACK_MOVE_POW"]),
 	GRAVITY(9.8f),
 	ROTATION_POW(0.2f),
-	HAND_AND_FOOT_COLLISION_RADIUS(100.0f),
+	HAND_AND_FOOT_COLLISION_RADIUS(1000.0f),
 	BODY_COLLISION_RADIUS(300.0f),
 	HP_MAX(data["HP"]),
 	resMng_(ResourceManager::GetInstance()),

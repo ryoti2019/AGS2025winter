@@ -45,7 +45,7 @@ public:
 	static constexpr float CAMERA_NEAR = 40.0f;
 
 	// カメラクリップ：FAR
-	static constexpr float CAMERA_FAR = 50000.0f;
+	static constexpr float CAMERA_FAR = 100000.0f;
 
 	// カメラモード
 	enum class MODE

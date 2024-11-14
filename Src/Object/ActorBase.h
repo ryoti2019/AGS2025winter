@@ -168,6 +168,9 @@ public:
 	// 体のフレーム名
 	std::string BODY_FRAME;
 
+	// 走るときの移動量
+	float RUN_MOVE_POW;
+
 	// 攻撃するときに進む移動量
 	const float ATTACK_MOVE_POW;
 	
@@ -186,8 +189,14 @@ public:
 	// 体の当たり判定の半径
 	const float BODY_COLLISION_RADIUS;
 
+	// モデルの大きさ
+	float MODEL_SCALE;
+
 	// HPの最大値
 	int HP_MAX;
+
+	// アニメーション番号
+	int ANIM_INDEX;
 
 	ActorBase(const VECTOR& pos, const json& data);
 
