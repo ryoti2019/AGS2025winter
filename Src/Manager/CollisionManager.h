@@ -10,7 +10,7 @@ public:
 	~CollisionManager() = default;
 
 	void Init();
-	void Update();
+	void Update(const float deltaTime);
 
 	// 当たり判定を見たいものを登録する
 	void Register(const std::shared_ptr<ActorBase>& actor);
@@ -45,14 +45,11 @@ private:
 	// すべてのアクターの衝突判定をまとめたデータ
 	std::unordered_map<ActorType, std::vector<std::shared_ptr<ActorBase>>> collisionActorData_;
 
-	// 攻撃が当たった敵をまとめたデータ
-	std::unordered_map<ActorType, std::vector<std::shared_ptr<ActorBase>>> attackCollisionData_;
-
-	// アクターの状態をまとめたデータ
-
+	// 攻撃が当たっているかどうかのデータ
+	std::map<std::shared_ptr<ActorBase>, std::map<int, float>> invincibleData_;
 
 	// プレイヤーと敵の攻撃の当たり判定
-	void CheckAttackCollision();
+	void CheckAttackCollision(const float deltaTime);
 
 	// プレイヤーと敵のステージとの当たり判定
 	void CheckStageCollision();

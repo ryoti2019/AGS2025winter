@@ -8,7 +8,7 @@
 				"LEFT_FOOT_FRAME_NAME": "mixamorig:LeftFoot",
 				"BODY_FRAME_NAME": "mixamorig:Hips",
 				"RUN_MOVE_POW": 100.0,
-				"ATTACK_MOVE_POW": 500.0,
+				"ATTACK_MOVE_POW": 1000.0,
 				"ANIM_INDEX": 0,
 				"SCALE": 1.0,
 				"HP": 100,

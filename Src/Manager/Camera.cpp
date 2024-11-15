@@ -629,10 +629,10 @@ void Camera::GamePadController(void)
 	VECTOR relativeCPos = rotXY_.PosAxis(LOCAL_P2C_POS);
 
 	// カメラ座標をゆっくり移動させる
-	pos_ = Utility::Lerp(pos_, VAdd(followPos, relativeCPos), 0.1f);
+	pos_ = Utility::Lerp(pos_, VAdd(followPos, relativeCPos), 1.0f);
 
 	// 注視点をゆっくり移動させる
-	targetPos_ = Utility::Lerp(targetPos_, VAdd(followPos, relativeTPos), 0.1f);
+	targetPos_ = Utility::Lerp(targetPos_, VAdd(followPos, relativeTPos), 1.0f);
 
 	// カメラの上方向
 	cameraUp_ = Utility::DIR_U;

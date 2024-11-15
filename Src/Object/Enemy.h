@@ -59,6 +59,9 @@ public:
 	// UŒ‚’†‚©æ“¾
 	bool GetAttackState()override;
 
+	// UŒ‚í—Ş‚ğæ“¾
+	int GetToatlAttackTypes() { return attackState_.size(); }
+
 	// UŒ‚‚ğó‚¯‚Ä‚¢‚éó‘Ô‚ğæ“¾
 	bool GetHitState()override;
 

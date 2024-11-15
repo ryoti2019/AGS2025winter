@@ -254,6 +254,9 @@ public:
 	// UŒ‚ó‘Ô‚ğæ“¾
 	virtual bool GetAttackState();
 
+	// UŒ‚í—Ş‚ğæ“¾
+	virtual int GetToatlAttackTypes() { return 0; }
+
 	// UŒ‚‚ğó‚¯‚Ä‚¢‚éó‘Ô‚ğæ“¾
 	virtual bool GetHitState();
 

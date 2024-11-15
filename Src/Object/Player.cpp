@@ -400,11 +400,16 @@ void Player::Attack()
 	if (inputController_->ComboAttack())
 	{
 		// コンボの先行入力の処理
-		for (auto& data : isCombo_)
+		for (int i = static_cast<int>(PlayerState::JAB); i <= static_cast<int>(PlayerState::RIGHT_KICK); i++)
 		{
-			if (!data.second)
+
+			// 今から判断するものを探す
+			auto isCombo = isCombo_.find(static_cast<PlayerState>(i));
+
+			// falseであればtrueにして先行入力を保持する
+			if (!isCombo->second)
 			{
-				data.second = true;
+				isCombo->second = true;
 				break;
 			}
 		}
@@ -445,6 +450,39 @@ void Player::Attack()
 		}
 
 	}
+
+}
+
+void Player::MoveAndRotate()
+{
+
+	// 入力方向
+	dir_ = inputController_->Dir();
+
+	// カメラの角度
+	VECTOR cameraAngle = SceneManager::GetInstance().GetCamera().lock()->GetAngle();
+
+	// Y軸の行列
+	MATRIX mat = MGetIdent();
+	mat = MMult(mat, MGetRotY(cameraAngle.y));
+
+	// 回転行列を使用して、ベクトルを回転させる
+	moveDir_ = VTransform(dir_, mat);
+
+	// 正規化
+	moveDir_ = VNorm(moveDir_);
+
+	// 移動量
+	speed_ = RUN_MOVE_POW;
+
+	// どれだけ進むか計算
+	movePow_ = VAdd(transform_.pos, VScale(moveDir_, ATTACK_MOVE_POW));
+
+	// 方向を角度に変換する(XZ平面 Y軸)
+	float angle = atan2f(dir_.x, dir_.z);
+
+	// プレイヤーにカメラを追従するときはこっちに切り替える
+	LazyRotation(cameraAngle.y + angle);
 
 }
 
@@ -500,9 +538,6 @@ void Player::ChangeJab()
 
 	stateUpdate_ = std::bind(&Player::UpdateJab, this);
 
-	// どれだけ進むか計算
-	movePow_ = VAdd(transform_.pos, VScale(moveDir_, ATTACK_MOVE_POW));
-
 	// 入力受付時間をリセット
 	acceptCnt_ = 0.0f;
 
@@ -512,15 +547,19 @@ void Player::ChangeJab()
 	// ダメージ量
 	damage_ = JAB_DAMAGE;
 
+	// 攻撃するときの移動や回転の処理
+	//MoveAndRotate();
+
+	// どれだけ進むか計算
+	movePow_ = VAdd(transform_.pos, VScale(moveDir_, ATTACK_MOVE_POW));
+
+
 }
 
 void Player::ChangeStraight()
 {
 
 	stateUpdate_ = std::bind(&Player::UpdateStraight, this);
-
-	// どれだけ進むか計算
-	movePow_ = VAdd(transform_.pos, VScale(moveDir_, ATTACK_MOVE_POW));
 
 	// 入力受付時間をリセット
 	acceptCnt_ = 0.0f;
@@ -531,15 +570,18 @@ void Player::ChangeStraight()
 	// ダメージ量
 	damage_ = STRAIGHT_DAMAGE;
 
+	// 攻撃するときの移動や回転の処理
+	//MoveAndRotate();
+
+	// どれだけ進むか計算
+	movePow_ = VAdd(transform_.pos, VScale(moveDir_, ATTACK_MOVE_POW));
+
 }
 
 void Player::ChangeHook()
 {
 
 	stateUpdate_ = std::bind(&Player::UpdateHook, this);
-
-	// どれだけ進むか計算
-	movePow_ = VAdd(transform_.pos, VScale(moveDir_, ATTACK_MOVE_POW));
 
 	// 入力受付時間をリセット
 	acceptCnt_ = 0.0f;
@@ -550,15 +592,18 @@ void Player::ChangeHook()
 	// ダメージ量
 	damage_ = HOOK_DAMAGE;
 
+	// 攻撃するときの移動や回転の処理
+	//MoveAndRotate();
+
+	// どれだけ進むか計算
+	movePow_ = VAdd(transform_.pos, VScale(moveDir_, ATTACK_MOVE_POW));
+
 }
 
 void Player::ChangeLeftKick()
 {
 
 	stateUpdate_ = std::bind(&Player::UpdateLeftKick, this);
-
-	// どれだけ進むか計算
-	movePow_ = VAdd(transform_.pos, VScale(moveDir_, ATTACK_MOVE_POW));
 
 	// 入力受付時間をリセット
 	acceptCnt_ = 0.0f;
@@ -569,15 +614,18 @@ void Player::ChangeLeftKick()
 	// ダメージ量
 	damage_ = LEFT_KICK_DAMAGE;
 
+	// 攻撃するときの移動や回転の処理
+	//MoveAndRotate();
+
+	// どれだけ進むか計算
+	movePow_ = VAdd(transform_.pos, VScale(moveDir_, ATTACK_MOVE_POW));
+
 }
 
 void Player::ChangeRightKick()
 {
 
 	stateUpdate_ = std::bind(&Player::UpdateRightKick, this);
-
-	// どれだけ進むか計算
-	movePow_ = VAdd(transform_.pos, VScale(moveDir_, ATTACK_MOVE_POW));
 
 	// 入力受付時間をリセット
 	acceptCnt_ = 0.0f;
@@ -587,6 +635,12 @@ void Player::ChangeRightKick()
 
 	// ダメージ量
 	damage_ = RIGHT_KICK_DAMAGE;
+
+	// 攻撃するときの移動や回転の処理
+	//MoveAndRotate();
+
+	// どれだけ進むか計算
+	movePow_ = VAdd(transform_.pos, VScale(moveDir_, ATTACK_MOVE_POW));
 
 }
 

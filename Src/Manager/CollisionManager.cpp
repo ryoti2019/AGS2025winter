@@ -5,11 +5,11 @@ void CollisionManager::Init()
 {
 }
 
-void CollisionManager::Update()
+void CollisionManager::Update(const float deltaTime)
 {
 
 	// プレイヤーと敵の攻撃の当たり判定をチェック
-	CheckAttackCollision();
+	CheckAttackCollision(deltaTime);
 
 	// プレイヤーと敵のステージの当たり判定をチェック
 	CheckStageCollision();
@@ -37,7 +37,7 @@ void CollisionManager::Register(const std::shared_ptr<ActorBase>& actor)
 
 }
 
-void CollisionManager::CheckAttackCollision()
+void CollisionManager::CheckAttackCollision(const float deltaTime)
 {
 
 	// 衝突しているか判定する
@@ -66,15 +66,39 @@ void CollisionManager::CheckAttackCollision()
 				// 攻撃状態に入っていなかったら当たり判定を通らない
 				if (!attacker->GetAttackState())continue;
 
-				//// 中身があるか確認
-				//auto hitData = attackCollisionData_.find(target->GetActorType());
+				// 中身があるか確認
+				auto hitData = invincibleData_.find(target);
 
-				//// 中身があれば処理する
-				//if (hitData != attackCollisionData_.end())
-				//{
-				//	// すでに当たっていたら処理しない
-				//	if (std::find(hitData->second.begin(), hitData->second.end(), target) != hitData->second.end())continue;
-				//}
+				// 生成されていない場合は、新しくvector配列の箱を作りその中に要素を入れていく
+				if (hitData == invincibleData_.end())
+				{
+
+					// 当たったもののデータを作る
+					std::map<int, float> data;
+					for (int i = ; i <= attacker->GetToatlAttackTypes(); i++)
+					{
+						data.emplace(i, 0.0f);
+					}
+
+					// 当たったものを格納
+					invincibleData_.emplace(target, data);
+
+				}
+
+				// 中身が無ければ処理しない
+				if (hitData == invincibleData_.end())return;
+
+				// 今攻撃している側のアニメーションが要素にあるか確認する
+				auto a = hitData->second.find(attacker->GetState());
+
+				// 中身が無ければ処理しない
+				if (a == hitData->second.end())return;
+
+				// 無敵時間を減算していく
+				a->second -= deltaTime;
+
+				// このアニメーション中の無敵時間が消えていなければ処理しない
+				if (a->second > 0.0f)return;
 
 				// 攻撃がすでに当たっていたら当たり判定を通らない
 				//if (attacker->GetIsAttackHit())continue;
@@ -98,12 +122,12 @@ void CollisionManager::CheckAttackCollision()
 					// 相手の座標を設定
 					target->SetTargetPos(attacker->GetPos());
 
-					//// 当たったもののデータを作る
-					//std::vector<std::shared_ptr<ActorBase>> data;
-					//data.emplace_back(target);
-
-					//// 当たったものを格納
-					//attackCollisionData_.emplace(target->GetActorType(), data);
+					// 当たったもののデータを作る
+					std::map<int,float> data;
+					data.emplace(attacker->GetState(), 1.0f);
+					
+					// 当たったものを格納
+					invincibleData_.emplace(target, data);
 
 				}
 				// 左手の判定
@@ -122,12 +146,12 @@ void CollisionManager::CheckAttackCollision()
 					// 相手の座標を設定
 					target->SetTargetPos(attacker->GetPos());
 
-					//// 当たったもののデータを作る
-					//std::vector<std::shared_ptr<ActorBase>> data;
-					//data.emplace_back(target);
+					// 当たったもののデータを作る
+					std::map<int, float> data;
+					data.emplace(attacker->GetState(), 1.0f);
 
-					//// 当たったものを格納
-					//attackCollisionData_.emplace(target->GetActorType(), data);
+					// 当たったものを格納
+					invincibleData_.emplace(target, data);
 
 				}
 				// 右足の判定
@@ -146,12 +170,12 @@ void CollisionManager::CheckAttackCollision()
 					// 相手の座標を設定
 					target->SetTargetPos(attacker->GetPos());
 
-					//// 当たったもののデータを作る
-					//std::vector<std::shared_ptr<ActorBase>> data;
-					//data.emplace_back(target);
+					// 当たったもののデータを作る
+					std::map<int, float> data;
+					data.emplace(attacker->GetState(), 1.0f);
 
-					//// 当たったものを格納
-					//attackCollisionData_.emplace(target->GetActorType(), data);
+					// 当たったものを格納
+					invincibleData_.emplace(target, data);
 
 				}
 				// 左足の判定
@@ -170,12 +194,12 @@ void CollisionManager::CheckAttackCollision()
 					// 相手の座標を設定
 					target->SetTargetPos(attacker->GetPos());
 
-					//// 当たったもののデータを作る
-					//std::vector<std::shared_ptr<ActorBase>> data;
-					//data.emplace_back(target);
+					// 当たったもののデータを作る
+					std::map<int, float> data;
+					data.emplace(attacker->GetState(), 1.0f);
 
-					//// 当たったものを格納
-					//attackCollisionData_.emplace(target->GetActorType(), data);
+					// 当たったものを格納
+					invincibleData_.emplace(target, data);
 
 				}
 			}

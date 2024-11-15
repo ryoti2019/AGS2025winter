@@ -36,7 +36,7 @@ void GameScene::Update(const float deltaTime)
 	actorManager_->Update(deltaTime);
 
 	// 衝突判定の管理クラスの更新
-	collisionManager_->Update();
+	collisionManager_->Update(deltaTime);
 
 }
 
