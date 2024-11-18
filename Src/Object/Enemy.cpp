@@ -149,6 +149,7 @@ void Enemy::InitFunctionPointer()
 	stateChange_.emplace(EnemyState::HIT_HEAD, std::bind(&Enemy::ChangeHitHead, this));
 	stateChange_.emplace(EnemyState::HIT_BODY, std::bind(&Enemy::ChangeHitBody, this));
 	stateChange_.emplace(EnemyState::HIT_FLY, std::bind(&Enemy::ChangeHitFly, this));
+	stateChange_.emplace(EnemyState::FLINCH_UP, std::bind(&Enemy::ChangeFlinchUp, this));
 	stateChange_.emplace(EnemyState::KIP_UP, std::bind(&Enemy::ChangeKipUp, this));
 }
 
@@ -288,12 +289,27 @@ bool Enemy::GetHitState()
 void Enemy::AttackHit(const int damage, const int state)
 {
 
+	// どのヒットアニメーションかチェックする
+	AttackHitCheck(state);
+
+	// HPを減らす
+	SubHp(damage);
+	
+	// アニメーションの再生時間をリセットする
+	animationController_->ResetStepAnim();
+
+}
+
+void Enemy::AttackHitCheck(const int state)
+{
+
 	// 頭にヒットするアニメーションかチェック
 	for (const auto hitState : hitHeadState_)
 	{
 		if (hitState == static_cast<PlayerState>(state))
 		{
 			ChangeState(EnemyState::HIT_HEAD);
+			return;
 		}
 	}
 
@@ -303,6 +319,7 @@ void Enemy::AttackHit(const int damage, const int state)
 		if (hitState == static_cast<PlayerState>(state))
 		{
 			ChangeState(EnemyState::HIT_BODY);
+			return;
 		}
 	}
 
@@ -312,14 +329,19 @@ void Enemy::AttackHit(const int damage, const int state)
 		if (hitState == static_cast<PlayerState>(state))
 		{
 			ChangeState(EnemyState::HIT_FLY);
+			return;
 		}
 	}
 
-	// HPを減らす
-	SubHp(damage);
-	
-	// アニメーションの再生時間をリセットする
-	animationController_->ResetStepAnim();
+	// 吹っ飛んでいくアニメーションかチェック
+	for (const auto hitState : hitFlinchUpState_)
+	{
+		if (hitState == static_cast<PlayerState>(state))
+		{
+			ChangeState(EnemyState::FLINCH_UP);
+			return;
+		}
+	}
 
 }
 
@@ -394,7 +416,7 @@ void Enemy::ChangeState(EnemyState state)
 	stateChange_[state_]();
 
 	// 前のアニメーションを保存
-	preKey_ = key_;
+ 	preKey_ = key_;
 
 	// 新しいアニメーションを保存
 	key_ = ANIM_DATA_KEY[static_cast<int>(state)];
@@ -556,6 +578,12 @@ void Enemy::ChangePunch()
 	// 攻撃が当たっているかをリセットする
 	isAttackHit_ = false;
 
+	// スピード
+	speed_ = ATTACK_MOVE_POW;
+
+	// どれだけ進むか計算
+	movePow_ = VAdd(transform_.pos, VScale(moveDir_, speed_));
+
 }
 
 void Enemy::ChangeKick()
@@ -565,6 +593,12 @@ void Enemy::ChangeKick()
 
 	// 攻撃が当たっているかをリセットする
 	isAttackHit_ = false;
+
+	// スピード
+	speed_ = ATTACK_MOVE_POW;
+
+	// どれだけ進むか計算
+	movePow_ = VAdd(transform_.pos, VScale(moveDir_, speed_));
 
 }
 
@@ -582,8 +616,11 @@ void Enemy::ChangeHitHead()
 	// プレイヤーの方向と逆方向のベクトル
 	vec = { -vec.x, vec.y,-vec.z };
 
+	// スピード
+	speed_ = ATTACK_MOVE_POW;
+
 	// 移動量
-	movePow_ = VAdd(transform_.pos, VScale(vec, ATTACK_MOVE_POW));
+	movePow_ = VAdd(transform_.pos, VScale(vec, speed_));
 
 }
 
@@ -601,8 +638,11 @@ void Enemy::ChangeHitBody()
 	// プレイヤーの方向と逆方向のベクトル
 	vec = { -vec.x, vec.y,-vec.z };
 
+	// スピード
+	speed_ = ATTACK_MOVE_POW;
+
 	// 移動量
-	movePow_ = VAdd(transform_.pos, VScale(vec, ATTACK_MOVE_POW));
+	movePow_ = VAdd(transform_.pos, VScale(vec, speed_));
 
 }
 
@@ -620,11 +660,45 @@ void Enemy::ChangeHitFly()
 	vec = { -vec.x, vec.y,-vec.z };
 
 	// 上方向に飛ばす
-	velocity_.y = 1.0f;
+	velocity_.y = 1.2f;
 	vec.y = velocity_.y;
 
+	// スピード
+	speed_ = HIT_FLY_MOVE_POW;
+
 	// 移動量
-	movePow_ = VScale(vec,HIT_FLY_MOVE_POW);
+	movePow_ = VScale(vec, speed_);
+
+}
+
+void Enemy::ChangeFlinchUp()
+{
+
+	stateUpdate_ = std::bind(&Enemy::UpdateHitFly, this, std::placeholders::_1);
+
+	// プレイヤーの方向を求める
+	VECTOR vec = VSub(targetPos_, transform_.pos);
+
+	// 正規化
+	vec = VNorm(vec);
+
+	// プレイヤーの方向と逆方向のベクトル
+	vec = { -vec.x, vec.y,-vec.z };
+
+	// 上方向に飛ばす
+	velocity_.y = 15.0f;
+	vec.y = velocity_.y;
+
+	// スピード
+	speed_ = 4.0f;
+
+	vec = VScale(vec, speed_);
+
+	vec.x = 0.0f;
+	vec.z = 0.0f;
+
+	// 移動量
+	movePow_ = VScale(vec, speed_);
 
 }
 
@@ -679,8 +753,11 @@ void Enemy::UpdateRun(const float deltaTime)
 	// プレイヤー方向に回転
 	LazyRotation(angle);
 
+	// スピード
+	speed_ = RUN_MOVE_POW;
+
 	// 移動量
-	movePow_ = VScale(vec, RUN_MOVE_POW);
+	movePow_ = VScale(vec, speed_);
 
 	// プレイヤー方向に移動
  	transform_.pos = VAdd(transform_.pos, movePow_);
@@ -793,6 +870,20 @@ void Enemy::UpdateHitFly(const float deltaTime)
 		// 後ろに飛んでいきながら移動
 		transform_.pos = VAdd(transform_.pos, movePow_);
 	}
+
+	// アニメーションが終了したら起き上がり状態へ遷移する
+	if (animationController_->IsEndPlayAnimation())
+	{
+		ChangeState(EnemyState::KIP_UP);
+	}
+
+}
+
+void Enemy::UpdateFlinchUp(const float deltaTime)
+{
+
+	// 少し後ろにゆっくり移動
+	transform_.pos = Utility::Lerp(transform_.pos, movePow_, 0.01f);
 
 	// アニメーションが終了したら起き上がり状態へ遷移する
 	if (animationController_->IsEndPlayAnimation())

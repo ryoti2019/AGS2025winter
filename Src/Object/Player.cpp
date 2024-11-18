@@ -323,12 +323,27 @@ bool Player::GetComboState()
 void Player::AttackHit(const int damage, const int state)
 {
 
+	// どのアニメーションかチェックする
+	AttackHitCheck(state);
+
+	// HPを減らす
+	SubHp(damage);
+	
+	// アニメーションの再生時間をリセットする
+	animationController_->ResetStepAnim();
+
+}
+
+void Player::AttackHitCheck(const int state)
+{
+
 	// 頭にヒットするアニメーションかチェック
 	for (const auto hitState : hitHeadState_)
 	{
 		if (hitState == static_cast<EnemyState>(state))
 		{
 			ChangeState(PlayerState::HIT_HEAD);
+			return;
 		}
 	}
 
@@ -338,14 +353,9 @@ void Player::AttackHit(const int damage, const int state)
 		if (hitState == static_cast<EnemyState>(state))
 		{
 			ChangeState(PlayerState::HIT_BODY);
+			return;
 		}
 	}
-
-	// HPを減らす
-	SubHp(damage);
-	
-	// アニメーションの再生時間をリセットする
-	animationController_->ResetStepAnim();
 
 }
 
@@ -453,39 +463,6 @@ void Player::Attack()
 
 }
 
-void Player::MoveAndRotate()
-{
-
-	// 入力方向
-	dir_ = inputController_->Dir();
-
-	// カメラの角度
-	VECTOR cameraAngle = SceneManager::GetInstance().GetCamera().lock()->GetAngle();
-
-	// Y軸の行列
-	MATRIX mat = MGetIdent();
-	mat = MMult(mat, MGetRotY(cameraAngle.y));
-
-	// 回転行列を使用して、ベクトルを回転させる
-	moveDir_ = VTransform(dir_, mat);
-
-	// 正規化
-	moveDir_ = VNorm(moveDir_);
-
-	// 移動量
-	speed_ = RUN_MOVE_POW;
-
-	// どれだけ進むか計算
-	movePow_ = VAdd(transform_.pos, VScale(moveDir_, ATTACK_MOVE_POW));
-
-	// 方向を角度に変換する(XZ平面 Y軸)
-	float angle = atan2f(dir_.x, dir_.z);
-
-	// プレイヤーにカメラを追従するときはこっちに切り替える
-	LazyRotation(cameraAngle.y + angle);
-
-}
-
 void Player::ChangeState(PlayerState state)
 {
 
@@ -547,12 +524,11 @@ void Player::ChangeJab()
 	// ダメージ量
 	damage_ = JAB_DAMAGE;
 
-	// 攻撃するときの移動や回転の処理
-	//MoveAndRotate();
+	// スピード
+	speed_ = ATTACK_MOVE_POW;
 
 	// どれだけ進むか計算
-	movePow_ = VAdd(transform_.pos, VScale(moveDir_, ATTACK_MOVE_POW));
-
+	movePow_ = VAdd(transform_.pos, VScale(moveDir_, speed_));
 
 }
 
@@ -570,11 +546,11 @@ void Player::ChangeStraight()
 	// ダメージ量
 	damage_ = STRAIGHT_DAMAGE;
 
-	// 攻撃するときの移動や回転の処理
-	//MoveAndRotate();
+	// スピード
+	speed_ = ATTACK_MOVE_POW;
 
 	// どれだけ進むか計算
-	movePow_ = VAdd(transform_.pos, VScale(moveDir_, ATTACK_MOVE_POW));
+	movePow_ = VAdd(transform_.pos, VScale(moveDir_, speed_));
 
 }
 
@@ -592,11 +568,11 @@ void Player::ChangeHook()
 	// ダメージ量
 	damage_ = HOOK_DAMAGE;
 
-	// 攻撃するときの移動や回転の処理
-	//MoveAndRotate();
+	// スピード
+	speed_ = ATTACK_MOVE_POW;
 
 	// どれだけ進むか計算
-	movePow_ = VAdd(transform_.pos, VScale(moveDir_, ATTACK_MOVE_POW));
+	movePow_ = VAdd(transform_.pos, VScale(moveDir_, speed_));
 
 }
 
@@ -614,11 +590,11 @@ void Player::ChangeLeftKick()
 	// ダメージ量
 	damage_ = LEFT_KICK_DAMAGE;
 
-	// 攻撃するときの移動や回転の処理
-	//MoveAndRotate();
+	// スピード
+	speed_ = ATTACK_MOVE_POW;
 
 	// どれだけ進むか計算
-	movePow_ = VAdd(transform_.pos, VScale(moveDir_, ATTACK_MOVE_POW));
+	movePow_ = VAdd(transform_.pos, VScale(moveDir_, speed_));
 
 }
 
@@ -636,11 +612,11 @@ void Player::ChangeRightKick()
 	// ダメージ量
 	damage_ = RIGHT_KICK_DAMAGE;
 
-	// 攻撃するときの移動や回転の処理
-	//MoveAndRotate();
+	// スピード
+	speed_ = ATTACK_MOVE_POW;
 
 	// どれだけ進むか計算
-	movePow_ = VAdd(transform_.pos, VScale(moveDir_, ATTACK_MOVE_POW));
+	movePow_ = VAdd(transform_.pos, VScale(moveDir_, speed_));
 
 }
 
@@ -661,6 +637,12 @@ void Player::ChangeUpper()
 	// ダメージ量
 	damage_ = UPPER_DAMAGE;
 
+	// スピード
+	speed_ = ATTACK_MOVE_POW;
+
+	// どれだけ進むか計算
+	movePow_ = VAdd(transform_.pos, VScale(moveDir_, speed_));
+
 }
 
 void Player::ChangeHitHead()
@@ -677,8 +659,11 @@ void Player::ChangeHitHead()
 	// プレイヤーの方向と逆方向のベクトル
 	vec = { -vec.x, vec.y,-vec.z };
 
-	// 移動量
-	movePow_ = VAdd(transform_.pos, VScale(vec, ATTACK_MOVE_POW));
+	// スピード
+	speed_ = ATTACK_MOVE_POW;
+
+	// どれだけ進むか計算
+	movePow_ = VAdd(transform_.pos, VScale(moveDir_, speed_));
 
 }
 
@@ -696,8 +681,11 @@ void Player::ChangeHitBody()
 	// プレイヤーの方向と逆方向のベクトル
 	vec = { -vec.x, vec.y,-vec.z };
 
-	// 移動量
-	movePow_ = VAdd(transform_.pos, VScale(vec, ATTACK_MOVE_POW));
+	// スピード
+	speed_ = ATTACK_MOVE_POW;
+
+	// どれだけ進むか計算
+	movePow_ = VAdd(transform_.pos, VScale(moveDir_, speed_));
 
 }
 
@@ -728,7 +716,7 @@ void Player::UpdateRun(void)
 	// 正規化
 	moveDir_ = VNorm(moveDir_);
 
-	// 移動量
+	// スピード
 	speed_ = RUN_MOVE_POW;
 
 	// 移動量

@@ -29,7 +29,7 @@ private:
 	{
 		{
 			{ActorType::PLAYER,ActorType::ENEMY},
-			//{ActorType::ENEMY,ActorType::PLAYER}
+			{ActorType::ENEMY,ActorType::PLAYER}
 		}
 	};
 
@@ -51,8 +51,11 @@ private:
 	// プレイヤーと敵の攻撃の当たり判定
 	void CheckAttackCollision(const float deltaTime);
 
+	// 当たった時の処理
+	void OnAttackCollision(const std::shared_ptr<ActorBase>& attacker, const std::shared_ptr<ActorBase>& target);
+
 	// プレイヤーと敵のステージとの当たり判定
-	void CheckStageCollision();
+	void CheckStageCollision(const float deltaTime);
 
 };
 

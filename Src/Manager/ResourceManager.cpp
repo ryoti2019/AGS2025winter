@@ -106,6 +106,10 @@ void ResourceManager::Init(void)
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Enemy/HitFly.mv1");
 	resourcesMap_.emplace(SRC::ENEMY_HIT_FLY, res);
 
+	// 敵の攻撃が当たった時に怯むアニメーション
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Enemy/FlinchUp.mv1");
+	resourcesMap_.emplace(SRC::ENEMY_HIT_FLINCH, res);
+
 	// 敵の起き上がるアニメーション
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Enemy/KipUp.mv1");
 	resourcesMap_.emplace(SRC::ENEMY_KIP_UP, res);

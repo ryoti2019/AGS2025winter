@@ -282,6 +282,10 @@ void ActorBase::AnimationFrame()
 
 }
 
+void ActorBase::AttackHitCheck(const int state)
+{
+}
+
 void ActorBase::Gravity()
 {
 
