@@ -62,6 +62,10 @@ void ResourceManager::Init(void)
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Player/Upper.mv1");
 	resourcesMap_.emplace(SRC::PLAYER_UPPER, res);
 
+	// プレイヤーの溜めパンチアニメーション
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Player/ChargePunch.mv1");
+	resourcesMap_.emplace(SRC::PLAYER_CHARGE_PUNCH, res);
+
 	// プレイヤーの攻撃が頭に当たった時のアニメーション
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Player/HitHead.mv1");
 	resourcesMap_.emplace(SRC::PLAYER_HIT_HEAD, res);

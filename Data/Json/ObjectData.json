@@ -9,6 +9,7 @@
 				"BODY_FRAME_NAME": "mixamorig:Hips",
 				"RUN_MOVE_POW": 100.0,
 				"ATTACK_MOVE_POW": 500.0,
+				"CHARGE_TIME": 1.0,
 				"ANIM_INDEX": 0,
 				"SCALE": 1.0,
 				"HP": 100,
@@ -67,6 +68,14 @@
 					{
 						"NAME": "UPPER",
 						"PATH": "Data/Model/Player/Upper.mv1",
+						"SPEED": 50.0,
+						"ATTACK_START_FRAME": 8.0,
+						"ATTACK_END_FRAME": 15.0,
+						"DAMAGE": 10
+					},
+					{
+						"NAME": "CHARGE_PUNCH",
+						"PATH": "Data/Model/Player/ChargePunch.mv1",
 						"SPEED": 50.0,
 						"ATTACK_START_FRAME": 8.0,
 						"ATTACK_END_FRAME": 15.0,

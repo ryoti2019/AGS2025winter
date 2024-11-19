@@ -29,7 +29,8 @@ Player::Player(const VECTOR& pos, const json& data)
 	RIGHT_KICK_DAMAGE(data["ANIM"][static_cast<int>(PlayerState::RIGHT_KICK) - 1]["DAMAGE"]),
 	UPPER_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(PlayerState::UPPER) - 1]["ATTACK_START_FRAME"]),
 	UPPER_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(PlayerState::UPPER) - 1]["ATTACK_END_FRAME"]),
-	UPPER_DAMAGE(data["ANIM"][static_cast<int>(PlayerState::UPPER) - 1]["DAMAGE"])
+	UPPER_DAMAGE(data["ANIM"][static_cast<int>(PlayerState::UPPER) - 1]["DAMAGE"]),
+	CHARGE_TIME(data["CHARGE_TIME"])
 {
 
 	// 機能の初期化
@@ -82,6 +83,7 @@ void Player::InitFunctionPointer()
 	stateChange_.emplace(PlayerState::LEFT_KICK, std::bind(&Player::ChangeLeftKick, this));
 	stateChange_.emplace(PlayerState::RIGHT_KICK, std::bind(&Player::ChangeRightKick, this));
 	stateChange_.emplace(PlayerState::UPPER, std::bind(&Player::ChangeUpper, this));
+	stateChange_.emplace(PlayerState::CHARGE_PUNCH, std::bind(&Player::ChangeChargePunch, this));
 	stateChange_.emplace(PlayerState::HIT_HEAD, std::bind(&Player::ChangeHitHead, this));
 	stateChange_.emplace(PlayerState::HIT_BODY, std::bind(&Player::ChangeHitBody, this));
 
@@ -149,6 +151,9 @@ void Player::InitParameter()
 
 	// 入力カウンタの初期化
 	acceptCnt_ = 0.0f;
+
+	// 溜めパンチのカウンタの初期化
+	chargeCnt_ = 0.0f;
 
 	// 走るときの移動量
 	RUN_MOVE_POW = jsonData_["RUN_MOVE_POW"];
@@ -219,7 +224,7 @@ void Player::Update(const float deltaTime)
 	Move();
 
 	// 攻撃処理
-	Attack();
+	Attack(deltaTime);
 
 	// 重力
 	Gravity(gravityScale_);
@@ -394,7 +399,7 @@ void Player::Move()
 
 }
 
-void Player::Attack()
+void Player::Attack(const float deltaTime)
 {
 
 	// ヒット中は行動できない
@@ -406,8 +411,22 @@ void Player::Attack()
 		}
 	}
 
-	// 攻撃の先行入力
-	if (inputController_->ComboAttack())
+	// 溜めパンチ用のボタンを長押ししているか
+	if (inputController_->ChargeAttack() && chargeCnt_ <= CHARGE_TIME)
+	{
+		// 押していたら加算する
+		chargeCnt_ += deltaTime;
+	}
+
+	// 溜めパンチ
+	if (chargeCnt_ >= CHARGE_TIME)
+	{
+		chargeCnt_ = 0.0f;
+		ChangeState(PlayerState::CHARGE_PUNCH);
+	}
+
+	// 攻撃の先行入力 ため攻撃の後通らないようにする
+	if (inputController_->Attack() && key_ != ANIM_DATA_KEY[static_cast<int>(PlayerState::CHARGE_PUNCH)])
 	{
 		// コンボの先行入力の処理
 		for (int i = static_cast<int>(PlayerState::JAB); i <= static_cast<int>(PlayerState::RIGHT_KICK); i++)
@@ -471,6 +490,13 @@ void Player::ChangeState(PlayerState state)
 
 	// 関数ポインタの遷移
 	stateChange_[state_]();
+
+	// 前と同じ状態でなければカウンタをリセットする
+	if (preKey_ != key_)
+	{
+		// 溜めパンチのカウンタをリセット
+		chargeCnt_ = 0.0f;
+	}
 
 	// 前のアニメーションを保存
 	preKey_ = key_;
@@ -646,6 +672,11 @@ void Player::ChangeUpper()
 	// どれだけ進むか計算
 	movePow_ = VAdd(transform_.pos, VScale(moveDir_, speed_));
 
+}
+
+void Player::ChangeChargePunch()
+{
+	stateUpdate_ = std::bind(&Player::UpdateChargePunch, this);
 }
 
 void Player::ChangeHitHead()
@@ -871,6 +902,17 @@ void Player::UpdateUpper()
 	{
 		collisionData_.isRightHandAttack = false;
 	}
+
+	// 待機状態に遷移
+	if (animationController_->IsEndPlayAnimation())
+	{
+		ChangeState(PlayerState::IDLE);
+	}
+
+}
+
+void Player::UpdateChargePunch()
+{
 
 	// 待機状態に遷移
 	if (animationController_->IsEndPlayAnimation())

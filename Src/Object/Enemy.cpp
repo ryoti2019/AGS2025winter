@@ -213,7 +213,7 @@ void Enemy::Update(const float deltaTime)
 	// どの行動をするか決める
 	if (!isActionDecided_ && coolTime_ <= 0.0f)
 	{
-		SelsectAction();
+		SelsectAction(deltaTime);
 	}
 
 	// 状態ごとの更新
@@ -426,7 +426,7 @@ void Enemy::ChangeState(EnemyState state)
 
 }
 
-void Enemy::SelsectAction()
+void Enemy::SelsectAction(const float deltaTime)
 {
 
 	// ヒット中は行動できない
@@ -458,7 +458,7 @@ void Enemy::SelsectAction()
 	else if (number == 1)
 	{
 		//攻撃処理
-		Attack();
+		Attack(deltaTime);
 	}
 
 }
@@ -489,7 +489,7 @@ void Enemy::Move()
 
 }
 
-void Enemy::Attack()
+void Enemy::Attack(const float deltaTime)
 {
 
 	// 乱数

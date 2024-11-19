@@ -11,16 +11,6 @@ class Player : public ActorBase
 
 public:
 
-	enum class ATTACK_STATE
-	{
-		JAB,
-		STRAIGHT,
-		HOOK,
-		LEFT_KICK,
-		RIGHT_KICK,
-		UPPER
-	};
-
 	// アニメーションコントローラーに渡す引数
 	std::string ANIM_DATA_KEY[static_cast<int>(PlayerState::MAX)] =
 	{
@@ -33,6 +23,7 @@ public:
 		"LEFT_KICK",
 		"RIGHT_KICK",
 		"UPPER",
+		"CHARGE_PUNCH",
 		"HIT_HEAD",
 		"HIT_BODY"
 	};
@@ -52,7 +43,7 @@ public:
 	// ストレートの攻撃終了フレーム
 	const float STRAIGHT_ATTACK_END_FRAME;
 
-	// ジャブのダメージ量
+	// ストレートのダメージ量
 	const int STRAIGHT_DAMAGE;
 
 	// フックの攻撃開始フレーム
@@ -61,7 +52,7 @@ public:
 	// フックの攻撃終了フレーム
 	const float HOOK_ATTACK_END_FRAME;
 
-	// ジャブのダメージ量
+	// フックのダメージ量
 	const int HOOK_DAMAGE;
 
 	// 左キックの攻撃開始フレーム
@@ -70,7 +61,7 @@ public:
 	// 左キックの攻撃終了フレーム
 	const float LEFT_KICK_ATTACK_END_FRAME;
 
-	// ジャブのダメージ量
+	// 左キックのダメージ量
 	const int LEFT_KICK_DAMAGE;
 
 	// 右キックの攻撃開始フレーム
@@ -79,7 +70,7 @@ public:
 	// 右キックの攻撃終了フレーム
 	const float RIGHT_KICK_ATTACK_END_FRAME;
 
-	// ジャブのダメージ量
+	// 右キックのダメージ量
 	const int RIGHT_KICK_DAMAGE;
 
 	// アッパーの攻撃開始フレーム
@@ -88,8 +79,11 @@ public:
 	// アッパーの攻撃終了フレーム
 	const float UPPER_ATTACK_END_FRAME;
 
-	// ジャブのダメージ量
+	// アッパーのダメージ量
 	const int UPPER_DAMAGE;
+
+	// 溜めパンチを出すためにボタン押す長さ
+	const float CHARGE_TIME;
 
 	Player(const VECTOR& pos, const json& data);
 
@@ -146,7 +140,8 @@ private:
 		{PlayerState::HOOK},
 		{PlayerState::LEFT_KICK},
 		{PlayerState::RIGHT_KICK},
-		{PlayerState::UPPER}
+		{PlayerState::UPPER},
+		{PlayerState::CHARGE_PUNCH}
 	};
 
 	// コンボ中の判定
@@ -187,6 +182,9 @@ private:
 	// 入力カウンタ
 	float acceptCnt_;
 
+	// 溜めパンチのカウンタ
+	float chargeCnt_;
+
 	// 状態遷移
 	std::unordered_map<PlayerState, std::function<void()>> stateChange_;
 	void ChangeIdle();
@@ -197,6 +195,7 @@ private:
 	void ChangeLeftKick();
 	void ChangeRightKick();
 	void ChangeUpper();
+	void ChangeChargePunch();
 	void ChangeHitHead();
 	void ChangeHitBody();
 
@@ -210,6 +209,7 @@ private:
 	void UpdateLeftKick();
 	void UpdateRightKick();
 	void UpdateUpper();
+	void UpdateChargePunch();
 	void UpdateHitHead();
 	void UpdateHitBody();
 
@@ -235,7 +235,7 @@ private:
 	void Move()override;
 
 	// 攻撃処理
-	void Attack()override;
+	void Attack(const float deltaTime)override;
 
 	// 攻撃するときの移動や回転の処理
 	void MoveAndRotate();

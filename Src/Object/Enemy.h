@@ -186,13 +186,13 @@ private:
 	void ChangeState(EnemyState state);
 
 	// どの行動をするか決める
-	void SelsectAction();
+	void SelsectAction(const float deltaTime);
 
 	// 移動処理
 	void Move()override;
 
 	// 攻撃処理
-	void Attack()override;
+	void Attack(const float deltaTime)override;
 
 	// アニメーションのフレームを固定
 	void AnimationFrame()override;

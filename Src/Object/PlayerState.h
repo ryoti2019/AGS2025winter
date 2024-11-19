@@ -11,6 +11,7 @@ enum class PlayerState
 	LEFT_KICK,
 	RIGHT_KICK,
 	UPPER,
+	CHARGE_PUNCH,
 	HIT_HEAD,
 	HIT_BODY,
 	MAX

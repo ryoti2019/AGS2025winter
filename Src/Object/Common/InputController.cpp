@@ -24,8 +24,7 @@ VECTOR InputController::Dir()
 	// 方向を初期化
 	dir_ = Utility::VECTOR_ZERO;
 
-	// コントローラー
-	// WASDでプレイヤーの位置を変える
+	// キーボード
 	if (!SceneManager::GetInstance().GetGamePad())
 	{
 		// 前方向
@@ -49,6 +48,7 @@ VECTOR InputController::Dir()
 			dir_.x += 1.0f;
 		}
 	}
+	// コントローラー
 	else
 	{
 		// ゲームパッドの番号を取得
@@ -71,8 +71,7 @@ VECTOR InputController::LockOnDir(Transform transform)
 	// 方向を初期化
 	dir_ = Utility::VECTOR_ZERO;
 
-	// コントローラー
-	// WASDでプレイヤーの位置を変える
+	// キーボード
 	if (!SceneManager::GetInstance().GetGamePad())
 	{
 
@@ -97,6 +96,7 @@ VECTOR InputController::LockOnDir(Transform transform)
 			dir_ = transform.GetRight();
 		}
 	}
+	// コントローラー
 	else
 	{
 		// ゲームパッドの番号を取得
@@ -116,12 +116,13 @@ bool InputController::Run()
 
 	auto& ins = InputManager::GetInstance();
 
+	// キーボード
 	if (!SceneManager::GetInstance().GetGamePad() && ins.IsNew(KEY_INPUT_LSHIFT))
 	{
 		return true;
 	}
-	else if (SceneManager::GetInstance().GetGamePad() &&
-		ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN))
+	// コントローラー
+	else if (SceneManager::GetInstance().GetGamePad() && ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN))
 	{
 		return true;
 	}
@@ -130,15 +131,37 @@ bool InputController::Run()
 
 }
 
-bool InputController::ComboAttack()
+bool InputController::Attack()
 {
 
 	auto& ins = InputManager::GetInstance();
 
+	// キーボード
 	if (!SceneManager::GetInstance().GetGamePad() && ins.IsTrgUpMouseLeft())
 	{
 		return true;
 	}
+	// コントローラー
+	else if (SceneManager::GetInstance().GetGamePad() && ins.IsPadBtnTrgUp(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::RIGHT))
+	{
+		return true;
+	}
+
+	return false;
+
+}
+
+bool InputController::ChargeAttack()
+{
+
+	auto& ins = InputManager::GetInstance();
+
+	// キーボード
+	if (!SceneManager::GetInstance().GetGamePad() && ins.IsClickMouseLeft())
+	{
+		return true;
+	}
+	// コントローラー
 	else if (SceneManager::GetInstance().GetGamePad() && ins.IsPadBtnTrgUp(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::RIGHT))
 	{
 		return true;
@@ -153,12 +176,13 @@ bool InputController::Upper()
 
 	auto& ins = InputManager::GetInstance();
 
+	// キーボード
 	if (!SceneManager::GetInstance().GetGamePad() && ins.IsTrgUpMouseLeft() && ins.IsNew(KEY_INPUT_LSHIFT))
 	{
 		return true;
 	}
-	else if (SceneManager::GetInstance().GetGamePad()/* && ins.IsPadBtnTrgUp(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::RIGHT)*/
-		&& ins.IsPadBtnTrgUp(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::R_BOTTON))
+	// コントローラー
+	else if (SceneManager::GetInstance().GetGamePad() && ins.IsPadBtnTrgUp(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::R_BOTTON))
 	{
 		return true;
 	}

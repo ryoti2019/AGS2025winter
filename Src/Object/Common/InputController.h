@@ -24,7 +24,10 @@ public:
 	bool Run();
 
 	// 攻撃
-	bool ComboAttack();
+	bool Attack();
+
+	// 長押し攻撃
+	bool ChargeAttack();
 
 	// アッパー
 	bool Upper();

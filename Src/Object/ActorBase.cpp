@@ -269,7 +269,7 @@ void ActorBase::Move()
 {
 }
 
-void ActorBase::Attack()
+void ActorBase::Attack(const float deltaTime)
 {
 }
 
