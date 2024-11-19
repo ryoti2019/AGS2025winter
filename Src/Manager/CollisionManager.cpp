@@ -75,7 +75,7 @@ void CollisionManager::CheckAttackCollision(const float deltaTime)
 
 					// “–‚½‚Á‚½‚à‚Ì‚Ìƒf[ƒ^‚ğì‚é
 					std::map<int, float> data;
-					for (int i = ; i <= attacker->GetToatlAttackTypes(); i++)
+					for (int i = 0; i <= attacker->GetToatlAttackTypes(); i++)
 					{
 						data.emplace(i, 0.0f);
 					}
