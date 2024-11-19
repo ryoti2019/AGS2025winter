@@ -21,6 +21,7 @@ public:
 		"HIT_HEAD",
 		"HIT_BODY",
 		"HIT_FLY",
+		"FLINCH_UP",
 		"KIP_UP"
 	};
 
@@ -60,7 +61,21 @@ public:
 	bool GetAttackState()override;
 
 	// 攻撃種類を取得
-	int GetToatlAttackTypes() { return attackState_.size(); }
+	const std::vector<int> GetToatlAttackTypes()const
+	{
+
+		std::vector<int> intStates;
+		intStates.reserve(attackState_.size());
+
+		 // 変換処理
+		for (const auto& state : attackState_)
+		{
+			intStates.push_back(static_cast<int>(state));
+		}
+
+		return intStates; 
+
+	}
 
 	// 攻撃を受けている状態を取得
 	bool GetHitState()override;
@@ -77,40 +92,46 @@ public:
 private:
 
 	// 攻撃中の状態
-	const std::vector<EnemyState> attackState_ =
+	const std::vector<EnemyState>& attackState_ =
 	{
 		{EnemyState::PUNCH},
 		{EnemyState::KICK}
 	};
 
 	// 攻撃を受けている状態
-	const std::vector<EnemyState> hitState_ =
+	const std::vector<EnemyState>& hitState_ =
 	{
 		{EnemyState::HIT_HEAD},
 		{EnemyState::HIT_BODY},
 		{EnemyState::HIT_FLY},
+		{EnemyState::FLINCH_UP},
 		{EnemyState::KIP_UP}
 	};
 
 	// 頭にヒットするプレイヤーの攻撃
-	const std::vector<PlayerState> hitHeadState_ =
+	const std::vector<PlayerState>& hitHeadState_ =
 	{
 		{PlayerState::JAB},
 		{PlayerState::STRAIGHT},
 		{PlayerState::HOOK},
-		{PlayerState::UPPER}
 	};
 
 	// 体にヒットするプレイヤーの攻撃
-	const std::vector<PlayerState> hitBodyState_ =
+	const std::vector<PlayerState>& hitBodyState_ =
 	{
 		{PlayerState::LEFT_KICK}
 	};
 
 	// 吹っ飛ばされるプレイヤーの攻撃
-	const std::vector<PlayerState> hitFlyState_ =
+	const std::vector<PlayerState>& hitFlyState_ =
 	{
 		{PlayerState::RIGHT_KICK}
+	};
+
+	// 上に飛ばされるプレイヤーの攻撃
+	const std::vector<PlayerState>& hitFlinchUpState_ =
+	{
+		{PlayerState::UPPER}
 	};
 
 	// 状態
@@ -134,6 +155,7 @@ private:
 	void ChangeHitHead();
 	void ChangeHitBody();
 	void ChangeHitFly();
+	void ChangeFlinchUp();
 	void ChangeKipUp();
 
 	// 状態の更新
@@ -145,6 +167,7 @@ private:
 	void UpdateHitHead(const float deltaTime);
 	void UpdateHitBody(const float deltaTime);
 	void UpdateHitFly(const float deltaTime);
+	void UpdateFlinchUp(const float deltaTime);
 	void UpdateKipUp(const float deltaTime);
 
 	// 機能の初期化
@@ -176,6 +199,9 @@ private:
 
 	// プレイヤーの座標を取得
 	std::optional<VECTOR> GetPlayerPos();
+
+	// どのヒットアニメーションかチェックする
+	void AttackHitCheck(const int state);
 
 };
 

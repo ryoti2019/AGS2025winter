@@ -102,7 +102,21 @@ public:
 	bool GetAttackState()override;
 
 	// 攻撃種類を取得
-	int GetToatlAttackTypes() { return attackState_.size(); }
+	const std::vector<int> GetToatlAttackTypes()const
+	{
+
+		std::vector<int> intStates;
+		intStates.reserve(attackState_.size());
+
+		// 変換処理
+		for (const auto& state : attackState_)
+		{
+			intStates.push_back(static_cast<int>(state));
+		}
+
+		return intStates;
+
+	}
 
 	// 攻撃を受けている状態を取得
 	bool GetHitState()override;
@@ -225,6 +239,10 @@ private:
 
 	// 攻撃するときの移動や回転の処理
 	void MoveAndRotate();
+
+	// どのヒットアニメーションかチェックする
+	virtual void AttackHitCheck(const int state);
+
 
 };
 

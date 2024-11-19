@@ -37,9 +37,8 @@ public:
 		ENEMY_HIT_HEAD,
 		ENEMY_HIT_BODY,
 		ENEMY_HIT_FLY,
+		ENEMY_HIT_FLINCH,
 		ENEMY_KIP_UP,
-		ENEMY_JAB,
-		ENEMY_STRAIGHT,
 
 #pragma endregion
 

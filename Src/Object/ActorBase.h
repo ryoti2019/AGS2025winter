@@ -255,7 +255,7 @@ public:
 	virtual bool GetAttackState();
 
 	// 攻撃種類を取得
-	virtual int GetToatlAttackTypes() { return 0; }
+	virtual const std::vector<int>  GetToatlAttackTypes()const { return {}; }
 
 	// 攻撃を受けている状態を取得
 	virtual bool GetHitState();
@@ -283,6 +283,9 @@ public:
 
 	// ダメージ量を取得
 	virtual int GetDamage() { return 0; }
+
+	// スピードを取得
+	virtual float GetSpeed() { return speed_; }
 
 protected:
 
@@ -354,6 +357,9 @@ protected:
 	// 回転する時間
 	float stepRotTime_;
 
+	// 重力を緩くする
+	float gravityScale_;
+
 	// 生きているか
 	bool isAlive_;
 
@@ -402,8 +408,11 @@ protected:
 	// アニメーションのフレーム固定
 	virtual void AnimationFrame();
 
+	// どのヒットアニメーションかチェックする
+	virtual void AttackHitCheck(const int state);
+
 	// 重力
-	void Gravity();
+	void Gravity(const float scale);
 
 #pragma endregion
 

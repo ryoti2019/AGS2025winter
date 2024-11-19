@@ -12,7 +12,7 @@ void CollisionManager::Update(const float deltaTime)
 	CheckAttackCollision(deltaTime);
 
 	// プレイヤーと敵のステージの当たり判定をチェック
-	CheckStageCollision();
+	CheckStageCollision(deltaTime);
 
 }
 
@@ -39,6 +39,16 @@ void CollisionManager::Register(const std::shared_ptr<ActorBase>& actor)
 
 void CollisionManager::CheckAttackCollision(const float deltaTime)
 {
+
+	// 無敵時間の計算
+	for (auto& data : invincibleData_)
+	{
+		for (auto& state : data.second)
+		{
+			// 無敵時間を減算していく
+			state.second -= deltaTime;
+		}
+	}
 
 	// 衝突しているか判定する
 	for (const collisionChannnelInfo& info : attackCollisionChannelList_)
@@ -73,38 +83,29 @@ void CollisionManager::CheckAttackCollision(const float deltaTime)
 				if (hitData == invincibleData_.end())
 				{
 
-					// 当たったもののデータを作る
+					// 当たったもののデータを作るattacker->GetToatlAttackTypes()
 					std::map<int, float> data;
-					for (int i = 0; i <= attacker->GetToatlAttackTypes(); i++)
+					for (int type = 0; type < attacker->GetToatlAttackTypes().size(); type++)
 					{
-						data.emplace(i, 0.0f);
+						data.emplace(type, 0.0f);
 					}
 
 					// 当たったものを格納
 					invincibleData_.emplace(target, data);
 
+					// 上で作ったデータを格納
+					hitData = invincibleData_.find(target);
+
 				}
 
-				// 中身が無ければ処理しない
-				if (hitData == invincibleData_.end())return;
-
 				// 今攻撃している側のアニメーションが要素にあるか確認する
-				auto a = hitData->second.find(attacker->GetState());
+				auto a = hitData->second.find(attacker->GetState() - 3);
 
 				// 中身が無ければ処理しない
 				if (a == hitData->second.end())return;
 
-				// 無敵時間を減算していく
-				a->second -= deltaTime;
-
 				// このアニメーション中の無敵時間が消えていなければ処理しない
 				if (a->second > 0.0f)return;
-
-				// 攻撃がすでに当たっていたら当たり判定を通らない
-				//if (attacker->GetIsAttackHit())continue;
-
-				// 攻撃を受けている状態だったら当たり判定を通らない
-				//if (target->GetHitState())continue;
 
 				// 右手の判定
 				if (HitCheck_Capsule_Capsule(attacker->GetCollisionData().rightHandCapsuleUpPos, attacker->GetCollisionData().rightHandCapsuleDownPos,
@@ -112,23 +113,8 @@ void CollisionManager::CheckAttackCollision(const float deltaTime)
 					target->GetCollisionData().bodyCapsuleUpPos, target->GetCollisionData().bodyCapsuleDownPos, target->GetCollisionData().bodyCollisionRadius)
 					&& attacker->GetCollisionData().isRightHandAttack)
 				{
-
-					// 攻撃がずっと当たらないようにする
-					attacker->SetIsAttackHit(true);
-
-					// 攻撃が当たった処理
-					target->AttackHit(attacker->GetDamage(), attacker->GetState());
-
-					// 相手の座標を設定
-					target->SetTargetPos(attacker->GetPos());
-
-					// 当たったもののデータを作る
-					std::map<int,float> data;
-					data.emplace(attacker->GetState(), 1.0f);
-					
-					// 当たったものを格納
-					invincibleData_.emplace(target, data);
-
+					// 当たった時の処理
+					OnAttackCollision(attacker, target);
 				}
 				// 左手の判定
 				if (HitCheck_Capsule_Capsule(attacker->GetCollisionData().leftHandCapsuleUpPos, attacker->GetCollisionData().leftHandCapsuleDownPos,
@@ -136,23 +122,8 @@ void CollisionManager::CheckAttackCollision(const float deltaTime)
 					target->GetCollisionData().bodyCapsuleUpPos, target->GetCollisionData().bodyCapsuleDownPos, target->GetCollisionData().bodyCollisionRadius)
 					&& attacker->GetCollisionData().isLeftHandAttack)
 				{
-
-					// 攻撃がずっと当たらないようにする
-					attacker->SetIsAttackHit(true);
-
-					// 攻撃が当たった処理
-					target->AttackHit(attacker->GetDamage(), attacker->GetState());
-
-					// 相手の座標を設定
-					target->SetTargetPos(attacker->GetPos());
-
-					// 当たったもののデータを作る
-					std::map<int, float> data;
-					data.emplace(attacker->GetState(), 1.0f);
-
-					// 当たったものを格納
-					invincibleData_.emplace(target, data);
-
+					// 当たった時の処理
+					OnAttackCollision(attacker, target);
 				}
 				// 右足の判定
 				if (HitCheck_Capsule_Capsule(attacker->GetCollisionData().rightFootCapsuleUpPos, attacker->GetCollisionData().rightFootCapsuleDownPos,
@@ -160,23 +131,8 @@ void CollisionManager::CheckAttackCollision(const float deltaTime)
 					target->GetCollisionData().bodyCapsuleUpPos, target->GetCollisionData().bodyCapsuleDownPos, target->GetCollisionData().bodyCollisionRadius)
 					&& attacker->GetCollisionData().isRightFootAttack)
 				{
-
-					// 攻撃がずっと当たらないようにする
-					attacker->SetIsAttackHit(true);
-
-					// 攻撃が当たった処理
-					target->AttackHit(attacker->GetDamage(), attacker->GetState());
-
-					// 相手の座標を設定
-					target->SetTargetPos(attacker->GetPos());
-
-					// 当たったもののデータを作る
-					std::map<int, float> data;
-					data.emplace(attacker->GetState(), 1.0f);
-
-					// 当たったものを格納
-					invincibleData_.emplace(target, data);
-
+					// 当たった時の処理
+					OnAttackCollision(attacker, target);
 				}
 				// 左足の判定
 				if (HitCheck_Capsule_Capsule(attacker->GetCollisionData().leftFootCapsuleUpPos, attacker->GetCollisionData().leftFootCapsuleDownPos,
@@ -184,23 +140,8 @@ void CollisionManager::CheckAttackCollision(const float deltaTime)
 					target->GetCollisionData().bodyCapsuleUpPos, target->GetCollisionData().bodyCapsuleDownPos, target->GetCollisionData().bodyCollisionRadius)
 					&& attacker->GetCollisionData().isLeftFootAttack)
 				{
-
-					// 攻撃がずっと当たらないようにする
-					attacker->SetIsAttackHit(true);
-
-					// 攻撃が当たった処理
-					target->AttackHit(attacker->GetDamage(), attacker->GetState());
-
-					// 相手の座標を設定
-					target->SetTargetPos(attacker->GetPos());
-
-					// 当たったもののデータを作る
-					std::map<int, float> data;
-					data.emplace(attacker->GetState(), 1.0f);
-
-					// 当たったものを格納
-					invincibleData_.emplace(target, data);
-
+					// 当たった時の処理
+					OnAttackCollision(attacker, target);
 				}
 			}
 		}
@@ -208,7 +149,27 @@ void CollisionManager::CheckAttackCollision(const float deltaTime)
 
 }
 
-void CollisionManager::CheckStageCollision()
+void CollisionManager::OnAttackCollision(const std::shared_ptr<ActorBase>& attacker, const std::shared_ptr<ActorBase>& target)
+{
+
+	// 攻撃がずっと当たらないようにする
+	attacker->SetIsAttackHit(true);
+
+	// 攻撃が当たった処理
+	target->AttackHit(attacker->GetDamage(), attacker->GetState());
+
+	// 相手の座標を設定
+	target->SetTargetPos(attacker->GetPos());
+
+	// 当たったターゲットの情報を取得
+	auto& data = invincibleData_[target];
+
+	// ターゲットに今攻撃された攻撃状態の無敵時間を設定する
+	data[attacker->GetState() - 3] = 1.0f;
+
+}
+
+void CollisionManager::CheckStageCollision(const float deltaTime)
 {
 
 	// 衝突しているか判定する
@@ -260,6 +221,9 @@ void CollisionManager::CheckStageCollision()
 
 						if (pHit)
 						{
+							
+							// y方向には処理しない
+							if (hit.Normal.y == 1.0f)continue;
 
 							// 当たっているか判定したいActorの座標
 							VECTOR pos = target->GetTransform().pos;
@@ -294,6 +258,7 @@ void CollisionManager::CheckStageCollision()
 					target->SetVelocity(Utility::VECTOR_ZERO);
 
 				}
+
 			}
 		}
 	}

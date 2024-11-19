@@ -282,12 +282,18 @@ void ActorBase::AnimationFrame()
 
 }
 
-void ActorBase::Gravity()
+void ActorBase::AttackHitCheck(const int state)
+{
+}
+
+void ActorBase::Gravity(const float scale)
 {
 
+	// 重力の強さを変更する
+	const VECTOR acceleration = { acceleration_.x, acceleration_.y / scale, acceleration_.z };
 
 	// 速度に加速度（重力）を加える
-	velocity_ = VAdd(velocity_, acceleration_);
+	velocity_ = VAdd(velocity_, acceleration);
 
 	// 座標を更新
 	transform_.pos = VAdd(transform_.pos, velocity_);

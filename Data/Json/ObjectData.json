@@ -8,7 +8,7 @@
 				"LEFT_FOOT_FRAME_NAME": "mixamorig:LeftFoot",
 				"BODY_FRAME_NAME": "mixamorig:Hips",
 				"RUN_MOVE_POW": 100.0,
-				"ATTACK_MOVE_POW": 1000.0,
+				"ATTACK_MOVE_POW": 500.0,
 				"ANIM_INDEX": 0,
 				"SCALE": 1.0,
 				"HP": 100,
@@ -141,6 +141,11 @@
 					{
 						"NAME": "HIT_FLY",
 						"PATH": "Data/Model/Enemy/HitFly.mv1",
+						"SPEED": 30.0
+					},
+					{
+						"NAME": "FLINCH_UP",
+						"PATH": "Data/Model/Enemy/FlinchUp.mv1",
 						"SPEED": 30.0
 					},
 					{
