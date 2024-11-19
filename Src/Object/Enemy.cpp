@@ -220,7 +220,7 @@ void Enemy::Update(const float deltaTime)
 	stateUpdate_(deltaTime);
 
 	// 重力
-	Gravity();
+	Gravity(gravityScale_);
 
 	// アニメーション再生
 	animationController_->Update(deltaTime);
@@ -303,6 +303,16 @@ void Enemy::AttackHit(const int damage, const int state)
 void Enemy::AttackHitCheck(const int state)
 {
 
+	// 上に飛ぶアニメーションかチェック
+	for (const auto hitState : hitFlinchUpState_)
+	{
+		if (hitState == static_cast<PlayerState>(state))
+		{
+			ChangeState(EnemyState::FLINCH_UP);
+			return;
+		}
+	}
+
 	// 頭にヒットするアニメーションかチェック
 	for (const auto hitState : hitHeadState_)
 	{
@@ -329,16 +339,6 @@ void Enemy::AttackHitCheck(const int state)
 		if (hitState == static_cast<PlayerState>(state))
 		{
 			ChangeState(EnemyState::HIT_FLY);
-			return;
-		}
-	}
-
-	// 吹っ飛んでいくアニメーションかチェック
-	for (const auto hitState : hitFlinchUpState_)
-	{
-		if (hitState == static_cast<PlayerState>(state))
-		{
-			ChangeState(EnemyState::FLINCH_UP);
 			return;
 		}
 	}
@@ -558,6 +558,12 @@ void Enemy::ChangeIdle()
 	// 左足の攻撃判定をなくす
 	collisionData_.isLeftFootAttack = false;
 
+	// 攻撃が当たっているかをリセットする
+	isAttackHit_ = false;
+
+	// 重力を通常状態に戻す
+ 	gravityScale_ = 1.0f;
+
 }
 
 void Enemy::ChangeRun()
@@ -674,7 +680,7 @@ void Enemy::ChangeHitFly()
 void Enemy::ChangeFlinchUp()
 {
 
-	stateUpdate_ = std::bind(&Enemy::UpdateHitFly, this, std::placeholders::_1);
+	stateUpdate_ = std::bind(&Enemy::UpdateFlinchUp, this, std::placeholders::_1);
 
 	// プレイヤーの方向を求める
 	VECTOR vec = VSub(targetPos_, transform_.pos);
@@ -686,19 +692,21 @@ void Enemy::ChangeFlinchUp()
 	vec = { -vec.x, vec.y,-vec.z };
 
 	// 上方向に飛ばす
-	velocity_.y = 15.0f;
+	velocity_.y = 8.0f;
 	vec.y = velocity_.y;
 
 	// スピード
-	speed_ = 4.0f;
-
-	vec = VScale(vec, speed_);
-
-	vec.x = 0.0f;
-	vec.z = 0.0f;
+	speed_ = 10.0f;
 
 	// 移動量
 	movePow_ = VScale(vec, speed_);
+
+	// 重力を緩くする
+	gravityScale_ = 4.0f;
+
+	// 横方向の移動をなくす
+	//movePow_.x = 0.0f;
+	//movePow_.y = 0.0f;
 
 }
 
@@ -882,11 +890,15 @@ void Enemy::UpdateHitFly(const float deltaTime)
 void Enemy::UpdateFlinchUp(const float deltaTime)
 {
 
-	// 少し後ろにゆっくり移動
-	transform_.pos = Utility::Lerp(transform_.pos, movePow_, 0.01f);
+	// 地面につくまで加算する
+	if (velocity_.y != 0.0f)
+	{
+		// 後ろに飛んでいきながら移動
+		transform_.pos = VAdd(transform_.pos, movePow_);
+	}
 
 	// アニメーションが終了したら起き上がり状態へ遷移する
-	if (animationController_->IsEndPlayAnimation())
+	if (transform_.pos.y <= -1500.0f && velocity_.y <= 0.0f)
 	{
 		ChangeState(EnemyState::KIP_UP);
 	}

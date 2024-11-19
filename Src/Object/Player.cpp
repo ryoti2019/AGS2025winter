@@ -222,7 +222,7 @@ void Player::Update(const float deltaTime)
 	Attack();
 
 	// 重力
-	Gravity();
+	Gravity(gravityScale_);
 
 	// 入力受付時間をカウント
 	acceptCnt_++;
@@ -502,6 +502,9 @@ void Player::ChangeIdle(void)
 
 	// 攻撃が当たっているかをリセットする
 	isAttackHit_ = false;
+
+	// 重力を通常状態に戻す
+	gravityScale_ = 1.0f;
 
 }
 

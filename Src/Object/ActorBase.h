@@ -357,6 +357,9 @@ protected:
 	// ‰ñ“]‚·‚éŠÔ
 	float stepRotTime_;
 
+	// d—Í‚ğŠÉ‚­‚·‚é
+	float gravityScale_;
+
 	// ¶‚«‚Ä‚¢‚é‚©
 	bool isAlive_;
 
@@ -409,7 +412,7 @@ protected:
 	virtual void AttackHitCheck(const int state);
 
 	// d—Í
-	void Gravity();
+	void Gravity(const float scale);
 
 #pragma endregion
 

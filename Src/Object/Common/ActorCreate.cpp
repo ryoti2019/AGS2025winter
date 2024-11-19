@@ -61,7 +61,7 @@ ActorCreate::ActorCreate()
 	const auto& enemyData = objectData[1]["EnemyData"];
 
 	// “G‚ğ¶¬
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < 10; i++)
 	{
 		float x = std::rand() % 10000;
 		float z = std::rand() % 10000;
