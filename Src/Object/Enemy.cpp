@@ -257,7 +257,7 @@ void Enemy::Update(const float deltaTime)
 	// ‚Ç‚Ìs“®‚ğ‚·‚é‚©Œˆ‚ß‚é
 	if (!isActionDecided_ && coolTime_ <= 0.0f)
 	{
-		SelsectAction(deltaTime);
+		//SelsectAction(deltaTime);
 	}
 
 	// ó‘Ô‚²‚Æ‚ÌXV

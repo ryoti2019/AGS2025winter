@@ -368,6 +368,9 @@ void ActorBase::DrawDebug()
 		VAdd(collisionData_.bodyCapsuleUpPos,VGet(0.0f, collisionData_.bodyCollisionRadius,0.0f)), 
 		VAdd(collisionData_.bodyCapsuleDownPos, VGet(0.0f, -collisionData_.bodyCollisionRadius, 0.0f)), 0x00ff00);
 
+	DrawSphere3D(collisionData_.minPos, 50, 10, 0xff0000, 0xff0000, true);
+	DrawSphere3D(collisionData_.maxPos, 50, 10, 0xff0000, 0xff0000, true);
+
 	// ’¼•û‘Ì‚Ì“–‚½‚è”»’è‚Ì•`‰æ
 	// AABB‚Ì8‚Â‚Ì’¸“_‚ðŒvŽZ
 

@@ -1,4 +1,7 @@
+#define NOMINMAX
 #include <map>
+#include <algorithm>
+#include <cmath>
 #include "CollisionManager.h"
 
 void CollisionManager::Init()
@@ -272,7 +275,7 @@ void CollisionManager::CheckResolveCollision()
 {
 
 	// 衝突しているか判定する
-	for (const collisionChannnelInfo& info : attackCollisionChannelList_)
+	for (const collisionChannnelInfo& info : resolveCollisionChannelList_)
 	{
 
 		// アクター1
@@ -298,7 +301,7 @@ void CollisionManager::CheckResolveCollision()
 				// アクター1
 				// 最小点
 				VECTOR actorPos1Min = actor1->GetCollisionData().minPos;
-				
+
 				//最大点
 				VECTOR actorPos1Max = actor1->GetCollisionData().maxPos;
 
@@ -309,34 +312,79 @@ void CollisionManager::CheckResolveCollision()
 				//最大点
 				VECTOR actorPos2Max = actor2->GetCollisionData().maxPos;
 
-				// 当たっているか判定
-				if (!IsAABBColliding(actorPos1Min, actorPos1Max, actorPos2Min, actorPos2Max))return;
+				// 各軸方向の重なり量を計算
+				float overlapX = std::min(actorPos1Max.x, actorPos2Max.x) - std::max(actorPos1Min.x, actorPos2Min.x);
+				float overlapY = std::min(actorPos1Max.y, actorPos2Max.y) - std::max(actorPos1Min.y, actorPos2Min.y);
+				float overlapZ = std::min(actorPos1Max.z, actorPos2Max.z) - std::max(actorPos1Min.z, actorPos2Min.z);
 
-				// どれだけ重なっているか
-				VECTOR delta = VSub(actor1->GetTransform().pos, actor2->GetTransform().pos);
+				// 重なっていなければ通らない
+				if (overlapX <= 0 || overlapY <= 0 || overlapZ <= 0)continue;
 
-				// 長さ
-				float distance = VSize(delta);
+				// 重なってる分ずらす座標
+				VECTOR pos = Utility::VECTOR_ZERO;
 
-				// 
-				float overlap = (actor1->GetCollisionData().bodyCollisionRadius + actor2->GetCollisionData().bodyCollisionRadius) - distance;
-
-				// 重なりを解消するための移動量を計算
-				VECTOR direction = VScale(delta, 1.0f / distance); // 正規化
-				VECTOR move = VScale(direction, overlap / 2.0f);
-
-				a.position = VAdd(a.position, move);  // 一方を移動
-				b.position = VSub(b.position, move);  // もう一方を逆方向に移動
-
+				// もし重なりがあれば解消する
+				if (overlapX < overlapY && overlapX < overlapZ)
+				{
+					// 1.0fにして符号だけ取得する
+					float x = std::copysignf(1.0f, overlapX);
+					x = x * -10.0f;
+					// aのX軸方向に移動
+					if (actorPos1Max.x > actorPos2Max.x)
+					{
+						// 重なってる分を代入
+						pos = { x,0.0f,0.0f };
+						actor2->AddPos(pos);
+					}
+					else
+					{
+						// 重なってる分を代入
+						pos = { x,0.0f,0.0f };
+						actor2->SubPos(pos);
+					}
+				}
+				// Y軸方向
+				else if (overlapY < overlapZ)
+				{
+					// 1.0fにして符号だけ取得する
+					float y = std::copysignf(1.0f, overlapY);
+					y = y * -10.0f;
+					// aのY軸方向に移動
+					if (actorPos1Max.y > actorPos2Max.y)
+					{
+						// 重なってる分を代入
+						pos = { 0.0f,y,0.0f };
+						actor2->AddPos(pos);
+					}
+					else
+					{
+						// 重なってる分を代入
+						pos = { 0.0f,y,0.0f };
+						actor2->SubPos(pos);
+					}
+				}
+				// Z軸方向
+				else
+				{
+					// 1.0fにして符号だけ取得する
+					float z = std::copysignf(1.0f, overlapZ);
+					z = z * -10.0f;
+					// aのZ軸方向に移動
+					if (actorPos1Max.z > actorPos2Max.z)
+					{
+						// 重なってる分を代入
+						pos = { 0.0f,0.0f,z };
+						actor2->AddPos(pos);
+					}
+					else
+					{
+						// 重なってる分を代入
+						pos = { 0.0f,0.0f,z };
+						actor2->SubPos(pos);
+					}
+				}
 			}
 		}
 	}
 
-}
-
-bool CollisionManager::IsAABBColliding(const VECTOR& actor1MinPos, const VECTOR& actor1MaxPos, const VECTOR& actor2MinPos, const VECTOR& actor2MaxPos)
-{
-	return (actor1MinPos.x <= actor2MaxPos.x && actor1MaxPos.x >= actor2MinPos.x) &&
-		   (actor1MinPos.y <= actor2MaxPos.y && actor1MaxPos.y >= actor2MinPos.y) &&
-		   (actor1MinPos.z <= actor2MaxPos.z && actor1MaxPos.z >= actor2MinPos.z);
 }

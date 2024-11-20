@@ -263,6 +263,12 @@ public:
 	// ¶‘¶”»’è‚ğİ’è
 	void SetIsActive(const bool isActive) { isActive_ = isActive; }
 
+	// À•W‚ğ‘«‚·
+	void AddPos(const VECTOR& pos) { transform_.pos = VAdd(transform_.pos, pos); }
+
+	// À•W‚ğ‘«‚·
+	void SubPos(const VECTOR& pos) { transform_.pos = VSub(transform_.pos, pos); }
+
 	// HP‚ğİ’è
 	void SetHp(const int hp) { hp_ = hp; }
 

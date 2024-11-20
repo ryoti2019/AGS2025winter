@@ -69,8 +69,5 @@ private:
 	// プレイヤーと敵同士が重なってた時の処理
 	void CheckResolveCollision();
 
-	// プレイヤーと敵同士が重なっているかの当たり判定
-	bool IsAABBColliding(const VECTOR& actor1MinPos, const VECTOR& actor1MaxPos, const VECTOR& actor2MinPos, const VECTOR& actor2MaxPos);
-
 };
 
