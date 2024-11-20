@@ -28,6 +28,10 @@ public:
 	struct CollisionData
 	{
 
+#pragma region 攻撃やステージとの当たり判定で使うもの
+
+#pragma region フレーム
+
 		// 右手のフレーム
 		int rightHand;
 
@@ -43,50 +47,66 @@ public:
 		// 体全体のフレーム
 		int body;
 
-		// 右手の座標
+#pragma endregion
+
+#pragma region 中心座標
+
+		// 右手の中心座標
 		VECTOR rightHandPos;
 
-		// 左手の座標
+		// 左手の中心座標
 		VECTOR leftHandPos;
 
-		// 右足の座標
+		// 右足の中心座標
 		VECTOR rightFootPos;
 
-		// 左足の座標
+		// 左足の中心座標
 		VECTOR leftFootPos;
 
-		// 体全体の座標
+		// 体全体の中心座標
 		VECTOR bodyPos;
+
+#pragma endregion
+
+#pragma region カプセルの上座標
 
 		// 右手のカプセルの上座標
 		VECTOR rightHandCapsuleUpPos;
 
-		// 右手のカプセルの下座標
-		VECTOR rightHandCapsuleDownPos;
-
 		// 左手のカプセルの上座標
 		VECTOR leftHandCapsuleUpPos;
-
-		// 左手のカプセルの下座標
-		VECTOR leftHandCapsuleDownPos;
 
 		// 右足のカプセルの上座標
 		VECTOR rightFootCapsuleUpPos;
 
-		// 右足のカプセルの下座標
-		VECTOR rightFootCapsuleDownPos;
-
 		// 左足のカプセルの上座標
 		VECTOR leftFootCapsuleUpPos;
-
-		// 左足のカプセルの下座標
-		VECTOR leftFootCapsuleDownPos;
 
 		// 体のカプセルの上座標
 		VECTOR bodyCapsuleUpPos;
 
+#pragma endregion
+
+#pragma region カプセルの下座標
+
+		// 右手のカプセルの下座標
+		VECTOR rightHandCapsuleDownPos;
+
+		// 左手のカプセルの下座標
+		VECTOR leftHandCapsuleDownPos;
+
+		// 右足のカプセルの下座標
+		VECTOR rightFootCapsuleDownPos;
+
+		// 左足のカプセルの下座標
+		VECTOR leftFootCapsuleDownPos;
+
 		// 体のカプセルの下座標
 		VECTOR bodyCapsuleDownPos;
+
+#pragma endregion
+
+#pragma region 向き
 
 		// 右手の向き
 		Quaternion rightHandRot;
@@ -103,11 +123,19 @@ public:
 		// 体の向き
 		Quaternion bodyRot;
 
+#pragma endregion
+
+#pragma region 半径
+
 		// 手足の当たり判定の半径
 		float handAndFootCollisionRadius;
 
 		// 体の当たり判定の半径
 		float bodyCollisionRadius;
+
+#pragma endregion
+
+#pragma region 攻撃判定があるかどうか
 
 		// 右手に攻撃判定があるかどうか
 		bool isRightHandAttack;
@@ -120,6 +148,20 @@ public:
 
 		// 左足に攻撃判定があるかどうか
 		bool isLeftFootAttack;
+
+#pragma endregion
+
+#pragma endregion
+
+#pragma region プレイヤーと敵が重ならないようにするために衝突判定で使うもの
+
+		// 最小点
+		VECTOR minPos;
+
+		// 最大点
+		VECTOR maxPos; 
+
+#pragma endregion
 
 	};
 
@@ -238,9 +280,6 @@ public:
 
 	// コリジョンデータのを取得
 	const CollisionData& GetCollisionData() const { return collisionData_; }
-
-	// 座標を取得
-	const VECTOR& GetPos() const { return transform_.pos; }
 
 	// アクターの重力方向の速度の取得
 	const VECTOR& GetVelocity()const { return velocity_; }

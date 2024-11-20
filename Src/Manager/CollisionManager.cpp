@@ -12,7 +12,10 @@ void CollisionManager::Update(const float deltaTime)
 	CheckAttackCollision(deltaTime);
 
 	// プレイヤーと敵のステージの当たり判定をチェック
-	CheckStageCollision(deltaTime);
+	CheckStageCollision();
+
+	// プレイヤーと敵同士が重ならないようにする当たり判定をチェック
+	CheckResolveCollision();
 
 }
 
@@ -159,7 +162,7 @@ void CollisionManager::OnAttackCollision(const std::shared_ptr<ActorBase>& attac
 	target->AttackHit(attacker->GetDamage(), attacker->GetState());
 
 	// 相手の座標を設定
-	target->SetTargetPos(attacker->GetPos());
+	target->SetTargetPos(attacker->GetTransform().pos);
 
 	// 当たったターゲットの情報を取得
 	auto& data = invincibleData_[target];
@@ -169,7 +172,7 @@ void CollisionManager::OnAttackCollision(const std::shared_ptr<ActorBase>& attac
 
 }
 
-void CollisionManager::CheckStageCollision(const float deltaTime)
+void CollisionManager::CheckStageCollision()
 {
 
 	// 衝突しているか判定する
@@ -263,4 +266,77 @@ void CollisionManager::CheckStageCollision(const float deltaTime)
 		}
 	}
 
+}
+
+void CollisionManager::CheckResolveCollision()
+{
+
+	// 衝突しているか判定する
+	for (const collisionChannnelInfo& info : attackCollisionChannelList_)
+	{
+
+		// アクター1
+		const auto& actors1 = collisionActorData_.find(info.type1);
+
+		// アクター2
+		const auto& actors2 = collisionActorData_.find(info.type2);
+
+		// 中身が入っているか確認
+		if (actors1 == collisionActorData_.end())continue;
+		if (actors2 == collisionActorData_.end())continue;
+
+		for (const std::shared_ptr<ActorBase>& actor1 : actors1->second)
+		{
+			for (const std::shared_ptr<ActorBase>& actor2 : actors2->second)
+			{
+
+				// ポインタが入っている確認
+				if (!actor1)return;
+				if (!actor2)return;
+
+				// 直方体の当たり判定の図形を作る
+				// アクター1
+				// 最小点
+				VECTOR actorPos1Min = actor1->GetCollisionData().minPos;
+				
+				//最大点
+				VECTOR actorPos1Max = actor1->GetCollisionData().maxPos;
+
+				// アクター2
+				// 最小値
+				VECTOR actorPos2Min = actor2->GetCollisionData().minPos;
+
+				//最大点
+				VECTOR actorPos2Max = actor2->GetCollisionData().maxPos;
+
+				// 当たっているか判定
+				if (!IsAABBColliding(actorPos1Min, actorPos1Max, actorPos2Min, actorPos2Max))return;
+
+				// どれだけ重なっているか
+				VECTOR delta = VSub(actor1->GetTransform().pos, actor2->GetTransform().pos);
+
+				// 長さ
+				float distance = VSize(delta);
+
+				// 
+				float overlap = (actor1->GetCollisionData().bodyCollisionRadius + actor2->GetCollisionData().bodyCollisionRadius) - distance;
+
+				// 重なりを解消するための移動量を計算
+				VECTOR direction = VScale(delta, 1.0f / distance); // 正規化
+				VECTOR move = VScale(direction, overlap / 2.0f);
+
+				a.position = VAdd(a.position, move);  // 一方を移動
+				b.position = VSub(b.position, move);  // もう一方を逆方向に移動
+
+			}
+		}
+	}
+
+}
+
+bool CollisionManager::IsAABBColliding(const VECTOR& actor1MinPos, const VECTOR& actor1MaxPos, const VECTOR& actor2MinPos, const VECTOR& actor2MaxPos)
+{
+	return (actor1MinPos.x <= actor2MaxPos.x && actor1MaxPos.x >= actor2MinPos.x) &&
+		   (actor1MinPos.y <= actor2MaxPos.y && actor1MaxPos.y >= actor2MinPos.y) &&
+		   (actor1MinPos.z <= actor2MaxPos.z && actor1MaxPos.z >= actor2MinPos.z);
 }

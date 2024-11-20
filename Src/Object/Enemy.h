@@ -21,7 +21,8 @@ public:
 		"HIT_HEAD",
 		"HIT_BODY",
 		"HIT_FLY",
-		"FLINCH_UP",
+		"HIT_FLINCH_UP",
+		"HIT_KNOCK_BACK",
 		"KIP_UP"
 	};
 
@@ -48,6 +49,9 @@ public:
 
 	// 追いかける最大の時間
 	const float TRACKING_MAX_TIME;
+
+	// まっすぐ飛んでいく時間
+	const float KNOCK_BACK_TIME;
 
 	Enemy(const VECTOR& pos, const json& data);
 
@@ -104,7 +108,8 @@ private:
 		{EnemyState::HIT_HEAD},
 		{EnemyState::HIT_BODY},
 		{EnemyState::HIT_FLY},
-		{EnemyState::FLINCH_UP},
+		{EnemyState::HIT_FLINCH_UP},
+		{EnemyState::HIT_KNOCK_BACK},
 		{EnemyState::KIP_UP}
 	};
 
@@ -134,17 +139,29 @@ private:
 		{PlayerState::UPPER}
 	};
 
+	// 真っすぐ飛ばされるプレうやーの攻撃
+	const std::vector<PlayerState>& hitKnockBackState_ =
+	{
+		{PlayerState::CHARGE_PUNCH}
+	};
+
 	// 状態
 	EnemyState state_;
 
 	// 行動を決めたかどうか
 	bool isActionDecided_;
 
+	// すでに角度が変わっているかどうか
+	bool isChangeAngle_;
+
 	// クールタイム
 	float coolTime_;
 
 	// 追いかけている時間
 	float trackingTime_;
+
+	// 敵がまっすく飛んでいくときのカウンタ
+	float knockBackCnt_;
 
 	// 状態遷移
 	std::unordered_map<EnemyState, std::function<void()>> stateChange_;
@@ -155,7 +172,8 @@ private:
 	void ChangeHitHead();
 	void ChangeHitBody();
 	void ChangeHitFly();
-	void ChangeFlinchUp();
+	void ChangeHitFlinchUp();
+	void ChangeHitKnockBack();
 	void ChangeKipUp();
 
 	// 状態の更新
@@ -167,7 +185,8 @@ private:
 	void UpdateHitHead(const float deltaTime);
 	void UpdateHitBody(const float deltaTime);
 	void UpdateHitFly(const float deltaTime);
-	void UpdateFlinchUp(const float deltaTime);
+	void UpdateHitFlinchUp(const float deltaTime);
+	void UpdateHitKnockBack(const float deltaTime);
 	void UpdateKipUp(const float deltaTime);
 
 	// 機能の初期化
@@ -181,6 +200,9 @@ private:
 
 	// 関数ポインタの初期化
 	void InitFunctionPointer()override;
+
+	// ImGuiのデバッグ描画の更新
+	void UpdateDebugImGui()override;
 
 	// 状態遷移
 	void ChangeState(EnemyState state);

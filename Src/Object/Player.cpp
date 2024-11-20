@@ -30,6 +30,9 @@ Player::Player(const VECTOR& pos, const json& data)
 	UPPER_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(PlayerState::UPPER) - 1]["ATTACK_START_FRAME"]),
 	UPPER_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(PlayerState::UPPER) - 1]["ATTACK_END_FRAME"]),
 	UPPER_DAMAGE(data["ANIM"][static_cast<int>(PlayerState::UPPER) - 1]["DAMAGE"]),
+	CHARGE_PUNCH_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(PlayerState::CHARGE_PUNCH) - 1]["ATTACK_START_FRAME"]),
+	CHARGE_PUNCH_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(PlayerState::CHARGE_PUNCH) - 1]["ATTACK_END_FRAME"]),
+	CHARGE_PUNCH_DAMAGE(data["ANIM"][static_cast<int>(PlayerState::CHARGE_PUNCH) - 1]["DAMAGE"]),
 	CHARGE_TIME(data["CHARGE_TIME"])
 {
 
@@ -92,7 +95,7 @@ void Player::InitFunctionPointer()
 void Player::InitParameter()
 {
 
-	// 攻撃の入力を初期化
+	// 攻撃の入力
 	for (int i = static_cast<int>(PlayerState::JAB); i < static_cast<int>(PlayerState::MAX); i++)
 	{
 		isCombo_.emplace(static_cast<PlayerState>(i), false);
@@ -149,10 +152,10 @@ void Player::InitParameter()
 	// 左足に攻撃判定があるかどうか
 	collisionData_.isLeftFootAttack = false;
 
-	// 入力カウンタの初期化
+	// 入力カウンタ
 	acceptCnt_ = 0.0f;
 
-	// 溜めパンチのカウンタの初期化
+	// 溜めパンチのカウンタ
 	chargeCnt_ = 0.0f;
 
 	// 走るときの移動量
@@ -654,9 +657,6 @@ void Player::ChangeUpper()
 
 	stateUpdate_ = std::bind(&Player::UpdateUpper, this);
 
-	// どれだけ進むか計算
-	movePow_ = VAdd(transform_.pos, VScale(moveDir_, ATTACK_MOVE_POW));
-
 	// 入力受付時間をリセット
 	acceptCnt_ = 0.0f;
 
@@ -676,7 +676,15 @@ void Player::ChangeUpper()
 
 void Player::ChangeChargePunch()
 {
+
 	stateUpdate_ = std::bind(&Player::UpdateChargePunch, this);
+
+	// スピード
+	speed_ = ATTACK_MOVE_POW;
+
+	// どれだけ進むか計算
+	movePow_ = VAdd(transform_.pos, VScale(moveDir_, speed_));
+
 }
 
 void Player::ChangeHitHead()
@@ -913,6 +921,19 @@ void Player::UpdateUpper()
 
 void Player::UpdateChargePunch()
 {
+
+	// 少し前にゆっくり移動
+	transform_.pos = Utility::Lerp(transform_.pos, movePow_, 0.1f);
+
+	// 攻撃判定があるフレーム
+	if (CHARGE_PUNCH_ATTACK_START_FRAME <= animationController_->GetStepAnim() && animationController_->GetStepAnim() <= CHARGE_PUNCH_ATTACK_END_FRAME)
+	{
+		collisionData_.isRightHandAttack = true;
+	}
+	else
+	{
+		collisionData_.isRightHandAttack = false;
+	}
 
 	// 待機状態に遷移
 	if (animationController_->IsEndPlayAnimation())

@@ -1,4 +1,5 @@
 #include <random>
+#include "../Lib/ImGui/imgui.h"
 #include "../Manager/SceneManager.h"
 #include "../Manager/CollisionManager.h"
 #include "../Manager/ActorManager.h"
@@ -15,7 +16,8 @@ Enemy::Enemy(const VECTOR& pos, const json& data)
 	COOL_TIME(data["COOL_TIME"]),
 	ACTIVATION_DISTANCE(data["ACTIVATION_DISTANCE"]),
 	HIT_FLY_MOVE_POW(data["HIT_FLY_MOVE_POW"]),
-	TRACKING_MAX_TIME(data["TRACKING_MAX_TIME"])
+	TRACKING_MAX_TIME(data["TRACKING_MAX_TIME"]),
+	KNOCK_BACK_TIME(data["KNOCK_BACK_TIME"])
 {
 
 	// 機能の初期化
@@ -134,8 +136,14 @@ void Enemy::InitParameter()
 	// 追いかけている時間
 	trackingTime_ = 0.0f;
 
+	// 敵がまっすく飛んでいくときのカウンタ
+	knockBackCnt_ = 0.0f;
+
 	// 行動を決めたかどうか
 	isActionDecided_ = false;
+
+	// すでに角度が変わっているかどうか
+	isChangeAngle_ = false;
 
 }
 
@@ -149,8 +157,41 @@ void Enemy::InitFunctionPointer()
 	stateChange_.emplace(EnemyState::HIT_HEAD, std::bind(&Enemy::ChangeHitHead, this));
 	stateChange_.emplace(EnemyState::HIT_BODY, std::bind(&Enemy::ChangeHitBody, this));
 	stateChange_.emplace(EnemyState::HIT_FLY, std::bind(&Enemy::ChangeHitFly, this));
-	stateChange_.emplace(EnemyState::FLINCH_UP, std::bind(&Enemy::ChangeFlinchUp, this));
+	stateChange_.emplace(EnemyState::HIT_FLINCH_UP, std::bind(&Enemy::ChangeHitFlinchUp, this));
+	stateChange_.emplace(EnemyState::HIT_KNOCK_BACK, std::bind(&Enemy::ChangeHitKnockBack, this));
 	stateChange_.emplace(EnemyState::KIP_UP, std::bind(&Enemy::ChangeKipUp, this));
+}
+
+void Enemy::UpdateDebugImGui()
+{
+
+	// ウィンドウタイトル&開始処理
+	ImGui::Begin("Enemy");
+
+	// 大きさ
+	ImGui::Text("scale");
+	ImGui::InputFloat("Scl", &scl_);
+
+	// 角度
+	VECTOR rotDeg = VECTOR();
+	rotDeg.x = Utility::Rad2DegF(transform_.quaRot.x);
+	rotDeg.y = Utility::Rad2DegF(transform_.quaRot.y);
+	rotDeg.z = Utility::Rad2DegF(transform_.quaRot.z);
+	ImGui::Text("angle(deg)");
+	ImGui::SliderFloat("RotX", &rotDeg.x, -90.0f, 90.0f);
+	ImGui::SliderFloat("RotY", &rotDeg.y, -90.0f, 90.0f);
+	ImGui::SliderFloat("RotZ", &rotDeg.z, -90.0f, 90.0f);
+	transform_.quaRot.x = Utility::Deg2RadF(rotDeg.x);
+	transform_.quaRot.y = Utility::Deg2RadF(rotDeg.y);
+	transform_.quaRot.z = Utility::Deg2RadF(rotDeg.z);
+
+	// 位置
+	ImGui::Text("position");
+	// 構造体の先頭ポインタを渡し、xyzと連続したメモリ配置へアクセス
+	ImGui::InputFloat3("Pos", &transform_.pos.x);
+	// 終了処理
+	ImGui::End();
+
 }
 
 void Enemy::InitAnimation()
@@ -207,6 +248,9 @@ void Enemy::InitAnimation()
 void Enemy::Update(const float deltaTime)
 {
 
+	// ImGuiのデバッグ描画の更新
+	UpdateDebugImGui();
+
 	// クールタイムを計算
 	coolTime_ -= deltaTime;
 
@@ -219,8 +263,12 @@ void Enemy::Update(const float deltaTime)
 	// 状態ごとの更新
 	stateUpdate_(deltaTime);
 
-	// 重力
-	Gravity(gravityScale_);
+	// 重力がかかるアニメーションのみ処理する
+	if (state_ != EnemyState::HIT_KNOCK_BACK)
+	{
+		// 重力
+		Gravity(gravityScale_);
+	}
 
 	// アニメーション再生
 	animationController_->Update(deltaTime);
@@ -308,7 +356,7 @@ void Enemy::AttackHitCheck(const int state)
 	{
 		if (hitState == static_cast<PlayerState>(state))
 		{
-			ChangeState(EnemyState::FLINCH_UP);
+			ChangeState(EnemyState::HIT_FLINCH_UP);
 			return;
 		}
 	}
@@ -339,6 +387,16 @@ void Enemy::AttackHitCheck(const int state)
 		if (hitState == static_cast<PlayerState>(state))
 		{
 			ChangeState(EnemyState::HIT_FLY);
+			return;
+		}
+	}
+
+	// 吹っ飛んでいくアニメーションかチェック
+	for (const auto hitState : hitKnockBackState_)
+	{
+		if (hitState == static_cast<PlayerState>(state))
+		{
+			ChangeState(EnemyState::HIT_KNOCK_BACK);
 			return;
 		}
 	}
@@ -401,7 +459,7 @@ std::optional<VECTOR> Enemy::GetPlayerPos()
 	// プレイヤーの座標を取得
 	for (const auto& player : players->second)
 	{
-		return player->GetPos();
+		return player->GetTransform().pos;
 	}
 
 }
@@ -564,6 +622,9 @@ void Enemy::ChangeIdle()
 	// 重力を通常状態に戻す
  	gravityScale_ = 1.0f;
 
+	// 角度が変更されたかどうかをリセットする
+	isChangeAngle_ = false;
+
 }
 
 void Enemy::ChangeRun()
@@ -654,6 +715,7 @@ void Enemy::ChangeHitBody()
 
 void Enemy::ChangeHitFly()
 {
+
 	stateUpdate_ = std::bind(&Enemy::UpdateHitFly, this, std::placeholders::_1);
 
 	// プレイヤーの方向を求める
@@ -665,22 +727,26 @@ void Enemy::ChangeHitFly()
 	// プレイヤーの方向と逆方向のベクトル
 	vec = { -vec.x, vec.y,-vec.z };
 
-	// 上方向に飛ばす
-	velocity_.y = 1.2f;
-	vec.y = velocity_.y;
+	// 一個前のアニメーションがまっすぐ飛んでいくのだったら上方向に飛ばさない
+	if (key_ != ANIM_DATA_KEY[static_cast<int>(EnemyState::HIT_KNOCK_BACK)])
+	{
+		// 上方向に飛ばす
+		velocity_.y = 1.2f;
+		vec.y = velocity_.y;
 
-	// スピード
-	speed_ = HIT_FLY_MOVE_POW;
+		// スピード
+		speed_ = HIT_FLY_MOVE_POW;
 
-	// 移動量
-	movePow_ = VScale(vec, speed_);
+		// 移動量
+		movePow_ = VScale(vec, speed_);
+	}
 
 }
 
-void Enemy::ChangeFlinchUp()
+void Enemy::ChangeHitFlinchUp()
 {
 
-	stateUpdate_ = std::bind(&Enemy::UpdateFlinchUp, this, std::placeholders::_1);
+	stateUpdate_ = std::bind(&Enemy::UpdateHitFlinchUp, this, std::placeholders::_1);
 
 	// プレイヤーの方向を求める
 	VECTOR vec = VSub(targetPos_, transform_.pos);
@@ -701,12 +767,42 @@ void Enemy::ChangeFlinchUp()
 	// 移動量
 	movePow_ = VScale(vec, speed_);
 
+	// すでに角度が変わっていたら処理しない
+	if (!isChangeAngle_)
+	{
+		// 体の角度を変更
+		transform_.quaRot = Quaternion::Mult(transform_.quaRot, Quaternion::AngleAxis(Utility::Deg2RadF(-30.0f), Utility::AXIS_X));
+		//transform_.Update();
+		isChangeAngle_ = true;
+	}
+
 	// 重力を緩くする
 	gravityScale_ = 4.0f;
 
-	// 横方向の移動をなくす
-	//movePow_.x = 0.0f;
-	//movePow_.y = 0.0f;
+}
+
+void Enemy::ChangeHitKnockBack()
+{
+
+	stateUpdate_ = std::bind(&Enemy::UpdateHitKnockBack, this, std::placeholders::_1);
+
+	// プレイヤーの方向を求める
+	VECTOR vec = VSub(targetPos_, transform_.pos);
+
+	// 正規化
+	vec = VNorm(vec);
+
+	// プレイヤーの方向と逆方向のベクトル
+	vec = { -vec.x, vec.y,-vec.z };
+
+	// y方向を消す
+	vec.y = 0.0f;
+
+	// スピード
+	speed_ = HIT_FLY_MOVE_POW;
+
+	// 移動量
+	movePow_ = VScale(vec, speed_);
 
 }
 
@@ -887,7 +983,7 @@ void Enemy::UpdateHitFly(const float deltaTime)
 
 }
 
-void Enemy::UpdateFlinchUp(const float deltaTime)
+void Enemy::UpdateHitFlinchUp(const float deltaTime)
 {
 
 	// 地面につくまで加算する
@@ -902,6 +998,27 @@ void Enemy::UpdateFlinchUp(const float deltaTime)
 	{
 		ChangeState(EnemyState::KIP_UP);
 	}
+
+}
+
+void Enemy::UpdateHitKnockBack(const float deltaTime)
+{
+
+	// 飛んでいられる時間まで移動し続ける
+	if (KNOCK_BACK_TIME > knockBackCnt_)
+	{
+		// 後ろに飛んでいきながら移動
+		transform_.pos = VAdd(transform_.pos, movePow_);
+		transform_.pos.y = -500.0f;
+	}
+	else
+	{
+		knockBackCnt_ = 0.0f;
+		ChangeState(EnemyState::HIT_FLY);
+	}
+
+	// 飛んでいる時間をカウント
+	knockBackCnt_ += deltaTime;
 
 }
 

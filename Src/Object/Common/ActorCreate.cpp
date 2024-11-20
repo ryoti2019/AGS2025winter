@@ -60,13 +60,13 @@ ActorCreate::ActorCreate()
 	// “G
 	const auto& enemyData = objectData[1]["EnemyData"];
 
-	//// “G‚ğ¶¬
-	//for (int i = 0; i < 10; i++)
-	//{
-	//	float x = std::rand() % 10000;
-	//	float z = std::rand() % 10000;
-	//	actorManager->CreateActor<Enemy>(enemyData, { 0.0f,-1500.0f,0.0f });
-	//	actorManager->ActiveData(ActorType::ENEMY, { -5000.0f + x,0.0f,-5000.0f + z });
-	//}
+	// “G‚ğ¶¬
+	for (int i = 0; i < 100; i++)
+	{
+		float x = std::rand() % 10000;
+		float z = std::rand() % 10000;
+		actorManager->CreateActor<Enemy>(enemyData, { 0.0f,-1500.0f,0.0f });
+		actorManager->ActiveData(ActorType::ENEMY, { -5000.0f + x,0.0f,-5000.0f + z });
+	}
 
 }

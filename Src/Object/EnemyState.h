@@ -10,7 +10,8 @@ enum class EnemyState
 	HIT_HEAD,
 	HIT_BODY,
 	HIT_FLY,
-	FLINCH_UP,
+	HIT_FLINCH_UP,
+	HIT_KNOCK_BACK,
 	KIP_UP,
 	MAX
 };

@@ -82,6 +82,15 @@ public:
 	// アッパーのダメージ量
 	const int UPPER_DAMAGE;
 
+	// 溜めパンチの攻撃開始フレーム
+	const float CHARGE_PUNCH_ATTACK_START_FRAME;
+
+	// 溜めパンチの攻撃終了フレーム
+	const float CHARGE_PUNCH_ATTACK_END_FRAME;
+
+	// 溜めパンチのダメージ量
+	const int CHARGE_PUNCH_DAMAGE;
+
 	// 溜めパンチを出すためにボタン押す長さ
 	const float CHARGE_TIME;
 
@@ -226,7 +235,7 @@ private:
 	void InitFunctionPointer()override;
 
 	// ImGuiのデバッグ描画の更新
-	virtual void UpdateDebugImGui();
+	void UpdateDebugImGui()override;
 
 	// 状態遷移
 	void ChangeState(PlayerState state);

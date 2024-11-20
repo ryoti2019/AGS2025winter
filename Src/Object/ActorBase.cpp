@@ -263,6 +263,16 @@ void ActorBase::CollisionUpdate()
 
 #pragma endregion
 
+#pragma region 直方体の当たり判定
+
+	// 最小点
+	collisionData_.minPos = { transform_.pos.x - collisionData_.bodyCollisionRadius,transform_.pos.y,transform_.pos.z - collisionData_.bodyCollisionRadius };
+
+	// 最大点
+	collisionData_.maxPos = { transform_.pos.x + collisionData_.bodyCollisionRadius,transform_.pos.y + BODY_RELATIVE_UP_POS.y,transform_.pos.z + collisionData_.bodyCollisionRadius };
+
+#pragma endregion
+
 }
 
 void ActorBase::Move()
@@ -307,7 +317,7 @@ void ActorBase::Draw()
 	MV1DrawModel(transform_.modelId);
 
 	// デバッグ描画
-	//DrawDebug();
+	DrawDebug();
 
 }
 
@@ -339,23 +349,53 @@ void ActorBase::DrawDebug()
 {
 
 	// 右手の当たり判定の描画
-	DrawCapsule3D(collisionData_.rightHandCapsuleUpPos, collisionData_.rightHandCapsuleDownPos, HAND_AND_FOOT_COLLISION_RADIUS, 10, 0xff0000, 0xff0000, false);
+	//DrawCapsule3D(collisionData_.rightHandCapsuleUpPos, collisionData_.rightHandCapsuleDownPos, HAND_AND_FOOT_COLLISION_RADIUS, 10, 0xff0000, 0xff0000, false);
 
 	// 左手の当たり判定の描画
-	DrawCapsule3D(collisionData_.leftHandCapsuleUpPos, collisionData_.leftHandCapsuleDownPos, HAND_AND_FOOT_COLLISION_RADIUS, 10, 0xff0000, 0xff0000, false);
+	//DrawCapsule3D(collisionData_.leftHandCapsuleUpPos, collisionData_.leftHandCapsuleDownPos, HAND_AND_FOOT_COLLISION_RADIUS, 10, 0xff0000, 0xff0000, false);
 
 	// 右足の当たり判定の描画
-	DrawCapsule3D(collisionData_.rightFootCapsuleUpPos, collisionData_.rightFootCapsuleDownPos, HAND_AND_FOOT_COLLISION_RADIUS, 10, 0xff0000, 0xff0000, false);
+	//DrawCapsule3D(collisionData_.rightFootCapsuleUpPos, collisionData_.rightFootCapsuleDownPos, HAND_AND_FOOT_COLLISION_RADIUS, 10, 0xff0000, 0xff0000, false);
 
 	// 左足の当たり判定の描画
-	DrawCapsule3D(collisionData_.leftFootCapsuleUpPos, collisionData_.leftFootCapsuleDownPos, HAND_AND_FOOT_COLLISION_RADIUS, 10, 0xff0000, 0xff0000, false);
+	//DrawCapsule3D(collisionData_.leftFootCapsuleUpPos, collisionData_.leftFootCapsuleDownPos, HAND_AND_FOOT_COLLISION_RADIUS, 10, 0xff0000, 0xff0000, false);
 
 	// 体の当たり判定の描画
-	DrawCapsule3D(collisionData_.bodyCapsuleUpPos, collisionData_.bodyCapsuleDownPos, BODY_COLLISION_RADIUS, 10, 0xff0000, 0xff0000, false);
+	//DrawCapsule3D(collisionData_.bodyCapsuleUpPos, collisionData_.bodyCapsuleDownPos, BODY_COLLISION_RADIUS, 10, 0xff0000, 0xff0000, false);
 
 	// 地面との当たり判定の時の線の描画
 	DrawLine3D(
 		VAdd(collisionData_.bodyCapsuleUpPos,VGet(0.0f, collisionData_.bodyCollisionRadius,0.0f)), 
 		VAdd(collisionData_.bodyCapsuleDownPos, VGet(0.0f, -collisionData_.bodyCollisionRadius, 0.0f)), 0x00ff00);
+
+	// 直方体の当たり判定の描画
+	// AABBの8つの頂点を計算
+
+	VECTOR vertices[8] = {
+		collisionData_.minPos ,                                    // 頂点0 (min.x, min.y, min.z)
+		VGet(collisionData_.minPos.x, collisionData_.minPos.y, collisionData_.maxPos.z),      // 頂点1 (min.x, min.y, max.z)
+		VGet(collisionData_.minPos.x, collisionData_.maxPos.y, collisionData_.minPos.z),      // 頂点2 (min.x, max.y, min.z)
+		VGet(collisionData_.minPos.x, collisionData_.maxPos.y, collisionData_.maxPos.z),      // 頂点3 (min.x, max.y, max.z)
+		VGet(collisionData_.maxPos.x, collisionData_.minPos.y, collisionData_.minPos.z),      // 頂点4 (max.x, min.y, min.z)
+		VGet(collisionData_.maxPos.x, collisionData_.minPos.y, collisionData_.maxPos.z),      // 頂点5 (max.x, min.y, max.z)
+		VGet(collisionData_.maxPos.x, collisionData_.maxPos.y, collisionData_.minPos.z),      // 頂点6 (max.x, max.y, min.z)
+		collisionData_.maxPos                                     // 頂点7 (max.x, max.y, max.z)
+	};
+
+	// 各辺を結ぶ (12本の線を描画)
+	DrawLine3D(vertices[0], vertices[1], 0x00ff00); // 底面
+	DrawLine3D(vertices[1], vertices[3], 0x00ff00);
+	DrawLine3D(vertices[3], vertices[2], 0x00ff00);
+	DrawLine3D(vertices[2], vertices[0], 0x00ff00);
+
+	DrawLine3D(vertices[4], vertices[5], 0x00ff00); // 上面
+	DrawLine3D(vertices[5], vertices[7], 0x00ff00);
+	DrawLine3D(vertices[7], vertices[6], 0x00ff00);
+	DrawLine3D(vertices[6], vertices[4], 0x00ff00);
+
+	DrawLine3D(vertices[0], vertices[4], 0x00ff00); // 側面
+	DrawLine3D(vertices[1], vertices[5], 0x00ff00);
+	DrawLine3D(vertices[2], vertices[6], 0x00ff00);
+	DrawLine3D(vertices[3], vertices[7], 0x00ff00);
 
 }

@@ -42,6 +42,15 @@ private:
 		}
 	};
 
+	// プレイヤーと敵同士が当たっているかの組み合わせを登録する
+	const std::vector<collisionChannnelInfo> resolveCollisionChannelList_ =
+	{
+		{
+			{ActorType::PLAYER,ActorType::ENEMY},
+			{ActorType::ENEMY,ActorType::ENEMY}
+		}
+	};
+
 	// すべてのアクターの衝突判定をまとめたデータ
 	std::unordered_map<ActorType, std::vector<std::shared_ptr<ActorBase>>> collisionActorData_;
 
@@ -55,7 +64,10 @@ private:
 	void OnAttackCollision(const std::shared_ptr<ActorBase>& attacker, const std::shared_ptr<ActorBase>& target);
 
 	// プレイヤーと敵のステージとの当たり判定
-	void CheckStageCollision(const float deltaTime);
+	void CheckStageCollision();
+
+	// プレイヤーと敵同士が重ならないようにする当たり判定
+	void CheckResolveCollision();
 
 };
 

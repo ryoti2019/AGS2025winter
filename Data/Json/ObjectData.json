@@ -62,7 +62,7 @@
 						"PATH": "Data/Model/Player/RightKick.mv1",
 						"SPEED": 40.0,
 						"ATTACK_START_FRAME": 7.0,
-						"ATTACK_END_FRAME": 16.0,
+						"ATTACK_END_FRAME": 20.0,
 						"DAMAGE": 10
 					},
 					{
@@ -77,9 +77,9 @@
 						"NAME": "CHARGE_PUNCH",
 						"PATH": "Data/Model/Player/ChargePunch.mv1",
 						"SPEED": 50.0,
-						"ATTACK_START_FRAME": 8.0,
-						"ATTACK_END_FRAME": 15.0,
-						"DAMAGE": 10
+						"ATTACK_START_FRAME": 30.0,
+						"ATTACK_END_FRAME": 36.0,
+						"DAMAGE": 50
 					},
 					{
 						"NAME": "HIT_HEAD",
@@ -108,6 +108,7 @@
 				"ACTIVATION_DISTANCE": 1000.0,
 				"COOL_TIME": 5.0,
 				"TRACKING_MAX_TIME": 5.0,
+				"KNOCK_BACK_TIME": 3.0,
 				"ANIM_INDEX": 1,
 				"SCALE": 10.0,
 				"HP": 100,
@@ -153,8 +154,13 @@
 						"SPEED": 30.0
 					},
 					{
-						"NAME": "FLINCH_UP",
+						"NAME": "HIT_FLINCH_UP",
 						"PATH": "Data/Model/Enemy/FlinchUp.mv1",
+						"SPEED": 30.0
+					},
+					{
+						"NAME": "HIT_KNOCK_BACK",
+						"PATH": "Data/Model/Enemy/KnockBack.mv1",
 						"SPEED": 30.0
 					},
 					{
