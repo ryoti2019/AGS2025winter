@@ -153,7 +153,7 @@ public:
 
 #pragma endregion
 
-#pragma region プレイヤーと敵が重ならないようにするために衝突判定で使うもの
+#pragma region プレイヤーと敵が重ならないようにするために当たり判定で使うもの
 
 		// 最小点
 		VECTOR minPos;
