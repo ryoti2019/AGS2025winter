@@ -9,10 +9,10 @@
 Enemy::Enemy(const VECTOR& pos, const json& data)
 	:
 	ActorBase(pos, data),
-	PUNCH_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(EnemyState::PUNCH) - 1]["ATTACK_START_FRAME"]),
-	PUNCH_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(EnemyState::PUNCH) - 1]["ATTACK_END_FRAME"]),
-	KICK_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(EnemyState::KICK) - 1]["ATTACK_START_FRAME"]),
-	KICK_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(EnemyState::KICK) - 1]["ATTACK_END_FRAME"]),
+	PUNCH_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(EnemyState::ATTACK_PUNCH) - 1]["ATTACK_START_FRAME"]),
+	PUNCH_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(EnemyState::ATTACK_PUNCH) - 1]["ATTACK_END_FRAME"]),
+	KICK_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(EnemyState::ATTACK_KICK) - 1]["ATTACK_START_FRAME"]),
+	KICK_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(EnemyState::ATTACK_KICK) - 1]["ATTACK_END_FRAME"]),
 	COOL_TIME(data["COOL_TIME"]),
 	ACTIVATION_DISTANCE(data["ACTIVATION_DISTANCE"]),
 	HIT_FLY_MOVE_POW(data["HIT_FLY_MOVE_POW"]),
@@ -152,8 +152,8 @@ void Enemy::InitFunctionPointer()
 	//関数ポインタの初期化
 	stateChange_.emplace(EnemyState::IDLE, std::bind(&Enemy::ChangeIdle, this));
 	stateChange_.emplace(EnemyState::RUN, std::bind(&Enemy::ChangeRun, this));
-	stateChange_.emplace(EnemyState::PUNCH, std::bind(&Enemy::ChangePunch, this));
-	stateChange_.emplace(EnemyState::KICK, std::bind(&Enemy::ChangeKick, this));
+	stateChange_.emplace(EnemyState::ATTACK_PUNCH, std::bind(&Enemy::ChangePunch, this));
+	stateChange_.emplace(EnemyState::ATTACK_KICK, std::bind(&Enemy::ChangeKick, this));
 	stateChange_.emplace(EnemyState::HIT_HEAD, std::bind(&Enemy::ChangeHitHead, this));
 	stateChange_.emplace(EnemyState::HIT_BODY, std::bind(&Enemy::ChangeHitBody, this));
 	stateChange_.emplace(EnemyState::HIT_FLY, std::bind(&Enemy::ChangeHitFly, this));
@@ -257,7 +257,7 @@ void Enemy::Update(const float deltaTime)
 	// どの行動をするか決める
 	if (!isActionDecided_ && coolTime_ <= 0.0f)
 	{
-		//SelsectAction(deltaTime);
+		SelsectAction(deltaTime);
 	}
 
 	// 状態ごとの更新
@@ -581,7 +581,7 @@ void Enemy::Attack(const float deltaTime)
 	if (number == 0)
 	{
 
-		ChangeState(EnemyState::PUNCH);
+		ChangeState(EnemyState::ATTACK_PUNCH);
 
 		// 行動を決めた
 		isActionDecided_ = true;
@@ -590,7 +590,7 @@ void Enemy::Attack(const float deltaTime)
 	else if (number == 1)
 	{
 
-		ChangeState(EnemyState::KICK);
+		ChangeState(EnemyState::ATTACK_KICK);
 
 		// 行動を決めた
 		isActionDecided_ = true;

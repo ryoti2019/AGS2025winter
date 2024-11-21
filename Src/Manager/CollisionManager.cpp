@@ -2,7 +2,16 @@
 #include <map>
 #include <algorithm>
 #include <cmath>
+#include <DxLib.h>
 #include "CollisionManager.h"
+
+CollisionManager::CollisionManager()
+	:
+	ATTACK_START_NUM(3),
+	ENEMY_PUSH_FORCE_SCALER(2.0f)
+{
+
+}
 
 void CollisionManager::Init()
 {
@@ -75,7 +84,7 @@ void CollisionManager::CheckAttackCollision(const float deltaTime)
 			for (const std::shared_ptr<ActorBase>& target : targets->second)
 			{
 
-				// ポインタが入っている確認
+				// ポインタが入っているか確認
 				if (!attacker)return;
 				if (!target)return;
 
@@ -105,7 +114,7 @@ void CollisionManager::CheckAttackCollision(const float deltaTime)
 				}
 
 				// 今攻撃している側のアニメーションが要素にあるか確認する
-				auto a = hitData->second.find(attacker->GetState() - 3);
+				auto a = hitData->second.find(attacker->GetState() - ATTACK_START_NUM);
 
 				// 中身が無ければ処理しない
 				if (a == hitData->second.end())return;
@@ -171,7 +180,7 @@ void CollisionManager::OnAttackCollision(const std::shared_ptr<ActorBase>& attac
 	auto& data = invincibleData_[target];
 
 	// ターゲットに今攻撃された攻撃状態の無敵時間を設定する
-	data[attacker->GetState() - 3] = 1.0f;
+	data[attacker->GetState() - ATTACK_START_NUM] = 1.0f;
 
 }
 
@@ -197,7 +206,7 @@ void CollisionManager::CheckStageCollision()
 			for (const std::shared_ptr<ActorBase>& stage : stages->second)
 			{
 
-				// ポインタが入っている確認
+				// ポインタが入っているか確認
 				if (!target)return;
 				if (!stage)return;
 
@@ -293,98 +302,96 @@ void CollisionManager::CheckResolveCollision()
 			for (const std::shared_ptr<ActorBase>& actor2 : actors2->second)
 			{
 
-				// ポインタが入っている確認
+				// ポインタが入っているか確認
 				if (!actor1)return;
 				if (!actor2)return;
 
-				// 直方体の当たり判定の図形を作る
-				// アクター1
-				// 最小点
-				VECTOR actorPos1Min = actor1->GetCollisionData().minPos;
-
-				//最大点
-				VECTOR actorPos1Max = actor1->GetCollisionData().maxPos;
-
-				// アクター2
-				// 最小値
-				VECTOR actorPos2Min = actor2->GetCollisionData().minPos;
-
-				//最大点
-				VECTOR actorPos2Max = actor2->GetCollisionData().maxPos;
-
-				// 各軸方向の重なり量を計算
-				float overlapX = std::min(actorPos1Max.x, actorPos2Max.x) - std::max(actorPos1Min.x, actorPos2Min.x);
-				float overlapY = std::min(actorPos1Max.y, actorPos2Max.y) - std::max(actorPos1Min.y, actorPos2Min.y);
-				float overlapZ = std::min(actorPos1Max.z, actorPos2Max.z) - std::max(actorPos1Min.z, actorPos2Min.z);
-
-				// 重なっていなければ通らない
-				if (overlapX <= 0 || overlapY <= 0 || overlapZ <= 0)continue;
-
-				// 重なってる分ずらす座標
-				VECTOR pos = Utility::VECTOR_ZERO;
-
-				// もし重なりがあれば解消する
-				if (overlapX < overlapY && overlapX < overlapZ)
+				// プレイヤーと敵が重なってたときの処理
+				if (actor1->GetActorType() == ActorType::PLAYER)
 				{
-					// 1.0fにして符号だけ取得する
-					float x = std::copysignf(1.0f, overlapX);
-					x = x * -10.0f;
-					// aのX軸方向に移動
-					if (actorPos1Max.x > actorPos2Max.x)
-					{
-						// 重なってる分を代入
-						pos = { x,0.0f,0.0f };
-						actor2->AddPos(pos);
-					}
-					else
-					{
-						// 重なってる分を代入
-						pos = { x,0.0f,0.0f };
-						actor2->SubPos(pos);
-					}
+					ResolvePlayerEnemyCollision(actor1, actor2);
 				}
-				// Y軸方向
-				else if (overlapY < overlapZ)
+				// プレイヤーと敵が重なってたときの処理
+				else if (actor1->GetActorType() == ActorType::ENEMY)
 				{
-					// 1.0fにして符号だけ取得する
-					float y = std::copysignf(1.0f, overlapY);
-					y = y * -10.0f;
-					// aのY軸方向に移動
-					if (actorPos1Max.y > actorPos2Max.y)
-					{
-						// 重なってる分を代入
-						pos = { 0.0f,y,0.0f };
-						actor2->AddPos(pos);
-					}
-					else
-					{
-						// 重なってる分を代入
-						pos = { 0.0f,y,0.0f };
-						actor2->SubPos(pos);
-					}
+					ResolveEnemysCollision(actor1, actor2);
 				}
-				// Z軸方向
-				else
-				{
-					// 1.0fにして符号だけ取得する
-					float z = std::copysignf(1.0f, overlapZ);
-					z = z * -10.0f;
-					// aのZ軸方向に移動
-					if (actorPos1Max.z > actorPos2Max.z)
-					{
-						// 重なってる分を代入
-						pos = { 0.0f,0.0f,z };
-						actor2->AddPos(pos);
-					}
-					else
-					{
-						// 重なってる分を代入
-						pos = { 0.0f,0.0f,z };
-						actor2->SubPos(pos);
-					}
-				}
+
 			}
 		}
 	}
+
+}
+
+void CollisionManager::ResolvePlayerEnemyCollision(const std::shared_ptr<ActorBase>& actor1, const std::shared_ptr<ActorBase>& actor2)
+{
+
+	// カプセル同氏の当たり判定
+	if(HitCheck_Capsule_Capsule(actor1->GetCollisionData().bodyCapsuleUpPos,actor1->GetCollisionData().bodyCapsuleDownPos, actor1->GetCollisionData().bodyCollisionRadius,
+								actor2->GetCollisionData().bodyCapsuleUpPos, actor2->GetCollisionData().bodyCapsuleDownPos, actor2->GetCollisionData().bodyCollisionRadius))
+	{
+
+	}
+
+}
+
+void CollisionManager::ResolveEnemysCollision(const std::shared_ptr<ActorBase>& actor1, const std::shared_ptr<ActorBase>& actor2)
+{
+
+	// アクター1
+	// 最小点
+	VECTOR actorPos1Min = actor1->GetCollisionData().minPos;
+
+	//最大点
+	VECTOR actorPos1Max = actor1->GetCollisionData().maxPos;
+
+	// アクター2
+	// 最小値
+	VECTOR actorPos2Min = actor2->GetCollisionData().minPos;
+
+	//最大点
+	VECTOR actorPos2Max = actor2->GetCollisionData().maxPos;
+
+	// 重なってる分ずらす座標
+	VECTOR pos = Utility::VECTOR_ZERO;
+
+	// 中心点の差分を計算（方向ベクトルとして利用
+	// Aの中心点
+	VECTOR actor1CenterPos = VScale(VAdd(actorPos1Min, actorPos1Max), 0.5f);
+
+	// Bの中心点
+	VECTOR actor2CenterPos = VScale(VAdd(actorPos2Min, actorPos2Max), 0.5f);
+
+	// 正規化した方向ベクトル
+	VECTOR direction = VNorm(VSub(actor1CenterPos, actor2CenterPos));
+
+	// 重なり解消の移動量を計算（軸ごとに処理）
+	VECTOR actor1MovePos = { 0.0f, 0.0f, 0.0f };
+	VECTOR actor2MovePos = { 0.0f, 0.0f, 0.0f };
+
+	// X軸の解消
+	if (overlap_.x > 0) {
+		float halfOverlapX = overlap_.x * 0.5f;
+		actor1MovePos.x -= direction.x * halfOverlapX;
+		actor2MovePos.x += direction.x * halfOverlapX;
+	}
+
+	// Y軸の解消
+	if (overlap_.y > 0) {
+		float halfOverlapY = overlap_.y * 0.5f;
+		actor1MovePos.y -= direction.y * halfOverlapY;
+		actor2MovePos.y += direction.y * halfOverlapY;
+	}
+
+	// Z軸の解消
+	if (overlap_.z > 0) {
+		float halfOverlapZ = overlap_.z * 0.5f;
+		actor1MovePos.z -= direction.z * halfOverlapZ;
+		actor2MovePos.z += direction.z * halfOverlapZ;
+	}
+
+	// 移動量をAとBに適用
+	actor1->AddPos(actor1MovePos);
+	actor2->AddPos(actor2MovePos);
 
 }

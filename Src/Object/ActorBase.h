@@ -264,7 +264,7 @@ public:
 	void SetIsActive(const bool isActive) { isActive_ = isActive; }
 
 	// À•W‚ğ‘«‚·
-	void AddPos(const VECTOR& pos) { transform_.pos = VAdd(transform_.pos, pos); }
+	void AddPos(const VECTOR& pos);
 
 	// À•W‚ğ‘«‚·
 	void SubPos(const VECTOR& pos) { transform_.pos = VSub(transform_.pos, pos); }

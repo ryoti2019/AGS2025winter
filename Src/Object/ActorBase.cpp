@@ -317,8 +317,13 @@ void ActorBase::Draw()
 	MV1DrawModel(transform_.modelId);
 
 	// デバッグ描画
-	DrawDebug();
+	//DrawDebug();
 
+}
+
+void ActorBase::AddPos(const VECTOR& pos)
+{
+	transform_.pos = VAdd(transform_.pos, pos);
 }
 
 void ActorBase::SetIsLockOn(const bool isLockOn)
@@ -349,19 +354,19 @@ void ActorBase::DrawDebug()
 {
 
 	// 右手の当たり判定の描画
-	//DrawCapsule3D(collisionData_.rightHandCapsuleUpPos, collisionData_.rightHandCapsuleDownPos, HAND_AND_FOOT_COLLISION_RADIUS, 10, 0xff0000, 0xff0000, false);
+	DrawCapsule3D(collisionData_.rightHandCapsuleUpPos, collisionData_.rightHandCapsuleDownPos, HAND_AND_FOOT_COLLISION_RADIUS, 10, 0xff0000, 0xff0000, false);
 
 	// 左手の当たり判定の描画
-	//DrawCapsule3D(collisionData_.leftHandCapsuleUpPos, collisionData_.leftHandCapsuleDownPos, HAND_AND_FOOT_COLLISION_RADIUS, 10, 0xff0000, 0xff0000, false);
+	DrawCapsule3D(collisionData_.leftHandCapsuleUpPos, collisionData_.leftHandCapsuleDownPos, HAND_AND_FOOT_COLLISION_RADIUS, 10, 0xff0000, 0xff0000, false);
 
 	// 右足の当たり判定の描画
-	//DrawCapsule3D(collisionData_.rightFootCapsuleUpPos, collisionData_.rightFootCapsuleDownPos, HAND_AND_FOOT_COLLISION_RADIUS, 10, 0xff0000, 0xff0000, false);
+	DrawCapsule3D(collisionData_.rightFootCapsuleUpPos, collisionData_.rightFootCapsuleDownPos, HAND_AND_FOOT_COLLISION_RADIUS, 10, 0xff0000, 0xff0000, false);
 
 	// 左足の当たり判定の描画
-	//DrawCapsule3D(collisionData_.leftFootCapsuleUpPos, collisionData_.leftFootCapsuleDownPos, HAND_AND_FOOT_COLLISION_RADIUS, 10, 0xff0000, 0xff0000, false);
+	DrawCapsule3D(collisionData_.leftFootCapsuleUpPos, collisionData_.leftFootCapsuleDownPos, HAND_AND_FOOT_COLLISION_RADIUS, 10, 0xff0000, 0xff0000, false);
 
 	// 体の当たり判定の描画
-	//DrawCapsule3D(collisionData_.bodyCapsuleUpPos, collisionData_.bodyCapsuleDownPos, BODY_COLLISION_RADIUS, 10, 0xff0000, 0xff0000, false);
+	DrawCapsule3D(collisionData_.bodyCapsuleUpPos, collisionData_.bodyCapsuleDownPos, BODY_COLLISION_RADIUS, 10, 0xff0000, 0xff0000, false);
 
 	// 地面との当たり判定の時の線の描画
 	DrawLine3D(

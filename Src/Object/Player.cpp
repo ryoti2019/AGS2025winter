@@ -12,27 +12,27 @@
 Player::Player(const VECTOR& pos, const json& data)
 	:
 	ActorBase(pos, data),
-	JAB_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(PlayerState::JAB) - 1]["ATTACK_START_FRAME"]),
-	JAB_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(PlayerState::JAB) - 1]["ATTACK_END_FRAME"]),
-	JAB_DAMAGE(data["ANIM"][static_cast<int>(PlayerState::JAB) - 1]["DAMAGE"]),
-	STRAIGHT_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(PlayerState::STRAIGHT) - 1]["ATTACK_START_FRAME"]),
-	STRAIGHT_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(PlayerState::STRAIGHT) - 1]["ATTACK_END_FRAME"]),
-	STRAIGHT_DAMAGE(data["ANIM"][static_cast<int>(PlayerState::STRAIGHT) - 1]["DAMAGE"]),
-	HOOK_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(PlayerState::HOOK) - 1]["ATTACK_START_FRAME"]),
-	HOOK_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(PlayerState::HOOK) - 1]["ATTACK_END_FRAME"]),
-	HOOK_DAMAGE(data["ANIM"][static_cast<int>(PlayerState::HOOK) - 1]["DAMAGE"]),
-	LEFT_KICK_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(PlayerState::LEFT_KICK) - 1]["ATTACK_START_FRAME"]),
-	LEFT_KICK_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(PlayerState::LEFT_KICK) - 1]["ATTACK_END_FRAME"]),
-	LEFT_KICK_DAMAGE(data["ANIM"][static_cast<int>(PlayerState::LEFT_KICK) - 1]["DAMAGE"]),
-	RIGHT_KICK_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(PlayerState::RIGHT_KICK) - 1]["ATTACK_START_FRAME"]),
-	RIGHT_KICK_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(PlayerState::RIGHT_KICK) - 1]["ATTACK_END_FRAME"]),
-	RIGHT_KICK_DAMAGE(data["ANIM"][static_cast<int>(PlayerState::RIGHT_KICK) - 1]["DAMAGE"]),
-	UPPER_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(PlayerState::UPPER) - 1]["ATTACK_START_FRAME"]),
-	UPPER_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(PlayerState::UPPER) - 1]["ATTACK_END_FRAME"]),
-	UPPER_DAMAGE(data["ANIM"][static_cast<int>(PlayerState::UPPER) - 1]["DAMAGE"]),
-	CHARGE_PUNCH_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(PlayerState::CHARGE_PUNCH) - 1]["ATTACK_START_FRAME"]),
-	CHARGE_PUNCH_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(PlayerState::CHARGE_PUNCH) - 1]["ATTACK_END_FRAME"]),
-	CHARGE_PUNCH_DAMAGE(data["ANIM"][static_cast<int>(PlayerState::CHARGE_PUNCH) - 1]["DAMAGE"]),
+	JAB_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_JAB) - 1]["ATTACK_START_FRAME"]),
+	JAB_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_JAB) - 1]["ATTACK_END_FRAME"]),
+	JAB_DAMAGE(data["ANIM"][static_cast<int>(PlayerState::ATTACK_JAB) - 1]["DAMAGE"]),
+	STRAIGHT_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_STRAIGHT) - 1]["ATTACK_START_FRAME"]),
+	STRAIGHT_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_STRAIGHT) - 1]["ATTACK_END_FRAME"]),
+	STRAIGHT_DAMAGE(data["ANIM"][static_cast<int>(PlayerState::ATTACK_STRAIGHT) - 1]["DAMAGE"]),
+	HOOK_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_HOOK) - 1]["ATTACK_START_FRAME"]),
+	HOOK_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_HOOK) - 1]["ATTACK_END_FRAME"]),
+	HOOK_DAMAGE(data["ANIM"][static_cast<int>(PlayerState::ATTACK_HOOK) - 1]["DAMAGE"]),
+	LEFT_KICK_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_LEFT_KICK) - 1]["ATTACK_START_FRAME"]),
+	LEFT_KICK_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_LEFT_KICK) - 1]["ATTACK_END_FRAME"]),
+	LEFT_KICK_DAMAGE(data["ANIM"][static_cast<int>(PlayerState::ATTACK_LEFT_KICK) - 1]["DAMAGE"]),
+	RIGHT_KICK_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_RIGHT_KICK) - 1]["ATTACK_START_FRAME"]),
+	RIGHT_KICK_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_RIGHT_KICK) - 1]["ATTACK_END_FRAME"]),
+	RIGHT_KICK_DAMAGE(data["ANIM"][static_cast<int>(PlayerState::ATTACK_RIGHT_KICK) - 1]["DAMAGE"]),
+	UPPER_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_UPPER) - 1]["ATTACK_START_FRAME"]),
+	UPPER_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_UPPER) - 1]["ATTACK_END_FRAME"]),
+	UPPER_DAMAGE(data["ANIM"][static_cast<int>(PlayerState::ATTACK_UPPER) - 1]["DAMAGE"]),
+	CHARGE_PUNCH_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_CHARGE_PUNCH) - 1]["ATTACK_START_FRAME"]),
+	CHARGE_PUNCH_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_CHARGE_PUNCH) - 1]["ATTACK_END_FRAME"]),
+	CHARGE_PUNCH_DAMAGE(data["ANIM"][static_cast<int>(PlayerState::ATTACK_CHARGE_PUNCH) - 1]["DAMAGE"]),
 	CHARGE_TIME(data["CHARGE_TIME"])
 {
 
@@ -80,13 +80,13 @@ void Player::InitFunctionPointer()
 	//関数ポインタの初期化
 	stateChange_.emplace(PlayerState::IDLE, std::bind(&Player::ChangeIdle, this));
 	stateChange_.emplace(PlayerState::RUN, std::bind(&Player::ChangeRun, this));
-	stateChange_.emplace(PlayerState::JAB, std::bind(&Player::ChangeJab, this));
-	stateChange_.emplace(PlayerState::STRAIGHT, std::bind(&Player::ChangeStraight, this));
-	stateChange_.emplace(PlayerState::HOOK, std::bind(&Player::ChangeHook, this));
-	stateChange_.emplace(PlayerState::LEFT_KICK, std::bind(&Player::ChangeLeftKick, this));
-	stateChange_.emplace(PlayerState::RIGHT_KICK, std::bind(&Player::ChangeRightKick, this));
-	stateChange_.emplace(PlayerState::UPPER, std::bind(&Player::ChangeUpper, this));
-	stateChange_.emplace(PlayerState::CHARGE_PUNCH, std::bind(&Player::ChangeChargePunch, this));
+	stateChange_.emplace(PlayerState::ATTACK_JAB, std::bind(&Player::ChangeJab, this));
+	stateChange_.emplace(PlayerState::ATTACK_STRAIGHT, std::bind(&Player::ChangeStraight, this));
+	stateChange_.emplace(PlayerState::ATTACK_HOOK, std::bind(&Player::ChangeHook, this));
+	stateChange_.emplace(PlayerState::ATTACK_LEFT_KICK, std::bind(&Player::ChangeLeftKick, this));
+	stateChange_.emplace(PlayerState::ATTACK_RIGHT_KICK, std::bind(&Player::ChangeRightKick, this));
+	stateChange_.emplace(PlayerState::ATTACK_UPPER, std::bind(&Player::ChangeUpper, this));
+	stateChange_.emplace(PlayerState::ATTACK_CHARGE_PUNCH, std::bind(&Player::ChangeChargePunch, this));
 	stateChange_.emplace(PlayerState::HIT_HEAD, std::bind(&Player::ChangeHitHead, this));
 	stateChange_.emplace(PlayerState::HIT_BODY, std::bind(&Player::ChangeHitBody, this));
 
@@ -96,7 +96,7 @@ void Player::InitParameter()
 {
 
 	// 攻撃の入力
-	for (int i = static_cast<int>(PlayerState::JAB); i < static_cast<int>(PlayerState::MAX); i++)
+	for (int i = static_cast<int>(PlayerState::ATTACK_JAB); i < static_cast<int>(PlayerState::MAX); i++)
 	{
 		isCombo_.emplace(static_cast<PlayerState>(i), false);
 	}
@@ -425,14 +425,14 @@ void Player::Attack(const float deltaTime)
 	if (chargeCnt_ >= CHARGE_TIME)
 	{
 		chargeCnt_ = 0.0f;
-		ChangeState(PlayerState::CHARGE_PUNCH);
+		ChangeState(PlayerState::ATTACK_CHARGE_PUNCH);
 	}
 
 	// 攻撃の先行入力 ため攻撃の後通らないようにする
-	if (inputController_->Attack() && key_ != ANIM_DATA_KEY[static_cast<int>(PlayerState::CHARGE_PUNCH)])
+	if (inputController_->Attack() && key_ != ANIM_DATA_KEY[static_cast<int>(PlayerState::ATTACK_CHARGE_PUNCH)])
 	{
 		// コンボの先行入力の処理
-		for (int i = static_cast<int>(PlayerState::JAB); i <= static_cast<int>(PlayerState::RIGHT_KICK); i++)
+		for (int i = static_cast<int>(PlayerState::ATTACK_JAB); i <= static_cast<int>(PlayerState::ATTACK_RIGHT_KICK); i++)
 		{
 
 			// 今から判断するものを探す
@@ -447,24 +447,24 @@ void Player::Attack(const float deltaTime)
 		}
 
 		// ジャブに遷移
-		if (isCombo_.at(PlayerState::JAB) && !isCombo_.at(PlayerState::STRAIGHT))
+		if (isCombo_.at(PlayerState::ATTACK_JAB) && !isCombo_.at(PlayerState::ATTACK_STRAIGHT))
 		{
-			ChangeState(PlayerState::JAB);
+			ChangeState(PlayerState::ATTACK_JAB);
 		}
 
 	}
 
 	// アッパーに遷移
-	if (inputController_->Upper() && state_ != PlayerState::UPPER)
+	if (inputController_->Upper() && state_ != PlayerState::ATTACK_UPPER)
 	{
-		ChangeState(PlayerState::UPPER);
+		ChangeState(PlayerState::ATTACK_UPPER);
 	}
 
 	//コンボ中か判定
 	if (!GetComboState())return;
 
 	// 次の入力がなければコンボをキャンセルする
-	for(int i = static_cast<int>(PlayerState::JAB); i < static_cast<int>(PlayerState::RIGHT_KICK); i++)
+	for(int i = static_cast<int>(PlayerState::ATTACK_JAB); i < static_cast<int>(PlayerState::ATTACK_RIGHT_KICK); i++)
 	{
 
 		// 次の状態の入力を見るための計算
@@ -735,7 +735,7 @@ void Player::UpdateIdle(void)
 {
 
 	// 攻撃の入力を初期化
-	for (int i = static_cast<int>(PlayerState::JAB); i < static_cast<int>(PlayerState::MAX); i++)
+	for (int i = static_cast<int>(PlayerState::ATTACK_JAB); i < static_cast<int>(PlayerState::MAX); i++)
 	{
 		isCombo_.at(static_cast<PlayerState>(i)) = false;
 	}
@@ -792,9 +792,9 @@ void Player::UpdateJab()
 	}
 
 	// ストレートに遷移
-	if (animationController_->IsEndPlayAnimation() && isCombo_.at(PlayerState::STRAIGHT))
+	if (animationController_->IsEndPlayAnimation() && isCombo_.at(PlayerState::ATTACK_STRAIGHT))
 	{
-		ChangeState(PlayerState::STRAIGHT);
+		ChangeState(PlayerState::ATTACK_STRAIGHT);
 	}
 
 }
@@ -816,9 +816,9 @@ void Player::UpdateStraight()
 	}
 
 	// フックに遷移
-	if (animationController_->IsEndPlayAnimation() && isCombo_.at(PlayerState::HOOK))
+	if (animationController_->IsEndPlayAnimation() && isCombo_.at(PlayerState::ATTACK_HOOK))
 	{
-		ChangeState(PlayerState::HOOK);
+		ChangeState(PlayerState::ATTACK_HOOK);
 	}
 
 }
@@ -840,9 +840,9 @@ void Player::UpdateHook()
 	}
 
 	// 左キックに遷移
-	if (animationController_->IsEndPlayAnimation() && isCombo_.at(PlayerState::LEFT_KICK))
+	if (animationController_->IsEndPlayAnimation() && isCombo_.at(PlayerState::ATTACK_LEFT_KICK))
 	{
-		ChangeState(PlayerState::LEFT_KICK);
+		ChangeState(PlayerState::ATTACK_LEFT_KICK);
 	}
 
 }
@@ -864,9 +864,9 @@ void Player::UpdateLeftKick()
 	}
 
 	// 右キックに遷移
-	if (animationController_->IsEndPlayAnimation() && isCombo_.at(PlayerState::RIGHT_KICK))
+	if (animationController_->IsEndPlayAnimation() && isCombo_.at(PlayerState::ATTACK_RIGHT_KICK))
 	{
-		ChangeState(PlayerState::RIGHT_KICK);
+		ChangeState(PlayerState::ATTACK_RIGHT_KICK);
 	}
 
 }

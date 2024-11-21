@@ -16,8 +16,8 @@ public:
 		"NONE",
 		"IDLE",
 		"RUN",
-		"PUNCH",
-		"KICK",
+		"ATTACK_PUNCH",
+		"ATTACK_KICK",
 		"HIT_HEAD",
 		"HIT_BODY",
 		"HIT_FLY",
@@ -98,8 +98,8 @@ private:
 	// 攻撃中の状態
 	const std::vector<EnemyState>& attackState_ =
 	{
-		{EnemyState::PUNCH},
-		{EnemyState::KICK}
+		{EnemyState::ATTACK_PUNCH},
+		{EnemyState::ATTACK_KICK}
 	};
 
 	// 攻撃を受けている状態
@@ -116,33 +116,33 @@ private:
 	// 頭にヒットするプレイヤーの攻撃
 	const std::vector<PlayerState>& hitHeadState_ =
 	{
-		{PlayerState::JAB},
-		{PlayerState::STRAIGHT},
-		{PlayerState::HOOK},
+		{PlayerState::ATTACK_JAB},
+		{PlayerState::ATTACK_STRAIGHT},
+		{PlayerState::ATTACK_HOOK},
 	};
 
 	// 体にヒットするプレイヤーの攻撃
 	const std::vector<PlayerState>& hitBodyState_ =
 	{
-		{PlayerState::LEFT_KICK}
+		{PlayerState::ATTACK_LEFT_KICK}
 	};
 
 	// 吹っ飛ばされるプレイヤーの攻撃
 	const std::vector<PlayerState>& hitFlyState_ =
 	{
-		{PlayerState::RIGHT_KICK}
+		{PlayerState::ATTACK_RIGHT_KICK}
 	};
 
 	// 上に飛ばされるプレイヤーの攻撃
 	const std::vector<PlayerState>& hitFlinchUpState_ =
 	{
-		{PlayerState::UPPER}
+		{PlayerState::ATTACK_UPPER}
 	};
 
 	// 真っすぐ飛ばされるプレうやーの攻撃
 	const std::vector<PlayerState>& hitKnockBackState_ =
 	{
-		{PlayerState::CHARGE_PUNCH}
+		{PlayerState::ATTACK_CHARGE_PUNCH}
 	};
 
 	// 状態

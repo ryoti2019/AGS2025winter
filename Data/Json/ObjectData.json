@@ -26,7 +26,7 @@
 						"SPEED": 30.0
 					},
 					{
-						"NAME": "JAB",
+						"NAME": "ATTACK_JAB",
 						"PATH": "Data/Model/Player/Jab.mv1",
 						"SPEED": 50.0,
 						"ATTACK_START_FRAME": 12.0,
@@ -34,7 +34,7 @@
 						"DAMAGE": 10
 					},
 					{
-						"NAME": "STRAIGHT",
+						"NAME": "ATTACK_STRAIGHT",
 						"PATH": "Data/Model/Player/Straight.mv1",
 						"SPEED": 60.0,
 						"ATTACK_START_FRAME": 3.0,
@@ -42,7 +42,7 @@
 						"DAMAGE": 10
 					},
 					{
-						"NAME": "HOOK",
+						"NAME": "ATTACK_HOOK",
 						"PATH": "Data/Model/Player/Hook.mv1",
 						"SPEED": 40.0,
 						"ATTACK_START_FRAME": 6.0,
@@ -50,7 +50,7 @@
 						"DAMAGE": 10
 					},
 					{
-						"NAME": "LEFT_KICK",
+						"NAME": "ATTACK_LEFT_KICK",
 						"PATH": "Data/Model/Player/LeftKick.mv1",
 						"SPEED": 40.0,
 						"ATTACK_START_FRAME": 8.0,
@@ -58,7 +58,7 @@
 						"DAMAGE": 10
 					},
 					{
-						"NAME": "RIGHT_KICK",
+						"NAME": "ATTACK_RIGHT_KICK",
 						"PATH": "Data/Model/Player/RightKick.mv1",
 						"SPEED": 40.0,
 						"ATTACK_START_FRAME": 7.0,
@@ -66,7 +66,7 @@
 						"DAMAGE": 10
 					},
 					{
-						"NAME": "UPPER",
+						"NAME": "ATTACK_UPPER",
 						"PATH": "Data/Model/Player/Upper.mv1",
 						"SPEED": 50.0,
 						"ATTACK_START_FRAME": 8.0,
@@ -74,7 +74,7 @@
 						"DAMAGE": 10
 					},
 					{
-						"NAME": "CHARGE_PUNCH",
+						"NAME": "ATTACK_CHARGE_PUNCH",
 						"PATH": "Data/Model/Player/ChargePunch.mv1",
 						"SPEED": 50.0,
 						"ATTACK_START_FRAME": 30.0,
@@ -125,14 +125,14 @@
 						"SPEED": 30.0
 					},
 					{
-						"NAME": "PUNCH",
+						"NAME": "ATTACK_PUNCH",
 						"PATH": "Data/Model/Enemy/Punch.mv1",
 						"SPEED": 30.0,
 						"ATTACK_START_FRAME": 26.0,
 						"ATTACK_END_FRAME": 35.0
 					},
 					{
-						"NAME": "KICK",
+						"NAME": "ATTACK_KICK",
 						"PATH": "Data/Model/Enemy/Kick.mv1",
 						"SPEED": 30.0,
 						"ATTACK_START_FRAME": 15.0,

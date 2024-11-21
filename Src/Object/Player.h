@@ -17,13 +17,13 @@ public:
 		"NONE",
 		"IDLE",
 		"RUN",
-		"JAB",
-		"STRAIGHT",
-		"HOOK",
-		"LEFT_KICK",
-		"RIGHT_KICK",
-		"UPPER",
-		"CHARGE_PUNCH",
+		"ATTACK_JAB",
+		"ATTACK_STRAIGHT",
+		"ATTACK_HOOK",
+		"ATTACK_LEFT_KICK",
+		"ATTACK_RIGHT_KICK",
+		"ATTACK_UPPER",
+		"ATTACK_CHARGE_PUNCH",
 		"HIT_HEAD",
 		"HIT_BODY"
 	};
@@ -144,23 +144,23 @@ private:
 	// çUåÇíÜÇÃèÛë‘
 	const std::vector<PlayerState> attackState_ =
 	{
-		{PlayerState::JAB},
-		{PlayerState::STRAIGHT},
-		{PlayerState::HOOK},
-		{PlayerState::LEFT_KICK},
-		{PlayerState::RIGHT_KICK},
-		{PlayerState::UPPER},
-		{PlayerState::CHARGE_PUNCH}
+		{PlayerState::ATTACK_JAB},
+		{PlayerState::ATTACK_STRAIGHT},
+		{PlayerState::ATTACK_HOOK},
+		{PlayerState::ATTACK_LEFT_KICK},
+		{PlayerState::ATTACK_RIGHT_KICK},
+		{PlayerState::ATTACK_UPPER},
+		{PlayerState::ATTACK_CHARGE_PUNCH}
 	};
 
 	// ÉRÉìÉ{íÜÇÃîªíË
 	const std::vector<PlayerState> comboState_=
 	{
-		{PlayerState::JAB},
-		{ PlayerState::STRAIGHT },
-		{ PlayerState::HOOK },
-		{ PlayerState::LEFT_KICK },
-		{ PlayerState::RIGHT_KICK }
+		{PlayerState::ATTACK_JAB},
+		{ PlayerState::ATTACK_STRAIGHT },
+		{ PlayerState::ATTACK_HOOK },
+		{ PlayerState::ATTACK_LEFT_KICK },
+		{ PlayerState::ATTACK_RIGHT_KICK }
 	};
 
 	// çUåÇÇéÛÇØÇƒÇ¢ÇÈèÛë‘
@@ -173,13 +173,13 @@ private:
 	// ì™Ç…ÉqÉbÉgÇ∑ÇÈìGÇÃçUåÇ
 	const std::vector<EnemyState> hitHeadState_ =
 	{
-		{EnemyState::PUNCH}
+		{EnemyState::ATTACK_PUNCH}
 	};
 
 	// ëÃÇ…ÉqÉbÉgÇ∑ÇÈìGÇÃçUåÇ
 	const std::vector<EnemyState> hitBodyState_ =
 	{
-		{EnemyState::KICK}
+		{EnemyState::ATTACK_KICK}
 	};
 
 	// èÛë‘
