@@ -8,7 +8,10 @@
 CollisionManager::CollisionManager()
 	:
 	ATTACK_START_NUM(3),
-	ENEMY_PUSH_FORCE_SCALER(2.0f)
+	STAGE_COLLISION_COUNT(10),
+	ENEMY_PUSH_FORCE(10.0f),
+	STAGE_PUSH_FORCE(30.0f),
+	DOWN_DIR(0.9f)
 {
 
 }
@@ -225,7 +228,7 @@ void CollisionManager::CheckStageCollision()
 					// 地面と異なり、衝突回避位置が不明なため、何度か移動させる
 					// この時、移動させる方向は、移動前座標に向いた方向であったり、
 					// 衝突したポリゴンの法線方向だったりする
-					for (int tryCnt = 0; tryCnt < 10; tryCnt++)
+					for (int tryCnt = 0; tryCnt < STAGE_COLLISION_COUNT; tryCnt++)
 					{
 
 						// 再度、モデル全体と衝突検出するには、効率が悪過ぎるので、
@@ -244,7 +247,7 @@ void CollisionManager::CheckStageCollision()
 							VECTOR pos = target->GetTransform().pos;
 
 							// 法線の方向にちょっとだけ移動させる
-							pos = VAdd(pos, VScale(hit.Normal, 30.0f));
+							pos = VAdd(pos, VScale(hit.Normal, STAGE_PUSH_FORCE));
 
 							// カプセルも一緒に移動させる
 							target->SetPos(pos);
@@ -263,7 +266,9 @@ void CollisionManager::CheckStageCollision()
 					stage->GetTransform().modelId, -1,
 					VAdd(target->GetCollisionData().bodyCapsuleUpPos, VECTOR(0.0f,target->GetCollisionData().bodyCollisionRadius,0.0f)),
 					VAdd(target->GetCollisionData().bodyCapsuleDownPos, VECTOR(0.0f, -target->GetCollisionData().bodyCollisionRadius, 0.0f)));
-				if (hit.HitFlag > 0 && VDot({0.0f,-1.0f,0.0f}, target->GetVelocity()) > 0.9f)
+
+				// 地面に当たっている時と下方向に動いている時のみ判定する
+				if (hit.HitFlag > 0 && VDot({0.0f,-1.0f,0.0f}, target->GetVelocity()) > DOWN_DIR)
 				{
 
 					// 衝突地点から、少し上に移動
@@ -327,9 +332,18 @@ void CollisionManager::ResolvePlayerEnemyCollision(const std::shared_ptr<ActorBa
 {
 
 	// カプセル同氏の当たり判定
-	if(HitCheck_Capsule_Capsule(actor1->GetCollisionData().bodyCapsuleUpPos,actor1->GetCollisionData().bodyCapsuleDownPos, actor1->GetCollisionData().bodyCollisionRadius,
-								actor2->GetCollisionData().bodyCapsuleUpPos, actor2->GetCollisionData().bodyCapsuleDownPos, actor2->GetCollisionData().bodyCollisionRadius))
+	if (HitCheck_Capsule_Capsule(actor1->GetCollisionData().bodyCapsuleUpPos, actor1->GetCollisionData().bodyCapsuleDownPos, actor1->GetCollisionData().bodyCollisionRadius,
+								 actor2->GetCollisionData().bodyCapsuleUpPos, actor2->GetCollisionData().bodyCapsuleDownPos, actor2->GetCollisionData().bodyCollisionRadius))
 	{
+
+		// 重なっていたら互いに押し返す
+		VECTOR overlap = VSub(actor2->GetCollisionData().bodyPos, actor1->GetCollisionData().bodyPos);
+
+		// 正規化する
+		VECTOR normOverlap = VNorm(overlap);
+
+		// 敵側を移動させる
+		actor2->AddPos(VScale(normOverlap, ENEMY_PUSH_FORCE));
 
 	}
 
@@ -338,60 +352,21 @@ void CollisionManager::ResolvePlayerEnemyCollision(const std::shared_ptr<ActorBa
 void CollisionManager::ResolveEnemysCollision(const std::shared_ptr<ActorBase>& actor1, const std::shared_ptr<ActorBase>& actor2)
 {
 
-	// アクター1
-	// 最小点
-	VECTOR actorPos1Min = actor1->GetCollisionData().minPos;
+	// カプセル同氏の当たり判定
+	if (HitCheck_Capsule_Capsule(actor1->GetCollisionData().bodyCapsuleUpPos, actor1->GetCollisionData().bodyCapsuleDownPos, actor1->GetCollisionData().bodyCollisionRadius,
+								 actor2->GetCollisionData().bodyCapsuleUpPos, actor2->GetCollisionData().bodyCapsuleDownPos, actor2->GetCollisionData().bodyCollisionRadius))
+	{
 
-	//最大点
-	VECTOR actorPos1Max = actor1->GetCollisionData().maxPos;
+		// 重なっていたら互いに押し返す
+		VECTOR overlap = VSub(actor2->GetCollisionData().bodyPos, actor1->GetCollisionData().bodyPos);
 
-	// アクター2
-	// 最小値
-	VECTOR actorPos2Min = actor2->GetCollisionData().minPos;
+		// 正規化する
+		VECTOR normOverlap = VNorm(overlap);
 
-	//最大点
-	VECTOR actorPos2Max = actor2->GetCollisionData().maxPos;
+		// お互いに移動させる
+		actor1->AddPos(VScale(normOverlap, -ENEMY_PUSH_FORCE / 2));
+		actor2->AddPos(VScale(normOverlap, ENEMY_PUSH_FORCE / 2));
 
-	// 重なってる分ずらす座標
-	VECTOR pos = Utility::VECTOR_ZERO;
-
-	// 中心点の差分を計算（方向ベクトルとして利用
-	// Aの中心点
-	VECTOR actor1CenterPos = VScale(VAdd(actorPos1Min, actorPos1Max), 0.5f);
-
-	// Bの中心点
-	VECTOR actor2CenterPos = VScale(VAdd(actorPos2Min, actorPos2Max), 0.5f);
-
-	// 正規化した方向ベクトル
-	VECTOR direction = VNorm(VSub(actor1CenterPos, actor2CenterPos));
-
-	// 重なり解消の移動量を計算（軸ごとに処理）
-	VECTOR actor1MovePos = { 0.0f, 0.0f, 0.0f };
-	VECTOR actor2MovePos = { 0.0f, 0.0f, 0.0f };
-
-	// X軸の解消
-	if (overlap_.x > 0) {
-		float halfOverlapX = overlap_.x * 0.5f;
-		actor1MovePos.x -= direction.x * halfOverlapX;
-		actor2MovePos.x += direction.x * halfOverlapX;
 	}
-
-	// Y軸の解消
-	if (overlap_.y > 0) {
-		float halfOverlapY = overlap_.y * 0.5f;
-		actor1MovePos.y -= direction.y * halfOverlapY;
-		actor2MovePos.y += direction.y * halfOverlapY;
-	}
-
-	// Z軸の解消
-	if (overlap_.z > 0) {
-		float halfOverlapZ = overlap_.z * 0.5f;
-		actor1MovePos.z -= direction.z * halfOverlapZ;
-		actor2MovePos.z += direction.z * halfOverlapZ;
-	}
-
-	// 移動量をAとBに適用
-	actor1->AddPos(actor1MovePos);
-	actor2->AddPos(actor2MovePos);
 
 }

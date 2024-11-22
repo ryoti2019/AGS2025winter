@@ -120,9 +120,6 @@ public:
 		// 左足の向き
 		Quaternion leftFootRot;
 
-		// 体の向き
-		Quaternion bodyRot;
-
 #pragma endregion
 
 #pragma region 半径
@@ -188,6 +185,9 @@ public:
 
 	// 左足のカプセルの下の相対座標
 	const VECTOR LEFT_FOOT_RELATIVE_DOWN_POS;
+
+	// 体のカプセルの中心の相対座標
+	const VECTOR BODY_RELATIVE_CENTER_POS;
 
 	// 体のカプセルの上の相対座標
 	const VECTOR BODY_RELATIVE_UP_POS;

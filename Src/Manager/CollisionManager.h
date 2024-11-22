@@ -9,8 +9,17 @@ public:
 	// 攻撃の最初の状態の番号
 	const int ATTACK_START_NUM;
 
-	// 敵同士の押し合う力を割る数
-	const float ENEMY_PUSH_FORCE_SCALER;
+	// ステージと衝突しているか判定する回数
+	const int STAGE_COLLISION_COUNT;
+
+	// 敵同士の押し合う力
+	const float ENEMY_PUSH_FORCE;
+
+	// ステージとの当たり判定で押し返す力
+	const float STAGE_PUSH_FORCE;
+
+	// ほぼ真下への向き
+	const float DOWN_DIR;
 
 	CollisionManager();
 	~CollisionManager() = default;
@@ -52,7 +61,7 @@ private:
 	const std::vector<collisionChannnelInfo> resolveCollisionChannelList_ =
 	{
 		{
-			//{ActorType::PLAYER,ActorType::ENEMY},
+			{ActorType::PLAYER,ActorType::ENEMY},
 			{ActorType::ENEMY,ActorType::ENEMY}
 		}
 	};
