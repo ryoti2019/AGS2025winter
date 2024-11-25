@@ -231,8 +231,11 @@ public:
 	// 体の当たり判定の半径
 	const float BODY_COLLISION_RADIUS;
 
-	// モデルの大きさ
-	float MODEL_SCALE;
+	// 最初に向いている角度
+	float INIT_ANGLE;
+
+	// 床の高さ
+	const float FLOOR_HEIGHT;
 
 	// HPの最大値
 	int HP_MAX;
@@ -416,6 +419,9 @@ protected:
 
 	// ロックオンされているか(敵のみ)
 	bool isLockOn_;
+
+	// アクティブ状態かどうか
+	bool isActive_;
 	
 	// ポインタの取得
 	const std::shared_ptr<ActorBase>& GetThis() { return shared_from_this(); };
@@ -462,9 +468,6 @@ protected:
 #pragma endregion
 
 private:
-
-	// アクティブ状態かどうか
-	bool isActive_;
 
 	// デバッグ描画
 	void DrawDebug();

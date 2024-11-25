@@ -11,6 +11,8 @@
 #include "ActorCreate.h"
 
 ActorCreate::ActorCreate()
+	:
+	isCollisionArea1_(false)
 {
 
 	// 外部ファイルの読み込み
@@ -54,19 +56,86 @@ ActorCreate::ActorCreate()
 	const auto& playerData = objectData[0]["PlayerData"];
 
 	// プレイヤーを生成
-	actorManager->CreateActor<Player>(playerData, { 0.0f,-1960.0f,0.0f });
-	actorManager->ActiveData(ActorType::PLAYER, { 0.0f,-1960.0f,0.0f });
+	actorManager->CreateActor<Player>(playerData, { -80000.0f,-19500.0f,25900.0f });
+	actorManager->ActiveData(ActorType::PLAYER, { -80000.0f,-19500.0f,25900.0f });
 
 	// 敵
 	const auto& enemyData = objectData[1]["EnemyData"];
 
 	// 敵を生成
-	for (int i = 0; i < 100; i++)
+	for (int i = 0; i < 50; i++)
 	{
 		float x = std::rand() % 10;
 		float z = std::rand() % 10;
 		actorManager->CreateActor<Enemy>(enemyData, { 0.0f,-1500.0f,0.0f });
-		actorManager->ActiveData(ActorType::ENEMY, { -5000.0f + x,0.0f,-5000.0f + z });
 	}
 
+}
+
+void ActorCreate::Update()
+{
+
+	// 外部ファイルの読み込み
+	std::ifstream ifs;
+
+	ifs.open(Application::PATH_JSON + "ObjectData.json");
+
+	if (!ifs)
+	{
+		// 外部ファイルの読み込み失敗
+		return;
+	}
+
+	// ファイルストリームからjsonオブジェクトに変換
+	nlohmann::json objectJson = nlohmann::json::parse(ifs);
+
+	const auto& objectData = objectJson["ObjectData"];
+
+	// スコープが切れる際に 自動的にファイルクローズして貰えますが、
+	// お行儀良く、明示的にファイルストリームを閉じる
+	ifs.close();
+
+	// 基底クラスから使いたい型へキャストする
+	std::shared_ptr<GameScene> gameScene =
+		std::dynamic_pointer_cast<GameScene>(SceneManager::GetInstance().GetNowScene());
+
+	// NULLチェック
+	if (!gameScene) return;
+
+	// アクターマネージャーを取得
+	std::shared_ptr<ActorManager> actorManager = gameScene->GetActorManager();
+
+	// 敵
+	const auto& enemyData = objectData[1]["EnemyData"];
+
+	// プレイヤー
+	const auto& players = actorManager->GetActiveActorData().find(ActorType::PLAYER);
+
+	// プレイヤーの中身が入っているか確認
+	if (players == actorManager->GetActiveActorData().end()) return;
+
+	for (auto& player : players->second)
+	{
+		if (!isCollisionArea1_ && HitCheck_Sphere_Sphere(player->GetTransform().pos,player->GetCollisionData().bodyCollisionRadius,{9300.0f,-18000.0f,23600.0f},10000.0f))
+		{
+
+			// エリア1と衝突した
+			isCollisionArea1_ = true;
+
+			// 敵を生成
+			for (int i = 0; i < 10; i++)
+			{
+				float x = std::rand() % 10;
+				float z = std::rand() % 10;
+				actorManager->ActiveData(ActorType::ENEMY, { -5000.0f + x,0.0f,-5000.0f + z });
+			}
+
+		}
+	}
+
+}
+
+void ActorCreate::Draw()
+{
+	DrawSphere3D({ 9300.0f,-18000.0f,23600.0f }, 10000.0f, 10, 0xff0000, 0xff0000, false);
 }

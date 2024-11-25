@@ -38,11 +38,19 @@ void GameScene::Update(const float deltaTime)
 	// 衝突判定の管理クラスの更新
 	collisionManager_->Update(deltaTime);
 
+	// アクターの生成クラスの更新
+	actorCreate_->Update();
+
 }
 
 void GameScene::Draw()
 {
+
+	// アクターの管理クラスの更新
 	actorManager_->Draw();
+
+	// アクターの生成クラスの描画
+	actorCreate_->Draw();
 
 	DrawFormatString(0, 0, 0xff0000, "GameScene");
 }

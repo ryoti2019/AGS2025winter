@@ -26,6 +26,8 @@ ActorBase::ActorBase(const VECTOR& pos, const json& data)
 	modelId_(-1),
 	damage_(0),
 	scl_(data["SCALE"]),
+	INIT_ANGLE(data["INIT_ANGLE"]),
+	FLOOR_HEIGHT(-19500.0f),
 	stepRotTime_(0.0f),
 	speed_(0.0f),
 	velocity_({ 0.0f,0.0f,0.0f }),
@@ -49,7 +51,7 @@ void ActorBase::Init(const VECTOR& pos)
 	transform_.SetModel(modelId_);
 	SetPos(pos);
 	transform_.scl = { scl_,scl_,scl_ };
-	transform_.quaRot = Quaternion::Euler({ Utility::Deg2RadF(0.0f) , Utility::Deg2RadF(0.0f),Utility::Deg2RadF(0.0f) });
+	transform_.quaRot = Quaternion::Euler({ Utility::Deg2RadF(0.0f) , Utility::Deg2RadF(INIT_ANGLE),Utility::Deg2RadF(0.0f) });
 	transform_.quaRotLocal = Quaternion::Euler({ Utility::Deg2RadF(0.0f) , Utility::Deg2RadF(180.0f),Utility::Deg2RadF(0.0f) });
 	transform_.Update();
 

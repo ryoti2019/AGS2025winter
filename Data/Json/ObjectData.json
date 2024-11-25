@@ -12,6 +12,7 @@
 				"CHARGE_TIME": 1.0,
 				"ANIM_INDEX": 0,
 				"SCALE": 1.0,
+				"INIT_ANGLE": 90.0,
 				"HP": 100,
 				"ACTOR_TYPE": 0,
 				"ANIM": [
@@ -103,14 +104,22 @@
 				"BODY_FRAME_NAME": "mixamorig1:Hips",
 				"ATTACK_MOVE_POW": 400.0,
 				"HIT_MOVE_POW": 200.0,
+				"HIT_FLY_UP_VEC_POW": 1.2,
 				"HIT_FLY_MOVE_POW": 300.0,
 				"RUN_MOVE_POW": 100.0,
 				"ACTIVATION_DISTANCE": 1000.0,
 				"COOL_TIME": 5.0,
 				"TRACKING_MAX_TIME": 5.0,
 				"KNOCK_BACK_TIME": 3.0,
+				"KNOCK_BACK_HEIGHT_OFFSET": 1000.0,
+				"FLINCH_UP_UP_VEC_POW": 8.0,
+				"FLINCH_UP_SPEED": 10.0,
+				"FLINCH_UP_ANGLE_X": -30.0,
+				"FLINCH_UP_GRAVITY_SCALE": 4.0,
+				"MOVE_RATE": 0.1,
 				"ANIM_INDEX": 1,
 				"SCALE": 10.0,
+				"INIT_ANGLE": 0.0,
 				"HP": 100,
 				"ACTOR_TYPE": 1,
 				"ANIM": [
@@ -175,6 +184,7 @@
 			"StageData": {
 				"ATTACK_MOVE_POW": 0.0,
 				"SCALE": 10.0,
+				"INIT_ANGLE": 0.0,
 				"HP": 10,
 				"ACTOR_TYPE": 2,
 				"POS": {

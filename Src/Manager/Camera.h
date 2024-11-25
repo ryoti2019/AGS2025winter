@@ -11,7 +11,7 @@ class Camera
 public:
 
 	// カメラの初期座標
-	static constexpr VECTOR DEFAULT_CAMERA_POS = { 0.0f, 500.0f, -500.0f };
+	static constexpr VECTOR DEFAULT_CAMERA_POS = { 0.0f, 0.0f, 0.0f };
 
 	// プレイヤーからカメラの位置までの相対座標
 	static constexpr VECTOR LOCAL_P2C_POS = { 0.0f, 1500.0f,-3000.0f };
@@ -45,7 +45,7 @@ public:
 	static constexpr float CAMERA_NEAR = 40.0f;
 
 	// カメラクリップ：FAR
-	static constexpr float CAMERA_FAR = 100000.0f;
+	static constexpr float CAMERA_FAR = 1000000.0f;
 
 	// カメラモード
 	enum class MODE
@@ -192,6 +192,9 @@ private:
 
 	// ステージとの当たり判定
 	void CheckStageCollision(void);
+
+	// ImGuiのデバッグ描画の更新
+	void UpdateDebugImGui();
 
 };
 

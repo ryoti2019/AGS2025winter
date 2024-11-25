@@ -15,9 +15,16 @@ Enemy::Enemy(const VECTOR& pos, const json& data)
 	KICK_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(EnemyState::ATTACK_KICK) - 1]["ATTACK_END_FRAME"]),
 	COOL_TIME(data["COOL_TIME"]),
 	ACTIVATION_DISTANCE(data["ACTIVATION_DISTANCE"]),
+	HIT_FLY_UP_VEC_POW(data["HIT_FLY_UP_VEC_POW"]),
 	HIT_FLY_MOVE_POW(data["HIT_FLY_MOVE_POW"]),
 	TRACKING_MAX_TIME(data["TRACKING_MAX_TIME"]),
-	KNOCK_BACK_TIME(data["KNOCK_BACK_TIME"])
+	KNOCK_BACK_TIME(data["KNOCK_BACK_TIME"]),
+	KNOCK_BACK_HEIGHT_OFFSET(data["KNOCK_BACK_HEIGHT_OFFSET"]),
+	FLINCH_UP_UP_VEC_POW(data["FLINCH_UP_UP_VEC_POW"]),
+	FLINCH_UP_SPEED(data["FLINCH_UP_SPEED"]),
+	FLINCH_UP_ANGLE_X(data["FLINCH_UP_ANGLE_X"]),
+	FLINCH_UP_GRAVITY_SCALE(data["FLINCH_UP_GRAVITY_SCALE"]),
+	MOVE_RATE(data["MOVE_RATE"])
 {
 
 	// 機能の初期化
@@ -248,6 +255,8 @@ void Enemy::InitAnimation()
 void Enemy::Update(const float deltaTime)
 {
 
+
+
 	// ImGuiのデバッグ描画の更新
 	UpdateDebugImGui();
 
@@ -345,6 +354,13 @@ void Enemy::AttackHit(const int damage, const int state)
 	
 	// アニメーションの再生時間をリセットする
 	animationController_->ResetStepAnim();
+
+	// 死んでいたら消す
+	if (hp_<= 0)
+	{
+		// 非アクティブにする
+		isActive_ = false;
+	}
 
 }
 
@@ -561,8 +577,7 @@ void Enemy::Attack(const float deltaTime)
 	// 指定の範囲でランダムな数を取得
 	std::uniform_int_distribution<> dist_int(0, 1);
 	int number = dist_int(gen);
-	//int number = 1;
-
+	
 	// プレイヤーの座標
 	std::optional<VECTOR> playerPos = GetPlayerPos();
 
@@ -731,7 +746,7 @@ void Enemy::ChangeHitFly()
 	if (key_ != ANIM_DATA_KEY[static_cast<int>(EnemyState::HIT_KNOCK_BACK)])
 	{
 		// 上方向に飛ばす
-		velocity_.y = 1.2f;
+		velocity_.y = HIT_FLY_UP_VEC_POW;
 		vec.y = velocity_.y;
 
 		// スピード
@@ -758,11 +773,11 @@ void Enemy::ChangeHitFlinchUp()
 	vec = { -vec.x, vec.y,-vec.z };
 
 	// 上方向に飛ばす
-	velocity_.y = 8.0f;
+	velocity_.y = FLINCH_UP_UP_VEC_POW;
 	vec.y = velocity_.y;
 
 	// スピード
-	speed_ = 10.0f;
+	speed_ = FLINCH_UP_SPEED;
 
 	// 移動量
 	movePow_ = VScale(vec, speed_);
@@ -771,13 +786,12 @@ void Enemy::ChangeHitFlinchUp()
 	if (!isChangeAngle_)
 	{
 		// 体の角度を変更
-		transform_.quaRot = Quaternion::Mult(transform_.quaRot, Quaternion::AngleAxis(Utility::Deg2RadF(-30.0f), Utility::AXIS_X));
-		//transform_.Update();
+		transform_.quaRot = Quaternion::Mult(transform_.quaRot, Quaternion::AngleAxis(Utility::Deg2RadF(FLINCH_UP_ANGLE_X), Utility::AXIS_X));
 		isChangeAngle_ = true;
 	}
 
 	// 重力を緩くする
-	gravityScale_ = 4.0f;
+	gravityScale_ = FLINCH_UP_GRAVITY_SCALE;
 
 }
 
@@ -803,6 +817,9 @@ void Enemy::ChangeHitKnockBack()
 
 	// 移動量
 	movePow_ = VScale(vec, speed_);
+
+	// 高さを調整する
+	transform_.pos.y = transform_.pos.y + KNOCK_BACK_HEIGHT_OFFSET;
 
 }
 
@@ -941,7 +958,7 @@ void Enemy::UpdateHitHead(const float deltaTime)
 {
 
 	// 少し後ろにゆっくり移動
-	transform_.pos = Utility::Lerp(transform_.pos, movePow_, 0.1f);
+	transform_.pos = Utility::Lerp(transform_.pos, movePow_, MOVE_RATE);
 
 	// アニメーションが終了したら待機状態へ遷移する
 	if (animationController_->IsEndPlayAnimation())
@@ -955,7 +972,7 @@ void Enemy::UpdateHitBody(const float deltaTime)
 {
 
 	// 少し後ろにゆっくり移動
-	transform_.pos = Utility::Lerp(transform_.pos, movePow_, 0.1f);
+	transform_.pos = Utility::Lerp(transform_.pos, movePow_, MOVE_RATE);
 
 	// アニメーションが終了したら待機状態へ遷移する
 	if (animationController_->IsEndPlayAnimation())
@@ -994,7 +1011,7 @@ void Enemy::UpdateHitFlinchUp(const float deltaTime)
 	}
 
 	// アニメーションが終了したら起き上がり状態へ遷移する
-	if (transform_.pos.y <= -1500.0f && velocity_.y <= 0.0f)
+	if (transform_.pos.y <= FLOOR_HEIGHT && velocity_.y <= 0.0f)
 	{
 		ChangeState(EnemyState::KIP_UP);
 	}
@@ -1009,7 +1026,6 @@ void Enemy::UpdateHitKnockBack(const float deltaTime)
 	{
 		// 後ろに飛んでいきながら移動
 		transform_.pos = VAdd(transform_.pos, movePow_);
-		transform_.pos.y = -500.0f;
 	}
 	else
 	{

@@ -1,4 +1,5 @@
 #include <EffekseerForDXLib.h>
+#include "../Lib/ImGui/imgui.h"
 #include "../Utility/Utility.h"
 #include "ResourceManager.h"
 #include "InputManager.h"
@@ -11,9 +12,9 @@ Camera::Camera(void)
 {
 
 	mode_ = MODE::FIXED_POINT;
-	pos_ = { 0.0f, 0.0f, 0.0f };
+	pos_ = { 0.0f,0.0f,0.0f };
 	targetPos_ = { 0.0f, 0.0f, 0.0f };
-	angle_ = { 0.0f, 0.0f, 0.0f };
+	angle_ = { 0.0f, Utility::Deg2RadF(90.0f), 0.0f};
 	lockOn_ = false;
 
 	// カメラの初期設定
@@ -31,6 +32,10 @@ void Camera::Init(void)
 
 void Camera::Update(void)
 {
+
+	// ImGuiのデバッグ描画の更新
+	UpdateDebugImGui();
+
 }
 
 void Camera::SetBeforeDraw(void)
@@ -274,7 +279,6 @@ void Camera::ChangeMode(MODE mode)
 	case Camera::MODE::FREE:
 		break;
 	case Camera::MODE::FOLLOW:
-		angle_ = { 0.0f,0.0f,0.0f };
 		lockOnAngles_ = { 0.0f, 0.0f, 0.0f };
 		break;
 	case Camera::MODE::LOCKON:
@@ -324,8 +328,8 @@ void Camera::SetDefault(void)
 
 	// カメラはX軸に傾いているが、
 	// この傾いた状態を角度ゼロ、傾き無しとする
-	rotY_ = Quaternion::Identity();
-	rotXY_ = Quaternion::Identity();
+	rotY_ = Quaternion::AngleAxis(angle_.y, Utility::AXIS_Y);
+	rotXY_ = rotY_.Mult(Quaternion::AngleAxis(angle_.x, Utility::AXIS_X));
 
 	// ロックオン
 	lockOn_ = false;
@@ -718,6 +722,38 @@ void Camera::CheckStageCollision(void)
 
 	// 検出した地面ポリゴン情報の後始末
 	MV1CollResultPolyDimTerminate(hits);
+
+}
+
+void Camera::UpdateDebugImGui()
+{
+
+	// ウィンドウタイトル&開始処理
+	ImGui::Begin("Camera");
+
+	// 大きさ
+	//ImGui::Text("scale");
+	//ImGui::InputFloat("Scl", &scl_);
+
+	// 角度
+	VECTOR rotDeg = VECTOR();
+	rotDeg.x = Utility::Rad2DegF(angle_.x);
+	rotDeg.y = Utility::Rad2DegF(angle_.y);
+	rotDeg.z = Utility::Rad2DegF(angle_.z);
+	ImGui::Text("angle(deg)");
+	ImGui::SliderFloat("RotX", &rotDeg.x, -90.0f, 90.0f);
+	ImGui::SliderFloat("RotY", &rotDeg.y, -90.0f, 90.0f);
+	ImGui::SliderFloat("RotZ", &rotDeg.z, -90.0f, 90.0f);
+	angle_.x = Utility::Deg2RadF(rotDeg.x);
+	angle_.y = Utility::Deg2RadF(rotDeg.y);
+	angle_.z = Utility::Deg2RadF(rotDeg.z);
+
+	// 位置
+	ImGui::Text("position");
+	// 構造体の先頭ポインタを渡し、xyzと連続したメモリ配置へアクセス
+	ImGui::InputFloat3("Pos", &pos_.x);
+	// 終了処理
+	ImGui::End();
 
 }
 

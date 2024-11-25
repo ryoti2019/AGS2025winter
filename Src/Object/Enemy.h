@@ -44,6 +44,9 @@ public:
 	// プレイヤーから一定距離離れたら移動してくる距離
 	const float ACTIVATION_DISTANCE;
 
+	// 吹っ飛ぶ時の上方向の力
+	const float HIT_FLY_UP_VEC_POW;
+
 	// 吹っ飛ぶ時の移動量
 	const float HIT_FLY_MOVE_POW;
 
@@ -52,6 +55,24 @@ public:
 
 	// まっすぐ飛んでいく時間
 	const float KNOCK_BACK_TIME;
+
+	// まっすぐ飛んでいくとき調整する高さ
+	const float KNOCK_BACK_HEIGHT_OFFSET;
+
+	// 上に飛んでいくときの上方向の力
+	const float FLINCH_UP_UP_VEC_POW;
+
+	// 上に飛んでいくときのスピード
+	const float FLINCH_UP_SPEED;
+
+	// 上に飛んでいくときのX軸の角度
+	const float FLINCH_UP_ANGLE_X;
+
+	// 上に飛んでいくときの重力を緩くする強さ
+	const float FLINCH_UP_GRAVITY_SCALE;
+
+	// 移動中の動かす割合
+	const float MOVE_RATE;
 
 	Enemy(const VECTOR& pos, const json& data);
 
