@@ -2,7 +2,6 @@
 #include <DxLib.h>
 #include <functional>
 #include "ActorBase.h"
-#include "Common/InputController.h"
 #include "PlayerState.h"
 #include "EnemyState.h"
 
@@ -105,7 +104,7 @@ public:
 	bool GetAttackState()override;
 
 	// 攻撃種類を取得
-	const std::vector<int> GetToatlAttackTypes()const
+	const std::vector<int>& GetToatlAttackTypes()const
 	{
 
 		std::vector<int> intStates;
@@ -131,15 +130,12 @@ public:
 	void AttackHit(const int damage, const int state)override;
 
 	// 今の状態を取得
-	int GetState()override { return static_cast<int>(state_); }
+	int GetState()const override { return static_cast<int>(state_); }
 
 	// ダメージ量を取得
-	int GetDamage()override { return damage_; }
+	int GetDamage()const override { return damage_; }
 
 private:
-
-	// 入力用コントローラー
-	std::unique_ptr<InputController> inputController_;
 
 	// 攻撃中の状態
 	const std::vector<PlayerState> attackState_ =
@@ -238,7 +234,7 @@ private:
 	void UpdateDebugImGui()override;
 
 	// 状態遷移
-	void ChangeState(PlayerState state);
+	void ChangeState(const int state)override;
 
 	// 移動処理
 	void Move()override;

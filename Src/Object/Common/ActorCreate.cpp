@@ -2,6 +2,7 @@
 #include <memory>
 #include "../Lib/nlohmann/json.hpp"
 #include "../Application.h"
+#include "../Component/InputComponent.h"
 #include "../Manager/SceneManager.h"
 #include "../Manager/ActorManager.h"
 #include "../Scene/GameScene.h"
@@ -58,6 +59,25 @@ ActorCreate::ActorCreate()
 	// プレイヤーを生成
 	actorManager->CreateActor<Player>(playerData, { -80000.0f,-19500.0f,25900.0f });
 	actorManager->ActiveData(ActorType::PLAYER, { -80000.0f,-19500.0f,25900.0f });
+
+	// プレイヤーのコンポーネントを追加
+	for (const auto& activeActorData : actorManager->GetActiveActorData())
+	{
+		for (const auto& player : activeActorData.second)
+		{
+
+			// ポインタが入っているか確認
+			if (!player)return;
+
+			// プレイヤーの場合のみコンポーネントを追加する
+			if (player->GetActorType() == ActorType::PLAYER)
+			{
+				// 入力のコンポーネント
+				player->AddComponent(std::make_shared<InputComponent>(player));
+			}
+
+		}
+	}
 
 	// 敵
 	const auto& enemyData = objectData[1]["EnemyData"];

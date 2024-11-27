@@ -1,5 +1,6 @@
 #pragma once
 #include <DxLib.h>
+#include "../Object/Common/Transform.h"
 
 class AnimationController;
 class Player;
@@ -9,7 +10,7 @@ class InputController
 public:
 
 	// コンストラクタ
-	InputController(Player* player);
+	InputController();
 
 	// デストラクタ
 	~InputController(void);

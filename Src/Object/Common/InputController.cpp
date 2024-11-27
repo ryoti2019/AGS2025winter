@@ -7,9 +7,8 @@
 #include "../Player.h"
 #include "InputController.h"
 
-InputController::InputController(Player* player)
+InputController::InputController()
 {
-	player_ = player;
 }
 
 InputController::~InputController(void)

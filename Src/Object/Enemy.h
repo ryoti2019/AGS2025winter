@@ -87,7 +87,7 @@ public:
 	bool GetAttackState()override;
 
 	// 攻撃種類を取得
-	const std::vector<int> GetToatlAttackTypes()const
+	const std::vector<int>& GetToatlAttackTypes()const
 	{
 
 		std::vector<int> intStates;
@@ -110,10 +110,10 @@ public:
 	void AttackHit(const int damage, const int state)override;
 
 	// 今の状態を取得
-	int GetState()override { return static_cast<int>(state_); }
+	int GetState()const override { return static_cast<int>(state_); }
 
 	// ダメージ量を取得
-	int GetDamage()override { return damage_; }
+	int GetDamage()const override { return damage_; }
 
 private:
 
@@ -167,13 +167,19 @@ private:
 		{PlayerState::ATTACK_CHARGE_PUNCH}
 	};
 
-	// 死んだときのプレイヤーの攻撃
+	// その場で死ぬときのプレイヤーの攻撃
 	const std::vector<PlayerState>& deathState_ =
 	{
 		{PlayerState::ATTACK_JAB},
 		{PlayerState::ATTACK_STRAIGHT},
 		{PlayerState::ATTACK_HOOK},
 		{PlayerState::ATTACK_LEFT_KICK}
+	};
+
+	// 吹っ飛んで死ぬときのプレイヤーの攻撃
+	const std::vector<PlayerState>& hitFlyDeathState_ =
+	{
+		{PlayerState::ATTACK_RIGHT_KICK}
 	};
 
 	// 状態

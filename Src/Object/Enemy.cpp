@@ -432,6 +432,16 @@ void Enemy::DeathAnim(int state)
 		}
 	}
 
+	// ノーマルの死亡アニメーションかチェック
+	for (const auto hitState : hitFlyDeathState_)
+	{
+		if (hitState == static_cast<PlayerState>(state))
+		{
+			ChangeState(EnemyState::HIT_FLY);
+			return;
+		}
+	}
+	
 }
 
 void Enemy::AnimationFrame()
@@ -1012,6 +1022,15 @@ void Enemy::UpdateHitFly(const float deltaTime)
 		transform_.pos = VAdd(transform_.pos, movePow_);
 	}
 
+	// HPが0以下だったら非アクティブにする
+	if (animationController_->IsEndPlayAnimation() && hp_ <= 0)
+	{
+		isActive_ = false;
+	}
+
+	// HPが0以下は通らない
+	if (hp_ <= 0)return;
+
 	// アニメーションが終了したら起き上がり状態へ遷移する
 	if (animationController_->IsEndPlayAnimation())
 	{
@@ -1072,7 +1091,7 @@ void Enemy::UpdateKipUp(const float deltaTime)
 void Enemy::UpdateDeath(const float deltaTime)
 {
 
-	// アニメーションが終了したら待機状態へ遷移する
+	// アニメーションが終了したら非アクティブにする
 	if (animationController_->IsEndPlayAnimation())
 	{
 		isActive_ = false;

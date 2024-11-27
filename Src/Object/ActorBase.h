@@ -8,6 +8,7 @@
 #include "../Manager/ResourceManager.h"
 #include "../Object/Common/AnimationController.h"
 
+class Component;
 class Camera;
 
 using json = nlohmann::json;
@@ -252,6 +253,12 @@ public:
 	virtual void Update(const float deltaTime);
 	virtual void Draw();
 
+	// コンポーネントの追加
+	void AddComponent(std::shared_ptr<Component> component);
+
+	// コンポーネントの削除
+	void ClearComponents();
+
 	// 座標を設定
 	void SetPos(const VECTOR& pos) {
 		transform_.pos = pos;
@@ -303,7 +310,7 @@ public:
 	virtual bool GetAttackState();
 
 	// 攻撃種類を取得
-	virtual const std::vector<int>  GetToatlAttackTypes()const { return {}; }
+	virtual const std::vector<int>&  GetToatlAttackTypes()const { return {}; }
 
 	// 攻撃を受けている状態を取得
 	virtual bool GetHitState();
@@ -327,20 +334,30 @@ public:
 	virtual void AttackHit(const int damage, const int state);
 
 	// 今の状態を取得
-	virtual int GetState() { return 0; }
+	virtual int GetState()const { return 0; }
 
 	// ダメージ量を取得
-	virtual int GetDamage() { return 0; }
+	virtual int GetDamage()const { return 0; }
 
 	// スピードを取得
-	virtual float GetSpeed() { return speed_; }
+	virtual float GetSpeed()const  { return speed_; }
+
+	// 方向を取得
+	const VECTOR& GetDir()const { return dir_; }
+
+	// 方向を設定
+	void SetDir(const VECTOR& dir) { dir_ = dir; }
+
+	// 状態遷移
+	virtual void ChangeState(const int state);
 
 protected:
 
 	// リソース管理
 	ResourceManager& resMng_;
 
-#pragma region オブジェクトの情報
+	// 複数のコンポーネント
+	std::vector<std::shared_ptr<Component>> components_;
 
 	// アニメーション
 	std::unique_ptr<AnimationController> animationController_;
@@ -467,8 +484,6 @@ protected:
 
 	// HPが0になったら死亡アニメーションに遷移
 	virtual void DeathAnim(int state);
-
-#pragma endregion
 
 private:
 

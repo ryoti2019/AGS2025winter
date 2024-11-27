@@ -1,4 +1,5 @@
 #include "ActorBase.h"
+#include "../Component/Component.h"
 
 ActorBase::ActorBase(const VECTOR& pos, const json& data)
 	:
@@ -65,6 +66,12 @@ void ActorBase::Create(const VECTOR& pos)
 
 void ActorBase::Update(const float deltaTime)
 {
+
+	// 複数のコンポーネントを更新
+	for (auto& c : components_) {
+		c->Update();
+	}
+
 }
 
 void ActorBase::LazyRotation(float goalRot)
@@ -298,6 +305,10 @@ void ActorBase::Gravity(const float scale)
 
 }
 
+void ActorBase::ChangeState(const int state)
+{
+}
+
 void ActorBase::DeathAnim(int state)
 {
 }
@@ -340,6 +351,17 @@ bool ActorBase::GetIsLockOn()
 
 void ActorBase::AttackHit(const int damage, const int state)
 {
+}
+
+void ActorBase::AddComponent(std::shared_ptr<Component> component)
+{
+	components_.push_back(component);
+	component->Init();
+}
+
+void ActorBase::ClearComponents()
+{
+	components_.clear();
 }
 
 void ActorBase::DrawDebug()
