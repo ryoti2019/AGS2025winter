@@ -41,6 +41,7 @@ public:
 		ENEMY_HIT_FLINCH,
 		ENEMY_HIT_KNOCK_BACK,
 		ENEMY_KIP_UP,
+		ENEMY_NORMAL_DEATH,
 
 #pragma endregion
 

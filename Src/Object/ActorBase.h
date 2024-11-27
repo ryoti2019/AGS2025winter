@@ -465,6 +465,9 @@ protected:
 	// 重力
 	void Gravity(const float scale);
 
+	// HPが0になったら死亡アニメーションに遷移
+	virtual void DeathAnim(int state);
+
 #pragma endregion
 
 private:

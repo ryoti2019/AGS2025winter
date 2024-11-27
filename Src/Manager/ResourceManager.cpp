@@ -122,6 +122,10 @@ void ResourceManager::Init(void)
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Enemy/KipUp.mv1");
 	resourcesMap_.emplace(SRC::ENEMY_KIP_UP, res);
 
+	// 敵のノーマル死亡アニメーション
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Enemy/Death.mv1");
+	resourcesMap_.emplace(SRC::ENEMY_NORMAL_DEATH, res);
+
 #pragma endregion
 
 #pragma region ステージ

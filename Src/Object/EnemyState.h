@@ -13,5 +13,6 @@ enum class EnemyState
 	HIT_FLINCH_UP,
 	HIT_KNOCK_BACK,
 	KIP_UP,
+	DEATH,
 	MAX
 };

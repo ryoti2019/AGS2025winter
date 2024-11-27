@@ -156,6 +156,7 @@ void Enemy::InitParameter()
 
 void Enemy::InitFunctionPointer()
 {
+
 	//関数ポインタの初期化
 	stateChange_.emplace(EnemyState::IDLE, std::bind(&Enemy::ChangeIdle, this));
 	stateChange_.emplace(EnemyState::RUN, std::bind(&Enemy::ChangeRun, this));
@@ -167,6 +168,8 @@ void Enemy::InitFunctionPointer()
 	stateChange_.emplace(EnemyState::HIT_FLINCH_UP, std::bind(&Enemy::ChangeHitFlinchUp, this));
 	stateChange_.emplace(EnemyState::HIT_KNOCK_BACK, std::bind(&Enemy::ChangeHitKnockBack, this));
 	stateChange_.emplace(EnemyState::KIP_UP, std::bind(&Enemy::ChangeKipUp, this));
+	stateChange_.emplace(EnemyState::DEATH, std::bind(&Enemy::ChangeDeath, this));
+
 }
 
 void Enemy::UpdateDebugImGui()
@@ -254,8 +257,6 @@ void Enemy::InitAnimation()
 
 void Enemy::Update(const float deltaTime)
 {
-
-
 
 	// ImGuiのデバッグ描画の更新
 	UpdateDebugImGui();
@@ -352,15 +353,14 @@ void Enemy::AttackHit(const int damage, const int state)
 	// HPを減らす
 	SubHp(damage);
 	
+	// HPが0になったら死ぬアニメーションに遷移
+	if (hp_ <= 0)
+	{
+		DeathAnim(state);
+	}
+
 	// アニメーションの再生時間をリセットする
 	animationController_->ResetStepAnim();
-
-	// 死んでいたら消す
-	if (hp_<= 0)
-	{
-		// 非アクティブにする
-		isActive_ = false;
-	}
 
 }
 
@@ -413,6 +413,21 @@ void Enemy::AttackHitCheck(const int state)
 		if (hitState == static_cast<PlayerState>(state))
 		{
 			ChangeState(EnemyState::HIT_KNOCK_BACK);
+			return;
+		}
+	}
+
+}
+
+void Enemy::DeathAnim(int state)
+{
+
+	// ノーマルの死亡アニメーションかチェック
+	for (const auto hitState : deathState_)
+	{
+		if (hitState == static_cast<PlayerState>(state))
+		{
+			ChangeState(EnemyState::DEATH);
 			return;
 		}
 	}
@@ -828,6 +843,11 @@ void Enemy::ChangeKipUp()
 	stateUpdate_ = std::bind(&Enemy::UpdateKipUp, this, std::placeholders::_1);
 }
 
+void Enemy::ChangeDeath()
+{
+	stateUpdate_ = std::bind(&Enemy::UpdateDeath, this, std::placeholders::_1);
+}
+
 void Enemy::UpdateIdle(const float deltaTime)
 {
 
@@ -1045,6 +1065,17 @@ void Enemy::UpdateKipUp(const float deltaTime)
 	if (animationController_->IsEndPlayAnimation())
 	{
 		ChangeState(EnemyState::IDLE);
+	}
+
+}
+
+void Enemy::UpdateDeath(const float deltaTime)
+{
+
+	// アニメーションが終了したら待機状態へ遷移する
+	if (animationController_->IsEndPlayAnimation())
+	{
+		isActive_ = false;
 	}
 
 }

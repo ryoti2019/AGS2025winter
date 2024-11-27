@@ -23,7 +23,8 @@ public:
 		"HIT_FLY",
 		"HIT_FLINCH_UP",
 		"HIT_KNOCK_BACK",
-		"KIP_UP"
+		"KIP_UP",
+		"DEATH"
 	};
 
 	// パンチの攻撃開始フレーム
@@ -160,10 +161,19 @@ private:
 		{PlayerState::ATTACK_UPPER}
 	};
 
-	// 真っすぐ飛ばされるプレうやーの攻撃
+	// 真っすぐ飛ばされるプレイヤーの攻撃
 	const std::vector<PlayerState>& hitKnockBackState_ =
 	{
 		{PlayerState::ATTACK_CHARGE_PUNCH}
+	};
+
+	// 死んだときのプレイヤーの攻撃
+	const std::vector<PlayerState>& deathState_ =
+	{
+		{PlayerState::ATTACK_JAB},
+		{PlayerState::ATTACK_STRAIGHT},
+		{PlayerState::ATTACK_HOOK},
+		{PlayerState::ATTACK_LEFT_KICK}
 	};
 
 	// 状態
@@ -196,6 +206,7 @@ private:
 	void ChangeHitFlinchUp();
 	void ChangeHitKnockBack();
 	void ChangeKipUp();
+	void ChangeDeath();
 
 	// 状態の更新
 	std::function<void(const float deltaTime)> stateUpdate_;
@@ -209,6 +220,7 @@ private:
 	void UpdateHitFlinchUp(const float deltaTime);
 	void UpdateHitKnockBack(const float deltaTime);
 	void UpdateKipUp(const float deltaTime);
+	void UpdateDeath(const float deltaTime);
 
 	// 機能の初期化
 	void InitFunction()override;
@@ -245,6 +257,9 @@ private:
 
 	// どのヒットアニメーションかチェックする
 	void AttackHitCheck(const int state);
+
+	// HPが0になったら死亡アニメーションに遷移
+	void DeathAnim(int state)override;
 
 };
 

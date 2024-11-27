@@ -298,6 +298,10 @@ void ActorBase::Gravity(const float scale)
 
 }
 
+void ActorBase::DeathAnim(int state)
+{
+}
+
 void ActorBase::Draw()
 {
 	
