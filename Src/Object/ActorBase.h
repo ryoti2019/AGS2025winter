@@ -4,7 +4,7 @@
 #include <vector>
 #include "../Lib/nlohmann/json.hpp"
 #include "../Common/Vector2F.h"
-#include "../Object/Common/Transform.h"
+#include "../Component/TransformComponent.h"
 #include "../Manager/ResourceManager.h"
 #include "../Object/Common/AnimationController.h"
 
@@ -259,10 +259,14 @@ public:
 	// コンポーネントの削除
 	void ClearComponents();
 
+	// コンポーネントの取得
+	template<typename T>
+	std::shared_ptr<T> GetComponent()const;
+
 	// 座標を設定
 	void SetPos(const VECTOR& pos) {
-		transform_.pos = pos;
-		transform_.Update();
+		transform_->pos = pos;
+		transform_->Update();
 		// 衝突判定の更新
 		ActorBase::CollisionUpdate();
 	}
@@ -277,7 +281,7 @@ public:
 	void AddPos(const VECTOR& pos);
 
 	// 座標を足す
-	void SubPos(const VECTOR& pos) { transform_.pos = VSub(transform_.pos, pos); }
+	void SubPos(const VECTOR& pos) { transform_->pos = VSub(transform_->pos, pos); }
 
 	// HPを設定
 	void SetHp(const int hp) { hp_ = hp; }
@@ -289,7 +293,7 @@ public:
 	void SetIsLockOn(const bool isLockOn);
 
 	// モデルの基本情報を取得
-	const Transform& GetTransform() const { return transform_; }
+	const std::shared_ptr<TransformComponent>& GetTransform() const { return transform_; }
 
 	// アクタータイプを取得
 	const ActorType& GetActorType() const { return actorType_; }
@@ -310,7 +314,7 @@ public:
 	virtual bool GetAttackState();
 
 	// 攻撃種類を取得
-	virtual const std::vector<int>&  GetToatlAttackTypes()const { return {}; }
+	virtual const std::vector<int> GetTotalAttackTypes()const { return {}; }
 
 	// 攻撃を受けている状態を取得
 	virtual bool GetHitState();
@@ -348,8 +352,14 @@ public:
 	// 方向を設定
 	void SetDir(const VECTOR& dir) { dir_ = dir; }
 
-	// 状態遷移
-	virtual void ChangeState(const int state);
+	// アニメーションコントローラーに状態を文字型で渡す変数を取得
+	const std::string& GetKey()const { return key_; }
+
+	// アニメーション
+	const std::unique_ptr<AnimationController>& GetAnimationController()const { return animationController_; }
+
+	// JSONデータ
+	const json& GetJsonData()const { return jsonData_; }
 
 protected:
 
@@ -363,10 +373,10 @@ protected:
 	std::unique_ptr<AnimationController> animationController_;
 
 	// モデル制御の基本情報
-	Transform transform_;
+	std::shared_ptr<TransformComponent> transform_;
 
 	// 追従対象
-	Transform followTransform_;
+	std::shared_ptr<TransformComponent> followTransform_;
 
 	// 衝突判定のデータ
 	CollisionData collisionData_;
@@ -489,5 +499,26 @@ private:
 
 	// デバッグ描画
 	void DrawDebug();
+
+};
+
+// コンポーネントの取得
+template<typename T>
+inline std::shared_ptr<T> ActorBase::GetComponent() const
+{
+
+	// 同じコンポーネントがあるか調べる
+	for (const auto& com : components_)
+	{
+
+		// 同じじゃなければ通らない
+		if (typeid(*com) == typeid(T))
+		{
+			// 同じのがあれば返す
+			return std::static_pointer_cast<T>(com);
+		}
+	}
+
+	return nullptr;
 
 };

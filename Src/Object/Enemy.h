@@ -87,21 +87,7 @@ public:
 	bool GetAttackState()override;
 
 	// UŒ‚í—Ş‚ğæ“¾
-	const std::vector<int>& GetToatlAttackTypes()const
-	{
-
-		std::vector<int> intStates;
-		intStates.reserve(attackState_.size());
-
-		 // •ÏŠ·ˆ—
-		for (const auto& state : attackState_)
-		{
-			intStates.push_back(static_cast<int>(state));
-		}
-
-		return intStates; 
-
-	}
+	const std::vector<int> GetTotalAttackTypes()const;
 
 	// UŒ‚‚ğó‚¯‚Ä‚¢‚éó‘Ô‚ğæ“¾
 	bool GetHitState()override;

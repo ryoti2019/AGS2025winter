@@ -5,7 +5,7 @@
 #include "InputManager.h"
 #include "SceneManager.h" 
 #include "../Application.h"
-#include "../Object/Common/Transform.h"
+#include "../Component/TransformComponent.h"
 #include "Camera.h"
 
 Camera::Camera(void)
@@ -246,12 +246,12 @@ VECTOR Camera::GetTargetPos(void) const
 	return targetPos_;
 }
 
-void Camera::SetPlayer(const Transform* follow)
+void Camera::SetPlayer(const std::shared_ptr<TransformComponent> follow)
 {
 	playerTransform_ = follow;
 }
 
-void Camera::SetEnemy(const Transform* follow)
+void Camera::SetEnemy(const std::shared_ptr<TransformComponent> follow)
 {
 	enemyTransform_ = follow;
 }

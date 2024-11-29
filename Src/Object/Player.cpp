@@ -54,6 +54,8 @@ Player::Player(const VECTOR& pos, const json& data)
 	// アニメーションの初期化
 	InitAnimation();
 
+
+	// 
 }
 
 void Player::Init(const VECTOR& pos)
@@ -63,11 +65,14 @@ void Player::Init(const VECTOR& pos)
 void Player::InitFunction()
 {
 
+	// インプットコントローラーの生成
+	inputController_ = std::make_unique<InputController>();
+
 	// カメラを生成
 	std::weak_ptr<Camera> camera = SceneManager::GetInstance().GetCamera();
 
 	// カメラのターゲットをプレイヤーに設定
-	camera.lock()->SetPlayer(&transform_);
+	camera.lock()->SetPlayer(transform_);
 
 }
 
@@ -117,19 +122,19 @@ void Player::InitParameter()
 	BODY_FRAME = jsonData_["BODY_FRAME_NAME"];
 
 	// 右手のフレーム番号を取得
-	collisionData_.rightHand = MV1SearchFrame(transform_.modelId, RIGHT_HAND_FRAME.c_str());
+	collisionData_.rightHand = MV1SearchFrame(transform_->modelId, RIGHT_HAND_FRAME.c_str());
 
 	// 左手のフレーム番号を取得
-	collisionData_.leftHand = MV1SearchFrame(transform_.modelId, LEFT_HAND_FRAME.c_str());
+	collisionData_.leftHand = MV1SearchFrame(transform_->modelId, LEFT_HAND_FRAME.c_str());
 
 	// 右足のフレーム番号を取得
-	collisionData_.rightFoot = MV1SearchFrame(transform_.modelId, RIGHT_FOOT_FRAME.c_str());
+	collisionData_.rightFoot = MV1SearchFrame(transform_->modelId, RIGHT_FOOT_FRAME.c_str());
 
 	// 左足のフレーム番号を取得
-	collisionData_.leftFoot = MV1SearchFrame(transform_.modelId, LEFT_FOOT_FRAME.c_str());
+	collisionData_.leftFoot = MV1SearchFrame(transform_->modelId, LEFT_FOOT_FRAME.c_str());
 
 	// 体のフレーム番号を取得
-	collisionData_.body = MV1SearchFrame(transform_.modelId, BODY_FRAME.c_str());
+	collisionData_.body = MV1SearchFrame(transform_->modelId, BODY_FRAME.c_str());
 
 	// 手足の衝突判定の半径
 	collisionData_.handAndFootCollisionRadius = HAND_AND_FOOT_COLLISION_RADIUS;
@@ -167,7 +172,7 @@ void Player::InitAnimation()
 {
 
 	// アニメーションコントローラの生成
-	animationController_ = std::make_unique<AnimationController>(transform_.modelId);
+	animationController_ = std::make_unique<AnimationController>(transform_->modelId);
 
 	// アニメーションコントローラーにアニメーションを追加
 	for (int i = static_cast<int>(PlayerState::IDLE); i < static_cast<int>(PlayerState::MAX); ++i)
@@ -210,7 +215,7 @@ void Player::InitAnimation()
 	preKey_ = key_;
 
 	// 初期状態
-	ChangeState(static_cast<int>(PlayerState::IDLE));
+	ChangeState(PlayerState::IDLE);
 
 }
 
@@ -220,8 +225,8 @@ void Player::Update(const float deltaTime)
 	// ImGuiのデバッグ描画の更新
 	UpdateDebugImGui();
 
-	//
-	ActorBase::Update(deltaTime);
+	// 基底クラスの更新
+	//ActorBase::Update(deltaTime);
 
 	// 移動処理
 	Move();
@@ -242,7 +247,7 @@ void Player::Update(const float deltaTime)
 	animationController_->Update(deltaTime);
 
 	// モデル情報を更新
-	transform_.Update();
+	transform_->Update();
 
 	// 衝突判定の更新
 	ActorBase::CollisionUpdate();
@@ -260,21 +265,21 @@ void Player::UpdateDebugImGui()
 
 	// 角度
 	VECTOR rotDeg = VECTOR();
-	rotDeg.x = Utility::Rad2DegF(transform_.quaRot.x);
-	rotDeg.y = Utility::Rad2DegF(transform_.quaRot.y);
-	rotDeg.z = Utility::Rad2DegF(transform_.quaRot.z);
+	rotDeg.x = Utility::Rad2DegF(transform_->quaRot.x);
+	rotDeg.y = Utility::Rad2DegF(transform_->quaRot.y);
+	rotDeg.z = Utility::Rad2DegF(transform_->quaRot.z);
 	ImGui::Text("angle(deg)");
 	ImGui::SliderFloat("RotX", &rotDeg.x, -90.0f, 90.0f);
 	ImGui::SliderFloat("RotY", &rotDeg.y, -90.0f, 90.0f);
 	ImGui::SliderFloat("RotZ", &rotDeg.z, -90.0f, 90.0f);
-	transform_.quaRot.x = Utility::Deg2RadF(rotDeg.x);
-	transform_.quaRot.y = Utility::Deg2RadF(rotDeg.y);
-	transform_.quaRot.z = Utility::Deg2RadF(rotDeg.z);
+	transform_->quaRot.x = Utility::Deg2RadF(rotDeg.x);
+	transform_->quaRot.y = Utility::Deg2RadF(rotDeg.y);
+	transform_->quaRot.z = Utility::Deg2RadF(rotDeg.z);
 
 	// 位置
 	ImGui::Text("position");
 	// 構造体の先頭ポインタを渡し、xyzと連続したメモリ配置へアクセス
-	ImGui::InputFloat3("Pos", &transform_.pos.x);
+	ImGui::InputFloat3("Pos", &transform_->pos.x);
 	// 終了処理
 	ImGui::End();
 
@@ -293,6 +298,22 @@ bool Player::GetAttackState()
 	}
 
 	return false;
+
+}
+
+const std::vector<int> Player::GetTotalAttackTypes() const
+{
+
+	std::vector<int> intStates;
+	intStates.reserve(attackState_.size());
+
+	// 変換処理
+	for (const auto& state : attackState_)
+	{
+		intStates.push_back(static_cast<int>(state));
+	}
+
+	return intStates;
 
 }
 
@@ -350,7 +371,7 @@ void Player::AttackHitCheck(const int state)
 	{
 		if (hitState == static_cast<EnemyState>(state))
 		{
-			ChangeState(static_cast<int>(PlayerState::HIT_HEAD));
+			ChangeState(PlayerState::HIT_HEAD);
 			return;
 		}
 	}
@@ -360,7 +381,7 @@ void Player::AttackHitCheck(const int state)
 	{
 		if (hitState == static_cast<EnemyState>(state))
 		{
-			ChangeState(static_cast<int>(PlayerState::HIT_BODY));
+			ChangeState(PlayerState::HIT_BODY);
 			return;
 		}
 	}
@@ -379,26 +400,26 @@ void Player::Move()
 		}
 	}
 
-	//// 入力方向
-	//VECTOR dir = inputController_->Dir();
+	// 入力方向
+	VECTOR dir = inputController_->Dir();
 
-	//// 攻撃中は移動できない
-	//if (!GetAttackState())
-	//{
-	//	// 入力していたら移動する
-	//	if (!Utility::EqualsVZero(dir))
-	//	{
-	//		// 方向を更新
-	//		dir_ = dir;
+	// 攻撃中は移動できない
+	if (!GetAttackState())
+	{
+		// 入力していたら移動する
+		if (!Utility::EqualsVZero(dir))
+		{
+			// 方向を更新
+			dir_ = dir;
 
-	//		ChangeState(PlayerState::RUN);
-	//	}
-	//	// 入力していなければ待機状態にする
-	//	else if (Utility::EqualsVZero(dir))
-	//	{
-	//		ChangeState(PlayerState::IDLE);
-	//	}
-	//}
+			ChangeState(PlayerState::RUN);
+		}
+		// 入力していなければ待機状態にする
+		else if (Utility::EqualsVZero(dir))
+		{
+			ChangeState(PlayerState::IDLE);
+		}
+	}
 
 }
 
@@ -414,82 +435,82 @@ void Player::Attack(const float deltaTime)
 		}
 	}
 
-	//// 溜めパンチ用のボタンを長押ししているか
-	//if (inputController_->ChargeAttack() && chargeCnt_ <= CHARGE_TIME)
-	//{
-	//	// 押していたら加算する
-	//	chargeCnt_ += deltaTime;
-	//}
+	// 溜めパンチ用のボタンを長押ししているか
+	if (inputController_->ChargeAttack() && chargeCnt_ <= CHARGE_TIME)
+	{
+		// 押していたら加算する
+		chargeCnt_ += deltaTime;
+	}
 
-	//// 溜めパンチ
-	//if (chargeCnt_ >= CHARGE_TIME)
-	//{
-	//	chargeCnt_ = 0.0f;
-	//	ChangeState(PlayerState::ATTACK_CHARGE_PUNCH);
-	//}
+	// 溜めパンチ
+	if (chargeCnt_ >= CHARGE_TIME)
+	{
+		chargeCnt_ = 0.0f;
+		ChangeState(PlayerState::ATTACK_CHARGE_PUNCH);
+	}
 
-	//// 攻撃の先行入力 ため攻撃の後通らないようにする
-	//if (inputController_->Attack() && key_ != ANIM_DATA_KEY[static_cast<int>(PlayerState::ATTACK_CHARGE_PUNCH)])
-	//{
-	//	// コンボの先行入力の処理
-	//	for (int i = static_cast<int>(PlayerState::ATTACK_JAB); i <= static_cast<int>(PlayerState::ATTACK_RIGHT_KICK); i++)
-	//	{
+	// 攻撃の先行入力 ため攻撃の後通らないようにする
+	if (inputController_->Attack() && key_ != ANIM_DATA_KEY[static_cast<int>(PlayerState::ATTACK_CHARGE_PUNCH)])
+	{
+		// コンボの先行入力の処理
+		for (int i = static_cast<int>(PlayerState::ATTACK_JAB); i <= static_cast<int>(PlayerState::ATTACK_RIGHT_KICK); i++)
+		{
 
-	//		// 今から判断するものを探す
-	//		auto isCombo = isCombo_.find(static_cast<PlayerState>(i));
+			// 今から判断するものを探す
+			auto isCombo = isCombo_.find(static_cast<PlayerState>(i));
 
-	//		// falseであればtrueにして先行入力を保持する
-	//		if (!isCombo->second)
-	//		{
-	//			isCombo->second = true;
-	//			break;
-	//		}
-	//	}
+			// falseであればtrueにして先行入力を保持する
+			if (!isCombo->second)
+			{
+				isCombo->second = true;
+				break;
+			}
+		}
 
-	//	// ジャブに遷移
-	//	if (isCombo_.at(PlayerState::ATTACK_JAB) && !isCombo_.at(PlayerState::ATTACK_STRAIGHT))
-	//	{
-	//		ChangeState(PlayerState::ATTACK_JAB);
-	//	}
+		// ジャブに遷移
+		if (isCombo_.at(PlayerState::ATTACK_JAB) && !isCombo_.at(PlayerState::ATTACK_STRAIGHT))
+		{
+			ChangeState(PlayerState::ATTACK_JAB);
+		}
 
-	//}
+	}
 
-	//// アッパーに遷移
-	//if (inputController_->Upper() && state_ != PlayerState::ATTACK_UPPER)
-	//{
-	//	ChangeState(PlayerState::ATTACK_UPPER);
-	//}
+	// アッパーに遷移
+	if (inputController_->Upper() && state_ != PlayerState::ATTACK_UPPER)
+	{
+		ChangeState(PlayerState::ATTACK_UPPER);
+	}
 
-	////コンボ中か判定
-	//if (!GetComboState())return;
+	//コンボ中か判定
+	if (!GetComboState())return;
 
-	//// 次の入力がなければコンボをキャンセルする
-	//for(int i = static_cast<int>(PlayerState::ATTACK_JAB); i < static_cast<int>(PlayerState::ATTACK_RIGHT_KICK); i++)
-	//{
+	// 次の入力がなければコンボをキャンセルする
+	for(int i = static_cast<int>(PlayerState::ATTACK_JAB); i < static_cast<int>(PlayerState::ATTACK_RIGHT_KICK); i++)
+	{
 
-	//	// 次の状態の入力を見るための計算
-	//	const int nextState = static_cast<int>(state_) + 1;
+		// 次の状態の入力を見るための計算
+		const int nextState = static_cast<int>(state_) + 1;
 
-	//	// falseだったらコンボをキャンセル
-	//	if (!isCombo_.at(static_cast<PlayerState>(nextState)))
-	//	{
-	//		// 待機状態に遷移
-	//		if (animationController_->IsEndPlayAnimation())
-	//		{
-	//			ChangeState(PlayerState::IDLE);
-	//			return;
-	//		}
-	//	}
+		// falseだったらコンボをキャンセル
+		if (!isCombo_.at(static_cast<PlayerState>(nextState)))
+		{
+			// 待機状態に遷移
+			if (animationController_->IsEndPlayAnimation())
+			{
+				ChangeState(PlayerState::IDLE);
+				return;
+			}
+		}
 
-	//}
+	}
 
 }
 
-void Player::ChangeState(const int state)
+void Player::ChangeState(const PlayerState state)
 {
 
 	// 状態遷移
-	state_ = static_cast<PlayerState>(state);
+	state_ = state;
 
 	// 関数ポインタの遷移
 	stateChange_[state_]();
@@ -560,7 +581,7 @@ void Player::ChangeJab()
 	speed_ = ATTACK_MOVE_POW;
 
 	// どれだけ進むか計算
-	movePow_ = VAdd(transform_.pos, VScale(moveDir_, speed_));
+	movePow_ = VAdd(transform_->pos, VScale(moveDir_, speed_));
 
 }
 
@@ -582,7 +603,7 @@ void Player::ChangeStraight()
 	speed_ = ATTACK_MOVE_POW;
 
 	// どれだけ進むか計算
-	movePow_ = VAdd(transform_.pos, VScale(moveDir_, speed_));
+	movePow_ = VAdd(transform_->pos, VScale(moveDir_, speed_));
 
 }
 
@@ -604,7 +625,7 @@ void Player::ChangeHook()
 	speed_ = ATTACK_MOVE_POW;
 
 	// どれだけ進むか計算
-	movePow_ = VAdd(transform_.pos, VScale(moveDir_, speed_));
+	movePow_ = VAdd(transform_->pos, VScale(moveDir_, speed_));
 
 }
 
@@ -626,7 +647,7 @@ void Player::ChangeLeftKick()
 	speed_ = ATTACK_MOVE_POW;
 
 	// どれだけ進むか計算
-	movePow_ = VAdd(transform_.pos, VScale(moveDir_, speed_));
+	movePow_ = VAdd(transform_->pos, VScale(moveDir_, speed_));
 
 }
 
@@ -648,7 +669,7 @@ void Player::ChangeRightKick()
 	speed_ = ATTACK_MOVE_POW;
 
 	// どれだけ進むか計算
-	movePow_ = VAdd(transform_.pos, VScale(moveDir_, speed_));
+	movePow_ = VAdd(transform_->pos, VScale(moveDir_, speed_));
 
 }
 
@@ -670,7 +691,7 @@ void Player::ChangeUpper()
 	speed_ = ATTACK_MOVE_POW;
 
 	// どれだけ進むか計算
-	movePow_ = VAdd(transform_.pos, VScale(moveDir_, speed_));
+	movePow_ = VAdd(transform_->pos, VScale(moveDir_, speed_));
 
 }
 
@@ -683,7 +704,7 @@ void Player::ChangeChargePunch()
 	speed_ = ATTACK_MOVE_POW;
 
 	// どれだけ進むか計算
-	movePow_ = VAdd(transform_.pos, VScale(moveDir_, speed_));
+	movePow_ = VAdd(transform_->pos, VScale(moveDir_, speed_));
 
 }
 
@@ -693,7 +714,7 @@ void Player::ChangeHitHead()
 	stateUpdate_ = std::bind(&Player::UpdateHitHead, this);
 
 	// プレイヤーの方向を求める
-	VECTOR vec = VSub(targetPos_, transform_.pos);
+	VECTOR vec = VSub(targetPos_, transform_->pos);
 
 	// 正規化
 	vec = VNorm(vec);
@@ -705,7 +726,7 @@ void Player::ChangeHitHead()
 	speed_ = ATTACK_MOVE_POW;
 
 	// どれだけ進むか計算
-	movePow_ = VAdd(transform_.pos, VScale(moveDir_, speed_));
+	movePow_ = VAdd(transform_->pos, VScale(moveDir_, speed_));
 
 }
 
@@ -715,7 +736,7 @@ void Player::ChangeHitBody()
 	stateUpdate_ = std::bind(&Player::UpdateHitBody, this);
 
 	// プレイヤーの方向を求める
-	VECTOR vec = VSub(targetPos_, transform_.pos);
+	VECTOR vec = VSub(targetPos_, transform_->pos);
 
 	// 正規化
 	vec = VNorm(vec);
@@ -727,7 +748,7 @@ void Player::ChangeHitBody()
 	speed_ = ATTACK_MOVE_POW;
 
 	// どれだけ進むか計算
-	movePow_ = VAdd(transform_.pos, VScale(moveDir_, speed_));
+	movePow_ = VAdd(transform_->pos, VScale(moveDir_, speed_));
 
 }
 
@@ -765,7 +786,7 @@ void Player::UpdateRun(void)
 	movePow_ = VScale(moveDir_, speed_);
 
 	// 移動処理
-	transform_.pos = VAdd(transform_.pos, movePow_);
+	transform_->pos = VAdd(transform_->pos, movePow_);
 
 	// 方向を角度に変換する(XZ平面 Y軸)
 	float angle = atan2f(dir_.x, dir_.z);
@@ -779,7 +800,7 @@ void Player::UpdateJab()
 {
 
 	// 少し前にゆっくり移動
-	transform_.pos = Utility::Lerp(transform_.pos, movePow_, 0.1f);
+	transform_->pos = Utility::Lerp(transform_->pos, movePow_, 0.1f);
 
 	// 攻撃判定があるフレーム
 	if (JAB_ATTACK_START_FRAME <= animationController_->GetStepAnim() && animationController_->GetStepAnim() <= JAB_ATTACK_END_FRAME)
@@ -794,7 +815,7 @@ void Player::UpdateJab()
 	// ストレートに遷移
 	if (animationController_->IsEndPlayAnimation() && isCombo_.at(PlayerState::ATTACK_STRAIGHT))
 	{
-		ChangeState(static_cast<int>(PlayerState::ATTACK_STRAIGHT));
+		ChangeState(PlayerState::ATTACK_STRAIGHT);
 	}
 
 }
@@ -803,7 +824,7 @@ void Player::UpdateStraight()
 {
 
 	// 少し前にゆっくり移動
-	transform_.pos = Utility::Lerp(transform_.pos, movePow_, 0.1f);
+	transform_->pos = Utility::Lerp(transform_->pos, movePow_, 0.1f);
 
 	// 攻撃判定があるフレーム
 	if (STRAIGHT_ATTACK_START_FRAME <= animationController_->GetStepAnim() && animationController_->GetStepAnim() <= STRAIGHT_ATTACK_END_FRAME)
@@ -818,7 +839,7 @@ void Player::UpdateStraight()
 	// フックに遷移
 	if (animationController_->IsEndPlayAnimation() && isCombo_.at(PlayerState::ATTACK_HOOK))
 	{
-		ChangeState(static_cast<int>(PlayerState::ATTACK_HOOK));
+		ChangeState(PlayerState::ATTACK_HOOK);
 	}
 
 }
@@ -827,7 +848,7 @@ void Player::UpdateHook()
 {
 
 	// 少し前にゆっくり移動
-	transform_.pos = Utility::Lerp(transform_.pos, movePow_, 0.1f);
+	transform_->pos = Utility::Lerp(transform_->pos, movePow_, 0.1f);
 
 	// 攻撃判定があるフレーム
 	if (HOOK_ATTACK_START_FRAME <= animationController_->GetStepAnim() && animationController_->GetStepAnim() <= HOOK_ATTACK_END_FRAME)
@@ -842,7 +863,7 @@ void Player::UpdateHook()
 	// 左キックに遷移
 	if (animationController_->IsEndPlayAnimation() && isCombo_.at(PlayerState::ATTACK_LEFT_KICK))
 	{
-		ChangeState(static_cast<int>(PlayerState::ATTACK_LEFT_KICK));
+		ChangeState(PlayerState::ATTACK_LEFT_KICK);
 	}
 
 }
@@ -851,7 +872,7 @@ void Player::UpdateLeftKick()
 {
 
 	// 少し前にゆっくり移動
-	transform_.pos = Utility::Lerp(transform_.pos, movePow_, 0.1f);
+	transform_->pos = Utility::Lerp(transform_->pos, movePow_, 0.1f);
 
 	// 攻撃判定があるフレーム
 	if (LEFT_KICK_ATTACK_START_FRAME <= animationController_->GetStepAnim() && animationController_->GetStepAnim() <= LEFT_KICK_ATTACK_END_FRAME)
@@ -866,7 +887,7 @@ void Player::UpdateLeftKick()
 	// 右キックに遷移
 	if (animationController_->IsEndPlayAnimation() && isCombo_.at(PlayerState::ATTACK_RIGHT_KICK))
 	{
-		ChangeState(static_cast<int>(PlayerState::ATTACK_RIGHT_KICK));
+		ChangeState(PlayerState::ATTACK_RIGHT_KICK);
 	}
 
 }
@@ -875,7 +896,7 @@ void Player::UpdateRightKick()
 {
 
 	// 少し前にゆっくり移動
-	transform_.pos = Utility::Lerp(transform_.pos, movePow_, 0.1f);
+	transform_->pos = Utility::Lerp(transform_->pos, movePow_, 0.1f);
 
 	// 攻撃判定があるフレーム
 	if (RIGHT_KICK_ATTACK_START_FRAME <= animationController_->GetStepAnim() && animationController_->GetStepAnim() <= RIGHT_KICK_ATTACK_END_FRAME)
@@ -890,7 +911,7 @@ void Player::UpdateRightKick()
 	// 待機状態に遷移
 	if (animationController_->IsEndPlayAnimation())
 	{
-		ChangeState(static_cast<int>(PlayerState::IDLE));
+		ChangeState(PlayerState::IDLE);
 	}
 
 }
@@ -899,7 +920,7 @@ void Player::UpdateUpper()
 {
 
 	// 少し前にゆっくり移動
-	transform_.pos = Utility::Lerp(transform_.pos, movePow_, 0.1f);
+	transform_->pos = Utility::Lerp(transform_->pos, movePow_, 0.1f);
 
 	// 攻撃判定があるフレーム
 	if (UPPER_ATTACK_START_FRAME <= animationController_->GetStepAnim() && animationController_->GetStepAnim() <= UPPER_ATTACK_END_FRAME)
@@ -914,7 +935,7 @@ void Player::UpdateUpper()
 	// 待機状態に遷移
 	if (animationController_->IsEndPlayAnimation())
 	{
-		ChangeState(static_cast<int>(PlayerState::IDLE));
+		ChangeState(PlayerState::IDLE);
 	}
 
 }
@@ -923,7 +944,7 @@ void Player::UpdateChargePunch()
 {
 
 	// 少し前にゆっくり移動
-	transform_.pos = Utility::Lerp(transform_.pos, movePow_, 0.1f);
+	transform_->pos = Utility::Lerp(transform_->pos, movePow_, 0.1f);
 
 	// 攻撃判定があるフレーム
 	if (CHARGE_PUNCH_ATTACK_START_FRAME <= animationController_->GetStepAnim() && animationController_->GetStepAnim() <= CHARGE_PUNCH_ATTACK_END_FRAME)
@@ -938,7 +959,7 @@ void Player::UpdateChargePunch()
 	// 待機状態に遷移
 	if (animationController_->IsEndPlayAnimation())
 	{
-		ChangeState(static_cast<int>(PlayerState::IDLE));
+		ChangeState(PlayerState::IDLE);
 	}
 
 }
@@ -949,7 +970,7 @@ void Player::UpdateHitHead()
 	// 待機状態に遷移
 	if (animationController_->IsEndPlayAnimation())
 	{
-		ChangeState(static_cast<int>(PlayerState::IDLE));
+		ChangeState(PlayerState::IDLE);
 	}
 
 }
@@ -960,7 +981,7 @@ void Player::UpdateHitBody()
 	// 待機状態に遷移
 	if (animationController_->IsEndPlayAnimation())
 	{
-		ChangeState(static_cast<int>(PlayerState::IDLE));
+		ChangeState(PlayerState::IDLE);
 	}
 
 }

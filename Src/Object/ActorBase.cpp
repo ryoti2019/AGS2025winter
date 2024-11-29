@@ -3,7 +3,7 @@
 
 ActorBase::ActorBase(const VECTOR& pos, const json& data)
 	:
-	transform_(Transform()),
+	transform_(nullptr),
 	RIGHT_HAND_RELATIVE_UP_POS({ 0.0f,100.0f,0.0f }),
 	RIGHT_HAND_RELATIVE_DOWN_POS({ 0.0f,-100.0f,0.0f }),
 	LEFT_HAND_RELATIVE_UP_POS({ 0.0f,100.0f,0.0f }),
@@ -42,6 +42,13 @@ ActorBase::ActorBase(const VECTOR& pos, const json& data)
 	isOnGround_(false),
 	jsonData_(data)
 {
+
+	// モデルの制御情報を追加
+	AddComponent(std::make_shared<TransformComponent>());
+
+	auto component = GetComponent<TransformComponent>();
+	transform_ = std::static_pointer_cast<TransformComponent>(component);
+
 }
 
 void ActorBase::Init(const VECTOR& pos)
@@ -49,12 +56,12 @@ void ActorBase::Init(const VECTOR& pos)
 
 #pragma region オブジェクトの情報
 
-	transform_.SetModel(modelId_);
+	transform_->SetModel(modelId_);
 	SetPos(pos);
-	transform_.scl = { scl_,scl_,scl_ };
-	transform_.quaRot = Quaternion::Euler({ Utility::Deg2RadF(0.0f) , Utility::Deg2RadF(INIT_ANGLE),Utility::Deg2RadF(0.0f) });
-	transform_.quaRotLocal = Quaternion::Euler({ Utility::Deg2RadF(0.0f) , Utility::Deg2RadF(180.0f),Utility::Deg2RadF(0.0f) });
-	transform_.Update();
+	transform_->scl = { scl_,scl_,scl_ };
+	transform_->quaRot = Quaternion::Euler({ Utility::Deg2RadF(0.0f) , Utility::Deg2RadF(INIT_ANGLE),Utility::Deg2RadF(0.0f) });
+	transform_->quaRotLocal = Quaternion::Euler({ Utility::Deg2RadF(0.0f) , Utility::Deg2RadF(180.0f),Utility::Deg2RadF(0.0f) });
+	transform_->Update();
 
 #pragma endregion
 
@@ -77,7 +84,7 @@ void ActorBase::Update(const float deltaTime)
 void ActorBase::LazyRotation(float goalRot)
 {
 	auto goal = Quaternion::Euler(0.0f, goalRot, 0.0f);
-	transform_.quaRot = Quaternion::Slerp(transform_.quaRot, goal, ROTATION_POW);
+	transform_->quaRot = Quaternion::Slerp(transform_->quaRot, goal, ROTATION_POW);
 }
 
 void ActorBase::InitFunction()
@@ -106,7 +113,7 @@ void ActorBase::CollisionUpdate()
 #pragma region 右手
 
 	// 指定のフレームのローカル座標からワールド座標に変換する行列を得る
-	MATRIX matRightHandPos = MV1GetFrameLocalWorldMatrix(transform_.modelId, collisionData_.rightHand);
+	MATRIX matRightHandPos = MV1GetFrameLocalWorldMatrix(transform_->modelId, collisionData_.rightHand);
 
 	// 行列の平行移動成分を取得する
 	VECTOR rightHandPos = MGetTranslateElem(matRightHandPos);
@@ -140,7 +147,7 @@ void ActorBase::CollisionUpdate()
 #pragma region 左手
 
 	// 指定のフレームのローカル座標からワールド座標に変換する行列を得る
-	MATRIX matLeftHandPos = MV1GetFrameLocalWorldMatrix(transform_.modelId, collisionData_.leftHand);
+	MATRIX matLeftHandPos = MV1GetFrameLocalWorldMatrix(transform_->modelId, collisionData_.leftHand);
 
 	// 行列の平行移動成分を取得する
 	VECTOR leftHandPos = MGetTranslateElem(matLeftHandPos);
@@ -174,7 +181,7 @@ void ActorBase::CollisionUpdate()
 #pragma region 右足
 
 	// 指定のフレームのローカル座標からワールド座標に変換する行列を得る
-	MATRIX matRightFootPos = MV1GetFrameLocalWorldMatrix(transform_.modelId, collisionData_.rightFoot);
+	MATRIX matRightFootPos = MV1GetFrameLocalWorldMatrix(transform_->modelId, collisionData_.rightFoot);
 
 	// 行列の平行移動成分を取得する
 	VECTOR rightFootPos = MGetTranslateElem(matRightFootPos);
@@ -208,7 +215,7 @@ void ActorBase::CollisionUpdate()
 #pragma region 左足
 
 	// 指定のフレームのローカル座標からワールド座標に変換する行列を得る
-	MATRIX matLeftFootPos = MV1GetFrameLocalWorldMatrix(transform_.modelId, collisionData_.leftFoot);
+	MATRIX matLeftFootPos = MV1GetFrameLocalWorldMatrix(transform_->modelId, collisionData_.leftFoot);
 
 	// 行列の平行移動成分を取得する
 	VECTOR leftFootPos = MGetTranslateElem(matLeftFootPos);
@@ -242,7 +249,7 @@ void ActorBase::CollisionUpdate()
 #pragma region 体
 
 	// 当たり判定の座標を更新
-	collisionData_.bodyPos = VAdd(transform_.pos, BODY_RELATIVE_CENTER_POS);
+	collisionData_.bodyPos = VAdd(transform_->pos, BODY_RELATIVE_CENTER_POS);
 
 	// カプセルの上の相対座標
 	VECTOR bodyUpPos = BODY_RELATIVE_UP_POS;
@@ -261,10 +268,10 @@ void ActorBase::CollisionUpdate()
 #pragma region 直方体の当たり判定
 
 	// 最小点
-	collisionData_.minPos = { transform_.pos.x - collisionData_.bodyCollisionRadius,transform_.pos.y,transform_.pos.z - collisionData_.bodyCollisionRadius };
+	collisionData_.minPos = { transform_->pos.x - collisionData_.bodyCollisionRadius,transform_->pos.y,transform_->pos.z - collisionData_.bodyCollisionRadius };
 
 	// 最大点
-	collisionData_.maxPos = { transform_.pos.x + collisionData_.bodyCollisionRadius,transform_.pos.y + BODY_RELATIVE_UP_POS.y,transform_.pos.z + collisionData_.bodyCollisionRadius };
+	collisionData_.maxPos = { transform_->pos.x + collisionData_.bodyCollisionRadius,transform_->pos.y + BODY_RELATIVE_UP_POS.y,transform_->pos.z + collisionData_.bodyCollisionRadius };
 
 #pragma endregion
 
@@ -301,12 +308,8 @@ void ActorBase::Gravity(const float scale)
 	velocity_ = VAdd(velocity_, acceleration);
 
 	// 座標を更新
-	transform_.pos = VAdd(transform_.pos, velocity_);
+	transform_->pos = VAdd(transform_->pos, velocity_);
 
-}
-
-void ActorBase::ChangeState(const int state)
-{
 }
 
 void ActorBase::DeathAnim(int state)
@@ -317,7 +320,7 @@ void ActorBase::Draw()
 {
 	
 	// モデル描画
-	MV1DrawModel(transform_.modelId);
+	MV1DrawModel(transform_->modelId);
 
 	// デバッグ描画
 	DrawDebug();
@@ -326,7 +329,7 @@ void ActorBase::Draw()
 
 void ActorBase::AddPos(const VECTOR& pos)
 {
-	transform_.pos = VAdd(transform_.pos, pos);
+	transform_->pos = VAdd(transform_->pos, pos);
 }
 
 void ActorBase::SetIsLockOn(const bool isLockOn)

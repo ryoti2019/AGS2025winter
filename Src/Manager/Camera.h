@@ -1,7 +1,7 @@
 #pragma once
 #include <DxLib.h>
 #include "../Common/Quaternion.h"
-#include "../Object/Common/Transform.h"
+#include "../Component/TransformComponent.h"
 
 class Player;
 
@@ -75,10 +75,10 @@ public:
 	void SetBeforeDrawFollow(void);
 	
 	// 追従対象の設定
-	void SetPlayer(const Transform* follow);
+	void SetPlayer(const std::shared_ptr<TransformComponent> follow);
 
 	// 追従対象の設定
-	void SetEnemy(const Transform* follow);
+	void SetEnemy(const std::shared_ptr<TransformComponent> follow);
 
 	// ロックオンの設定
 	void SetLockOn(const bool lockOn);
@@ -112,8 +112,8 @@ public:
 private:
 
 	// 追従対象
-	const Transform* playerTransform_;
-	const Transform* enemyTransform_;
+	std::shared_ptr<TransformComponent> playerTransform_;
+	std::shared_ptr<TransformComponent> enemyTransform_;
 
 	// カメラモード
 	MODE mode_;
