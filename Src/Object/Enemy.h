@@ -87,7 +87,7 @@ public:
 	bool GetAttackState()override;
 
 	// UŒ‚í—Ş‚ğæ“¾
-	const std::vector<int>& GetToatlAttackTypes()const
+	const std::vector<int> GetToatlAttackTypes()const
 	{
 
 		std::vector<int> intStates;

@@ -4,6 +4,7 @@
 #include "ActorBase.h"
 #include "PlayerState.h"
 #include "EnemyState.h"
+#include "../Object/Common/InputController.h"
 
 class Player : public ActorBase
 {
@@ -104,7 +105,7 @@ public:
 	bool GetAttackState()override;
 
 	// 攻撃種類を取得
-	const std::vector<int>& GetToatlAttackTypes()const
+	const std::vector<int> GetToatlAttackTypes()const
 	{
 
 		std::vector<int> intStates;
@@ -136,6 +137,9 @@ public:
 	int GetDamage()const override { return damage_; }
 
 private:
+
+	// 入力用コントローラー
+	std::unique_ptr<InputController> inputController_;
 
 	// 攻撃中の状態
 	const std::vector<PlayerState> attackState_ =

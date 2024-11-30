@@ -310,7 +310,7 @@ public:
 	virtual bool GetAttackState();
 
 	// UŒ‚í—Ş‚ğæ“¾
-	virtual const std::vector<int>&  GetToatlAttackTypes()const { return {}; }
+	virtual const std::vector<int> GetToatlAttackTypes()const { return {}; }
 
 	// UŒ‚‚ğó‚¯‚Ä‚¢‚éó‘Ô‚ğæ“¾
 	virtual bool GetHitState();
