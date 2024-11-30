@@ -101,9 +101,9 @@ void CollisionManager::CheckAttackCollision(const float deltaTime)
 				if (hitData == invincibleData_.end())
 				{
 
-					// 当たったもののデータを作るattacker->GetToatlAttackTypes()
+					// 当たったもののデータを作る
 					std::map<int, float> data;
-					for (int type = 0; type < attacker->GetToatlAttackTypes().size(); type++)
+					for (int type = 0; type < attacker->GetTotalAttackTypes().size(); type++)
 					{
 						data.emplace(type, 0.0f);
 					}
@@ -177,7 +177,7 @@ void CollisionManager::OnAttackCollision(const std::shared_ptr<ActorBase>& attac
 	target->AttackHit(attacker->GetDamage(), attacker->GetState());
 
 	// 相手の座標を設定
-	target->SetTargetPos(attacker->GetTransform().pos);
+	target->SetTargetPos(attacker->GetTransform()->pos);
 
 	// 当たったターゲットの情報を取得
 	auto& data = invincibleData_[target];
@@ -215,7 +215,7 @@ void CollisionManager::CheckStageCollision()
 
 				// カプセルとの衝突判定
 				auto hits = MV1CollCheck_Capsule(
-					stage->GetTransform().modelId, -1,
+					stage->GetTransform()->modelId, -1,
 					target->GetCollisionData().bodyCapsuleUpPos, target->GetCollisionData().bodyCapsuleDownPos, target->GetCollisionData().bodyCollisionRadius);
 
 				// 衝突した複数のポリゴンと衝突回避するまで、
@@ -244,7 +244,7 @@ void CollisionManager::CheckStageCollision()
 							if (hit.Normal.y == 1.0f)continue;
 
 							// 当たっているか判定したいActorの座標
-							VECTOR pos = target->GetTransform().pos;
+							VECTOR pos = target->GetTransform()->pos;
 
 							// 法線の方向にちょっとだけ移動させる
 							pos = VAdd(pos, VScale(hit.Normal, STAGE_PUSH_FORCE));
@@ -263,7 +263,7 @@ void CollisionManager::CheckStageCollision()
 				
 				// 地面との衝突
 				auto hit = MV1CollCheck_Line(
-					stage->GetTransform().modelId, -1,
+					stage->GetTransform()->modelId, -1,
 					VAdd(target->GetCollisionData().bodyCapsuleUpPos, VECTOR(0.0f,target->GetCollisionData().bodyCollisionRadius,0.0f)),
 					VAdd(target->GetCollisionData().bodyCapsuleDownPos, VECTOR(0.0f, -target->GetCollisionData().bodyCollisionRadius, 0.0f)));
 

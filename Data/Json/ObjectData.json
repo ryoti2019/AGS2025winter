@@ -7,7 +7,7 @@
 				"RIGHT_FOOT_FRAME_NAME": "mixamorig:RightFoot",
 				"LEFT_FOOT_FRAME_NAME": "mixamorig:LeftFoot",
 				"BODY_FRAME_NAME": "mixamorig:Hips",
-				"RUN_MOVE_POW": 100.0,
+				"RUN_MOVE_POW": 300.0,
 				"ATTACK_MOVE_POW": 500.0,
 				"CHARGE_TIME": 1.0,
 				"ANIM_INDEX": 0,

@@ -1,8 +1,7 @@
 #include <memory>
 #include "Component.h"
 
-Component::Component(std::shared_ptr<ActorBase> actor)
-	:actor_(actor)
+Component::Component()
 {
 }
 

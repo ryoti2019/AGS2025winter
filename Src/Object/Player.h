@@ -1,6 +1,7 @@
 #pragma once
 #include <DxLib.h>
 #include <functional>
+#include "../Object/Common/InputController.h"
 #include "ActorBase.h"
 #include "PlayerState.h"
 #include "EnemyState.h"
@@ -105,21 +106,7 @@ public:
 	bool GetAttackState()override;
 
 	// 攻撃種類を取得
-	const std::vector<int> GetToatlAttackTypes()const
-	{
-
-		std::vector<int> intStates;
-		intStates.reserve(attackState_.size());
-
-		// 変換処理
-		for (const auto& state : attackState_)
-		{
-			intStates.push_back(static_cast<int>(state));
-		}
-
-		return intStates;
-
-	}
+	const std::vector<int> GetTotalAttackTypes()const;
 
 	// 攻撃を受けている状態を取得
 	bool GetHitState()override;
@@ -135,6 +122,21 @@ public:
 
 	// ダメージ量を取得
 	int GetDamage()const override { return damage_; }
+
+	// 溜め攻撃のカウンタを取得
+	float GetChargeCnt()const { return chargeCnt_; };
+
+	// 溜め攻撃のカウンタを設定
+	void SetChargeCnt(const float cnt) { chargeCnt_ = cnt; }
+
+	// 溜め攻撃のカウンタを加算
+	void AddChargeCnt(const float cnt) { chargeCnt_ += cnt; }
+
+	// 攻撃を入力しているか取得
+	const std::map<PlayerState, bool>& GetIsCombo()const { return isCombo_; }
+
+	// 攻撃を入力しているか設定
+	void SetIsCombo(const std::map<PlayerState, bool>& isCombo) { isCombo_ = isCombo; }
 
 private:
 
@@ -238,16 +240,13 @@ private:
 	void UpdateDebugImGui()override;
 
 	// 状態遷移
-	void ChangeState(const int state)override;
+	void ChangeState(const PlayerState state);
 
 	// 移動処理
 	void Move()override;
 
 	// 攻撃処理
 	void Attack(const float deltaTime)override;
-
-	// 攻撃するときの移動や回転の処理
-	void MoveAndRotate();
 
 	// どのヒットアニメーションかチェックする
 	virtual void AttackHitCheck(const int state);

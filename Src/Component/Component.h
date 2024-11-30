@@ -7,7 +7,7 @@ class Component
 
 public:
 
-	Component(std::shared_ptr<ActorBase> actor);
+	Component();
 
 	// アクターを取得する
 	const std::shared_ptr<ActorBase>& GetActor()const;

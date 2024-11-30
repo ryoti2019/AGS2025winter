@@ -90,19 +90,19 @@ void Enemy::InitParameter()
 	BODY_FRAME = jsonData_["BODY_FRAME_NAME"];
 
 	// 右手のフレーム番号を取得
-	collisionData_.rightHand = MV1SearchFrame(transform_.modelId, RIGHT_HAND_FRAME.c_str());
+	collisionData_.rightHand = MV1SearchFrame(transform_->modelId, RIGHT_HAND_FRAME.c_str());
 
 	// 左手のフレーム番号を取得
-	collisionData_.leftHand = MV1SearchFrame(transform_.modelId, LEFT_HAND_FRAME.c_str());
+	collisionData_.leftHand = MV1SearchFrame(transform_->modelId, LEFT_HAND_FRAME.c_str());
 
 	// 右足のフレーム番号を取得
-	collisionData_.rightFoot = MV1SearchFrame(transform_.modelId, RIGHT_FOOT_FRAME.c_str());
+	collisionData_.rightFoot = MV1SearchFrame(transform_->modelId, RIGHT_FOOT_FRAME.c_str());
 
 	// 左足のフレーム番号を取得
-	collisionData_.leftFoot = MV1SearchFrame(transform_.modelId, LEFT_FOOT_FRAME.c_str());
+	collisionData_.leftFoot = MV1SearchFrame(transform_->modelId, LEFT_FOOT_FRAME.c_str());
 
 	// 体のフレーム番号を取得
-	collisionData_.body = MV1SearchFrame(transform_.modelId, BODY_FRAME.c_str());
+	collisionData_.body = MV1SearchFrame(transform_->modelId, BODY_FRAME.c_str());
 
 	// 手足の衝突判定の半径
 	collisionData_.handAndFootCollisionRadius = HAND_AND_FOOT_COLLISION_RADIUS;
@@ -184,21 +184,21 @@ void Enemy::UpdateDebugImGui()
 
 	// 角度
 	VECTOR rotDeg = VECTOR();
-	rotDeg.x = Utility::Rad2DegF(transform_.quaRot.x);
-	rotDeg.y = Utility::Rad2DegF(transform_.quaRot.y);
-	rotDeg.z = Utility::Rad2DegF(transform_.quaRot.z);
+	rotDeg.x = Utility::Rad2DegF(transform_->quaRot.x);
+	rotDeg.y = Utility::Rad2DegF(transform_->quaRot.y);
+	rotDeg.z = Utility::Rad2DegF(transform_->quaRot.z);
 	ImGui::Text("angle(deg)");
 	ImGui::SliderFloat("RotX", &rotDeg.x, -90.0f, 90.0f);
 	ImGui::SliderFloat("RotY", &rotDeg.y, -90.0f, 90.0f);
 	ImGui::SliderFloat("RotZ", &rotDeg.z, -90.0f, 90.0f);
-	transform_.quaRot.x = Utility::Deg2RadF(rotDeg.x);
-	transform_.quaRot.y = Utility::Deg2RadF(rotDeg.y);
-	transform_.quaRot.z = Utility::Deg2RadF(rotDeg.z);
+	transform_->quaRot.x = Utility::Deg2RadF(rotDeg.x);
+	transform_->quaRot.y = Utility::Deg2RadF(rotDeg.y);
+	transform_->quaRot.z = Utility::Deg2RadF(rotDeg.z);
 
 	// 位置
 	ImGui::Text("position");
 	// 構造体の先頭ポインタを渡し、xyzと連続したメモリ配置へアクセス
-	ImGui::InputFloat3("Pos", &transform_.pos.x);
+	ImGui::InputFloat3("Pos", &transform_->pos.x);
 	// 終了処理
 	ImGui::End();
 
@@ -208,7 +208,7 @@ void Enemy::InitAnimation()
 {
 
 	// アニメーションコントローラの生成
-	animationController_ = std::make_unique<AnimationController>(transform_.modelId);
+	animationController_ = std::make_unique<AnimationController>(transform_->modelId);
 
 	// アニメーションコントローラーにアニメーションを追加
 	for (int i = static_cast<int>(EnemyState::IDLE); i < static_cast<int>(EnemyState::MAX); ++i)
@@ -284,7 +284,7 @@ void Enemy::Update(const float deltaTime)
 	animationController_->Update(deltaTime);
 
 	// モデル情報を更新
-	transform_.Update();
+	transform_->Update();
 
 	// 衝突判定の更新
 	ActorBase::CollisionUpdate();
@@ -325,6 +325,22 @@ bool Enemy::GetAttackState()
 	}
 
 	return false;
+
+}
+
+const std::vector<int> Enemy::GetTotalAttackTypes() const
+{
+
+	std::vector<int> intStates;
+	intStates.reserve(attackState_.size());
+
+	// 変換処理
+	for (const auto& state : attackState_)
+	{
+		intStates.push_back(static_cast<int>(state));
+	}
+
+	return intStates;
 
 }
 
@@ -448,14 +464,14 @@ void Enemy::AnimationFrame()
 {
 
 	// 対象フレームのローカル行列を初期値にリセットする
-	MV1ResetFrameUserLocalMatrix(transform_.modelId, collisionData_.body);
+	MV1ResetFrameUserLocalMatrix(transform_->modelId, collisionData_.body);
 
 	// 座標を固定する
 	if (animationController_->IsBlendPlay("HIT_FLY"))
 	{
 
 		// 対象フレームのローカル行列(大きさ、回転、位置)を取得する
-		auto mat = MV1GetFrameLocalMatrix(transform_.modelId, collisionData_.body);
+		auto mat = MV1GetFrameLocalMatrix(transform_->modelId, collisionData_.body);
 
 		auto scl = MGetSize(mat); // 行列から大きさを取り出す
 		auto rot = MGetRotElem(mat); // 行列から回転を取り出す
@@ -472,7 +488,7 @@ void Enemy::AnimationFrame()
 
 		// 合成した行列を対象フレームにセットし直して、
 		// アニメーションの移動値を無効化
-		MV1SetFrameUserLocalMatrix(transform_.modelId, collisionData_.body, mix);
+		MV1SetFrameUserLocalMatrix(transform_->modelId, collisionData_.body, mix);
 
 	}
 
@@ -500,7 +516,7 @@ std::optional<VECTOR> Enemy::GetPlayerPos()
 	// プレイヤーの座標を取得
 	for (const auto& player : players->second)
 	{
-		return player->GetTransform().pos;
+		return player->GetTransform()->pos;
 	}
 
 }
@@ -570,7 +586,7 @@ void Enemy::Move()
 	targetPos_ = playerPos.value();
 
 	// 敵からプレイヤーへのベクトル
-	VECTOR vec = VSub(targetPos_, transform_.pos);
+	VECTOR vec = VSub(targetPos_, transform_->pos);
 
 	// ベクトルの長さ
 	float length = Utility::Magnitude(vec);
@@ -610,7 +626,7 @@ void Enemy::Attack(const float deltaTime)
 	targetPos_ = playerPos.value();
 
 	// 敵からプレイヤーへのベクトル
-	VECTOR vec = VSub(targetPos_, transform_.pos);
+	VECTOR vec = VSub(targetPos_, transform_->pos);
 
 	// ベクトルの長さ
 	float length = Utility::Magnitude(vec);
@@ -689,7 +705,7 @@ void Enemy::ChangePunch()
 	speed_ = ATTACK_MOVE_POW;
 
 	// どれだけ進むか計算
-	movePow_ = VAdd(transform_.pos, VScale(moveDir_, speed_));
+	movePow_ = VAdd(transform_->pos, VScale(moveDir_, speed_));
 
 }
 
@@ -705,7 +721,7 @@ void Enemy::ChangeKick()
 	speed_ = ATTACK_MOVE_POW;
 
 	// どれだけ進むか計算
-	movePow_ = VAdd(transform_.pos, VScale(moveDir_, speed_));
+	movePow_ = VAdd(transform_->pos, VScale(moveDir_, speed_));
 
 }
 
@@ -715,7 +731,7 @@ void Enemy::ChangeHitHead()
 	stateUpdate_ = std::bind(&Enemy::UpdateHitHead, this, std::placeholders::_1);
 
 	// プレイヤーの方向を求める
-	VECTOR vec = VSub(targetPos_, transform_.pos);
+	VECTOR vec = VSub(targetPos_, transform_->pos);
 
 	// 正規化
 	vec = VNorm(vec);
@@ -727,7 +743,7 @@ void Enemy::ChangeHitHead()
 	speed_ = ATTACK_MOVE_POW;
 
 	// 移動量
-	movePow_ = VAdd(transform_.pos, VScale(vec, speed_));
+	movePow_ = VAdd(transform_->pos, VScale(vec, speed_));
 
 }
 
@@ -737,7 +753,7 @@ void Enemy::ChangeHitBody()
 	stateUpdate_ = std::bind(&Enemy::UpdateHitBody, this, std::placeholders::_1);
 
 	// プレイヤーの方向を求める
-	VECTOR vec = VSub(targetPos_, transform_.pos);
+	VECTOR vec = VSub(targetPos_, transform_->pos);
 
 	// 正規化
 	vec = VNorm(vec);
@@ -749,7 +765,7 @@ void Enemy::ChangeHitBody()
 	speed_ = ATTACK_MOVE_POW;
 
 	// 移動量
-	movePow_ = VAdd(transform_.pos, VScale(vec, speed_));
+	movePow_ = VAdd(transform_->pos, VScale(vec, speed_));
 
 }
 
@@ -759,7 +775,7 @@ void Enemy::ChangeHitFly()
 	stateUpdate_ = std::bind(&Enemy::UpdateHitFly, this, std::placeholders::_1);
 
 	// プレイヤーの方向を求める
-	VECTOR vec = VSub(targetPos_, transform_.pos);
+	VECTOR vec = VSub(targetPos_, transform_->pos);
 	
 	// 正規化
 	vec = VNorm(vec);
@@ -789,7 +805,7 @@ void Enemy::ChangeHitFlinchUp()
 	stateUpdate_ = std::bind(&Enemy::UpdateHitFlinchUp, this, std::placeholders::_1);
 
 	// プレイヤーの方向を求める
-	VECTOR vec = VSub(targetPos_, transform_.pos);
+	VECTOR vec = VSub(targetPos_, transform_->pos);
 
 	// 正規化
 	vec = VNorm(vec);
@@ -811,7 +827,7 @@ void Enemy::ChangeHitFlinchUp()
 	if (!isChangeAngle_)
 	{
 		// 体の角度を変更
-		transform_.quaRot = Quaternion::Mult(transform_.quaRot, Quaternion::AngleAxis(Utility::Deg2RadF(FLINCH_UP_ANGLE_X), Utility::AXIS_X));
+		transform_->quaRot = Quaternion::Mult(transform_->quaRot, Quaternion::AngleAxis(Utility::Deg2RadF(FLINCH_UP_ANGLE_X), Utility::AXIS_X));
 		isChangeAngle_ = true;
 	}
 
@@ -826,7 +842,7 @@ void Enemy::ChangeHitKnockBack()
 	stateUpdate_ = std::bind(&Enemy::UpdateHitKnockBack, this, std::placeholders::_1);
 
 	// プレイヤーの方向を求める
-	VECTOR vec = VSub(targetPos_, transform_.pos);
+	VECTOR vec = VSub(targetPos_, transform_->pos);
 
 	// 正規化
 	vec = VNorm(vec);
@@ -844,7 +860,7 @@ void Enemy::ChangeHitKnockBack()
 	movePow_ = VScale(vec, speed_);
 
 	// 高さを調整する
-	transform_.pos.y = transform_.pos.y + KNOCK_BACK_HEIGHT_OFFSET;
+	transform_->pos.y = transform_->pos.y + KNOCK_BACK_HEIGHT_OFFSET;
 
 }
 
@@ -866,7 +882,7 @@ void Enemy::UpdateIdle(const float deltaTime)
 	targetPos_ = playerPos.value();
 
 	// プレイヤーの方向を求める
-	VECTOR vec = VSub(targetPos_, transform_.pos);
+	VECTOR vec = VSub(targetPos_, transform_->pos);
 
 	// 正規化
 	vec = VNorm(vec);
@@ -890,7 +906,7 @@ void Enemy::UpdateRun(const float deltaTime)
 	targetPos_ = playerPos.value();
 
 	// プレイヤーの方向を求める
-	VECTOR vec = VSub(targetPos_, transform_.pos);
+	VECTOR vec = VSub(targetPos_, transform_->pos);
 
 	// ベクトルの長さ
 	float length = Utility::Magnitude(vec);
@@ -911,7 +927,7 @@ void Enemy::UpdateRun(const float deltaTime)
 	movePow_ = VScale(vec, speed_);
 
 	// プレイヤー方向に移動
- 	transform_.pos = VAdd(transform_.pos, movePow_);
+ 	transform_->pos = VAdd(transform_->pos, movePow_);
 
 	// プレイヤーの近くに来たら次の行動を決める
 	if (length <= ACTIVATION_DISTANCE)
@@ -988,7 +1004,7 @@ void Enemy::UpdateHitHead(const float deltaTime)
 {
 
 	// 少し後ろにゆっくり移動
-	transform_.pos = Utility::Lerp(transform_.pos, movePow_, MOVE_RATE);
+	transform_->pos = Utility::Lerp(transform_->pos, movePow_, MOVE_RATE);
 
 	// アニメーションが終了したら待機状態へ遷移する
 	if (animationController_->IsEndPlayAnimation())
@@ -1002,7 +1018,7 @@ void Enemy::UpdateHitBody(const float deltaTime)
 {
 
 	// 少し後ろにゆっくり移動
-	transform_.pos = Utility::Lerp(transform_.pos, movePow_, MOVE_RATE);
+	transform_->pos = Utility::Lerp(transform_->pos, movePow_, MOVE_RATE);
 
 	// アニメーションが終了したら待機状態へ遷移する
 	if (animationController_->IsEndPlayAnimation())
@@ -1019,7 +1035,7 @@ void Enemy::UpdateHitFly(const float deltaTime)
 	if (velocity_.y != 0.0f)
 	{
 		// 後ろに飛んでいきながら移動
-		transform_.pos = VAdd(transform_.pos, movePow_);
+		transform_->pos = VAdd(transform_->pos, movePow_);
 	}
 
 	// HPが0以下だったら非アクティブにする
@@ -1046,11 +1062,11 @@ void Enemy::UpdateHitFlinchUp(const float deltaTime)
 	if (velocity_.y != 0.0f)
 	{
 		// 後ろに飛んでいきながら移動
-		transform_.pos = VAdd(transform_.pos, movePow_);
+		transform_->pos = VAdd(transform_->pos, movePow_);
 	}
 
 	// アニメーションが終了したら起き上がり状態へ遷移する
-	if (transform_.pos.y <= FLOOR_HEIGHT && velocity_.y <= 0.0f)
+	if (transform_->pos.y <= FLOOR_HEIGHT && velocity_.y <= 0.0f)
 	{
 		ChangeState(EnemyState::KIP_UP);
 	}
@@ -1064,7 +1080,7 @@ void Enemy::UpdateHitKnockBack(const float deltaTime)
 	if (KNOCK_BACK_TIME > knockBackCnt_)
 	{
 		// 後ろに飛んでいきながら移動
-		transform_.pos = VAdd(transform_.pos, movePow_);
+		transform_->pos = VAdd(transform_->pos, movePow_);
 	}
 	else
 	{

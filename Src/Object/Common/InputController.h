@@ -1,6 +1,6 @@
 #pragma once
 #include <DxLib.h>
-#include "../Object/Common/Transform.h"
+#include "../Component/TransformComponent.h"
 
 class AnimationController;
 class Player;
@@ -19,7 +19,7 @@ public:
 	VECTOR Dir();
 
 	// ƒƒbƒNƒIƒ“‚Ì•ûŒü
-	VECTOR LockOnDir(Transform transform);
+	VECTOR LockOnDir(TransformComponent transform);
 
 	// ‘–‚é
 	bool Run();
