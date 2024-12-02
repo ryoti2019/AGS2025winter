@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <map>
 class ActorBase;
 
 class Component
@@ -14,7 +15,7 @@ public:
 
 	virtual bool IsDead()const { return false; }
 	virtual void Init() {};
-	virtual void Update() = 0;
+	virtual void Update() {};
 	virtual void Draw() {};
 
 protected:

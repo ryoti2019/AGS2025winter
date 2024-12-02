@@ -5,6 +5,7 @@
 #include "../Lib/nlohmann/json.hpp"
 #include "../Common/Vector2F.h"
 #include "../Component/TransformComponent.h"
+#include "../Component/MoveComponent.h"
 #include "../Manager/ResourceManager.h"
 #include "../Object/Common/AnimationController.h"
 
@@ -366,17 +367,20 @@ protected:
 	// リソース管理
 	ResourceManager& resMng_;
 
-	// 複数のコンポーネント
-	std::vector<std::shared_ptr<Component>> components_;
-
 	// アニメーション
 	std::unique_ptr<AnimationController> animationController_;
+
+	// 複数のコンポーネント
+	std::vector<std::shared_ptr<Component>> components_;
 
 	// モデル制御の基本情報
 	std::shared_ptr<TransformComponent> transform_;
 
 	// 追従対象
 	std::shared_ptr<TransformComponent> followTransform_;
+
+	// 移動処理
+	std::shared_ptr<MoveComponent> moveComponent_;
 
 	// 衝突判定のデータ
 	CollisionData collisionData_;

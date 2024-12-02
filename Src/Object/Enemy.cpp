@@ -906,28 +906,22 @@ void Enemy::UpdateRun(const float deltaTime)
 	targetPos_ = playerPos.value();
 
 	// プレイヤーの方向を求める
-	VECTOR vec = VSub(targetPos_, transform_->pos);
+	moveDir_ = VSub(targetPos_, transform_->pos);
 
 	// ベクトルの長さ
-	float length = Utility::Magnitude(vec);
-
-	// 正規化
-	vec = VNorm(vec);
-
-	// 方向を角度に変換する
-	float angle = atan2f(vec.x, vec.z);
-
-	// プレイヤー方向に回転
-	LazyRotation(angle);
+	float length = Utility::Magnitude(moveDir_);
 
 	// スピード
 	speed_ = RUN_MOVE_POW;
 
-	// 移動量
-	movePow_ = VScale(vec, speed_);
+	// 移動処理
+	moveComponent_->Update(*GetThis(), moveDir_, speed_);
 
-	// プレイヤー方向に移動
- 	transform_->pos = VAdd(transform_->pos, movePow_);
+	// 方向を角度に変換する
+	float angle = atan2f(moveDir_.x, moveDir_.z);
+
+	// プレイヤー方向に回転
+	LazyRotation(angle);
 
 	// プレイヤーの近くに来たら次の行動を決める
 	if (length <= ACTIVATION_DISTANCE)

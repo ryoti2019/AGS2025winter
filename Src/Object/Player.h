@@ -5,7 +5,6 @@
 #include "ActorBase.h"
 #include "PlayerState.h"
 #include "EnemyState.h"
-#include "../Object/Common/InputController.h"
 
 class Player : public ActorBase
 {
@@ -27,6 +26,15 @@ public:
 		"ATTACK_CHARGE_PUNCH",
 		"HIT_HEAD",
 		"HIT_BODY"
+	};
+
+	// 入力でのアクション
+	enum class InputAction
+	{
+		STICK,
+		ATTACK,
+		CHARGE_ATTACK,
+		SHIFT_ATTACK
 	};
 
 	// ジャブの攻撃開始フレーム

@@ -6,6 +6,7 @@
 #include "../Manager/CollisionManager.h"
 #include "../Manager/Camera.h"
 #include "../Object/Common/InputController.h"
+#include "../Component/InputComponent.h"
 #include "../Manager/ActorManager.h"
 #include "Player.h"
 
@@ -54,8 +55,6 @@ Player::Player(const VECTOR& pos, const json& data)
 	// アニメーションの初期化
 	InitAnimation();
 
-
-	// 
 }
 
 void Player::Init(const VECTOR& pos)
@@ -766,6 +765,11 @@ void Player::UpdateIdle(void)
 void Player::UpdateRun(void)
 {
 
+	if (state_ != PlayerState::RUN)
+	{
+		return;
+	}
+
 	// カメラの角度
 	VECTOR cameraAngle = SceneManager::GetInstance().GetCamera().lock()->GetAngle();
 
@@ -776,17 +780,11 @@ void Player::UpdateRun(void)
 	// 回転行列を使用して、ベクトルを回転させる
 	moveDir_ = VTransform(dir_, mat);
 
-	// 正規化
-	moveDir_ = VNorm(moveDir_);
-
 	// スピード
 	speed_ = RUN_MOVE_POW;
 
-	// 移動量
-	movePow_ = VScale(moveDir_, speed_);
-
 	// 移動処理
-	transform_->pos = VAdd(transform_->pos, movePow_);
+	moveComponent_->Update(*GetThis(), moveDir_, speed_);
 
 	// 方向を角度に変換する(XZ平面 Y軸)
 	float angle = atan2f(dir_.x, dir_.z);

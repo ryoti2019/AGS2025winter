@@ -13,11 +13,16 @@ InputComponent::InputComponent()
 void InputComponent::Update()
 {
 
+	if (inputController_->Run())
+	{
+		funcMap_[ACTION::RUN];
+	}
+
 	//// ƒqƒbƒg’†‚Ís“®‚Å‚«‚È‚¢
 	//if (actor_->GetHitState())return;
 
 	//// “ü—Í•ûŒü
-	//VECTOR dir = inputController_->Dir();
+	VECTOR dir = inputController_->Dir();
 
 	//// UŒ‚’†‚ÍˆÚ“®‚Å‚«‚È‚¢
 	//if (!actor_->GetAttackState())
@@ -110,6 +115,11 @@ void InputComponent::Update()
 
 	//}
 
+}
+
+void InputComponent::AddAction(ACTION action, std::function<void(void)> func)
+{
+	funcMap_.emplace(action, func);
 }
 
 void InputComponent::Move()

@@ -46,8 +46,16 @@ ActorBase::ActorBase(const VECTOR& pos, const json& data)
 	// モデルの制御情報を追加
 	AddComponent(std::make_shared<TransformComponent>());
 
-	auto component = GetComponent<TransformComponent>();
-	transform_ = std::static_pointer_cast<TransformComponent>(component);
+	// 移動処理を追加
+	AddComponent(std::make_shared<MoveComponent>());
+
+	// モデルの制御情報を代入
+	auto transformComponent = GetComponent<TransformComponent>();
+	transform_ = std::static_pointer_cast<TransformComponent>(transformComponent);
+
+	// 移動処理を代入
+	auto moveComponent = GetComponent<MoveComponent>();
+	moveComponent_ = std::static_pointer_cast<MoveComponent>(moveComponent);
 
 }
 
@@ -73,11 +81,6 @@ void ActorBase::Create(const VECTOR& pos)
 
 void ActorBase::Update(const float deltaTime)
 {
-
-	// 複数のコンポーネントを更新
-	for (auto& c : components_) {
-		c->Update();
-	}
 
 }
 
