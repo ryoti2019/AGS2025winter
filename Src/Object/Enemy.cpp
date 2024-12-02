@@ -42,6 +42,10 @@ Enemy::Enemy(const VECTOR& pos, const json& data)
 	// アニメーションの初期化
 	InitAnimation();
 
+	GetThis();
+	// 入力用のコンポーネントを追加
+	//aiComponent_ = std::make_unique<AIComponent>(std::dynamic_pointer_cast<Enemy>(GetThis()));
+
 }
 
 void Enemy::Init(const VECTOR& pos)
@@ -64,6 +68,9 @@ void Enemy::Init(const VECTOR& pos)
 
 	// アニメーションの初期化
 	InitAnimation();
+
+	// 入力用のコンポーネントを追加
+	aiComponent_ = std::make_unique<AIComponent>(std::dynamic_pointer_cast<Enemy>(GetThis()));
 
 }
 
@@ -264,11 +271,8 @@ void Enemy::Update(const float deltaTime)
 	// クールタイムを計算
 	coolTime_ -= deltaTime;
 
-	// どの行動をするか決める
-	if (!isActionDecided_ && coolTime_ <= 0.0f)
-	{
-		SelsectAction(deltaTime);
-	}
+	// 攻撃や移動を更新
+	aiComponent_->Update(deltaTime);
 
 	// 状態ごとの更新
 	stateUpdate_(deltaTime);
@@ -312,7 +316,7 @@ void Enemy::Draw()
 
 }
 
-bool Enemy::GetAttackState()
+const bool Enemy::GetAttackState()const
 {
 
 	// 攻撃の状態か判定
@@ -344,7 +348,7 @@ const std::vector<int> Enemy::GetTotalAttackTypes() const
 
 }
 
-bool Enemy::GetHitState()
+const bool Enemy::GetHitState()const
 {
 
 	// 攻撃を受けている状態か判定
@@ -538,120 +542,6 @@ void Enemy::ChangeState(EnemyState state)
 
 	// アニメーションコントローラー側のアニメーション遷移
 	animationController_->ChangeAnimation(key_);
-
-}
-
-void Enemy::SelsectAction(const float deltaTime)
-{
-
-	// ヒット中は行動できない
-	for (const auto hitState : hitState_)
-	{
-		if (hitState == state_)
-		{
-			return;
-		}
-	}
-
-	// 乱数
-	
-	// 非決定的な乱数生成器
-	std::random_device rd;
-
-	// メルセンヌ・ツイスタ法による乱数生成器
-	std::mt19937 gen(rd());
-
-	// 指定の範囲でランダムな数を取得
-	std::uniform_int_distribution<> dist_int(0,1); 
-	int number = dist_int(gen);
-
-	if (number == 0)
-	{
-		// 移動処理
-		Move();
-	}
-	else if (number == 1)
-	{
-		//攻撃処理
-		Attack(deltaTime);
-	}
-
-}
-
-void Enemy::Move()
-{
-
-	// プレイヤーの座標
-	std::optional<VECTOR> playerPos = GetPlayerPos();
-	targetPos_ = playerPos.value();
-
-	// 敵からプレイヤーへのベクトル
-	VECTOR vec = VSub(targetPos_, transform_->pos);
-
-	// ベクトルの長さ
-	float length = Utility::Magnitude(vec);
-
-	// プレイヤーの近くに移動
-	if (length >= ACTIVATION_DISTANCE)
-	{
-
-		ChangeState(EnemyState::RUN);
-
-		// 行動を決めた
-		isActionDecided_ = true;
-
-	}
-
-}
-
-void Enemy::Attack(const float deltaTime)
-{
-
-	// 乱数
-
-	// 非決定的な乱数生成器
-	std::random_device rd;
-
-	// メルセンヌ・ツイスタ法による乱数生成器
-	std::mt19937 gen(rd());
-
-	// 指定の範囲でランダムな数を取得
-	std::uniform_int_distribution<> dist_int(0, 1);
-	int number = dist_int(gen);
-	
-	// プレイヤーの座標
-	std::optional<VECTOR> playerPos = GetPlayerPos();
-
-	// 相手の座標
-	targetPos_ = playerPos.value();
-
-	// 敵からプレイヤーへのベクトル
-	VECTOR vec = VSub(targetPos_, transform_->pos);
-
-	// ベクトルの長さ
-	float length = Utility::Magnitude(vec);
-
-	// プレイヤーとの距離が遠かったら攻撃できない
-	if (length >= ACTIVATION_DISTANCE) return;
-
-	if (number == 0)
-	{
-
-		ChangeState(EnemyState::ATTACK_PUNCH);
-
-		// 行動を決めた
-		isActionDecided_ = true;
-
-	}
-	else if (number == 1)
-	{
-
-		ChangeState(EnemyState::ATTACK_KICK);
-
-		// 行動を決めた
-		isActionDecided_ = true;
-
-	}
 
 }
 

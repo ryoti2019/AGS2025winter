@@ -5,6 +5,7 @@
 #include "../Manager/SceneManager.h"
 #include "../Manager/CollisionManager.h"
 #include "../Manager/Camera.h"
+#include "../Component/InputComponent.h"
 #include "../Object/Common/InputController.h"
 #include "../Component/InputComponent.h"
 #include "../Manager/ActorManager.h"
@@ -55,6 +56,11 @@ Player::Player(const VECTOR& pos, const json& data)
 	// アニメーションの初期化
 	InitAnimation();
 
+	auto a = std::dynamic_pointer_cast<Player>(GetThis());
+
+	// 入力用のコンポーネントを追加
+	inputComponent_ = std::make_unique<InputComponent>(a);
+
 }
 
 void Player::Init(const VECTOR& pos)
@@ -63,9 +69,6 @@ void Player::Init(const VECTOR& pos)
 
 void Player::InitFunction()
 {
-
-	// インプットコントローラーの生成
-	inputController_ = std::make_unique<InputController>();
 
 	// カメラを生成
 	std::weak_ptr<Camera> camera = SceneManager::GetInstance().GetCamera();
@@ -97,7 +100,7 @@ void Player::InitParameter()
 {
 
 	// 攻撃の入力
-	for (int i = static_cast<int>(PlayerState::ATTACK_JAB); i < static_cast<int>(PlayerState::MAX); i++)
+	for (int i = static_cast<int>(PlayerState::ATTACK_JAB); i <= static_cast<int>(PlayerState::ATTACK_RIGHT_KICK); i++)
 	{
 		isCombo_.emplace(static_cast<PlayerState>(i), false);
 	}
@@ -224,14 +227,8 @@ void Player::Update(const float deltaTime)
 	// ImGuiのデバッグ描画の更新
 	UpdateDebugImGui();
 
-	// 基底クラスの更新
-	//ActorBase::Update(deltaTime);
-
-	// 移動処理
-	Move();
-
-	// 攻撃処理
-	Attack(deltaTime);
+	// 入力の更新
+	inputComponent_->Update(deltaTime);
 
 	// 重力
 	Gravity(gravityScale_);
@@ -250,6 +247,7 @@ void Player::Update(const float deltaTime)
 
 	// 衝突判定の更新
 	ActorBase::CollisionUpdate();
+
 }
 
 void Player::UpdateDebugImGui()
@@ -284,7 +282,7 @@ void Player::UpdateDebugImGui()
 
 }
 
-bool Player::GetAttackState()
+const bool Player::GetAttackState()const
 {
 
 	// 攻撃の状態か判定
@@ -316,7 +314,7 @@ const std::vector<int> Player::GetTotalAttackTypes() const
 
 }
 
-bool Player::GetHitState()
+const bool Player::GetHitState()const
 {
 
 	// 攻撃を受けている状態か判定
@@ -383,124 +381,6 @@ void Player::AttackHitCheck(const int state)
 			ChangeState(PlayerState::HIT_BODY);
 			return;
 		}
-	}
-
-}
-
-void Player::Move()
-{
-
-	// ヒット中は行動できない
-	for (const auto hitState : hitState_)
-	{
-		if (hitState == state_)
-		{
-			return;
-		}
-	}
-
-	// 入力方向
-	VECTOR dir = inputController_->Dir();
-
-	// 攻撃中は移動できない
-	if (!GetAttackState())
-	{
-		// 入力していたら移動する
-		if (!Utility::EqualsVZero(dir))
-		{
-			// 方向を更新
-			dir_ = dir;
-
-			ChangeState(PlayerState::RUN);
-		}
-		// 入力していなければ待機状態にする
-		else if (Utility::EqualsVZero(dir))
-		{
-			ChangeState(PlayerState::IDLE);
-		}
-	}
-
-}
-
-void Player::Attack(const float deltaTime)
-{
-
-	// ヒット中は行動できない
-	for (const auto hitState : hitState_)
-	{
-		if (hitState == state_)
-		{
-			return;
-		}
-	}
-
-	// 溜めパンチ用のボタンを長押ししているか
-	if (inputController_->ChargeAttack() && chargeCnt_ <= CHARGE_TIME)
-	{
-		// 押していたら加算する
-		chargeCnt_ += deltaTime;
-	}
-
-	// 溜めパンチ
-	if (chargeCnt_ >= CHARGE_TIME)
-	{
-		chargeCnt_ = 0.0f;
-		ChangeState(PlayerState::ATTACK_CHARGE_PUNCH);
-	}
-
-	// 攻撃の先行入力 ため攻撃の後通らないようにする
-	if (inputController_->Attack() && key_ != ANIM_DATA_KEY[static_cast<int>(PlayerState::ATTACK_CHARGE_PUNCH)])
-	{
-		// コンボの先行入力の処理
-		for (int i = static_cast<int>(PlayerState::ATTACK_JAB); i <= static_cast<int>(PlayerState::ATTACK_RIGHT_KICK); i++)
-		{
-
-			// 今から判断するものを探す
-			auto isCombo = isCombo_.find(static_cast<PlayerState>(i));
-
-			// falseであればtrueにして先行入力を保持する
-			if (!isCombo->second)
-			{
-				isCombo->second = true;
-				break;
-			}
-		}
-
-		// ジャブに遷移
-		if (isCombo_.at(PlayerState::ATTACK_JAB) && !isCombo_.at(PlayerState::ATTACK_STRAIGHT))
-		{
-			ChangeState(PlayerState::ATTACK_JAB);
-		}
-
-	}
-
-	// アッパーに遷移
-	if (inputController_->Upper() && state_ != PlayerState::ATTACK_UPPER)
-	{
-		ChangeState(PlayerState::ATTACK_UPPER);
-	}
-
-	//コンボ中か判定
-	if (!GetComboState())return;
-
-	// 次の入力がなければコンボをキャンセルする
-	for(int i = static_cast<int>(PlayerState::ATTACK_JAB); i < static_cast<int>(PlayerState::ATTACK_RIGHT_KICK); i++)
-	{
-
-		// 次の状態の入力を見るための計算
-		const int nextState = static_cast<int>(state_) + 1;
-
-		// falseだったらコンボをキャンセル
-		if (!isCombo_.at(static_cast<PlayerState>(nextState)))
-		{
-			// 待機状態に遷移
-			if (animationController_->IsEndPlayAnimation())
-			{
-				ChangeState(PlayerState::IDLE);
-				return;
-			}
-		}
-
 	}
 
 }
@@ -755,7 +635,7 @@ void Player::UpdateIdle(void)
 {
 
 	// 攻撃の入力を初期化
-	for (int i = static_cast<int>(PlayerState::ATTACK_JAB); i < static_cast<int>(PlayerState::MAX); i++)
+	for (int i = static_cast<int>(PlayerState::ATTACK_JAB); i <= static_cast<int>(PlayerState::ATTACK_RIGHT_KICK); i++)
 	{
 		isCombo_.at(static_cast<PlayerState>(i)) = false;
 	}
