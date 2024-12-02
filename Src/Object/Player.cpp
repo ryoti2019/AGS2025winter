@@ -663,9 +663,6 @@ void Player::UpdateRun(void)
 	// スピード
 	speed_ = RUN_MOVE_POW;
 
-	// 移動処理
-	moveComponent_->Update(*GetThis(), moveDir_, speed_);
-
 	// 方向を角度に変換する(XZ平面 Y軸)
 	float angle = atan2f(dir_.x, dir_.z);
 

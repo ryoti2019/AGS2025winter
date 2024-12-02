@@ -804,9 +804,6 @@ void Enemy::UpdateRun(const float deltaTime)
 	// スピード
 	speed_ = RUN_MOVE_POW;
 
-	// 移動処理
-	moveComponent_->Update(*GetThis(), moveDir_, speed_);
-
 	// 方向を角度に変換する
 	float angle = atan2f(moveDir_.x, moveDir_.z);
 

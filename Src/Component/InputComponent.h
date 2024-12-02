@@ -15,9 +15,6 @@ public:
 
 	void Update(const float deltaTime);
 
-	// アクションを追加する
-	void AddAction(ACTION action, std::function<void(void)> func);
-
 private:
 
 	// 入力用コントローラー
@@ -25,8 +22,6 @@ private:
 
 	// 溜めパンチのカウンタ
 	float chargeCnt_;
-
-	std::map<ACTION, std::function<void(void)>> funcMap_;
 
 	// 移動処理
 	void Move();
@@ -36,9 +31,6 @@ private:
 
 	// プレイヤーのポインター
 	std::shared_ptr<Player> player_;
-
-	// 入力用コントローラー
-	std::unique_ptr<InputController> inputController_;
 
 };
 
