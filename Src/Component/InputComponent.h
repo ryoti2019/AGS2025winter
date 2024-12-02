@@ -2,14 +2,16 @@
 #include "Component.h"
 #include "../Object/Common/InputController.h"
 
+class Player;
+
 class InputComponent : public Component
 {
 
 public:
 
-	InputComponent();
+	InputComponent(std::shared_ptr<Player>& player);
 
-	virtual void Update()override;
+	void Update(const float deltaTime);
 
 private:
 
@@ -19,11 +21,11 @@ private:
 	// 攻撃処理
 	void Attack(const float deltaTime);
 
+	// プレイヤーのポインター
+	std::shared_ptr<Player> player_;
+
 	// 入力用コントローラー
 	std::unique_ptr<InputController> inputController_;
-
-	// 溜めパンチのカウンタ
-	float chargeCnt_;
 
 };
 

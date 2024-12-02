@@ -253,16 +253,6 @@ public:
 	virtual void Update(const float deltaTime);
 	virtual void Draw();
 
-	// コンポーネントの追加
-	void AddComponent(std::shared_ptr<Component> component);
-
-	// コンポーネントの削除
-	void ClearComponents();
-
-	// コンポーネントの取得
-	template<typename T>
-	std::shared_ptr<T> GetComponent()const;
-
 	// 座標を設定
 	void SetPos(const VECTOR& pos) {
 		transform_->pos = pos;
@@ -270,6 +260,9 @@ public:
 		// 衝突判定の更新
 		ActorBase::CollisionUpdate();
 	}
+
+	// 相手の座標を取得
+	const VECTOR& GetTargetPos()const { return targetPos_; }
 
 	// 相手の座標を設定
 	void SetTargetPos(const VECTOR& pos) { targetPos_ = pos; }
@@ -308,16 +301,16 @@ public:
 	void SetVelocity(const VECTOR& velocity) { velocity_ = velocity; }
 
 	// 生存判定を取得
-	bool GetIsActive() const { return isActive_; }
+	const bool GetIsActive() const { return isActive_; }
 
 	// 攻撃状態を取得
-	virtual bool GetAttackState();
+	virtual const bool GetAttackState()const ;
 
 	// 攻撃種類を取得
 	virtual const std::vector<int> GetTotalAttackTypes()const { return {}; }
 
 	// 攻撃を受けている状態を取得
-	virtual bool GetHitState();
+	virtual const bool GetHitState()const;
 
 	// 攻撃が当たっているか設定
 	void SetIsAttackHit(const bool hit) { isAttackHit_ = hit; }
@@ -332,19 +325,19 @@ public:
 	const int GetHp()const { return hp_; }
 
 	// ロックオンされているか判定を取得
-	bool GetIsLockOn();
+	const bool GetIsLockOn()const;
 
 	// 攻撃のヒット処理
 	virtual void AttackHit(const int damage, const int state);
 
 	// 今の状態を取得
-	virtual int GetState()const { return 0; }
+	virtual const int GetState()const { return 0; }
 
 	// ダメージ量を取得
-	virtual int GetDamage()const { return 0; }
+	virtual const int GetDamage()const { return 0; }
 
 	// スピードを取得
-	virtual float GetSpeed()const  { return speed_; }
+	virtual const float GetSpeed()const { return speed_; }
 
 	// 方向を取得
 	const VECTOR& GetDir()const { return dir_; }
@@ -361,22 +354,18 @@ public:
 	// JSONデータ
 	const json& GetJsonData()const { return jsonData_; }
 
+
+
 protected:
 
 	// リソース管理
 	ResourceManager& resMng_;
-
-	// 複数のコンポーネント
-	std::vector<std::shared_ptr<Component>> components_;
 
 	// アニメーション
 	std::unique_ptr<AnimationController> animationController_;
 
 	// モデル制御の基本情報
 	std::shared_ptr<TransformComponent> transform_;
-
-	// 追従対象
-	std::shared_ptr<TransformComponent> followTransform_;
 
 	// 衝突判定のデータ
 	CollisionData collisionData_;
@@ -499,26 +488,5 @@ private:
 
 	// デバッグ描画
 	void DrawDebug();
-
-};
-
-// コンポーネントの取得
-template<typename T>
-inline std::shared_ptr<T> ActorBase::GetComponent() const
-{
-
-	// 同じコンポーネントがあるか調べる
-	for (const auto& com : components_)
-	{
-
-		// 同じじゃなければ通らない
-		if (typeid(*com) == typeid(T))
-		{
-			// 同じのがあれば返す
-			return std::static_pointer_cast<T>(com);
-		}
-	}
-
-	return nullptr;
 
 };

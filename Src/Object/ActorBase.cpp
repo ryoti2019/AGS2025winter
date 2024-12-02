@@ -43,11 +43,8 @@ ActorBase::ActorBase(const VECTOR& pos, const json& data)
 	jsonData_(data)
 {
 
-	// モデルの制御情報を追加
-	AddComponent(std::make_shared<TransformComponent>());
-
-	auto component = GetComponent<TransformComponent>();
-	transform_ = std::static_pointer_cast<TransformComponent>(component);
+	// モデル制御の基本情報を生成
+	transform_ = std::make_shared<TransformComponent>();
 
 }
 
@@ -73,11 +70,6 @@ void ActorBase::Create(const VECTOR& pos)
 
 void ActorBase::Update(const float deltaTime)
 {
-
-	// 複数のコンポーネントを更新
-	for (auto& c : components_) {
-		c->Update();
-	}
 
 }
 
@@ -337,34 +329,23 @@ void ActorBase::SetIsLockOn(const bool isLockOn)
 	isLockOn_ = isLockOn;
 }
 
-bool ActorBase::GetAttackState()
+const bool ActorBase::GetAttackState()const
 {
 	return false;
 }
 
-bool ActorBase::GetHitState()
+const bool ActorBase::GetHitState()const
 {
 	return false;
 }
 
-bool ActorBase::GetIsLockOn()
+const bool ActorBase::GetIsLockOn()const
 {
 	return isLockOn_;
 }
 
 void ActorBase::AttackHit(const int damage, const int state)
 {
-}
-
-void ActorBase::AddComponent(std::shared_ptr<Component> component)
-{
-	components_.push_back(component);
-	component->Init();
-}
-
-void ActorBase::ClearComponents()
-{
-	components_.clear();
 }
 
 void ActorBase::DrawDebug()

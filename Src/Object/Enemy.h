@@ -1,9 +1,12 @@
 #pragma once
 #include <DxLib.h>
 #include <functional>
+#include "../Component/AIComponent.h"
 #include "ActorBase.h"
 #include "EnemyState.h"
 #include "Player.h"
+
+class AIComponent;
 
 class Enemy : public ActorBase
 {
@@ -84,24 +87,45 @@ public:
 	void Draw()override;
 
 	// 攻撃中か取得
-	bool GetAttackState()override;
+	const bool GetAttackState()const override;
 
 	// 攻撃種類を取得
 	const std::vector<int> GetTotalAttackTypes()const;
 
 	// 攻撃を受けている状態を取得
-	bool GetHitState()override;
+	const bool GetHitState()const override;
 
 	// 攻撃のヒット処理
 	void AttackHit(const int damage, const int state)override;
 
 	// 今の状態を取得
-	int GetState()const override { return static_cast<int>(state_); }
+	const int GetState()const override { return static_cast<int>(state_); }
 
 	// ダメージ量を取得
-	int GetDamage()const override { return damage_; }
+	const int GetDamage()const override { return damage_; }
+
+	// 行動を決めたかどうかを取得
+	const bool GetIsActionDecided()const { return isActionDecided_; }
+
+	// 行動を決めたかどうかを設定
+	void SetIsActionDecided(const bool isActionDecided) { isActionDecided_ = isActionDecided; }
+
+	// クールタイムを取得
+	const float GetCoolTime()const { return coolTime_; }
+
+	// クールタイムを設定
+	void SetCoolTime(const float coolTime) { coolTime_ = coolTime; }
+
+	// プレイヤーの座標を取得
+	std::optional<VECTOR> GetPlayerPos();
+
+	// 状態遷移
+	void ChangeState(EnemyState state);
 
 private:
+
+	// 入力用のコンポーネント
+	std::unique_ptr<AIComponent> aiComponent_;
 
 	// 攻撃中の状態
 	const std::vector<EnemyState>& attackState_ =
@@ -229,23 +253,8 @@ private:
 	// ImGuiのデバッグ描画の更新
 	void UpdateDebugImGui()override;
 
-	// 状態遷移
-	void ChangeState(EnemyState state);
-
-	// どの行動をするか決める
-	void SelsectAction(const float deltaTime);
-
-	// 移動処理
-	void Move()override;
-
-	// 攻撃処理
-	void Attack(const float deltaTime)override;
-
 	// アニメーションのフレームを固定
 	void AnimationFrame()override;
-
-	// プレイヤーの座標を取得
-	std::optional<VECTOR> GetPlayerPos();
 
 	// どのヒットアニメーションかチェックする
 	void AttackHitCheck(const int state);

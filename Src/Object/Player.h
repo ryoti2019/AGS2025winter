@@ -1,10 +1,12 @@
 #pragma once
 #include <DxLib.h>
 #include <functional>
-#include "../Object/Common/InputController.h"
+#include "../Component/InputComponent.h"
 #include "ActorBase.h"
 #include "PlayerState.h"
 #include "EnemyState.h"
+
+class InputComponent;
 
 class Player : public ActorBase
 {
@@ -102,13 +104,13 @@ public:
 	void Update(const float deltaTime) override;
 
 	// 攻撃中の状態かを取得
-	bool GetAttackState()override;
+	const bool GetAttackState()const override;
 
 	// 攻撃種類を取得
 	const std::vector<int> GetTotalAttackTypes()const;
 
 	// 攻撃を受けている状態を取得
-	bool GetHitState()override;
+	const bool GetHitState()const override;
 
 	// コンボ中の状態かを取得
 	bool GetComboState();
@@ -117,10 +119,10 @@ public:
 	void AttackHit(const int damage, const int state)override;
 
 	// 今の状態を取得
-	int GetState()const override { return static_cast<int>(state_); }
+	const int GetState()const override { return static_cast<int>(state_); }
 
 	// ダメージ量を取得
-	int GetDamage()const override { return damage_; }
+	const int GetDamage()const override { return damage_; }
 
 	// 溜め攻撃のカウンタを取得
 	float GetChargeCnt()const { return chargeCnt_; };
@@ -135,12 +137,18 @@ public:
 	const std::map<PlayerState, bool>& GetIsCombo()const { return isCombo_; }
 
 	// 攻撃を入力しているか設定
-	void SetIsCombo(const std::map<PlayerState, bool>& isCombo) { isCombo_ = isCombo; }
+	void SetIsCombo(int i, bool isCombo)
+	{
+		isCombo_[static_cast<PlayerState>(i)] = isCombo;
+	}
+
+	// 状態遷移
+	void ChangeState(const PlayerState state);
 
 private:
 
-	// 入力用コントローラー
-	std::unique_ptr<InputController> inputController_;
+	// 入力用のコンポーネント
+	std::unique_ptr<InputComponent> inputComponent_;
 
 	// 攻撃中の状態
 	const std::vector<PlayerState> attackState_ =
@@ -237,15 +245,6 @@ private:
 
 	// ImGuiのデバッグ描画の更新
 	void UpdateDebugImGui()override;
-
-	// 状態遷移
-	void ChangeState(const PlayerState state);
-
-	// 移動処理
-	void Move()override;
-
-	// 攻撃処理
-	void Attack(const float deltaTime)override;
 
 	// どのヒットアニメーションかチェックする
 	virtual void AttackHitCheck(const int state);

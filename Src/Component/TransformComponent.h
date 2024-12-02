@@ -10,7 +10,7 @@
 /// 回転　：Quaternion基準
 /// 位置　：VECTOR基準
 /// </summary>
-class TransformComponent : public Component
+class TransformComponent
 {
 
 public:
@@ -50,7 +50,7 @@ public:
 	/// モデル制御の基本情報更新
 	/// </summary>
 	/// <param name=""></param>
-	void Update()override;
+	void Update();
 
 	void Release();
 

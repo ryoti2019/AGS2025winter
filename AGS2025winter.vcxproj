@@ -141,7 +141,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Component\AIComponent.cpp" />
     <ClCompile Include="Src\Component\Component.cpp" />
+    <ClCompile Include="Src\Component\DrawComponent.cpp" />
     <ClCompile Include="Src\Component\InputComponent.cpp" />
     <ClCompile Include="Src\Lib\ImGui\backends\imgui_impl_dx11.cpp" />
     <ClCompile Include="Src\Lib\ImGui\backends\imgui_impl_win32.cpp" />
@@ -179,7 +181,9 @@
     <ClCompile Include="Src\Object\Stage.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Component\AIComponent.h" />
     <ClInclude Include="Src\Component\Component.h" />
+    <ClInclude Include="Src\Component\DrawComponent.h" />
     <ClInclude Include="Src\Component\InputComponent.h" />
     <ClInclude Include="Src\Lib\ImGui\backends\imgui_impl_dx11.h" />
     <ClInclude Include="Src\Lib\ImGui\backends\imgui_impl_win32.h" />
