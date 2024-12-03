@@ -87,6 +87,12 @@ public:
 	// 対象方向の回転
 	void ToAngleAxis(float* angle, VECTOR* axis);
 
+	// クォータニオンの共役(逆もとに相当)
+	static Quaternion GetConjugate(const Quaternion& q);
+
+	// クォータニオンを使ってベクトルを回転
+	static VECTOR RotateVector(const Quaternion& rotation, const VECTOR& vector);
+
 private:
 
 	// 基本ベクトルを取得

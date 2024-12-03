@@ -230,10 +230,8 @@ void Player::Update(const float deltaTime)
 	// ImGuiのデバッグ描画の更新
 	UpdateDebugImGui();
 
-	auto angle = transform_->quaRot.y;
-
-	// 実際に動く方向を決める
-	//moveDir_ = 
+	// 回転行列を使用して、ベクトルを回転させる
+	//moveDir_ = transform_->quaRot.ToEuler();
 	
 	// 入力の更新
 	inputComponent_->Update(deltaTime);

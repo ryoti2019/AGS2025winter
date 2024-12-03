@@ -274,6 +274,7 @@ void Enemy::Update(const float deltaTime)
 	aiComponent_->Update(deltaTime);
 
 	// 状態ごとの更新
+	// 重力がかかる前に処理しないとおかしな挙動になるので注意！
 	stateUpdate_(deltaTime);
 
 	// 重力がかかるアニメーションのみ処理する
@@ -593,9 +594,6 @@ void Enemy::ChangePunch()
 	// スピード
 	speed_ = ATTACK_MOVE_POW;
 
-	// どれだけ進むか計算
-	movedPos_ = VAdd(transform_->pos, VScale(moveDir_, speed_));
-
 }
 
 void Enemy::ChangeKick()
@@ -609,9 +607,6 @@ void Enemy::ChangeKick()
 	// スピード
 	speed_ = ATTACK_MOVE_POW;
 
-	// どれだけ進むか計算
-	movedPos_ = VAdd(transform_->pos, VScale(moveDir_, speed_));
-
 }
 
 void Enemy::ChangeHitHead()
@@ -622,17 +617,11 @@ void Enemy::ChangeHitHead()
 	// プレイヤーの方向を求める
 	VECTOR vec = VSub(targetPos_, transform_->pos);
 
-	// 正規化
-	vec = VNorm(vec);
-
 	// プレイヤーの方向と逆方向のベクトル
-	vec = { -vec.x, vec.y,-vec.z };
+	moveDir_ = { -vec.x, vec.y,-vec.z };
 
 	// スピード
 	speed_ = ATTACK_MOVE_POW;
-
-	// 移動量
-	movedPos_ = VAdd(transform_->pos, VScale(vec, speed_));
 
 }
 
@@ -644,17 +633,11 @@ void Enemy::ChangeHitBody()
 	// プレイヤーの方向を求める
 	VECTOR vec = VSub(targetPos_, transform_->pos);
 
-	// 正規化
-	vec = VNorm(vec);
-
 	// プレイヤーの方向と逆方向のベクトル
-	vec = { -vec.x, vec.y,-vec.z };
+	moveDir_ = { -vec.x, vec.y,-vec.z };
 
 	// スピード
 	speed_ = ATTACK_MOVE_POW;
-
-	// 移動量
-	movedPos_ = VAdd(transform_->pos, VScale(vec, speed_));
 
 }
 
@@ -665,25 +648,24 @@ void Enemy::ChangeHitFly()
 
 	// プレイヤーの方向を求める
 	VECTOR vec = VSub(targetPos_, transform_->pos);
-	
+
 	// 正規化
 	vec = VNorm(vec);
 
 	// プレイヤーの方向と逆方向のベクトル
-	vec = { -vec.x, vec.y,-vec.z };
+	moveDir_ = { -vec.x, vec.y,-vec.z };
 
 	// 一個前のアニメーションがまっすぐ飛んでいくのだったら上方向に飛ばさない
 	if (key_ != ANIM_DATA_KEY[static_cast<int>(EnemyState::HIT_KNOCK_BACK)])
 	{
+
 		// 上方向に飛ばす
 		velocity_.y = HIT_FLY_UP_VEC_POW;
-		vec.y = velocity_.y;
+		moveDir_.y = velocity_.y;
 
 		// スピード
 		speed_ = HIT_FLY_MOVE_POW;
 
-		// 移動量
-		movedPos_ = VScale(vec, speed_);
 	}
 
 }
@@ -733,20 +715,14 @@ void Enemy::ChangeHitKnockBack()
 	// プレイヤーの方向を求める
 	VECTOR vec = VSub(targetPos_, transform_->pos);
 
-	// 正規化
-	vec = VNorm(vec);
-
 	// プレイヤーの方向と逆方向のベクトル
-	vec = { -vec.x, vec.y,-vec.z };
+	moveDir_ = { -vec.x, vec.y,-vec.z };
 
 	// y方向を消す
-	vec.y = 0.0f;
+	moveDir_.y = 0.0f;
 
 	// スピード
 	speed_ = HIT_FLY_MOVE_POW;
-
-	// 移動量
-	movedPos_ = VScale(vec, speed_);
 
 	// 高さを調整する
 	transform_->pos.y = transform_->pos.y + KNOCK_BACK_HEIGHT_OFFSET;
@@ -887,7 +863,7 @@ void Enemy::UpdateHitHead(const float deltaTime)
 {
 
 	// 少し後ろにゆっくり移動
-	transform_->pos = Utility::Lerp(transform_->pos, movedPos_, MOVE_RATE);
+	moveComponent_->Lerp();
 
 	// アニメーションが終了したら待機状態へ遷移する
 	if (animationController_->IsEndPlayAnimation())
@@ -901,7 +877,7 @@ void Enemy::UpdateHitBody(const float deltaTime)
 {
 
 	// 少し後ろにゆっくり移動
-	transform_->pos = Utility::Lerp(transform_->pos, movedPos_, MOVE_RATE);
+	moveComponent_->Lerp();
 
 	// アニメーションが終了したら待機状態へ遷移する
 	if (animationController_->IsEndPlayAnimation())
@@ -918,7 +894,7 @@ void Enemy::UpdateHitFly(const float deltaTime)
 	if (velocity_.y != 0.0f)
 	{
 		// 後ろに飛んでいきながら移動
-		transform_->pos = VAdd(transform_->pos, movePow_);
+		moveComponent_->HitMove();
 	}
 
 	// HPが0以下だったら非アクティブにする
@@ -945,7 +921,7 @@ void Enemy::UpdateHitFlinchUp(const float deltaTime)
 	if (velocity_.y != 0.0f)
 	{
 		// 後ろに飛んでいきながら移動
-		moveComponent_->Move();
+		moveComponent_->HitMove();
 	}
 
 	// アニメーションが終了したら起き上がり状態へ遷移する
@@ -963,7 +939,7 @@ void Enemy::UpdateHitKnockBack(const float deltaTime)
 	if (KNOCK_BACK_TIME > knockBackCnt_)
 	{
 		// 後ろに飛んでいきながら移動
-		transform_->pos = VAdd(transform_->pos, movePow_);
+		moveComponent_->Move();
 	}
 	else
 	{

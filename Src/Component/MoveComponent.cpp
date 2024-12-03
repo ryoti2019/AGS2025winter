@@ -34,3 +34,21 @@ void MoveComponent::Lerp()
 	actor_->SetPos(Utility::Lerp(actor_->GetTransform()->pos, movedPos, 0.1f));
 
 }
+
+void MoveComponent::HitMove()
+{
+
+	// 方向
+	const VECTOR dir = actor_->GetMoveDir();
+
+	// スピード
+	const float speed = actor_->GetSpeed();
+
+	// 移動量
+	const VECTOR movePow = VScale(dir, speed);
+
+	// 移動後の座標を作る
+	actor_->SetPos(VAdd(actor_->GetTransform()->pos, movePow));
+
+}
+

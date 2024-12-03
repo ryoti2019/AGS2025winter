@@ -70,7 +70,6 @@ void ActorBase::Create(const VECTOR& pos)
 
 void ActorBase::Update(const float deltaTime)
 {
-
 }
 
 void ActorBase::LazyRotation(float goalRot)

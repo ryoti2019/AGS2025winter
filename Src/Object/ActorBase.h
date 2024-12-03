@@ -390,9 +390,6 @@ protected:
 	// ˆÚ“®—Ê
 	VECTOR movePow_;
 
-	// ˆÚ“®ŒãÀ•W
-	VECTOR movedPos_;
-
 	// ‘ŠŽè‚ÌÀ•W
 	VECTOR targetPos_;
 

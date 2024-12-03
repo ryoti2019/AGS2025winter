@@ -17,6 +17,9 @@ public:
 	// ‚ä‚Á‚­‚èˆÚ“®
 	void Lerp();
 
+	// ã•ûŒü‚É”ò‚ñ‚Å‚¢‚­ˆÚ“®
+	void HitMove();
+
 private:
 
 };

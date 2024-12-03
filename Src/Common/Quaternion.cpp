@@ -692,6 +692,29 @@ void Quaternion::ToAngleAxis(float* angle, VECTOR* axis)
 
 }
 
+Quaternion Quaternion::GetConjugate(const Quaternion& q)
+{
+    return { -q.w,-q.x,-q.y,-q.z };
+}
+
+VECTOR Quaternion::RotateVector(const Quaternion& rotation, const VECTOR& vector)
+{
+
+    // ベクトルを純クォータニオンとして表現
+    Quaternion vQuat = { 0.0f, vector.x, vector.y, vector.z };
+
+    // 回転計算: v' = q * v * q^(-1)
+    Quaternion qConjugate = Quaternion::GetConjugate(rotation);
+    Quaternion resultQuat = Quaternion::Mult(
+        Quaternion::Mult(rotation, vQuat),
+        qConjugate
+    );
+
+    // 結果を 3D ベクトルに変換
+    return { static_cast<float>(resultQuat.x, resultQuat.y, resultQuat.z) };
+
+}
+
 Quaternion Quaternion::operator*(float& f) {
     return Quaternion(w * f, x * f, y * f, z * f);
 }
