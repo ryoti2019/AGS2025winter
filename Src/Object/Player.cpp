@@ -6,6 +6,7 @@
 #include "../Manager/CollisionManager.h"
 #include "../Manager/Camera.h"
 #include "../Component/InputComponent.h"
+#include "../Component/MoveComponent.h"
 #include "../Object/Common/InputController.h"
 #include "../Component/InputComponent.h"
 #include "../Manager/ActorManager.h"
@@ -56,15 +57,17 @@ Player::Player(const VECTOR& pos, const json& data)
 	// アニメーションの初期化
 	InitAnimation();
 
-	auto a = std::dynamic_pointer_cast<Player>(GetThis());
-
-	// 入力用のコンポーネントを追加
-	inputComponent_ = std::make_unique<InputComponent>(a);
-
 }
 
 void Player::Init(const VECTOR& pos)
 {
+
+	// 入力用のコンポーネントを追加
+	inputComponent_ = std::make_unique<InputComponent>(std::dynamic_pointer_cast<Player>(GetThis()));
+
+	// 移動用のコンポーネントを追加
+	moveComponent_ = std::make_shared<MoveComponent>(std::dynamic_pointer_cast<Player>(GetThis()));
+
 }
 
 void Player::InitFunction()
@@ -227,6 +230,11 @@ void Player::Update(const float deltaTime)
 	// ImGuiのデバッグ描画の更新
 	UpdateDebugImGui();
 
+	auto angle = transform_->quaRot.y;
+
+	// 実際に動く方向を決める
+	//moveDir_ = 
+	
 	// 入力の更新
 	inputComponent_->Update(deltaTime);
 
@@ -439,7 +447,12 @@ void Player::ChangeIdle(void)
 
 void Player::ChangeRun(void)
 {
+
 	stateUpdate_ = std::bind(&Player::UpdateRun, this);
+
+	// スピード
+	speed_ = RUN_MOVE_POW;
+
 }
 
 void Player::ChangeJab()
@@ -458,9 +471,6 @@ void Player::ChangeJab()
 
 	// スピード
 	speed_ = ATTACK_MOVE_POW;
-
-	// どれだけ進むか計算
-	movePow_ = VAdd(transform_->pos, VScale(moveDir_, speed_));
 
 }
 
@@ -481,9 +491,6 @@ void Player::ChangeStraight()
 	// スピード
 	speed_ = ATTACK_MOVE_POW;
 
-	// どれだけ進むか計算
-	movePow_ = VAdd(transform_->pos, VScale(moveDir_, speed_));
-
 }
 
 void Player::ChangeHook()
@@ -502,9 +509,6 @@ void Player::ChangeHook()
 
 	// スピード
 	speed_ = ATTACK_MOVE_POW;
-
-	// どれだけ進むか計算
-	movePow_ = VAdd(transform_->pos, VScale(moveDir_, speed_));
 
 }
 
@@ -525,9 +529,6 @@ void Player::ChangeLeftKick()
 	// スピード
 	speed_ = ATTACK_MOVE_POW;
 
-	// どれだけ進むか計算
-	movePow_ = VAdd(transform_->pos, VScale(moveDir_, speed_));
-
 }
 
 void Player::ChangeRightKick()
@@ -546,9 +547,6 @@ void Player::ChangeRightKick()
 
 	// スピード
 	speed_ = ATTACK_MOVE_POW;
-
-	// どれだけ進むか計算
-	movePow_ = VAdd(transform_->pos, VScale(moveDir_, speed_));
 
 }
 
@@ -569,9 +567,6 @@ void Player::ChangeUpper()
 	// スピード
 	speed_ = ATTACK_MOVE_POW;
 
-	// どれだけ進むか計算
-	movePow_ = VAdd(transform_->pos, VScale(moveDir_, speed_));
-
 }
 
 void Player::ChangeChargePunch()
@@ -581,9 +576,6 @@ void Player::ChangeChargePunch()
 
 	// スピード
 	speed_ = ATTACK_MOVE_POW;
-
-	// どれだけ進むか計算
-	movePow_ = VAdd(transform_->pos, VScale(moveDir_, speed_));
 
 }
 
@@ -604,9 +596,6 @@ void Player::ChangeHitHead()
 	// スピード
 	speed_ = ATTACK_MOVE_POW;
 
-	// どれだけ進むか計算
-	movePow_ = VAdd(transform_->pos, VScale(moveDir_, speed_));
-
 }
 
 void Player::ChangeHitBody()
@@ -625,9 +614,6 @@ void Player::ChangeHitBody()
 
 	// スピード
 	speed_ = ATTACK_MOVE_POW;
-
-	// どれだけ進むか計算
-	movePow_ = VAdd(transform_->pos, VScale(moveDir_, speed_));
 
 }
 
@@ -660,13 +646,13 @@ void Player::UpdateRun(void)
 	// 回転行列を使用して、ベクトルを回転させる
 	moveDir_ = VTransform(dir_, mat);
 
-	// スピード
-	speed_ = RUN_MOVE_POW;
+	// 移動処理
+	moveComponent_->Move();
 
 	// 方向を角度に変換する(XZ平面 Y軸)
 	float angle = atan2f(dir_.x, dir_.z);
 
-	// プレイヤーにカメラを追従するときはこっちに切り替える
+	// ゆっくり回転する
 	LazyRotation(cameraAngle.y + angle);
 
 }
@@ -675,7 +661,7 @@ void Player::UpdateJab()
 {
 
 	// 少し前にゆっくり移動
-	transform_->pos = Utility::Lerp(transform_->pos, movePow_, 0.1f);
+	moveComponent_->Lerp();
 
 	// 攻撃判定があるフレーム
 	if (JAB_ATTACK_START_FRAME <= animationController_->GetStepAnim() && animationController_->GetStepAnim() <= JAB_ATTACK_END_FRAME)
@@ -699,7 +685,7 @@ void Player::UpdateStraight()
 {
 
 	// 少し前にゆっくり移動
-	transform_->pos = Utility::Lerp(transform_->pos, movePow_, 0.1f);
+	moveComponent_->Lerp();
 
 	// 攻撃判定があるフレーム
 	if (STRAIGHT_ATTACK_START_FRAME <= animationController_->GetStepAnim() && animationController_->GetStepAnim() <= STRAIGHT_ATTACK_END_FRAME)
@@ -723,7 +709,7 @@ void Player::UpdateHook()
 {
 
 	// 少し前にゆっくり移動
-	transform_->pos = Utility::Lerp(transform_->pos, movePow_, 0.1f);
+	moveComponent_->Lerp();
 
 	// 攻撃判定があるフレーム
 	if (HOOK_ATTACK_START_FRAME <= animationController_->GetStepAnim() && animationController_->GetStepAnim() <= HOOK_ATTACK_END_FRAME)
@@ -747,7 +733,7 @@ void Player::UpdateLeftKick()
 {
 
 	// 少し前にゆっくり移動
-	transform_->pos = Utility::Lerp(transform_->pos, movePow_, 0.1f);
+	moveComponent_->Lerp();
 
 	// 攻撃判定があるフレーム
 	if (LEFT_KICK_ATTACK_START_FRAME <= animationController_->GetStepAnim() && animationController_->GetStepAnim() <= LEFT_KICK_ATTACK_END_FRAME)
@@ -771,7 +757,7 @@ void Player::UpdateRightKick()
 {
 
 	// 少し前にゆっくり移動
-	transform_->pos = Utility::Lerp(transform_->pos, movePow_, 0.1f);
+	moveComponent_->Lerp();
 
 	// 攻撃判定があるフレーム
 	if (RIGHT_KICK_ATTACK_START_FRAME <= animationController_->GetStepAnim() && animationController_->GetStepAnim() <= RIGHT_KICK_ATTACK_END_FRAME)
@@ -795,7 +781,7 @@ void Player::UpdateUpper()
 {
 
 	// 少し前にゆっくり移動
-	transform_->pos = Utility::Lerp(transform_->pos, movePow_, 0.1f);
+	moveComponent_->Lerp();
 
 	// 攻撃判定があるフレーム
 	if (UPPER_ATTACK_START_FRAME <= animationController_->GetStepAnim() && animationController_->GetStepAnim() <= UPPER_ATTACK_END_FRAME)
@@ -819,7 +805,7 @@ void Player::UpdateChargePunch()
 {
 
 	// 少し前にゆっくり移動
-	transform_->pos = Utility::Lerp(transform_->pos, movePow_, 0.1f);
+	moveComponent_->Lerp();
 
 	// 攻撃判定があるフレーム
 	if (CHARGE_PUNCH_ATTACK_START_FRAME <= animationController_->GetStepAnim() && animationController_->GetStepAnim() <= CHARGE_PUNCH_ATTACK_END_FRAME)

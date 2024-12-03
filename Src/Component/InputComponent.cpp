@@ -4,7 +4,7 @@
 #include "../Object/Common/InputController.h"
 #include "../Object/Player.h"
 
-InputComponent::InputComponent(std::shared_ptr<Player>& player)
+InputComponent::InputComponent(std::shared_ptr<Player> player)
 {
 	inputController_ = std::make_unique<InputController>();
 	player_ = player;

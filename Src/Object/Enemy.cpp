@@ -42,10 +42,6 @@ Enemy::Enemy(const VECTOR& pos, const json& data)
 	// アニメーションの初期化
 	InitAnimation();
 
-	GetThis();
-	// 入力用のコンポーネントを追加
-	//aiComponent_ = std::make_unique<AIComponent>(std::dynamic_pointer_cast<Enemy>(GetThis()));
-
 }
 
 void Enemy::Init(const VECTOR& pos)
@@ -71,6 +67,9 @@ void Enemy::Init(const VECTOR& pos)
 
 	// 入力用のコンポーネントを追加
 	aiComponent_ = std::make_unique<AIComponent>(std::dynamic_pointer_cast<Enemy>(GetThis()));
+
+	// 移動用のコンポーネントを追加
+	moveComponent_ = std::make_shared<MoveComponent>(std::dynamic_pointer_cast<Enemy>(GetThis()));
 
 }
 
@@ -595,7 +594,7 @@ void Enemy::ChangePunch()
 	speed_ = ATTACK_MOVE_POW;
 
 	// どれだけ進むか計算
-	movePow_ = VAdd(transform_->pos, VScale(moveDir_, speed_));
+	movedPos_ = VAdd(transform_->pos, VScale(moveDir_, speed_));
 
 }
 
@@ -611,7 +610,7 @@ void Enemy::ChangeKick()
 	speed_ = ATTACK_MOVE_POW;
 
 	// どれだけ進むか計算
-	movePow_ = VAdd(transform_->pos, VScale(moveDir_, speed_));
+	movedPos_ = VAdd(transform_->pos, VScale(moveDir_, speed_));
 
 }
 
@@ -633,7 +632,7 @@ void Enemy::ChangeHitHead()
 	speed_ = ATTACK_MOVE_POW;
 
 	// 移動量
-	movePow_ = VAdd(transform_->pos, VScale(vec, speed_));
+	movedPos_ = VAdd(transform_->pos, VScale(vec, speed_));
 
 }
 
@@ -655,7 +654,7 @@ void Enemy::ChangeHitBody()
 	speed_ = ATTACK_MOVE_POW;
 
 	// 移動量
-	movePow_ = VAdd(transform_->pos, VScale(vec, speed_));
+	movedPos_ = VAdd(transform_->pos, VScale(vec, speed_));
 
 }
 
@@ -684,7 +683,7 @@ void Enemy::ChangeHitFly()
 		speed_ = HIT_FLY_MOVE_POW;
 
 		// 移動量
-		movePow_ = VScale(vec, speed_);
+		movedPos_ = VScale(vec, speed_);
 	}
 
 }
@@ -707,11 +706,11 @@ void Enemy::ChangeHitFlinchUp()
 	velocity_.y = FLINCH_UP_UP_VEC_POW;
 	vec.y = velocity_.y;
 
+	// 実際に動く方向
+	moveDir_ = vec;
+
 	// スピード
 	speed_ = FLINCH_UP_SPEED;
-
-	// 移動量
-	movePow_ = VScale(vec, speed_);
 
 	// すでに角度が変わっていたら処理しない
 	if (!isChangeAngle_)
@@ -747,7 +746,7 @@ void Enemy::ChangeHitKnockBack()
 	speed_ = HIT_FLY_MOVE_POW;
 
 	// 移動量
-	movePow_ = VScale(vec, speed_);
+	movedPos_ = VScale(vec, speed_);
 
 	// 高さを調整する
 	transform_->pos.y = transform_->pos.y + KNOCK_BACK_HEIGHT_OFFSET;
@@ -803,6 +802,9 @@ void Enemy::UpdateRun(const float deltaTime)
 
 	// スピード
 	speed_ = RUN_MOVE_POW;
+
+	// 移動処理
+	moveComponent_->Move();
 
 	// 方向を角度に変換する
 	float angle = atan2f(moveDir_.x, moveDir_.z);
@@ -885,7 +887,7 @@ void Enemy::UpdateHitHead(const float deltaTime)
 {
 
 	// 少し後ろにゆっくり移動
-	transform_->pos = Utility::Lerp(transform_->pos, movePow_, MOVE_RATE);
+	transform_->pos = Utility::Lerp(transform_->pos, movedPos_, MOVE_RATE);
 
 	// アニメーションが終了したら待機状態へ遷移する
 	if (animationController_->IsEndPlayAnimation())
@@ -899,7 +901,7 @@ void Enemy::UpdateHitBody(const float deltaTime)
 {
 
 	// 少し後ろにゆっくり移動
-	transform_->pos = Utility::Lerp(transform_->pos, movePow_, MOVE_RATE);
+	transform_->pos = Utility::Lerp(transform_->pos, movedPos_, MOVE_RATE);
 
 	// アニメーションが終了したら待機状態へ遷移する
 	if (animationController_->IsEndPlayAnimation())
@@ -943,7 +945,7 @@ void Enemy::UpdateHitFlinchUp(const float deltaTime)
 	if (velocity_.y != 0.0f)
 	{
 		// 後ろに飛んでいきながら移動
-		transform_->pos = VAdd(transform_->pos, movePow_);
+		moveComponent_->Move();
 	}
 
 	// アニメーションが終了したら起き上がり状態へ遷移する

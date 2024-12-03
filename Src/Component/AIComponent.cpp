@@ -9,13 +9,11 @@ AIComponent::AIComponent(const std::shared_ptr<Enemy> enemy)
 
 void AIComponent::Update(const float deltaTime)
 {
-
 	// ‚Ç‚Ìs“®‚ð‚·‚é‚©Œˆ‚ß‚é
 	if (!enemy_->GetIsActionDecided() && enemy_->GetCoolTime() <= 0.0f)
 	{
 		SelectAction(deltaTime);
 	}
-
 }
 
 void AIComponent::SelectAction(const float deltaTime)

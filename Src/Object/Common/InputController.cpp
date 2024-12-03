@@ -62,7 +62,7 @@ VECTOR InputController::Dir()
 
 }
 
-VECTOR InputController::LockOnDir(TransformComponent transform)
+VECTOR InputController::LockOnDir(Transform transform)
 {
 
 	auto& ins = InputManager::GetInstance();

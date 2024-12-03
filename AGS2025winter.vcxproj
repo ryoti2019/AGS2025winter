@@ -175,7 +175,7 @@
     <ClCompile Include="Src\Manager\Resource.cpp" />
     <ClCompile Include="Src\Manager\ResourceManager.cpp" />
     <ClCompile Include="Src\Manager\SceneManager.cpp" />
-    <ClCompile Include="Src\Component\TransformComponent.cpp" />
+    <ClCompile Include="Src\Object\Common\Transform.cpp" />
     <ClCompile Include="Src\Scene\SceneBase.cpp" />
     <ClCompile Include="Src\Utility\Utility.cpp" />
     <ClCompile Include="Src\Scene\TitleScene.cpp" />
@@ -263,7 +263,7 @@
     <ClInclude Include="Src\Manager\Resource.h" />
     <ClInclude Include="Src\Manager\ResourceManager.h" />
     <ClInclude Include="Src\Manager\SceneManager.h" />
-    <ClInclude Include="Src\Component\TransformComponent.h" />
+    <ClInclude Include="Src\Object\Common\Transform.h" />
     <ClInclude Include="Src\Scene\SceneBase.h" />
     <ClInclude Include="Src\Utility\Utility.h" />
     <ClInclude Include="Src\Scene\TitleScene.h" />

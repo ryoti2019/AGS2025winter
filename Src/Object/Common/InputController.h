@@ -1,6 +1,6 @@
 #pragma once
 #include <DxLib.h>
-#include "../Component/TransformComponent.h"
+#include "../Object/Common/Transform.h"
 
 class AnimationController;
 class Player;
@@ -19,7 +19,7 @@ public:
 	VECTOR Dir();
 
 	// ロックオン時の方向
-	VECTOR LockOnDir(TransformComponent transform);
+	VECTOR LockOnDir(Transform transform);
 
 	// 走る
 	bool Run();
@@ -37,9 +37,6 @@ private:
 
 	// アニメーション
 	AnimationController* animationController_;
-
-	// プレイヤー
-	Player* player_;
 
 	// 方向
 	VECTOR dir_;

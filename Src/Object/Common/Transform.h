@@ -10,17 +10,17 @@
 /// 回転　：Quaternion基準
 /// 位置　：VECTOR基準
 /// </summary>
-class TransformComponent
+class Transform
 {
 
 public:
 
 	// コンストラクタ
-	TransformComponent();
-	TransformComponent(const int model);
+	Transform();
+	Transform(const int model);
 
 	// デストラクタ
-	~TransformComponent();
+	~Transform();
 
 	// モデルのハンドルID
 	int modelId;

@@ -4,7 +4,7 @@
 #include <vector>
 #include "../Lib/nlohmann/json.hpp"
 #include "../Common/Vector2F.h"
-#include "../Component/TransformComponent.h"
+#include "../Object/Common/Transform.h"
 #include "../Component/MoveComponent.h"
 #include "../Manager/ResourceManager.h"
 #include "../Object/Common/AnimationController.h"
@@ -287,7 +287,7 @@ public:
 	void SetIsLockOn(const bool isLockOn);
 
 	// モデルの基本情報を取得
-	const std::shared_ptr<TransformComponent>& GetTransform() const { return transform_; }
+	const std::shared_ptr<Transform>& GetTransform() const { return transform_; }
 
 	// アクタータイプを取得
 	const ActorType& GetActorType() const { return actorType_; }
@@ -346,6 +346,9 @@ public:
 	// 方向を設定
 	void SetDir(const VECTOR& dir) { dir_ = dir; }
 
+	// 実際に動く方向を取得
+	const VECTOR& GetMoveDir()const { return moveDir_; }
+
 	// アニメーションコントローラーに状態を文字型で渡す変数を取得
 	const std::string& GetKey()const { return key_; }
 
@@ -355,8 +358,6 @@ public:
 	// JSONデータ
 	const json& GetJsonData()const { return jsonData_; }
 
-
-
 protected:
 
 	// リソース管理
@@ -365,8 +366,11 @@ protected:
 	// アニメーション
 	std::unique_ptr<AnimationController> animationController_;
 
+	// 移動のコンポーネント
+	std::shared_ptr<MoveComponent> moveComponent_;
+
 	// モデル制御の基本情報
-	std::shared_ptr<TransformComponent> transform_;
+	std::shared_ptr<Transform> transform_;
 
 	// 衝突判定のデータ
 	CollisionData collisionData_;
@@ -385,6 +389,9 @@ protected:
 
 	// 移動量
 	VECTOR movePow_;
+
+	// 移動後座標
+	VECTOR movedPos_;
 
 	// 相手の座標
 	VECTOR targetPos_;

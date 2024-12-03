@@ -3,7 +3,7 @@
 #include "../Lib/nlohmann/json.hpp"
 #include "../Application.h"
 #include "../Component/InputComponent.h"
-#include "../Component/TransformComponent.h"
+#include "../Object/Common/Transform.h"
 #include "../Manager/SceneManager.h"
 #include "../Manager/ActorManager.h"
 #include "../Scene/GameScene.h"

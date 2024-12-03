@@ -1,8 +1,8 @@
 #include <DxLib.h>
 #include "../Utility/Utility.h"
-#include "TransformComponent.h"
+#include "Transform.h"
 
-TransformComponent::TransformComponent()
+Transform::Transform()
 	:
 	modelId(-1),
 	scl(Utility::VECTOR_ZERO),
@@ -17,7 +17,7 @@ TransformComponent::TransformComponent()
 {
 }
 
-TransformComponent::TransformComponent(int model)
+Transform::Transform(int model)
 	:
 	modelId(model),
 	scl(Utility::VECTOR_ZERO),
@@ -32,11 +32,11 @@ TransformComponent::TransformComponent(int model)
 {
 }
 
-TransformComponent::~TransformComponent()
+Transform::~Transform()
 {
 }
 
-void TransformComponent::Update()
+void Transform::Update()
 {
 
 	// ‘å‚«‚³
@@ -64,6 +64,6 @@ void TransformComponent::Update()
 
 }
 
-void TransformComponent::Release()
+void Transform::Release()
 {
 }

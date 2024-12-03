@@ -1,28 +1,36 @@
 #include "MoveComponent.h"
 #include "../Object/ActorBase.h"
+#include "../Object/Player.h"
 
-MoveComponent::MoveComponent()
+MoveComponent::MoveComponent(std::shared_ptr<ActorBase> actor)
 {
-
+	actor_ = actor;
 }
 
-MoveComponent::~MoveComponent()
-{
-}
-
-void MoveComponent::Update(ActorBase& actor ,const VECTOR& moveDir, float speed)
+void MoveComponent::Move()
 {
 
 	// ³‹K‰»
-	const VECTOR normDir = VNorm(moveDir);
+	const VECTOR normDir = VNorm(actor_->GetMoveDir());
 
 	// ˆÚ“®—Ê
-	const VECTOR movePow = VScale(normDir, speed);
+	const VECTOR movePow = VScale(normDir, actor_->GetSpeed());
 
 	// ˆÚ“®Œã‚ÌÀ•W‚ðì‚é
-	const VECTOR movePos = VAdd(actor.GetTransform()->pos, movePow);
+	actor_->SetPos(VAdd(actor_->GetTransform()->pos, movePow));
 
-	// À•W‚ðÝ’è
-	actor.SetPos(movePos);
+}
+
+void MoveComponent::Lerp()
+{
+
+	// ³‹K‰»
+	const VECTOR normDir = VNorm(actor_->GetMoveDir());
+
+	// ˆÚ“®ŒãÀ•W
+	const VECTOR movedPos = VAdd(actor_->GetTransform()->pos,VScale(normDir, actor_->GetSpeed()));
+
+	// ­‚µ‘O‚É‚ä‚Á‚­‚èˆÚ“®
+	actor_->SetPos(Utility::Lerp(actor_->GetTransform()->pos, movedPos, 0.1f));
 
 }

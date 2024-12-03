@@ -1,20 +1,23 @@
 #pragma once
 #include "Component.h"
-#include "TransformComponent.h"
+#include "../Object/Common/Transform.h"
+
+class Player;
+
 class MoveComponent : public Component
 {
 
 public:
 
-	MoveComponent();
+	MoveComponent(std::shared_ptr<ActorBase> actor);
 
-	~MoveComponent();
+	// ‘–‚éˆÚ“®
+	void Move();
 
-	void Update(ActorBase& actor, const VECTOR& moveDir, float speed);
+	// ‚ä‚Á‚­‚èˆÚ“®
+	void Lerp();
 
 private:
-
-	std::shared_ptr<TransformComponent> transform_;
 
 };
 
