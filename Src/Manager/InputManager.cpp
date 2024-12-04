@@ -32,6 +32,7 @@ void InputManager::Init(void)
 
 	// カメラの制御を止めるキー
 	InputManager::GetInstance().Add(KEY_INPUT_LSHIFT);
+	InputManager::GetInstance().Add(KEY_INPUT_LCONTROL);
 
 	// プレイヤーの移動キー
 	InputManager::GetInstance().Add(KEY_INPUT_W);

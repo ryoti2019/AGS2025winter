@@ -83,6 +83,17 @@
 						"DAMAGE": 50
 					},
 					{
+						"NAME": "ATTACK_SPECIAL_PUNCH",
+						"PATH": "Data/Model/Player/SpecilaAttack.mv1",
+						"SPEED": 20.0,
+						"DAMAGE": 500
+					},
+					{
+						"NAME": "POWER_CHARGE",
+						"PATH": "Data/Model/Player/ChargePunch.mv1",
+						"SPEED": 20.0
+					},
+					{
 						"NAME": "HIT_HEAD",
 						"PATH": "Data/Model/Player/HitHead.mv1",
 						"SPEED": 50.0
@@ -113,6 +124,7 @@
 				"KNOCK_BACK_TIME": 3.0,
 				"KNOCK_BACK_HEIGHT_OFFSET": 1000.0,
 				"FLINCH_UP_UP_VEC_POW": 8.0,
+				"FLINCH_UP_UP_VEC_SMALL_POW": 3.0,
 				"FLINCH_UP_SPEED": 10.0,
 				"FLINCH_UP_ANGLE_X": -30.0,
 				"FLINCH_UP_GRAVITY_SCALE": 4.0,

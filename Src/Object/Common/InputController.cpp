@@ -188,3 +188,20 @@ bool InputController::Upper()
 	return false;
 
 }
+
+bool InputController::SpecialAttack()
+{
+	auto& ins = InputManager::GetInstance();
+
+	// キーボード
+	if (!SceneManager::GetInstance().GetGamePad() && ins.IsTrgUpMouseLeft() && ins.IsNew(KEY_INPUT_LCONTROL))
+	{
+		return true;
+	}
+	// コントローラー
+	else if (SceneManager::GetInstance().GetGamePad() && ins.IsPadBtnTrgUp(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::LEFT))
+	{
+		return true;
+	}
+	return false;
+}

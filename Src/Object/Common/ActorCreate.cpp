@@ -14,7 +14,8 @@
 
 ActorCreate::ActorCreate()
 	:
-	isCollisionArea1_(false)
+	isCollisionArea1_(false),
+	isCollisionArea2_(false)
 {
 
 	// 外部ファイルの読み込み
@@ -118,7 +119,8 @@ void ActorCreate::Update()
 
 	for (auto& player : players->second)
 	{
-		if (!isCollisionArea1_ && HitCheck_Sphere_Sphere(player->GetTransform()->pos,player->GetCollisionData().bodyCollisionRadius,{9300.0f,-18000.0f,23600.0f},10000.0f))
+
+		if (!isCollisionArea1_ && HitCheck_Sphere_Sphere(player->GetTransform()->pos, player->GetCollisionData().bodyCollisionRadius, { 9300.0f,-18000.0f,23600.0f }, 10000.0f))
 		{
 
 			// エリア1と衝突した
@@ -127,12 +129,29 @@ void ActorCreate::Update()
 			// 敵を生成
 			for (int i = 0; i < 10; i++)
 			{
-				float x = std::rand() % 10;
-				float z = std::rand() % 10;
-				actorManager->ActiveData(ActorType::ENEMY, { -5000.0f + x,0.0f,-5000.0f + z });
+				float x = std::rand() % 10000;
+				float z = std::rand() % 10000;
+				actorManager->ActiveData(ActorType::ENEMY, { 9300.0f + x,-15000,23600.0f + z });
 			}
 
 		}
+
+		if (!isCollisionArea2_ && HitCheck_Sphere_Sphere(player->GetTransform()->pos, player->GetCollisionData().bodyCollisionRadius, { -3100.0f,-18000.0f,-22000.0f }, 10000.0f))
+		{
+
+			// エリア1と衝突した
+			isCollisionArea2_ = true;
+
+			// 敵を生成
+			for (int i = 0; i < 10; i++)
+			{
+				float x = std::rand() % 10000;
+				float z = std::rand() % 10000;
+				actorManager->ActiveData(ActorType::ENEMY, { -3100.0f + x,-15000,-22000.0f + z });
+			}
+
+		}
+
 	}
 
 }
@@ -140,4 +159,5 @@ void ActorCreate::Update()
 void ActorCreate::Draw()
 {
 	DrawSphere3D({ 9300.0f,-18000.0f,23600.0f }, 10000.0f, 10, 0xff0000, 0xff0000, false);
+	DrawSphere3D({ -3100.0f,-18000.0f,-22000.0f }, 10000.0f, 10, 0xff0000, 0xff0000, false);
 }

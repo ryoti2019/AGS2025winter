@@ -33,6 +33,9 @@ public:
 	// アッパー
 	bool Upper();
 
+	// 必殺技
+	bool SpecialAttack();
+
 private:
 
 	// アニメーション

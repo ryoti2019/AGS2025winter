@@ -100,6 +100,12 @@ void InputComponent::Attack(const float deltaTime)
 		player_->ChangeState(PlayerState::ATTACK_UPPER);
 	}
 
+	// •KŽE‹Z‚É‘JˆÚ
+	if (inputController_->SpecialAttack() && player_->GetState() != static_cast<int>(PlayerState::ATTACK_SPECIAL_PUNCH))
+	{
+		player_->ChangeState(PlayerState::POWER_CHARGE);
+	}
+
 	//ƒRƒ“ƒ{’†‚©”»’è
 	if (!player_->GetComboState())return;
 

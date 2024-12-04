@@ -94,6 +94,8 @@ void Player::InitFunctionPointer()
 	stateChange_.emplace(PlayerState::ATTACK_RIGHT_KICK, std::bind(&Player::ChangeRightKick, this));
 	stateChange_.emplace(PlayerState::ATTACK_UPPER, std::bind(&Player::ChangeUpper, this));
 	stateChange_.emplace(PlayerState::ATTACK_CHARGE_PUNCH, std::bind(&Player::ChangeChargePunch, this));
+	stateChange_.emplace(PlayerState::ATTACK_SPECIAL_PUNCH, std::bind(&Player::ChangeSpecialAttack, this));
+	stateChange_.emplace(PlayerState::POWER_CHARGE, std::bind(&Player::ChangePowerCharge, this));
 	stateChange_.emplace(PlayerState::HIT_HEAD, std::bind(&Player::ChangeHitHead, this));
 	stateChange_.emplace(PlayerState::HIT_BODY, std::bind(&Player::ChangeHitBody, this));
 
@@ -158,9 +160,6 @@ void Player::InitParameter()
 
 	// 左足に攻撃判定があるかどうか
 	collisionData_.isLeftFootAttack = false;
-
-	// 入力カウンタ
-	acceptCnt_ = 0.0f;
 
 	// 溜めパンチのカウンタ
 	chargeCnt_ = 0.0f;
@@ -231,16 +230,16 @@ void Player::Update(const float deltaTime)
 	UpdateDebugImGui();
 
 	// 回転行列を使用して、ベクトルを回転させる
-	//moveDir_ = transform_->quaRot.ToEuler();
+	moveDir_ = transform_->quaRot.GetForward();
 	
 	// 入力の更新
 	inputComponent_->Update(deltaTime);
 
 	// 重力
-	Gravity(gravityScale_);
-
-	// 入力受付時間をカウント
-	acceptCnt_++;
+	if (velocity_.y != 0.0f)
+	{
+		Gravity(gravityScale_);
+	}
 
 	// 状態ごとの更新
 	stateUpdate_();
@@ -458,9 +457,6 @@ void Player::ChangeJab()
 
 	stateUpdate_ = std::bind(&Player::UpdateJab, this);
 
-	// 入力受付時間をリセット
-	acceptCnt_ = 0.0f;
-
 	// 攻撃が当たっているかをリセットする
 	isAttackHit_ = false;
 
@@ -476,9 +472,6 @@ void Player::ChangeStraight()
 {
 
 	stateUpdate_ = std::bind(&Player::UpdateStraight, this);
-
-	// 入力受付時間をリセット
-	acceptCnt_ = 0.0f;
 
 	// 攻撃が当たっているかをリセットする
 	isAttackHit_ = false;
@@ -496,9 +489,6 @@ void Player::ChangeHook()
 
 	stateUpdate_ = std::bind(&Player::UpdateHook, this);
 
-	// 入力受付時間をリセット
-	acceptCnt_ = 0.0f;
-
 	// 攻撃が当たっているかをリセットする
 	isAttackHit_ = false;
 
@@ -514,9 +504,6 @@ void Player::ChangeLeftKick()
 {
 
 	stateUpdate_ = std::bind(&Player::UpdateLeftKick, this);
-
-	// 入力受付時間をリセット
-	acceptCnt_ = 0.0f;
 
 	// 攻撃が当たっているかをリセットする
 	isAttackHit_ = false;
@@ -534,9 +521,6 @@ void Player::ChangeRightKick()
 
 	stateUpdate_ = std::bind(&Player::UpdateRightKick, this);
 
-	// 入力受付時間をリセット
-	acceptCnt_ = 0.0f;
-
 	// 攻撃が当たっているかをリセットする
 	isAttackHit_ = false;
 
@@ -552,9 +536,6 @@ void Player::ChangeUpper()
 {
 
 	stateUpdate_ = std::bind(&Player::UpdateUpper, this);
-
-	// 入力受付時間をリセット
-	acceptCnt_ = 0.0f;
 
 	// 攻撃が当たっているかをリセットする
 	isAttackHit_ = false;
@@ -575,6 +556,16 @@ void Player::ChangeChargePunch()
 	// スピード
 	speed_ = ATTACK_MOVE_POW;
 
+}
+
+void Player::ChangeSpecialAttack()
+{
+	stateUpdate_ = std::bind(&Player::UpdateSpecialAttack, this);
+}
+
+void Player::ChangePowerCharge()
+{
+	stateUpdate_ = std::bind(&Player::UpdatePowerCharge, this);
 }
 
 void Player::ChangeHitHead()
@@ -819,6 +810,28 @@ void Player::UpdateChargePunch()
 	if (animationController_->IsEndPlayAnimation())
 	{
 		ChangeState(PlayerState::IDLE);
+	}
+
+}
+
+void Player::UpdateSpecialAttack()
+{
+
+	// 待機状態に遷移
+	if (animationController_->IsEndPlayAnimation())
+	{
+		ChangeState(PlayerState::IDLE);
+	}
+
+}
+
+void Player::UpdatePowerCharge()
+{
+
+	// 必殺技に遷移
+	if (animationController_->IsEndPlayAnimation())
+	{
+		ChangeState(PlayerState::ATTACK_SPECIAL_PUNCH);
 	}
 
 }

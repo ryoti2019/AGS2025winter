@@ -21,6 +21,7 @@ Enemy::Enemy(const VECTOR& pos, const json& data)
 	KNOCK_BACK_TIME(data["KNOCK_BACK_TIME"]),
 	KNOCK_BACK_HEIGHT_OFFSET(data["KNOCK_BACK_HEIGHT_OFFSET"]),
 	FLINCH_UP_UP_VEC_POW(data["FLINCH_UP_UP_VEC_POW"]),
+	FLINCH_UP_UP_VEC_SMALL_POW(data["FLINCH_UP_UP_VEC_SMALL_POW"]),
 	FLINCH_UP_SPEED(data["FLINCH_UP_SPEED"]),
 	FLINCH_UP_ANGLE_X(data["FLINCH_UP_ANGLE_X"]),
 	FLINCH_UP_GRAVITY_SCALE(data["FLINCH_UP_GRAVITY_SCALE"]),
@@ -278,7 +279,7 @@ void Enemy::Update(const float deltaTime)
 	stateUpdate_(deltaTime);
 
 	// 重力がかかるアニメーションのみ処理する
-	if (state_ != EnemyState::HIT_KNOCK_BACK)
+	if (state_ != EnemyState::HIT_KNOCK_BACK && transform_->pos.y > FLOOR_HEIGHT)
 	{
 		// 重力
 		Gravity(gravityScale_);
@@ -394,6 +395,20 @@ void Enemy::AttackHitCheck(const int state)
 		{
 			ChangeState(EnemyState::HIT_FLINCH_UP);
 			return;
+		}
+	}
+
+	// 地面についていないかチェック
+	if (velocity_ .y != 0.0f)
+	{
+		// 空中に浮き続けるアニメーションかチェック
+		for (const auto hitState : hitAirState_)
+		{
+			if (hitState == static_cast<PlayerState>(state))
+			{
+				ChangeState(EnemyState::HIT_FLINCH_UP);
+				return;
+			}
 		}
 	}
 
@@ -668,6 +683,13 @@ void Enemy::ChangeHitFly()
 
 	}
 
+	// 体の角度をリセット
+	transform_->quaRot.x = Quaternion().x;
+	transform_->quaRot.z = Quaternion().z;
+
+	// 重力を通常状態に戻す
+	gravityScale_ = 1.0f;
+
 }
 
 void Enemy::ChangeHitFlinchUp()
@@ -684,8 +706,18 @@ void Enemy::ChangeHitFlinchUp()
 	// プレイヤーの方向と逆方向のベクトル
 	vec = { -vec.x, vec.y,-vec.z };
 
+	// 地面についていたら上に移動させる
+	if (velocity_.y == 0.0f)
+	{
+		velocity_.y = FLINCH_UP_UP_VEC_POW;
+	}
+	// 地面についていなかったら少し移動させる
+	else
+	{
+		velocity_.y = FLINCH_UP_UP_VEC_SMALL_POW;
+	}
+
 	// 上方向に飛ばす
-	velocity_.y = FLINCH_UP_UP_VEC_POW;
 	vec.y = velocity_.y;
 
 	// 実際に動く方向
@@ -731,12 +763,24 @@ void Enemy::ChangeHitKnockBack()
 
 void Enemy::ChangeKipUp()
 {
+
 	stateUpdate_ = std::bind(&Enemy::UpdateKipUp, this, std::placeholders::_1);
+
+	// 体の角度をリセット
+	transform_->quaRot.x = Quaternion().x;
+	transform_->quaRot.z = Quaternion().z;
+
 }
 
 void Enemy::ChangeDeath()
 {
+
 	stateUpdate_ = std::bind(&Enemy::UpdateDeath, this, std::placeholders::_1);
+
+	// 体の角度をリセット
+	transform_->quaRot.x = Quaternion().x;
+	transform_->quaRot.z = Quaternion().z;
+
 }
 
 void Enemy::UpdateIdle(const float deltaTime)
@@ -920,12 +964,12 @@ void Enemy::UpdateHitFlinchUp(const float deltaTime)
 	// 地面につくまで加算する
 	if (velocity_.y != 0.0f)
 	{
-		// 後ろに飛んでいきながら移動
+		// 上に緩く移動する
 		moveComponent_->HitMove();
 	}
 
 	// アニメーションが終了したら起き上がり状態へ遷移する
-	if (transform_->pos.y <= FLOOR_HEIGHT && velocity_.y <= 0.0f)
+	if (velocity_.y == 0.0f)
 	{
 		ChangeState(EnemyState::KIP_UP);
 	}

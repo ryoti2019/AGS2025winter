@@ -26,17 +26,10 @@ public:
 		"ATTACK_RIGHT_KICK",
 		"ATTACK_UPPER",
 		"ATTACK_CHARGE_PUNCH",
+		"ATTACK_SPECIAL_PUNCH",
+		"POWER_CHARGE",
 		"HIT_HEAD",
 		"HIT_BODY"
-	};
-
-	// 入力でのアクション
-	enum class InputAction
-	{
-		STICK,
-		ATTACK,
-		CHARGE_ATTACK,
-		SHIFT_ATTACK
 	};
 
 	// ジャブの攻撃開始フレーム
@@ -168,7 +161,9 @@ private:
 		{PlayerState::ATTACK_LEFT_KICK},
 		{PlayerState::ATTACK_RIGHT_KICK},
 		{PlayerState::ATTACK_UPPER},
-		{PlayerState::ATTACK_CHARGE_PUNCH}
+		{PlayerState::ATTACK_CHARGE_PUNCH},
+		{PlayerState::POWER_CHARGE},
+		{PlayerState::ATTACK_SPECIAL_PUNCH}
 	};
 
 	// コンボ中の判定
@@ -178,7 +173,7 @@ private:
 		{ PlayerState::ATTACK_STRAIGHT },
 		{ PlayerState::ATTACK_HOOK },
 		{ PlayerState::ATTACK_LEFT_KICK },
-		{ PlayerState::ATTACK_RIGHT_KICK }
+		{ PlayerState::ATTACK_RIGHT_KICK },
 	};
 
 	// 攻撃を受けている状態
@@ -206,9 +201,6 @@ private:
 	// 攻撃を入力しているか
 	std::map<PlayerState, bool> isCombo_;
 
-	// 入力カウンタ
-	float acceptCnt_;
-
 	// 溜めパンチのカウンタ
 	float chargeCnt_;
 
@@ -223,6 +215,8 @@ private:
 	void ChangeRightKick();
 	void ChangeUpper();
 	void ChangeChargePunch();
+	void ChangeSpecialAttack();
+	void ChangePowerCharge();
 	void ChangeHitHead();
 	void ChangeHitBody();
 
@@ -237,6 +231,8 @@ private:
 	void UpdateRightKick();
 	void UpdateUpper();
 	void UpdateChargePunch();
+	void UpdateSpecialAttack();
+	void UpdatePowerCharge();
 	void UpdateHitHead();
 	void UpdateHitBody();
 

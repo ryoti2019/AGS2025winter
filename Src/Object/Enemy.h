@@ -66,6 +66,9 @@ public:
 	// 上に飛んでいくときの上方向の力
 	const float FLINCH_UP_UP_VEC_POW;
 
+	// 少し上に飛んでいくときの上方向の力
+	const float FLINCH_UP_UP_VEC_SMALL_POW;
+
 	// 上に飛んでいくときのスピード
 	const float FLINCH_UP_SPEED;
 
@@ -171,6 +174,15 @@ private:
 		{PlayerState::ATTACK_UPPER}
 	};
 
+	// 空中に浮き続けるプレイヤーの攻撃
+	const std::vector<PlayerState>& hitAirState_ =
+	{
+		{PlayerState::ATTACK_JAB},
+		{PlayerState::ATTACK_STRAIGHT},
+		{PlayerState::ATTACK_HOOK},
+		{PlayerState::ATTACK_LEFT_KICK}
+	};
+
 	// 真っすぐ飛ばされるプレイヤーの攻撃
 	const std::vector<PlayerState>& hitKnockBackState_ =
 	{
@@ -183,7 +195,8 @@ private:
 		{PlayerState::ATTACK_JAB},
 		{PlayerState::ATTACK_STRAIGHT},
 		{PlayerState::ATTACK_HOOK},
-		{PlayerState::ATTACK_LEFT_KICK}
+		{PlayerState::ATTACK_LEFT_KICK},
+		{PlayerState::ATTACK_UPPER}
 	};
 
 	// 吹っ飛んで死ぬときのプレイヤーの攻撃
