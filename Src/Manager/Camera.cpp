@@ -321,6 +321,10 @@ void Camera::ChangeMode(MODE mode)
 	case Camera::MODE::FREE:
 		break;
 	case Camera::MODE::FOLLOW:
+		targetPos_ = VAdd(playerTransform_->pos, playerTransform_->quaRot.PosAxis(LOCAL_P2T_POS));
+		angle_.y = playerTransform_->quaRot.ToEuler().y;
+		rotY_ = playerTransform_->quaRot;
+		rotXY_ = playerTransform_->quaRot;
 		lockOnAngles_ = { 0.0f, 0.0f, 0.0f };
 		break;
 	case Camera::MODE::LOCKON:

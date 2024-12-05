@@ -1,5 +1,6 @@
 #pragma once
 #include "Component.h"
+
 class DrawComponent : public Component
 {
 
@@ -7,7 +8,7 @@ public:
 
 	DrawComponent(std::shared_ptr<ActorBase> actor);
 
-	void Update();
+	void Update()override;
 
 private:
 

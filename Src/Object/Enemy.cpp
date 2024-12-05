@@ -38,7 +38,7 @@ Enemy::Enemy(const VECTOR& pos, const json& data)
 	InitFunctionPointer();
 
 	// 共通部分は基底クラスで初期化
-	//ActorBase::Create(pos);
+	ActorBase::Init(pos);
 
 	// パラメータの初期化
 	InitParameter();
@@ -74,6 +74,9 @@ void Enemy::Init(const VECTOR& pos)
 
 	// 移動用のコンポーネントを追加
 	moveComponent_ = std::make_shared<MoveComponent>(std::dynamic_pointer_cast<Enemy>(GetThis()));
+
+	// 描画用のコンポーネント
+	drawComponent_ = std::make_shared<DrawComponent>(std::dynamic_pointer_cast<Enemy>(GetThis()));
 
 }
 

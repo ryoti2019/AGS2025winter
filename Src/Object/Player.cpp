@@ -51,9 +51,6 @@ Player::Player(const VECTOR& pos, const json& data)
 	// 関数ポインタの初期化
 	InitFunctionPointer();
 
-	//// 共通部分は基底クラスで初期化
-	//ActorBase::Create(pos);
-
 	// 共通部分は基底クラスで初期化
 	ActorBase::Init(pos);
 
@@ -68,14 +65,14 @@ Player::Player(const VECTOR& pos, const json& data)
 void Player::Init(const VECTOR& pos)
 {
 
-	// 共通部分は基底クラスで初期化
-	ActorBase::Init(pos);
-
 	// 入力用のコンポーネントを追加
 	inputComponent_ = std::make_unique<InputComponent>(std::dynamic_pointer_cast<Player>(GetThis()));
 
 	// 移動用のコンポーネントを追加
 	moveComponent_ = std::make_shared<MoveComponent>(std::dynamic_pointer_cast<Player>(GetThis()));
+
+	// 描画用のコンポーネント
+	drawComponent_ = std::make_shared<DrawComponent>(std::dynamic_pointer_cast<Player>(GetThis()));
 
 }
 

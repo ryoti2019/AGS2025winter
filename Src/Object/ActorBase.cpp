@@ -52,9 +52,6 @@ ActorBase::ActorBase(const VECTOR& pos, const json& data)
 void ActorBase::Init(const VECTOR& pos)
 {
 
-	//// 描画用のコンポーネント
-	//drawComponent_ = std::make_shared<DrawComponent>(GetThis());
-
 #pragma region オブジェクトの情報
 
 	transform_->SetModel(modelId_);
@@ -315,12 +312,8 @@ void ActorBase::DeathAnim(int state)
 
 void ActorBase::Draw()
 {
-
-	// モデル描画
-	MV1DrawModel(transform_->modelId);
-
-	//// 描画の更新
-	//drawComponent_->Update();
+	// 描画の更新
+	drawComponent_->Update();
 }
 
 void ActorBase::AddPos(const VECTOR& pos)

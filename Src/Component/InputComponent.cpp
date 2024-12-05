@@ -1,7 +1,6 @@
 #include <map>
 #include "InputComponent.h"
 #include "../Object/ActorBase.h"
-#include "../Object/Common/InputController.h"
 #include "../Object/Player.h"
 
 InputComponent::InputComponent(std::shared_ptr<Player> player)
