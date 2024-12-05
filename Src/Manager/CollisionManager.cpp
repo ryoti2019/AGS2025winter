@@ -120,10 +120,13 @@ void CollisionManager::CheckAttackCollision(const float deltaTime)
 				auto a = hitData->second.find(attacker->GetState() - ATTACK_START_NUM);
 
 				// 中身が無ければ処理しない
-				if (a == hitData->second.end())return;
+				if (a == hitData->second.end())continue;
 
 				// このアニメーション中の無敵時間が消えていなければ処理しない
-				if (a->second > 0.0f)return;
+				if (a->second > 0.0f)continue;
+
+				// 攻撃側がスーパーアーマー状態かチェック
+				if (target->GetSuperArmorState())continue;
 
 				// 右手の判定
 				if (HitCheck_Capsule_Capsule(attacker->GetCollisionData().rightHandCapsuleUpPos, attacker->GetCollisionData().rightHandCapsuleDownPos,
@@ -157,6 +160,14 @@ void CollisionManager::CheckAttackCollision(const float deltaTime)
 					attacker->GetCollisionData().handAndFootCollisionRadius,
 					target->GetCollisionData().bodyCapsuleUpPos, target->GetCollisionData().bodyCapsuleDownPos, target->GetCollisionData().bodyCollisionRadius)
 					&& attacker->GetCollisionData().isLeftFootAttack)
+				{
+					// 当たった時の処理
+					OnAttackCollision(attacker, target);
+				}
+				// 必殺技の判定
+				if (HitCheck_Sphere_Capsule(attacker->GetCollisionData().specialAttackPos, attacker->GetCollisionData().specialAttackCollisionRadius,
+					target->GetCollisionData().bodyCapsuleUpPos, target->GetCollisionData().bodyCapsuleDownPos, target->GetCollisionData().bodyCollisionRadius)
+					&& attacker->GetCollisionData().isSpecialAttack)
 				{
 					// 当たった時の処理
 					OnAttackCollision(attacker, target);

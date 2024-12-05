@@ -54,14 +54,14 @@ void InputComponent::Attack(const float deltaTime)
 {
 
 	// 溜めパンチ用のボタンを長押ししているか
-	if (inputController_->ChargeAttack() && player_->GetChargeCnt() <= player_->CHARGE_TIME)
+	if (inputController_->ChargeAttack() && player_->GetChargeCnt() <= player_->ATTACK_CHARGE_PUNCH_TIME)
 	{
 		// 押していたら加算する
 		player_->AddChargeCnt(deltaTime);
 	}
 
 	// 溜めパンチ
-	if (player_->GetChargeCnt() >= player_->CHARGE_TIME)
+	if (player_->GetChargeCnt() >= player_->ATTACK_CHARGE_PUNCH_TIME)
 	{
 		player_->SetChargeCnt(0.0f);
 		player_->ChangeState(PlayerState::ATTACK_CHARGE_PUNCH);

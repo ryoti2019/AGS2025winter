@@ -58,7 +58,7 @@ void Application::Run()
 		imGuiWrapper.Update();
 		sceneManager.Update(deltaTime_);
 
-		sceneManager.Draw();
+		sceneManager.Draw(deltaTime_);
 
 		// 頂点バッファに溜まった頂点データを描画する
 		// DxLibは特定条件のもと、まとめて描画する機能がある

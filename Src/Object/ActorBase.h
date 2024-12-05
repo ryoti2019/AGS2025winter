@@ -6,6 +6,7 @@
 #include "../Common/Vector2F.h"
 #include "../Object/Common/Transform.h"
 #include "../Component/MoveComponent.h"
+#include "../Component/DrawComponent.h"
 #include "../Manager/ResourceManager.h"
 #include "../Object/Common/AnimationController.h"
 
@@ -67,6 +68,9 @@ public:
 
 		// 体全体の中心座標
 		VECTOR bodyPos;
+
+		// 必殺技の球体の中心座標
+		VECTOR specialAttackPos;
 
 #pragma endregion
 
@@ -132,6 +136,9 @@ public:
 		// 体の当たり判定の半径
 		float bodyCollisionRadius;
 
+		// 必殺技の当たり判定の半径
+		float specialAttackCollisionRadius;
+
 #pragma endregion
 
 #pragma region 攻撃判定があるかどうか
@@ -148,17 +155,10 @@ public:
 		// 左足に攻撃判定があるかどうか
 		bool isLeftFootAttack;
 
-#pragma endregion
+		// 必殺技に当たり判定があるかどうか
+		bool isSpecialAttack;
 
 #pragma endregion
-
-#pragma region プレイヤーと敵が重ならないようにするために当たり判定で使うもの
-
-		// 最小点
-		VECTOR minPos;
-
-		// 最大点
-		VECTOR maxPos; 
 
 #pragma endregion
 
@@ -232,6 +232,9 @@ public:
 
 	// 体の当たり判定の半径
 	const float BODY_COLLISION_RADIUS;
+
+	// 必殺技の当たり判定の半径
+	const float SPECIAL_ATTACK_COLLISION_RADIUS;
 
 	// 最初に向いている角度
 	float INIT_ANGLE;
@@ -310,8 +313,11 @@ public:
 	// 攻撃種類を取得
 	virtual const std::vector<int> GetTotalAttackTypes()const { return {}; }
 
-	// 攻撃を受けている状態を取得
+	// 攻撃を受けている状態かを取得
 	virtual const bool GetHitState()const;
+
+	// スーパーアーマー状態かを取得
+	virtual const bool GetSuperArmorState()const;
 
 	// 攻撃が当たっているか設定
 	void SetIsAttackHit(const bool hit) { isAttackHit_ = hit; }
@@ -366,8 +372,11 @@ protected:
 	// アニメーション
 	std::unique_ptr<AnimationController> animationController_;
 
-	// 移動のコンポーネント
+	// 移動用のコンポーネント
 	std::shared_ptr<MoveComponent> moveComponent_;
+
+	// 描画用のコンポーネント
+	std::shared_ptr<DrawComponent> drawComponent_;
 
 	// モデル制御の基本情報
 	std::shared_ptr<Transform> transform_;
@@ -490,8 +499,5 @@ protected:
 	virtual void DeathAnim(int state);
 
 private:
-
-	// デバッグ描画
-	void DrawDebug();
 
 };

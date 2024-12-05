@@ -37,6 +37,9 @@ Enemy::Enemy(const VECTOR& pos, const json& data)
 	// 関数ポインタの初期化
 	InitFunctionPointer();
 
+	// 共通部分は基底クラスで初期化
+	//ActorBase::Create(pos);
+
 	// パラメータの初期化
 	InitParameter();
 

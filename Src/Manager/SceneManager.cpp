@@ -108,7 +108,7 @@ void SceneManager::Update(const float deltaTime)
 
 }
 
-void SceneManager::Draw()
+void SceneManager::Draw(const float deltaTime)
 {
 
 	// 描画先グラフィック領域の指定
@@ -119,7 +119,7 @@ void SceneManager::Draw()
 	ClearDrawScreen();
 
 	// カメラ設定
-	camera_->SetBeforeDraw();
+	camera_->SetBeforeDraw(deltaTime);
 
 	// 描画
 	scene_->Draw();

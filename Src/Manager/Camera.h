@@ -47,6 +47,9 @@ public:
 	// カメラクリップ：FAR
 	static constexpr float CAMERA_FAR = 1000000.0f;
 
+	// 必殺技時のカメラが動く時間
+	static constexpr float SPECIAL_MOVE_MAX_TIME = 2.0f;
+
 	// カメラモード
 	enum class MODE
 	{
@@ -55,24 +58,26 @@ public:
 		FREE,			// フリーモード
 		FOLLOW,			// 追従モード
 		LOCKON,			// ロックオンモード
+		SPECIAL			// 必殺技モード
 	};
 
-	Camera(void);
-	~Camera(void);
+	Camera();
+	~Camera();
 
-	void Init(void);
-	void Update(void);
-	void SetBeforeDraw(void);
-	void SetBeforeDrawFixedPoint(void);
-	void SetBeforeDrawFree(void);
-	void SetBeforeDrawLockOn(void);
-	void Draw(void);
-	void Release(void);
+	void Init();
+	void Update();
+	void SetBeforeDraw(const float deltaTime);
+	void SetBeforeDrawFixedPoint();
+	void SetBeforeDrawFree();
+	void SetBeforeDrawLockOn();
+	void SetBeforeDrawSpecial(const float deltaTime);
+	void Draw();
+	void Release();
 
 	// プレイヤーが向いている角度
 	void SetLazyAngles(const VECTOR angles);
 
-	void SetBeforeDrawFollow(void);
+	void SetBeforeDrawFollow();
 	
 	// 追従対象の設定
 	void SetPlayer(const std::shared_ptr<Transform> follow);
@@ -87,7 +92,7 @@ public:
 	void ChangeMode(MODE mode);
 
 	// 遅延回転
-	void LazyRotation(void);
+	void LazyRotation();
 
 	//	ロックオン中のY軸の角度を足す
 	void AddLockOnAnglesY(float rad);
@@ -95,18 +100,18 @@ public:
 	// ステージのモデルIDを設定
 	void SetStageID(const int modelId);
 
-	Camera::MODE GetMode(void);
+	Camera::MODE GetMode();
 
-	VECTOR GetPos(void) const;
+	VECTOR GetPos() const;
 
-	VECTOR GetAngle(void) const;
+	VECTOR GetAngle() const;
 
-	VECTOR GetTargetPos(void) const;
+	VECTOR GetTargetPos() const;
 
-	Quaternion GetRotY(void) const;
+	Quaternion GetRotY() const;
 
 	// ロックオンの取得
-	bool GetLockOn(void);
+	bool GetLockOn();
 
 
 private:
@@ -123,6 +128,9 @@ private:
 
 	// 移動後座標
 	VECTOR movedPos_;
+
+	// カメラの移動量
+	VECTOR movePow_;
 
 	// カメラの注視点
 	VECTOR targetPos_;
@@ -176,22 +184,25 @@ private:
 	// ポリゴンと当たっているか
 	bool pHit_;
 
+	// 必殺技時のカメラの移動する時間
+	float specialMoveCnt_;
+
 	// カメラを初期位置に戻す
-	void SetDefault(void);
+	void SetDefault();
 
 	// 注視点をキャラクター前方位置に設定
-	void SetTargetPosFollowForward(void);
+	void SetTargetPosFollowForward();
 
 	// キーボードの操作
-	void KeybordController(void);
-	void KeybordLockOnContoroller(void);
+	void KeyboardController();
+	void KeyboardLockOnController();
 
 	// ゲームパッドの操作
-	void GamePadController(void);
-	void GamePadLockOnContoroller(void);
+	void GamePadController();
+	void GamePadLockOnController();
 
 	// ステージとの当たり判定
-	void CheckStageCollision(void);
+	void CheckStageCollision();
 
 	// ImGuiのデバッグ描画の更新
 	void UpdateDebugImGui();

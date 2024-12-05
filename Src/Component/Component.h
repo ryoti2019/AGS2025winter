@@ -16,7 +16,6 @@ public:
 	virtual bool IsDead()const { return false; }
 	virtual void Init() {};
 	virtual void Update() {};
-	virtual void Draw() {};
 
 protected:
 

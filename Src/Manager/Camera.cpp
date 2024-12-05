@@ -8,29 +8,31 @@
 #include "../Object/Common/Transform.h"
 #include "Camera.h"
 
-Camera::Camera(void)
+Camera::Camera()
 {
 
 	mode_ = MODE::FIXED_POINT;
 	pos_ = { 0.0f,0.0f,0.0f };
 	targetPos_ = { 0.0f, 0.0f, 0.0f };
+	movePow_ = { 0.0f,0.0f,0.0f };
 	angle_ = { 0.0f, Utility::Deg2RadF(90.0f), 0.0f};
 	lockOn_ = false;
+	specialMoveCnt_ = 0.0f;
 
 	// カメラの初期設定
 	SetDefault();
 
 }
 
-Camera::~Camera(void)
+Camera::~Camera()
 {
 }
 
-void Camera::Init(void)
+void Camera::Init()
 {
 }
 
-void Camera::Update(void)
+void Camera::Update()
 {
 
 	// ImGuiのデバッグ描画の更新
@@ -38,7 +40,7 @@ void Camera::Update(void)
 
 }
 
-void Camera::SetBeforeDraw(void)
+void Camera::SetBeforeDraw(const float deltaTime)
 {
 
 	// クリップ距離を設定する(SetDrawScreenでリセットされる)
@@ -58,6 +60,9 @@ void Camera::SetBeforeDraw(void)
 	case Camera::MODE::LOCKON:
 		SetBeforeDrawLockOn();
 		break;
+	case Camera::MODE::SPECIAL:
+		SetBeforeDrawSpecial(deltaTime);
+		break;
 	}
 
 	// カメラの設定(位置と注視点による制御)
@@ -72,12 +77,12 @@ void Camera::SetBeforeDraw(void)
 
 }
 
-void Camera::SetBeforeDrawFixedPoint(void)
+void Camera::SetBeforeDrawFixedPoint()
 {
 	pos_ = { 0.0f,5000.0f,-5000.0f };
 }
 
-void Camera::SetBeforeDrawFree(void)
+void Camera::SetBeforeDrawFree()
 {
 
 	auto& ins = InputManager::GetInstance();
@@ -148,7 +153,7 @@ void Camera::SetBeforeDrawFree(void)
 
 }
 
-void Camera::SetBeforeDrawFollow(void)
+void Camera::SetBeforeDrawFollow()
 {
 
 	auto& ins = InputManager::GetInstance();
@@ -158,7 +163,7 @@ void Camera::SetBeforeDrawFollow(void)
 	// マウスでの操作
 	if (!SceneManager::GetInstance().GetGamePad())
 	{
-		KeybordController();
+		KeyboardController();
 	}
 
 	// ゲームパッドでの操作
@@ -178,7 +183,7 @@ void Camera::SetBeforeDrawFollow(void)
 
 }
 
-void Camera::SetBeforeDrawLockOn(void)
+void Camera::SetBeforeDrawLockOn()
 {
 
 	// 同期先の位置
@@ -214,21 +219,58 @@ void Camera::SetBeforeDrawLockOn(void)
 
 }
 
+void Camera::SetBeforeDrawSpecial(const float deltaTime)
+{
 
-void Camera::Draw(void)
+	auto& ins = InputManager::GetInstance();
+
+	// 回転
+	//-------------------------------------
+
+	// 必殺技時のカメラの移動する時間を計算
+	specialMoveCnt_ += deltaTime;
+
+	// カメラのオフセット
+	VECTOR pow = { 20.0f,0.02f,20.0f };
+
+	// カメラが動ける時間まで移動させる
+	if (SPECIAL_MOVE_MAX_TIME >= specialMoveCnt_)
+	{
+
+		// プレイヤーから見たカメラのローカル座標
+		VECTOR localRotPos = playerTransform_->quaRot.PosAxis({ 500.0f,2000.0f,500.0f });
+
+		// カメラの座標を設定
+		pos_ = VAdd(playerTransform_->pos, localRotPos);
+
+		// カメラの移動量を設定
+		movePow_ = VAdd(movePow_,playerTransform_->quaRot.PosAxis(pow));
+
+		// カメラ座標を移動させる
+		pos_ = VAdd(pos_, movePow_);
+
+	}
+
+	// カメラの上方向
+	cameraUp_ = Utility::DIR_U;
+
+}
+
+
+void Camera::Draw()
 {
 }
 
-void Camera::Release(void)
+void Camera::Release()
 {
 }
 
-VECTOR Camera::GetPos(void) const
+VECTOR Camera::GetPos() const
 {
 	return pos_;
 }
 
-VECTOR Camera::GetAngle(void) const
+VECTOR Camera::GetAngle() const
 {
 	return angle_;
 }
@@ -241,7 +283,7 @@ void Camera::SetLazyAngles(const VECTOR angles)
 
 }
 
-VECTOR Camera::GetTargetPos(void) const
+VECTOR Camera::GetTargetPos() const
 {
 	return targetPos_;
 }
@@ -285,21 +327,36 @@ void Camera::ChangeMode(MODE mode)
 		angle_ = { 0.0f,0.0f,0.0f };
 		lockOnAngles_ = { 0.0f, 0.0f, 0.0f };
 		break;
+	case Camera::MODE::SPECIAL:
+
+		movePow_ = { 0.0f,0.0f,0.0f };
+
+		pos_ = VAdd(playerTransform_->pos, { 0.0f,1500.0f,0.0f });
+
+		// 回転してない
+		targetPos_ = VAdd(playerTransform_->pos,{0.0f,1000.0f,0.0f});
+
+		// 回転している
+		targetPos_ = VAdd(playerTransform_->pos, playerTransform_->quaRot.PosAxis({ 0.0f,1000.0f,0.0f }));
+
+		specialMoveCnt_ = 0.0f;
+
+		break;
 	}
 
 }
 
-Quaternion Camera::GetRotY(void) const
+Quaternion Camera::GetRotY() const
 {
 	return rotY_;
 }
 
-bool Camera::GetLockOn(void)
+bool Camera::GetLockOn()
 {
 	return lockOn_;
 }
 
-Camera::MODE Camera::GetMode(void)
+Camera::MODE Camera::GetMode()
 {
 	return mode_;
 }
@@ -314,7 +371,7 @@ void Camera::SetStageID(const int modelId)
 	stageId_ = modelId;
 }
 
-void Camera::SetDefault(void)
+void Camera::SetDefault()
 {
 
 	// カメラの初期設定
@@ -336,7 +393,7 @@ void Camera::SetDefault(void)
 
 }
 
-void Camera::SetTargetPosFollowForward(void)
+void Camera::SetTargetPosFollowForward()
 {
 
 	// カメラ位置(プレイヤーからの相対座標で制御)
@@ -363,13 +420,13 @@ void Camera::SetTargetPosFollowForward(void)
 
 }
 
-void Camera::KeybordController(void)
+void Camera::KeyboardController()
 {
 
 	auto& ins = InputManager::GetInstance();
 
 	// 回転
-//-------------------------------------
+	//-------------------------------------
 	VECTOR axisDeg = Utility::VECTOR_ZERO;
 
 	// 画面の中心位置
@@ -504,7 +561,7 @@ void Camera::KeybordController(void)
 
 }
 
-void Camera::KeybordLockOnContoroller(void)
+void Camera::KeyboardLockOnController()
 {
 
 	auto& ins = InputManager::GetInstance();
@@ -564,7 +621,7 @@ void Camera::KeybordLockOnContoroller(void)
 
 }
 
-void Camera::GamePadController(void)
+void Camera::GamePadController()
 {
 
 	auto& ins = InputManager::GetInstance();
@@ -643,7 +700,7 @@ void Camera::GamePadController(void)
 
 }
 
-void Camera::GamePadLockOnContoroller(void)
+void Camera::GamePadLockOnController()
 {
 
 	auto& ins = InputManager::GetInstance();
@@ -704,7 +761,7 @@ void Camera::GamePadLockOnContoroller(void)
 
 }
 
-void Camera::CheckStageCollision(void)
+void Camera::CheckStageCollision()
 {
 
 	// 球体との衝突判定
@@ -757,7 +814,7 @@ void Camera::UpdateDebugImGui()
 
 }
 
-void Camera::LazyRotation(void)
+void Camera::LazyRotation()
 {
 
 	// プレイヤーが向いている方向にカメラを回転させる

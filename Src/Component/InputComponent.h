@@ -24,7 +24,7 @@ private:
 	std::unique_ptr<InputController> inputController_;
 
 	// 溜めパンチのカウンタ
-	float chargeCnt_;
+	float attackChargePunchCnt_;
 
 	// 移動処理
 	void Move();

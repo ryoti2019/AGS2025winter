@@ -9,7 +9,8 @@
 				"BODY_FRAME_NAME": "mixamorig:Hips",
 				"RUN_MOVE_POW": 300.0,
 				"ATTACK_MOVE_POW": 100.0,
-				"CHARGE_TIME": 1.0,
+				"ATTACK_CHARGE_PUNCH_TIME": 1.0,
+				"ATTACK_SPECIAL_PUNCH_COLLISION_TIME": 3.0,
 				"ANIM_INDEX": 0,
 				"SCALE": 1.0,
 				"INIT_ANGLE": 90.0,
@@ -86,6 +87,7 @@
 						"NAME": "ATTACK_SPECIAL_PUNCH",
 						"PATH": "Data/Model/Player/SpecilaAttack.mv1",
 						"SPEED": 20.0,
+						"ATTACK_START_FRAME": 27.0,
 						"DAMAGE": 500
 					},
 					{

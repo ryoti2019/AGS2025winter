@@ -32,7 +32,7 @@ public:
 	void Init();
 	void Init3D();
 	void Update(const float deltaTime);
-	void Draw();
+	void Draw(const float deltaTime);
 
 	// ƒŠƒ\[ƒX‚Ì”jŠü
 	void Destroy();

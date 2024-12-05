@@ -15,28 +15,31 @@
 Player::Player(const VECTOR& pos, const json& data)
 	:
 	ActorBase(pos, data),
-	JAB_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_JAB) - 1]["ATTACK_START_FRAME"]),
-	JAB_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_JAB) - 1]["ATTACK_END_FRAME"]),
-	JAB_DAMAGE(data["ANIM"][static_cast<int>(PlayerState::ATTACK_JAB) - 1]["DAMAGE"]),
-	STRAIGHT_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_STRAIGHT) - 1]["ATTACK_START_FRAME"]),
-	STRAIGHT_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_STRAIGHT) - 1]["ATTACK_END_FRAME"]),
-	STRAIGHT_DAMAGE(data["ANIM"][static_cast<int>(PlayerState::ATTACK_STRAIGHT) - 1]["DAMAGE"]),
-	HOOK_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_HOOK) - 1]["ATTACK_START_FRAME"]),
-	HOOK_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_HOOK) - 1]["ATTACK_END_FRAME"]),
-	HOOK_DAMAGE(data["ANIM"][static_cast<int>(PlayerState::ATTACK_HOOK) - 1]["DAMAGE"]),
-	LEFT_KICK_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_LEFT_KICK) - 1]["ATTACK_START_FRAME"]),
-	LEFT_KICK_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_LEFT_KICK) - 1]["ATTACK_END_FRAME"]),
-	LEFT_KICK_DAMAGE(data["ANIM"][static_cast<int>(PlayerState::ATTACK_LEFT_KICK) - 1]["DAMAGE"]),
-	RIGHT_KICK_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_RIGHT_KICK) - 1]["ATTACK_START_FRAME"]),
-	RIGHT_KICK_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_RIGHT_KICK) - 1]["ATTACK_END_FRAME"]),
-	RIGHT_KICK_DAMAGE(data["ANIM"][static_cast<int>(PlayerState::ATTACK_RIGHT_KICK) - 1]["DAMAGE"]),
-	UPPER_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_UPPER) - 1]["ATTACK_START_FRAME"]),
-	UPPER_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_UPPER) - 1]["ATTACK_END_FRAME"]),
-	UPPER_DAMAGE(data["ANIM"][static_cast<int>(PlayerState::ATTACK_UPPER) - 1]["DAMAGE"]),
-	CHARGE_PUNCH_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_CHARGE_PUNCH) - 1]["ATTACK_START_FRAME"]),
-	CHARGE_PUNCH_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_CHARGE_PUNCH) - 1]["ATTACK_END_FRAME"]),
-	CHARGE_PUNCH_DAMAGE(data["ANIM"][static_cast<int>(PlayerState::ATTACK_CHARGE_PUNCH) - 1]["DAMAGE"]),
-	CHARGE_TIME(data["CHARGE_TIME"])
+	ATTACK_JAB_START_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_JAB) - 1]["ATTACK_START_FRAME"]),
+	ATTACK_JAB_END_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_JAB) - 1]["ATTACK_END_FRAME"]),
+	ATTACK_JAB_DAMAGE(data["ANIM"][static_cast<int>(PlayerState::ATTACK_JAB) - 1]["DAMAGE"]),
+	ATTACK_STRAIGHT_START_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_STRAIGHT) - 1]["ATTACK_START_FRAME"]),
+	ATTACK_STRAIGHT_END_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_STRAIGHT) - 1]["ATTACK_END_FRAME"]),
+	ATTACK_STRAIGHT_DAMAGE(data["ANIM"][static_cast<int>(PlayerState::ATTACK_STRAIGHT) - 1]["DAMAGE"]),
+	ATTACK_HOOK_START_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_HOOK) - 1]["ATTACK_START_FRAME"]),
+	ATTACK_HOOK_END_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_HOOK) - 1]["ATTACK_END_FRAME"]),
+	ATTACK_HOOK_DAMAGE(data["ANIM"][static_cast<int>(PlayerState::ATTACK_HOOK) - 1]["DAMAGE"]),
+	ATTACK_LEFT_KICK_START_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_LEFT_KICK) - 1]["ATTACK_START_FRAME"]),
+	ATTACK_LEFT_KICK_END_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_LEFT_KICK) - 1]["ATTACK_END_FRAME"]),
+	ATTACK_LEFT_KICK_DAMAGE(data["ANIM"][static_cast<int>(PlayerState::ATTACK_LEFT_KICK) - 1]["DAMAGE"]),
+	ATTACK_RIGHT_KICK_START_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_RIGHT_KICK) - 1]["ATTACK_START_FRAME"]),
+	ATTACK_RIGHT_KICK_END_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_RIGHT_KICK) - 1]["ATTACK_END_FRAME"]),
+	ATTACK_RIGHT_KICK_DAMAGE(data["ANIM"][static_cast<int>(PlayerState::ATTACK_RIGHT_KICK) - 1]["DAMAGE"]),
+	ATTACK_UPPER_START_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_UPPER) - 1]["ATTACK_START_FRAME"]),
+	ATTACK_UPPER_END_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_UPPER) - 1]["ATTACK_END_FRAME"]),
+	ATTACK_UPPER_DAMAGE(data["ANIM"][static_cast<int>(PlayerState::ATTACK_UPPER) - 1]["DAMAGE"]),
+	ATTACK_CHARGE_PUNCH_START_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_CHARGE_PUNCH) - 1]["ATTACK_START_FRAME"]),
+	ATTACK_CHARGE_PUNCH_END_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_CHARGE_PUNCH) - 1]["ATTACK_END_FRAME"]),
+	ATTACK_CHARGE_PUNCH_DAMAGE(data["ANIM"][static_cast<int>(PlayerState::ATTACK_CHARGE_PUNCH) - 1]["DAMAGE"]),
+	ATTACK_CHARGE_PUNCH_TIME(data["ATTACK_CHARGE_PUNCH_TIME"]),
+	ATTACK_SPECIAL_PUNCH_START_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_SPECIAL_PUNCH) - 1]["ATTACK_START_FRAME"]),
+	ATTACK_SPECIAL_PUNCH_DAMAGE(data["ANIM"][static_cast<int>(PlayerState::ATTACK_SPECIAL_PUNCH) - 1]["DAMAGE"]),
+	ATTACK_SPECIAL_PUNCH_COLLISION_TIME(data["ATTACK_SPECIAL_PUNCH_COLLISION_TIME"])
 {
 
 	// 機能の初期化
@@ -47,6 +50,9 @@ Player::Player(const VECTOR& pos, const json& data)
 
 	// 関数ポインタの初期化
 	InitFunctionPointer();
+
+	//// 共通部分は基底クラスで初期化
+	//ActorBase::Create(pos);
 
 	// 共通部分は基底クラスで初期化
 	ActorBase::Init(pos);
@@ -61,6 +67,9 @@ Player::Player(const VECTOR& pos, const json& data)
 
 void Player::Init(const VECTOR& pos)
 {
+
+	// 共通部分は基底クラスで初期化
+	ActorBase::Init(pos);
 
 	// 入力用のコンポーネントを追加
 	inputComponent_ = std::make_unique<InputComponent>(std::dynamic_pointer_cast<Player>(GetThis()));
@@ -143,11 +152,17 @@ void Player::InitParameter()
 	// 体のフレーム番号を取得
 	collisionData_.body = MV1SearchFrame(transform_->modelId, BODY_FRAME.c_str());
 
+	// 必殺技の当たり判定の座標を設定
+	collisionData_.specialAttackPos = VAdd(transform_->pos, BODY_RELATIVE_CENTER_POS);
+
 	// 手足の衝突判定の半径
 	collisionData_.handAndFootCollisionRadius = HAND_AND_FOOT_COLLISION_RADIUS;
 
 	// 体の衝突判定の半径
 	collisionData_.bodyCollisionRadius = BODY_COLLISION_RADIUS;
+
+	// 必殺技の衝突判定の半径
+	collisionData_.specialAttackCollisionRadius = SPECIAL_ATTACK_COLLISION_RADIUS;
 
 	// 右手に攻撃判定があるかどうか
 	collisionData_.isRightHandAttack = false;
@@ -161,8 +176,11 @@ void Player::InitParameter()
 	// 左足に攻撃判定があるかどうか
 	collisionData_.isLeftFootAttack = false;
 
+	// 必殺技に攻撃判定があるかどうか
+	collisionData_.isSpecialAttack = false;
+
 	// 溜めパンチのカウンタ
-	chargeCnt_ = 0.0f;
+	attackChargePunchCnt_ = 0.0f;
 
 	// 走るときの移動量
 	RUN_MOVE_POW = jsonData_["RUN_MOVE_POW"];
@@ -242,7 +260,7 @@ void Player::Update(const float deltaTime)
 	}
 
 	// 状態ごとの更新
-	stateUpdate_();
+	stateUpdate_(deltaTime);
 
 	// アニメーション再生
 	animationController_->Update(deltaTime);
@@ -335,6 +353,20 @@ const bool Player::GetHitState()const
 
 }
 
+const bool Player::GetSuperArmorState() const
+{
+	// スーパーアーマー状態か判定
+	for (const auto state : superArmorState_)
+	{
+		if (state_ == state)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 bool Player::GetComboState()
 {
 
@@ -403,7 +435,7 @@ void Player::ChangeState(const PlayerState state)
 	if (preKey_ != key_)
 	{
 		// 溜めパンチのカウンタをリセット
-		chargeCnt_ = 0.0f;
+		attackChargePunchCnt_ = 0.0f;
 	}
 
 	// 前のアニメーションを保存
@@ -420,7 +452,7 @@ void Player::ChangeState(const PlayerState state)
 void Player::ChangeIdle(void)
 {
 
-	stateUpdate_ = std::bind(&Player::UpdateIdle, this);
+	stateUpdate_ = std::bind(&Player::UpdateIdle, this, std::placeholders::_1);
 
 	// 右手の攻撃判定をなくす
 	collisionData_.isRightHandAttack = false;
@@ -445,7 +477,7 @@ void Player::ChangeIdle(void)
 void Player::ChangeRun(void)
 {
 
-	stateUpdate_ = std::bind(&Player::UpdateRun, this);
+	stateUpdate_ = std::bind(&Player::UpdateRun, this, std::placeholders::_1);
 
 	// スピード
 	speed_ = RUN_MOVE_POW;
@@ -455,13 +487,13 @@ void Player::ChangeRun(void)
 void Player::ChangeJab()
 {
 
-	stateUpdate_ = std::bind(&Player::UpdateJab, this);
+	stateUpdate_ = std::bind(&Player::UpdateJab, this, std::placeholders::_1);
 
 	// 攻撃が当たっているかをリセットする
 	isAttackHit_ = false;
 
 	// ダメージ量
-	damage_ = JAB_DAMAGE;
+	damage_ = ATTACK_JAB_DAMAGE;
 
 	// スピード
 	speed_ = ATTACK_MOVE_POW;
@@ -471,13 +503,13 @@ void Player::ChangeJab()
 void Player::ChangeStraight()
 {
 
-	stateUpdate_ = std::bind(&Player::UpdateStraight, this);
+	stateUpdate_ = std::bind(&Player::UpdateStraight, this, std::placeholders::_1);
 
 	// 攻撃が当たっているかをリセットする
 	isAttackHit_ = false;
 
 	// ダメージ量
-	damage_ = STRAIGHT_DAMAGE;
+	damage_ = ATTACK_STRAIGHT_DAMAGE;
 
 	// スピード
 	speed_ = ATTACK_MOVE_POW;
@@ -487,13 +519,13 @@ void Player::ChangeStraight()
 void Player::ChangeHook()
 {
 
-	stateUpdate_ = std::bind(&Player::UpdateHook, this);
+	stateUpdate_ = std::bind(&Player::UpdateHook, this, std::placeholders::_1);
 
 	// 攻撃が当たっているかをリセットする
 	isAttackHit_ = false;
 
 	// ダメージ量
-	damage_ = HOOK_DAMAGE;
+	damage_ = ATTACK_HOOK_DAMAGE;
 
 	// スピード
 	speed_ = ATTACK_MOVE_POW;
@@ -503,13 +535,13 @@ void Player::ChangeHook()
 void Player::ChangeLeftKick()
 {
 
-	stateUpdate_ = std::bind(&Player::UpdateLeftKick, this);
+	stateUpdate_ = std::bind(&Player::UpdateLeftKick, this, std::placeholders::_1);
 
 	// 攻撃が当たっているかをリセットする
 	isAttackHit_ = false;
 
 	// ダメージ量
-	damage_ = LEFT_KICK_DAMAGE;
+	damage_ = ATTACK_LEFT_KICK_DAMAGE;
 
 	// スピード
 	speed_ = ATTACK_MOVE_POW;
@@ -519,13 +551,13 @@ void Player::ChangeLeftKick()
 void Player::ChangeRightKick()
 {
 
-	stateUpdate_ = std::bind(&Player::UpdateRightKick, this);
+	stateUpdate_ = std::bind(&Player::UpdateRightKick, this, std::placeholders::_1);
 
 	// 攻撃が当たっているかをリセットする
 	isAttackHit_ = false;
 
 	// ダメージ量
-	damage_ = RIGHT_KICK_DAMAGE;
+	damage_ = ATTACK_RIGHT_KICK_DAMAGE;
 
 	// スピード
 	speed_ = ATTACK_MOVE_POW;
@@ -535,13 +567,13 @@ void Player::ChangeRightKick()
 void Player::ChangeUpper()
 {
 
-	stateUpdate_ = std::bind(&Player::UpdateUpper, this);
+	stateUpdate_ = std::bind(&Player::UpdateUpper, this, std::placeholders::_1);
 
 	// 攻撃が当たっているかをリセットする
 	isAttackHit_ = false;
 
 	// ダメージ量
-	damage_ = UPPER_DAMAGE;
+	damage_ = ATTACK_UPPER_DAMAGE;
 
 	// スピード
 	speed_ = ATTACK_MOVE_POW;
@@ -551,7 +583,7 @@ void Player::ChangeUpper()
 void Player::ChangeChargePunch()
 {
 
-	stateUpdate_ = std::bind(&Player::UpdateChargePunch, this);
+	stateUpdate_ = std::bind(&Player::UpdateChargePunch, this, std::placeholders::_1);
 
 	// スピード
 	speed_ = ATTACK_MOVE_POW;
@@ -560,18 +592,45 @@ void Player::ChangeChargePunch()
 
 void Player::ChangeSpecialAttack()
 {
-	stateUpdate_ = std::bind(&Player::UpdateSpecialAttack, this);
+
+	stateUpdate_ = std::bind(&Player::UpdateSpecialAttack, this, std::placeholders::_1);
+
+	// 攻撃が当たっているかをリセットする
+	isAttackHit_ = false;
+
+	// ダメージ量
+	damage_ = ATTACK_SPECIAL_PUNCH_DAMAGE;
+
+	// 必殺技の当たり判定の座標を設定
+	collisionData_.specialAttackPos = VAdd(transform_->pos, BODY_RELATIVE_CENTER_POS);
+
+	// 必殺技の衝突判定が続く時間のカウンタをリセット
+	attackSpecialPunchCollisionCnt_ = 0.0f;
+
+	// 必殺技の当たり判定をリセット
+	collisionData_.isSpecialAttack = false;
+
+	// カメラを生成
+	std::weak_ptr<Camera> camera = SceneManager::GetInstance().GetCamera();
+	camera.lock()->ChangeMode(Camera::MODE::FOLLOW);
+
 }
 
 void Player::ChangePowerCharge()
 {
-	stateUpdate_ = std::bind(&Player::UpdatePowerCharge, this);
+
+	stateUpdate_ = std::bind(&Player::UpdatePowerCharge, this, std::placeholders::_1);
+
+	// カメラを生成
+	std::weak_ptr<Camera> camera = SceneManager::GetInstance().GetCamera();
+	camera.lock()->ChangeMode(Camera::MODE::SPECIAL);
+
 }
 
 void Player::ChangeHitHead()
 {
 
-	stateUpdate_ = std::bind(&Player::UpdateHitHead, this);
+	stateUpdate_ = std::bind(&Player::UpdateHitHead, this, std::placeholders::_1);
 
 	// プレイヤーの方向を求める
 	VECTOR vec = VSub(targetPos_, transform_->pos);
@@ -590,7 +649,7 @@ void Player::ChangeHitHead()
 void Player::ChangeHitBody()
 {
 
-	stateUpdate_ = std::bind(&Player::UpdateHitBody, this);
+	stateUpdate_ = std::bind(&Player::UpdateHitBody, this, std::placeholders::_1);
 
 	// プレイヤーの方向を求める
 	VECTOR vec = VSub(targetPos_, transform_->pos);
@@ -606,7 +665,7 @@ void Player::ChangeHitBody()
 
 }
 
-void Player::UpdateIdle(void)
+void Player::UpdateIdle(const float deltaTime)
 {
 
 	// 攻撃の入力を初期化
@@ -617,7 +676,7 @@ void Player::UpdateIdle(void)
 
 }
 
-void Player::UpdateRun(void)
+void Player::UpdateRun(const float deltaTime)
 {
 
 	if (state_ != PlayerState::RUN)
@@ -646,14 +705,14 @@ void Player::UpdateRun(void)
 
 }
 
-void Player::UpdateJab()
+void Player::UpdateJab(const float deltaTime)
 {
 
 	// 少し前にゆっくり移動
 	moveComponent_->Lerp();
 
 	// 攻撃判定があるフレーム
-	if (JAB_ATTACK_START_FRAME <= animationController_->GetStepAnim() && animationController_->GetStepAnim() <= JAB_ATTACK_END_FRAME)
+	if (ATTACK_JAB_START_FRAME <= animationController_->GetStepAnim() && animationController_->GetStepAnim() <= ATTACK_JAB_END_FRAME)
 	{
 		collisionData_.isLeftHandAttack = true;
 	}
@@ -670,14 +729,14 @@ void Player::UpdateJab()
 
 }
 
-void Player::UpdateStraight()
+void Player::UpdateStraight(const float deltaTime)
 {
 
 	// 少し前にゆっくり移動
 	moveComponent_->Lerp();
 
 	// 攻撃判定があるフレーム
-	if (STRAIGHT_ATTACK_START_FRAME <= animationController_->GetStepAnim() && animationController_->GetStepAnim() <= STRAIGHT_ATTACK_END_FRAME)
+	if (ATTACK_STRAIGHT_START_FRAME <= animationController_->GetStepAnim() && animationController_->GetStepAnim() <= ATTACK_STRAIGHT_END_FRAME)
 	{
 		collisionData_.isRightHandAttack = true;
 	}
@@ -694,14 +753,14 @@ void Player::UpdateStraight()
 
 }
 
-void Player::UpdateHook()
+void Player::UpdateHook(const float deltaTime)
 {
 
 	// 少し前にゆっくり移動
 	moveComponent_->Lerp();
 
 	// 攻撃判定があるフレーム
-	if (HOOK_ATTACK_START_FRAME <= animationController_->GetStepAnim() && animationController_->GetStepAnim() <= HOOK_ATTACK_END_FRAME)
+	if (ATTACK_HOOK_START_FRAME <= animationController_->GetStepAnim() && animationController_->GetStepAnim() <= ATTACK_HOOK_END_FRAME)
 	{
 		collisionData_.isLeftHandAttack = true;
 	}
@@ -718,14 +777,14 @@ void Player::UpdateHook()
 
 }
 
-void Player::UpdateLeftKick()
+void Player::UpdateLeftKick(const float deltaTime)
 {
 
 	// 少し前にゆっくり移動
 	moveComponent_->Lerp();
 
 	// 攻撃判定があるフレーム
-	if (LEFT_KICK_ATTACK_START_FRAME <= animationController_->GetStepAnim() && animationController_->GetStepAnim() <= LEFT_KICK_ATTACK_END_FRAME)
+	if (ATTACK_LEFT_KICK_START_FRAME <= animationController_->GetStepAnim() && animationController_->GetStepAnim() <= ATTACK_LEFT_KICK_END_FRAME)
 	{
 		collisionData_.isLeftFootAttack = true;
 	}
@@ -742,14 +801,14 @@ void Player::UpdateLeftKick()
 
 }
 
-void Player::UpdateRightKick()
+void Player::UpdateRightKick(const float deltaTime)
 {
 
 	// 少し前にゆっくり移動
 	moveComponent_->Lerp();
 
 	// 攻撃判定があるフレーム
-	if (RIGHT_KICK_ATTACK_START_FRAME <= animationController_->GetStepAnim() && animationController_->GetStepAnim() <= RIGHT_KICK_ATTACK_END_FRAME)
+	if (ATTACK_RIGHT_KICK_START_FRAME <= animationController_->GetStepAnim() && animationController_->GetStepAnim() <= ATTACK_RIGHT_KICK_END_FRAME)
 	{
 		collisionData_.isRightFootAttack = true;
 	}
@@ -766,14 +825,14 @@ void Player::UpdateRightKick()
 
 }
 
-void Player::UpdateUpper()
+void Player::UpdateUpper(const float deltaTime)
 {
 
 	// 少し前にゆっくり移動
 	moveComponent_->Lerp();
 
 	// 攻撃判定があるフレーム
-	if (UPPER_ATTACK_START_FRAME <= animationController_->GetStepAnim() && animationController_->GetStepAnim() <= UPPER_ATTACK_END_FRAME)
+	if (ATTACK_UPPER_START_FRAME <= animationController_->GetStepAnim() && animationController_->GetStepAnim() <= ATTACK_UPPER_END_FRAME)
 	{
 		collisionData_.isRightHandAttack = true;
 	}
@@ -790,14 +849,14 @@ void Player::UpdateUpper()
 
 }
 
-void Player::UpdateChargePunch()
+void Player::UpdateChargePunch(const float deltaTime)
 {
 
 	// 少し前にゆっくり移動
 	moveComponent_->Lerp();
 
 	// 攻撃判定があるフレーム
-	if (CHARGE_PUNCH_ATTACK_START_FRAME <= animationController_->GetStepAnim() && animationController_->GetStepAnim() <= CHARGE_PUNCH_ATTACK_END_FRAME)
+	if (ATTACK_CHARGE_PUNCH_START_FRAME <= animationController_->GetStepAnim() && animationController_->GetStepAnim() <= ATTACK_CHARGE_PUNCH_END_FRAME)
 	{
 		collisionData_.isRightHandAttack = true;
 	}
@@ -814,8 +873,22 @@ void Player::UpdateChargePunch()
 
 }
 
-void Player::UpdateSpecialAttack()
+void Player::UpdateSpecialAttack(const float deltaTime)
 {
+
+	// 攻撃判定があるフレーム
+	if (ATTACK_SPECIAL_PUNCH_START_FRAME <= animationController_->GetStepAnim() && ATTACK_SPECIAL_PUNCH_COLLISION_TIME >= attackSpecialPunchCollisionCnt_)
+	{
+
+		collisionData_.isSpecialAttack = true;
+
+		// 必殺技の当たり判定の座標設定
+		collisionData_.specialAttackPos = VAdd(collisionData_.specialAttackPos, VScale(transform_->quaRot.GetForward(), 1000.0f));
+
+		// 必殺技の衝突判定が続く時間のカウンタを加算
+		attackSpecialPunchCollisionCnt_ += deltaTime;
+
+	}
 
 	// 待機状態に遷移
 	if (animationController_->IsEndPlayAnimation())
@@ -825,7 +898,7 @@ void Player::UpdateSpecialAttack()
 
 }
 
-void Player::UpdatePowerCharge()
+void Player::UpdatePowerCharge(const float deltaTime)
 {
 
 	// 必殺技に遷移
@@ -836,7 +909,7 @@ void Player::UpdatePowerCharge()
 
 }
 
-void Player::UpdateHitHead()
+void Player::UpdateHitHead(const float deltaTime)
 {
 
 	// 待機状態に遷移
@@ -847,7 +920,7 @@ void Player::UpdateHitHead()
 
 }
 
-void Player::UpdateHitBody()
+void Player::UpdateHitBody(const float deltaTime)
 {
 
 	// 待機状態に遷移

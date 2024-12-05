@@ -33,70 +33,79 @@ public:
 	};
 
 	// ジャブの攻撃開始フレーム
-	const float JAB_ATTACK_START_FRAME;
+	const float ATTACK_JAB_START_FRAME;
 
 	// ジャブの攻撃終了フレーム
-	const float JAB_ATTACK_END_FRAME;
+	const float ATTACK_JAB_END_FRAME;
 
 	// ジャブのダメージ量
-	const int JAB_DAMAGE;
+	const int ATTACK_JAB_DAMAGE;
 
 	// ストレートの攻撃開始フレーム
-	const float STRAIGHT_ATTACK_START_FRAME;
+	const float ATTACK_STRAIGHT_START_FRAME;
 
 	// ストレートの攻撃終了フレーム
-	const float STRAIGHT_ATTACK_END_FRAME;
+	const float ATTACK_STRAIGHT_END_FRAME;
 
 	// ストレートのダメージ量
-	const int STRAIGHT_DAMAGE;
+	const int ATTACK_STRAIGHT_DAMAGE;
 
 	// フックの攻撃開始フレーム
-	const float HOOK_ATTACK_START_FRAME;
+	const float ATTACK_HOOK_START_FRAME;
 
 	// フックの攻撃終了フレーム
-	const float HOOK_ATTACK_END_FRAME;
+	const float ATTACK_HOOK_END_FRAME;
 
 	// フックのダメージ量
-	const int HOOK_DAMAGE;
+	const int ATTACK_HOOK_DAMAGE;
 
 	// 左キックの攻撃開始フレーム
-	const float LEFT_KICK_ATTACK_START_FRAME;
+	const float ATTACK_LEFT_KICK_START_FRAME;
 
 	// 左キックの攻撃終了フレーム
-	const float LEFT_KICK_ATTACK_END_FRAME;
+	const float ATTACK_LEFT_KICK_END_FRAME;
 
 	// 左キックのダメージ量
-	const int LEFT_KICK_DAMAGE;
+	const int ATTACK_LEFT_KICK_DAMAGE;
 
 	// 右キックの攻撃開始フレーム
-	const float RIGHT_KICK_ATTACK_START_FRAME;
+	const float ATTACK_RIGHT_KICK_START_FRAME;
 
 	// 右キックの攻撃終了フレーム
-	const float RIGHT_KICK_ATTACK_END_FRAME;
+	const float ATTACK_RIGHT_KICK_END_FRAME;
 
 	// 右キックのダメージ量
-	const int RIGHT_KICK_DAMAGE;
+	const int ATTACK_RIGHT_KICK_DAMAGE;
 
 	// アッパーの攻撃開始フレーム
-	const float UPPER_ATTACK_START_FRAME;
+	const float ATTACK_UPPER_START_FRAME;
 
 	// アッパーの攻撃終了フレーム
-	const float UPPER_ATTACK_END_FRAME;
+	const float ATTACK_UPPER_END_FRAME;
 
 	// アッパーのダメージ量
-	const int UPPER_DAMAGE;
+	const int ATTACK_UPPER_DAMAGE;
 
 	// 溜めパンチの攻撃開始フレーム
-	const float CHARGE_PUNCH_ATTACK_START_FRAME;
+	const float ATTACK_CHARGE_PUNCH_START_FRAME;
 
 	// 溜めパンチの攻撃終了フレーム
-	const float CHARGE_PUNCH_ATTACK_END_FRAME;
+	const float ATTACK_CHARGE_PUNCH_END_FRAME;
 
 	// 溜めパンチのダメージ量
-	const int CHARGE_PUNCH_DAMAGE;
+	const int ATTACK_CHARGE_PUNCH_DAMAGE;
 
 	// 溜めパンチを出すためにボタン押す長さ
-	const float CHARGE_TIME;
+	const float ATTACK_CHARGE_PUNCH_TIME;
+
+	// 必殺技の攻撃開始フレーム
+	const float ATTACK_SPECIAL_PUNCH_START_FRAME;
+
+	// 必殺技のダメージ量
+	const int ATTACK_SPECIAL_PUNCH_DAMAGE;
+
+	// 必殺技の攻撃が続く時間
+	const float ATTACK_SPECIAL_PUNCH_COLLISION_TIME;
 
 	Player(const VECTOR& pos, const json& data);
 
@@ -111,8 +120,11 @@ public:
 	// 攻撃種類を取得
 	const std::vector<int> GetTotalAttackTypes()const;
 
-	// 攻撃を受けている状態を取得
+	// 攻撃を受けている状態かを取得
 	const bool GetHitState()const override;
+
+	// スーパーアーマー状態かを取得
+	const bool GetSuperArmorState()const override;
 
 	// コンボ中の状態かを取得
 	bool GetComboState();
@@ -127,13 +139,13 @@ public:
 	const int GetDamage()const override { return damage_; }
 
 	// 溜め攻撃のカウンタを取得
-	float GetChargeCnt()const { return chargeCnt_; };
+	float GetChargeCnt()const { return attackChargePunchCnt_; };
 
 	// 溜め攻撃のカウンタを設定
-	void SetChargeCnt(const float cnt) { chargeCnt_ = cnt; }
+	void SetChargeCnt(const float cnt) { attackChargePunchCnt_ = cnt; }
 
 	// 溜め攻撃のカウンタを加算
-	void AddChargeCnt(const float cnt) { chargeCnt_ += cnt; }
+	void AddChargeCnt(const float cnt) { attackChargePunchCnt_ += cnt; }
 
 	// 攻撃を入力しているか取得
 	const std::map<PlayerState, bool>& GetIsCombo()const { return isCombo_; }
@@ -183,6 +195,13 @@ private:
 		{PlayerState::HIT_BODY}
 	};
 
+	// 体にヒットする敵の攻撃
+	const std::vector<PlayerState> superArmorState_ =
+	{
+		{PlayerState::POWER_CHARGE},
+		{PlayerState::ATTACK_SPECIAL_PUNCH}
+	};
+
 	// 頭にヒットする敵の攻撃
 	const std::vector<EnemyState> hitHeadState_ =
 	{
@@ -202,7 +221,10 @@ private:
 	std::map<PlayerState, bool> isCombo_;
 
 	// 溜めパンチのカウンタ
-	float chargeCnt_;
+	float attackChargePunchCnt_;
+
+	// 必殺技の衝突判定が続く時間のカウンタ
+	float attackSpecialPunchCollisionCnt_;
 
 	// 状態遷移
 	std::unordered_map<PlayerState, std::function<void()>> stateChange_;
@@ -221,20 +243,20 @@ private:
 	void ChangeHitBody();
 
 	// 状態の更新
-	std::function<void()> stateUpdate_;
-	void UpdateIdle();
-	void UpdateRun();
-	void UpdateJab();
-	void UpdateStraight();
-	void UpdateHook();
-	void UpdateLeftKick();
-	void UpdateRightKick();
-	void UpdateUpper();
-	void UpdateChargePunch();
-	void UpdateSpecialAttack();
-	void UpdatePowerCharge();
-	void UpdateHitHead();
-	void UpdateHitBody();
+	std::function<void(const float deltaTime)> stateUpdate_;
+	void UpdateIdle(const float deltaTime);
+	void UpdateRun(const float deltaTime);
+	void UpdateJab(const float deltaTime);
+	void UpdateStraight(const float deltaTime);
+	void UpdateHook(const float deltaTime);
+	void UpdateLeftKick(const float deltaTime);
+	void UpdateRightKick(const float deltaTime);
+	void UpdateUpper(const float deltaTime);
+	void UpdateChargePunch(const float deltaTime);
+	void UpdateSpecialAttack(const float deltaTime);
+	void UpdatePowerCharge(const float deltaTime);
+	void UpdateHitHead(const float deltaTime);
+	void UpdateHitBody(const float deltaTime);
 
 	// 機能の初期化
 	void InitFunction()override;

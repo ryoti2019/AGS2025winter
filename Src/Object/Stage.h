@@ -10,6 +10,8 @@ public:
 
 	~Stage() = default;
 
+	void Init(const VECTOR& pos) override;
+
 private:
 
 

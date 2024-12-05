@@ -165,7 +165,8 @@ private:
 	// 吹っ飛ばされるプレイヤーの攻撃
 	const std::vector<PlayerState>& hitFlyState_ =
 	{
-		{PlayerState::ATTACK_RIGHT_KICK}
+		{PlayerState::ATTACK_RIGHT_KICK},
+		{PlayerState::ATTACK_SPECIAL_PUNCH}
 	};
 
 	// 上に飛ばされるプレイヤーの攻撃
