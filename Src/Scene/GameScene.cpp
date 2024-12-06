@@ -22,6 +22,9 @@ void GameScene::Init()
 	// 衝突判定管理クラス
 	collisionManager_ = std::make_shared<CollisionManager>();
 
+	// 衝突判定管理クラスにカメラの情報を設定
+	collisionManager_->SetCamera(SceneManager::GetInstance().GetCamera());
+
 	// アクターの生成クラス
 	actorCreate_ = std::make_shared<ActorCreate>();
 

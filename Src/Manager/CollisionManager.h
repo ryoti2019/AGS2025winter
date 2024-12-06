@@ -1,5 +1,6 @@
 #pragma once
 #include "../Object/ActorBase.h"
+#include "../Manager/Camera.h"
 
 class CollisionManager
 {
@@ -16,10 +17,19 @@ public:
 	const float ENEMY_PUSH_FORCE;
 
 	// ステージとの当たり判定で押し返す力
-	const float STAGE_PUSH_FORCE;
+	const float OBJECT_COLLISION_PUSH_FORCE;
+
+	// ステージとカメラの当たり判定で押し返す力
+	const float CAMERA_COLLISION_PUSH_FORCE;
 
 	// ほぼ真下への向き
 	const float DOWN_DIR;
+
+	// カメラの衝突判定で使う長さ
+	const float LEN_CAMERACOLLISION_LINE;
+
+	// カメラの衝突判定で一番短い長さ
+	const float MIN_LEN_CAMERA_COLLISION_LINE;
 
 	CollisionManager();
 	~CollisionManager() = default;
@@ -30,7 +40,13 @@ public:
 	// 当たり判定を見たいものを登録する
 	void Register(const std::shared_ptr<ActorBase>& actor);
 
+	// カメラの情報を設定
+	void SetCamera(const std::weak_ptr<Camera>& camera);
+
 private:
+
+	// カメラ
+	std::weak_ptr<Camera> camera_;
 
 	// ２つのActorの当たり判定を見るために組み合わせを登録する型
 	struct collisionChannnelInfo
@@ -66,6 +82,9 @@ private:
 		}
 	};
 
+	//壁衝突検知用の線分の長さ
+	float  collisionLineStageCamera_;
+
 	// どれだけ重なっているか
 	VECTOR overlap_;
 
@@ -81,8 +100,14 @@ private:
 	// 当たった時の処理
 	void OnAttackCollision(const std::shared_ptr<ActorBase>& attacker, const std::shared_ptr<ActorBase>& target);
 
-	// プレイヤーと敵のステージとの当たり判定
+	// ステージとの当たり判定
 	void CheckStageCollision();
+
+	// アクターとステージとの当たり判定
+	void CheckActorsAndStageCollision();
+
+	// カメラとステージとの当たり判定
+	void CheckCameraAndStageCollision();
 
 	// プレイヤーや敵同士が重なってた時の当たり判定
 	void CheckResolveCollision();

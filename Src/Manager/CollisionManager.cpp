@@ -10,8 +10,12 @@ CollisionManager::CollisionManager()
 	ATTACK_START_NUM(3),
 	STAGE_COLLISION_COUNT(10),
 	ENEMY_PUSH_FORCE(10.0f),
-	STAGE_PUSH_FORCE(30.0f),
-	DOWN_DIR(0.9f)
+	OBJECT_COLLISION_PUSH_FORCE(30.0f),
+	CAMERA_COLLISION_PUSH_FORCE(1000.0f),
+	DOWN_DIR(0.9f),
+	LEN_CAMERACOLLISION_LINE(500.0f),
+	MIN_LEN_CAMERA_COLLISION_LINE(1.0f),
+	collisionLineStageCamera_(0.0f)
 {
 
 }
@@ -26,7 +30,7 @@ void CollisionManager::Update(const float deltaTime)
 	// プレイヤーと敵の攻撃の当たり判定をチェック
 	CheckAttackCollision(deltaTime);
 
-	// プレイヤーと敵のステージの当たり判定をチェック
+	// ステージとの当たり判定をチェック
 	CheckStageCollision();
 
 	// プレイヤーと敵同士が重ならないようにする当たり判定をチェック
@@ -53,6 +57,11 @@ void CollisionManager::Register(const std::shared_ptr<ActorBase>& actor)
 		collisionElem->second.emplace_back(actor);
 	}
 
+}
+
+void CollisionManager::SetCamera(const std::weak_ptr<Camera>& camera)
+{
+	camera_ = camera;
 }
 
 void CollisionManager::CheckAttackCollision(const float deltaTime)
@@ -201,6 +210,17 @@ void CollisionManager::OnAttackCollision(const std::shared_ptr<ActorBase>& attac
 void CollisionManager::CheckStageCollision()
 {
 
+	// アクターとステージとの当たり判定
+	CheckActorsAndStageCollision();
+
+	// カメラとステージとの当たり判定
+	CheckCameraAndStageCollision();
+
+}
+
+void CollisionManager::CheckActorsAndStageCollision()
+{
+
 	// 衝突しているか判定する
 	for (const collisionChannnelInfo& info : stageCollisionChannelList_)
 	{
@@ -258,7 +278,7 @@ void CollisionManager::CheckStageCollision()
 							VECTOR pos = target->GetTransform()->pos;
 
 							// 法線の方向にちょっとだけ移動させる
-							pos = VAdd(pos, VScale(hit.Normal, STAGE_PUSH_FORCE));
+							pos = VAdd(pos, VScale(hit.Normal, OBJECT_COLLISION_PUSH_FORCE));
 
 							// カプセルも一緒に移動させる
 							target->SetPos(pos);
@@ -296,6 +316,65 @@ void CollisionManager::CheckStageCollision()
 			if (target->GetTransform()->pos.y < -19500.0f)
 			{
 				target->SetPos({ target->GetTransform()->pos.x, -19500.0f,target->GetTransform()->pos.z });
+			}
+
+		}
+	}
+
+}
+
+void CollisionManager::CheckCameraAndStageCollision()
+{
+
+	// ステージ
+	const auto& stages = collisionActorData_.find(ActorType::STAGE);
+
+	// プレイヤー
+	const auto& players = collisionActorData_.find(ActorType::PLAYER);
+
+	// 中身が入っているか確認
+	if (stages == collisionActorData_.end())return;
+	if (players == collisionActorData_.end())return;
+
+	// カメラ座標
+	auto cPos = camera_.lock()->GetPos();
+
+	// 注視点
+	auto tPos = camera_.lock()->GetTargetPos();
+
+	// カメラから注視点に向けてのベクトル
+	auto cDir = VNorm(VSub(tPos, cPos));
+
+	for (const std::shared_ptr<ActorBase>& stage : stages->second)
+	{
+
+		// ステージと衝突しているか判定
+		MV1_COLL_RESULT_POLY hit = MV1CollCheck_Line(stage->GetTransform()->modelId, -1, camera_.lock()->GetTargetPos(), camera_.lock()->GetPos());
+
+		if (hit.HitFlag)
+		{
+
+			// 当たった地点に座標を設定
+			camera_.lock()->SetPos(VAdd(hit.HitPosition, VScale(cDir, 10.0f)));
+
+			// カメラ座標
+			auto tmpCPos = camera_.lock()->GetPos();
+
+			// 注視点
+			auto tmpTPos = camera_.lock()->GetTargetPos();
+
+			// ワールドの上方向と地面の法線が近しい方向だったらカメラの上昇補正を処理しない
+			if (VDot({ 0.0f,1.0f,0.0f }, hit.Normal) > 0.9f)return;
+
+			// カメラと注視点の距離を計算
+			auto disPow2 = Utility::SqrMagnitude(tmpCPos, tmpTPos);
+
+			// 距離
+			float len = 5000.0f;
+			if (disPow2 < len * len)
+			{
+				auto l = Utility::Lerp(tmpCPos, VAdd(tmpCPos, { 0.0f,len ,0.0f }), 0.1f);
+				camera_.lock()->SetPos(l);
 			}
 
 		}
@@ -388,3 +467,4 @@ void CollisionManager::ResolveEnemysCollision(const std::shared_ptr<ActorBase>& 
 	}
 
 }
+

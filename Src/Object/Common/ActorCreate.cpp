@@ -147,7 +147,7 @@ void ActorCreate::Update()
 			{
 				float x = std::rand() % 10000;
 				float z = std::rand() % 10000;
-				actorManager->ActiveData(ActorType::ENEMY, { -3100.0f + x,-15000,-22000.0f + z });
+				actorManager->ActiveData(ActorType::ENEMY, { -27000.0f + x,-15000,-22000.0f + z });
 			}
 
 		}

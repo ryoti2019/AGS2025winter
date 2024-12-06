@@ -22,12 +22,8 @@ public:
 	// 敵からカメラの位置までの相対座標
 	static constexpr VECTOR LOCAL_E2C_POS = { 0.0f, 500.0f,-400.0f };
 
-	static constexpr VECTOR LOCAL_POS = { 0.0f,300.0f,-500.0f };
-
 	// 敵から注視点までの相対座標
 	static constexpr VECTOR LOCAL_E2T_POS = { 0.0f,0.0f,500.0f };
-
-	static constexpr VECTOR LOCAL_LOCK_ON_F2C_POS = { 0.0f,300.0f,-500.0f };
 
 	// カメラの高さ
 	static constexpr float HEIGHT = 250.0f;
@@ -49,6 +45,9 @@ public:
 
 	// 必殺技時のカメラが動く時間
 	static constexpr float SPECIAL_MOVE_MAX_TIME = 2.0f;
+
+	// 当たり判定の半径
+	static constexpr float COLLISION_RADIUS = 100.0f;
 
 	// カメラモード
 	enum class MODE
@@ -80,16 +79,16 @@ public:
 	void SetBeforeDrawFollow();
 	
 	// 追従対象の設定
-	void SetPlayer(const std::shared_ptr<Transform> follow);
+	void SetPlayer(const std::shared_ptr<Transform>& follow);
 
 	// 追従対象の設定
-	void SetEnemy(const std::shared_ptr<Transform> follow);
+	void SetEnemy(const std::shared_ptr<Transform>& follow);
 
 	// ロックオンの設定
 	void SetLockOn(const bool lockOn);
 
 	// カメラモードの変更
-	void ChangeMode(MODE mode);
+	void ChangeMode(const MODE& mode);
 
 	// 遅延回転
 	void LazyRotation();
@@ -100,19 +99,20 @@ public:
 	// ステージのモデルIDを設定
 	void SetStageID(const int modelId);
 
-	Camera::MODE GetMode();
+	// モードを取得
+	const Camera::MODE& GetMode()const { return mode_; }
 
-	VECTOR GetPos() const;
+	// カメラ座標を取得
+	const VECTOR& GetPos()const { return pos_; }
 
-	VECTOR GetAngle() const;
+	// カメラ座標を設定
+	void SetPos(const VECTOR& pos) { pos_ = pos; }
 
-	VECTOR GetTargetPos() const;
+	// 注視点を取得
+	const VECTOR& GetTargetPos()const { return targetPos_; }
 
-	Quaternion GetRotY() const;
-
-	// ロックオンの取得
-	bool GetLockOn();
-
+	// 角度を取得
+	const VECTOR& GetAngle()const { return angle_; }
 
 private:
 
@@ -201,11 +201,7 @@ private:
 	void GamePadController();
 	void GamePadLockOnController();
 
-	// ステージとの当たり判定
-	void CheckStageCollision();
-
 	// ImGuiのデバッグ描画の更新
 	void UpdateDebugImGui();
 
 };
-

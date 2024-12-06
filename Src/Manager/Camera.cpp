@@ -265,16 +265,6 @@ void Camera::Release()
 {
 }
 
-VECTOR Camera::GetPos() const
-{
-	return pos_;
-}
-
-VECTOR Camera::GetAngle() const
-{
-	return angle_;
-}
-
 void Camera::SetLazyAngles(const VECTOR angles)
 {
 
@@ -283,17 +273,12 @@ void Camera::SetLazyAngles(const VECTOR angles)
 
 }
 
-VECTOR Camera::GetTargetPos() const
-{
-	return targetPos_;
-}
-
-void Camera::SetPlayer(const std::shared_ptr<Transform> follow)
+void Camera::SetPlayer(const std::shared_ptr<Transform>& follow)
 {
 	playerTransform_ = follow;
 }
 
-void Camera::SetEnemy(const std::shared_ptr<Transform> follow)
+void Camera::SetEnemy(const std::shared_ptr<Transform>& follow)
 {
 	enemyTransform_ = follow;
 }
@@ -303,7 +288,7 @@ void Camera::SetLockOn(const bool lockOn)
 	lockOn_ = lockOn;
 }
 
-void Camera::ChangeMode(MODE mode)
+void Camera::ChangeMode(const MODE& mode)
 {
 
 	// カメラモードの変更
@@ -348,21 +333,6 @@ void Camera::ChangeMode(MODE mode)
 		break;
 	}
 
-}
-
-Quaternion Camera::GetRotY() const
-{
-	return rotY_;
-}
-
-bool Camera::GetLockOn()
-{
-	return lockOn_;
-}
-
-Camera::MODE Camera::GetMode()
-{
-	return mode_;
 }
 
 void Camera::AddLockOnAnglesY(float rad)
@@ -762,27 +732,6 @@ void Camera::GamePadLockOnController()
 
 		rotXY_ = rotY_.Mult(Quaternion::AngleAxis(lockOnAngles_.x, Utility::AXIS_X));
 	}
-
-}
-
-void Camera::CheckStageCollision()
-{
-
-	// 球体との衝突判定
-	auto hits = MV1CollCheck_Sphere(
-		stageId_, -1, pos_, 20.0f);
-
-	if (hits.HitNum > 0)
-	{
-		pHit_ = true;
-	}
-	else
-	{
-		pHit_ = false;
-	}
-
-	// 検出した地面ポリゴン情報の後始末
-	MV1CollResultPolyDimTerminate(hits);
 
 }
 
