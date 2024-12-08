@@ -66,13 +66,13 @@ void Player::Init(const VECTOR& pos)
 {
 
 	// 入力用のコンポーネントを追加
-	inputComponent_ = std::make_unique<InputComponent>(std::dynamic_pointer_cast<Player>(GetThis()));
+	inputComponent_ = std::make_unique<InputComponent>(std::static_pointer_cast<Player>(GetThis()));
 
 	// 移動用のコンポーネントを追加
-	moveComponent_ = std::make_shared<MoveComponent>(std::dynamic_pointer_cast<Player>(GetThis()));
+	moveComponent_ = std::make_unique<MoveComponent>(std::static_pointer_cast<Player>(GetThis()));
 
 	// 描画用のコンポーネント
-	drawComponent_ = std::make_shared<DrawComponent>(std::dynamic_pointer_cast<Player>(GetThis()));
+	drawComponent_ = std::make_unique<DrawComponent>(std::static_pointer_cast<Player>(GetThis()));
 
 }
 

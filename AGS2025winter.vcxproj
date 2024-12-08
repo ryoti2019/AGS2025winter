@@ -141,7 +141,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Src\Component\AIComponent.cpp" />
+    <ClCompile Include="Src\Component\BossAIComponent.cpp" />
+    <ClCompile Include="Src\Component\EnemyAIComponent.cpp" />
     <ClCompile Include="Src\Component\Component.cpp" />
     <ClCompile Include="Src\Component\DrawComponent.cpp" />
     <ClCompile Include="Src\Component\InputComponent.cpp" />
@@ -155,10 +156,12 @@
     <ClCompile Include="Src\Lib\ImGui\imgui_widgets.cpp" />
     <ClCompile Include="Src\Manager\CollisionManager.cpp" />
     <ClCompile Include="Src\Lib\ImGuiWrapper.cpp" />
+    <ClCompile Include="Src\Object\Boss.cpp" />
     <ClCompile Include="Src\Object\Common\ActorCreate.cpp" />
     <ClCompile Include="Src\Object\Enemy.cpp" />
     <ClCompile Include="Src\Object\Common\AnimationController.cpp" />
     <ClCompile Include="Src\Object\Common\InputController.cpp" />
+    <ClCompile Include="Src\Object\EnemyBase.cpp" />
     <ClCompile Include="Src\Object\Player.cpp" />
     <ClCompile Include="Src\Manager\ActorManager.cpp" />
     <ClCompile Include="Src\Object\ActorBase.cpp" />
@@ -182,7 +185,8 @@
     <ClCompile Include="Src\Object\Stage.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Src\Component\AIComponent.h" />
+    <ClInclude Include="Src\Component\BossAIComponent.h" />
+    <ClInclude Include="Src\Component\EnemyAIComponent.h" />
     <ClInclude Include="Src\Component\Component.h" />
     <ClInclude Include="Src\Component\DrawComponent.h" />
     <ClInclude Include="Src\Component\InputComponent.h" />
@@ -242,10 +246,13 @@
     <ClInclude Include="Src\Lib\nlohmann\thirdparty\hedley\hedley.hpp" />
     <ClInclude Include="Src\Lib\nlohmann\thirdparty\hedley\hedley_undef.hpp" />
     <ClInclude Include="Src\Lib\ImGuiWrapper.h" />
+    <ClInclude Include="Src\Object\Boss.h" />
+    <ClInclude Include="Src\Object\BossState.h" />
     <ClInclude Include="Src\Object\Common\ActorCreate.h" />
     <ClInclude Include="Src\Object\Enemy.h" />
     <ClInclude Include="Src\Object\Common\AnimationController.h" />
     <ClInclude Include="Src\Object\Common\InputController.h" />
+    <ClInclude Include="Src\Object\EnemyBase.h" />
     <ClInclude Include="Src\Object\EnemyState.h" />
     <ClInclude Include="Src\Object\Player.h" />
     <ClInclude Include="Src\Manager\ActorManager.h" />

@@ -10,10 +10,12 @@ public:
 
 	~Stage() = default;
 
-	void Init(const VECTOR& pos) override;
+	void Init(const VECTOR& pos)override;
 
 private:
 
+	// ステージのコリジョンモデル
+	std::shared_ptr<Transform> collision_;
 
 };
 

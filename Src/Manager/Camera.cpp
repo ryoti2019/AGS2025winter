@@ -407,8 +407,8 @@ void Camera::KeyboardController()
 	Vector2 center = { Application::SCREEN_SIZE_X / 2,Application::SCREEN_SIZE_Y / 2 };
 
 	// キーボード操作
-	if (ins.IsNew(KEY_INPUT_UP)) { axisDeg.x += 1.0f; }
-	if (ins.IsNew(KEY_INPUT_DOWN)) { axisDeg.x += -1.0f; }
+	if (ins.IsNew(KEY_INPUT_UP)) { axisDeg.x += -1.0f; }
+	if (ins.IsNew(KEY_INPUT_DOWN)) { axisDeg.x += 1.0f; }
 	if (ins.IsNew(KEY_INPUT_LEFT)) { axisDeg.y += -1.0f; }
 	if (ins.IsNew(KEY_INPUT_RIGHT)) { axisDeg.y += 1.0f; }
 

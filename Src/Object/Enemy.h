@@ -1,14 +1,14 @@
 #pragma once
 #include <DxLib.h>
 #include <functional>
-#include "../Component/AIComponent.h"
-#include "ActorBase.h"
+#include "../Component/EnemyAIComponent.h"
+#include "EnemyBase.h"
 #include "EnemyState.h"
 #include "Player.h"
 
 class AIComponent;
 
-class Enemy : public ActorBase
+class Enemy : public EnemyBase
 {
 
 public:
@@ -30,32 +30,11 @@ public:
 		"DEATH"
 	};
 
-	// パンチの攻撃開始フレーム
-	const float PUNCH_ATTACK_START_FRAME;
-
-	// パンチの攻撃終了フレーム
-	const float PUNCH_ATTACK_END_FRAME;
-
-	// キックの攻撃開始フレーム
-	const float KICK_ATTACK_START_FRAME;
-
-	// キックの攻撃終了フレーム
-	const float KICK_ATTACK_END_FRAME;
-
-	// クールタイム
-	const float COOL_TIME;
-
-	// プレイヤーから一定距離離れたら移動してくる距離
-	const float ACTIVATION_DISTANCE;
-
 	// 吹っ飛ぶ時の上方向の力
 	const float HIT_FLY_UP_VEC_POW;
 
 	// 吹っ飛ぶ時の移動量
 	const float HIT_FLY_MOVE_POW;
-
-	// 追いかける最大の時間
-	const float TRACKING_MAX_TIME;
 
 	// まっすぐ飛んでいく時間
 	const float KNOCK_BACK_TIME;
@@ -107,28 +86,13 @@ public:
 	// ダメージ量を取得
 	const int GetDamage()const override { return damage_; }
 
-	// 行動を決めたかどうかを取得
-	const bool GetIsActionDecided()const { return isActionDecided_; }
-
-	// 行動を決めたかどうかを設定
-	void SetIsActionDecided(const bool isActionDecided) { isActionDecided_ = isActionDecided; }
-
-	// クールタイムを取得
-	const float GetCoolTime()const { return coolTime_; }
-
-	// クールタイムを設定
-	void SetCoolTime(const float coolTime) { coolTime_ = coolTime; }
-
-	// プレイヤーの座標を取得
-	std::optional<VECTOR> GetPlayerPos();
-
 	// 状態遷移
-	void ChangeState(EnemyState state);
+	void ChangeState(const EnemyState state);
 
 private:
 
-	// 入力用のコンポーネント
-	std::unique_ptr<AIComponent> aiComponent_;
+	// AIコンポーネント
+	std::unique_ptr<EnemyAIComponent> aiComponent_;
 
 	// 攻撃中の状態
 	const std::vector<EnemyState>& attackState_ =
@@ -209,17 +173,8 @@ private:
 	// 状態
 	EnemyState state_;
 
-	// 行動を決めたかどうか
-	bool isActionDecided_;
-
 	// すでに角度が変わっているかどうか
 	bool isChangeAngle_;
-
-	// クールタイム
-	float coolTime_;
-
-	// 追いかけている時間
-	float trackingTime_;
 
 	// 敵がまっすく飛んでいくときのカウンタ
 	float knockBackCnt_;

@@ -9,6 +9,7 @@
 #include "../Scene/GameScene.h"
 #include "../Object/Player.h"
 #include "../Object/Enemy.h"
+#include "../Object/Boss.h"
 #include "../Object/Stage.h"
 #include "ActorCreate.h"
 
@@ -49,7 +50,7 @@ ActorCreate::ActorCreate()
 	std::shared_ptr<ActorManager> actorManager = gameScene->GetActorManager();
 
 	// ステージ
-	const auto& stageData = objectData[2]["StageData"];
+	const auto& stageData = objectData[3]["StageData"];
 
 	// ステージを生成
 	actorManager->CreateActor<Stage>(stageData, { 0.0f,0.0f,0.0f });
@@ -59,8 +60,11 @@ ActorCreate::ActorCreate()
 	const auto& playerData = objectData[0]["PlayerData"];
 
 	// プレイヤーを生成
-	actorManager->CreateActor<Player>(playerData, { -80000.0f,-19500.0f,25900.0f });
-	actorManager->ActiveData(ActorType::PLAYER, { -80000.0f,-19500.0f,25900.0f });
+	//actorManager->CreateActor<Player>(playerData, { -80000.0f,-19500.0f,25900.0f });
+	//actorManager->ActiveData(ActorType::PLAYER, { -80000.0f,-19500.0f,25900.0f });
+
+	actorManager->CreateActor<Player>(playerData, { -10800.0f,-19500.0f,-132000.0f });
+	actorManager->ActiveData(ActorType::PLAYER, { -10800.0f,-19500.0f,-132000.0f });
 
 	// 敵
 	const auto& enemyData = objectData[1]["EnemyData"];
@@ -70,8 +74,15 @@ ActorCreate::ActorCreate()
 	{
 		float x = std::rand() % 10;
 		float z = std::rand() % 10;
-		actorManager->CreateActor<Enemy>(enemyData, { 0.0f,-1500.0f,0.0f });
+		actorManager->CreateActor<Enemy>(enemyData, { 0.0f,0.0f,0.0f });
 	}
+
+	// ボス
+	const auto& bossData = objectData[2]["BossData"];
+
+	// ボスを生成
+	actorManager->CreateActor<Boss>(bossData, { -10800.0f,-10000.0f,-150000.0f });
+	actorManager->ActiveData(ActorType::BOSS, { -10800.0f,-10000.0f,-150000.0f });
 
 }
 

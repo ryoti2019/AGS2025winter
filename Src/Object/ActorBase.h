@@ -19,6 +19,7 @@ enum class ActorType {
 	NONE = -1,
 	PLAYER,
 	ENEMY,
+	BOSS,
 	STAGE,
 	MAX
 };
@@ -364,6 +365,9 @@ public:
 	// JSONデータ
 	const json& GetJsonData()const { return jsonData_; }
 
+	// 衝突判定のモデルIDを取得
+	const int GetCollisionModelId()const { return collisionModelId_; }
+
 protected:
 
 	// リソース管理
@@ -373,10 +377,10 @@ protected:
 	std::unique_ptr<AnimationController> animationController_;
 
 	// 移動用のコンポーネント
-	std::shared_ptr<MoveComponent> moveComponent_;
+	std::unique_ptr<MoveComponent> moveComponent_;
 
 	// 描画用のコンポーネント
-	std::shared_ptr<DrawComponent> drawComponent_;
+	std::unique_ptr<DrawComponent> drawComponent_;
 
 	// モデル制御の基本情報
 	std::shared_ptr<Transform> transform_;
@@ -423,6 +427,9 @@ protected:
 	// モデルID
 	int modelId_;
 
+	// 衝突判定のモデルID
+	int collisionModelId_;
+
 	// ダメージ量
 	int damage_;
 
@@ -455,7 +462,7 @@ protected:
 	
 	// ポインタの取得
 	const std::shared_ptr<ActorBase>& GetThis() { return shared_from_this(); };
-	
+
 	// 機能の初期化
 	virtual void InitFunction();
 

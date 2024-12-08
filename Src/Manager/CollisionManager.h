@@ -60,7 +60,9 @@ private:
 	{
 		{
 			{ActorType::PLAYER,ActorType::ENEMY},
-			{ActorType::ENEMY,ActorType::PLAYER}
+			{ActorType::PLAYER,ActorType::BOSS},
+			{ActorType::ENEMY,ActorType::PLAYER},
+			{ActorType::BOSS,ActorType::PLAYER}
 		}
 	};
 
@@ -69,7 +71,8 @@ private:
 	{
 		{
 			{ActorType::PLAYER,ActorType::STAGE},
-			{ActorType::ENEMY,ActorType::STAGE}
+			{ActorType::ENEMY,ActorType::STAGE},
+			{ActorType::BOSS,ActorType::STAGE}
 		}
 	};
 
@@ -78,7 +81,9 @@ private:
 	{
 		{
 			{ActorType::PLAYER,ActorType::ENEMY},
-			{ActorType::ENEMY,ActorType::ENEMY}
+			{ActorType::PLAYER,ActorType::BOSS},
+			{ActorType::ENEMY,ActorType::ENEMY},
+			{ActorType::ENEMY,ActorType::BOSS},
 		}
 	};
 

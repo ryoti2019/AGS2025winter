@@ -4,20 +4,14 @@
 #include "../Manager/CollisionManager.h"
 #include "../Manager/ActorManager.h"
 #include "../Scene/GameScene.h"
+#include "../Object/EnemyBase.h"
 #include "Enemy.h"
 
 Enemy::Enemy(const VECTOR& pos, const json& data)
 	:
-	ActorBase(pos, data),
-	PUNCH_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(EnemyState::ATTACK_PUNCH) - 1]["ATTACK_START_FRAME"]),
-	PUNCH_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(EnemyState::ATTACK_PUNCH) - 1]["ATTACK_END_FRAME"]),
-	KICK_ATTACK_START_FRAME(data["ANIM"][static_cast<int>(EnemyState::ATTACK_KICK) - 1]["ATTACK_START_FRAME"]),
-	KICK_ATTACK_END_FRAME(data["ANIM"][static_cast<int>(EnemyState::ATTACK_KICK) - 1]["ATTACK_END_FRAME"]),
-	COOL_TIME(data["COOL_TIME"]),
-	ACTIVATION_DISTANCE(data["ACTIVATION_DISTANCE"]),
+	EnemyBase(pos, data),
 	HIT_FLY_UP_VEC_POW(data["HIT_FLY_UP_VEC_POW"]),
 	HIT_FLY_MOVE_POW(data["HIT_FLY_MOVE_POW"]),
-	TRACKING_MAX_TIME(data["TRACKING_MAX_TIME"]),
 	KNOCK_BACK_TIME(data["KNOCK_BACK_TIME"]),
 	KNOCK_BACK_HEIGHT_OFFSET(data["KNOCK_BACK_HEIGHT_OFFSET"]),
 	FLINCH_UP_UP_VEC_POW(data["FLINCH_UP_UP_VEC_POW"]),
@@ -43,6 +37,9 @@ Enemy::Enemy(const VECTOR& pos, const json& data)
 	// パラメータの初期化
 	InitParameter();
 
+	// 共通部分は基底クラスで初期化
+	ActorBase::Init(pos);
+
 	// アニメーションの初期化
 	InitAnimation();
 
@@ -57,11 +54,14 @@ void Enemy::Init(const VECTOR& pos)
 	// モデルID
 	modelId_ = resMng_.LoadModelDuplicate(ResourceManager::SRC::ENEMY);
 
-	// 共通部分は基底クラスで初期化
+	// アクターの共通部分の初期化
 	ActorBase::Init(pos);
 
 	// 関数ポインタの初期化
 	InitFunctionPointer();
+
+	// 敵同士の共通部分の初期化
+	EnemyBase::Init();
 
 	// パラメータの初期化
 	InitParameter();
@@ -69,14 +69,14 @@ void Enemy::Init(const VECTOR& pos)
 	// アニメーションの初期化
 	InitAnimation();
 
-	// 入力用のコンポーネントを追加
-	aiComponent_ = std::make_unique<AIComponent>(std::dynamic_pointer_cast<Enemy>(GetThis()));
+	// AIコンポーネントを追加
+	aiComponent_ = std::make_unique<EnemyAIComponent>(std::static_pointer_cast<Enemy>(GetThis()));
 
 	// 移動用のコンポーネントを追加
-	moveComponent_ = std::make_shared<MoveComponent>(std::dynamic_pointer_cast<Enemy>(GetThis()));
+	moveComponent_ = std::make_unique<MoveComponent>(std::static_pointer_cast<Enemy>(GetThis()));
 
 	// 描画用のコンポーネント
-	drawComponent_ = std::make_shared<DrawComponent>(std::dynamic_pointer_cast<Enemy>(GetThis()));
+	drawComponent_ = std::make_unique<DrawComponent>(std::static_pointer_cast<Enemy>(GetThis()));
 
 }
 
@@ -141,6 +141,18 @@ void Enemy::InitParameter()
 	// 相手の座標
 	targetPos_ = playerPos.value();
 
+	// パンチの攻撃開始フレーム
+	PUNCH_ATTACK_START_FRAME = jsonData_["ANIM"][static_cast<int>(EnemyState::ATTACK_PUNCH) - 1]["ATTACK_START_FRAME"];
+
+	// パンチの攻撃終了フレーム
+	PUNCH_ATTACK_END_FRAME = jsonData_["ANIM"][static_cast<int>(EnemyState::ATTACK_PUNCH) - 1]["ATTACK_END_FRAME"];
+
+	// キックの攻撃開始フレーム
+	KICK_ATTACK_START_FRAME = jsonData_["ANIM"][static_cast<int>(EnemyState::ATTACK_KICK) - 1]["ATTACK_START_FRAME"];
+
+	// キックの攻撃終了フレーム
+	KICK_ATTACK_END_FRAME = jsonData_["ANIM"][static_cast<int>(EnemyState::ATTACK_KICK) - 1]["ATTACK_END_FRAME"];
+
 	// 走るときの移動量
 	RUN_MOVE_POW = jsonData_["RUN_MOVE_POW"];
 
@@ -150,17 +162,11 @@ void Enemy::InitParameter()
 	// アニメーション番号
 	ANIM_INDEX = jsonData_["ANIM_INDEX"];
 
-	// クールタイム
-	coolTime_ = 0.0f;
-
 	// 追いかけている時間
 	trackingTime_ = 0.0f;
 
 	// 敵がまっすく飛んでいくときのカウンタ
 	knockBackCnt_ = 0.0f;
-
-	// 行動を決めたかどうか
-	isActionDecided_ = false;
 
 	// すでに角度が変わっているかどうか
 	isChangeAngle_ = false;
@@ -519,34 +525,7 @@ void Enemy::AnimationFrame()
 
 }
 
-std::optional<VECTOR> Enemy::GetPlayerPos()
-{
-
-	// ゲームシーンの情報を持ってくる
-	std::shared_ptr<GameScene> gameScene =
-		std::dynamic_pointer_cast<GameScene>(SceneManager::GetInstance().GetNowScene());
-
-	// NULLチェック
-	if (!gameScene)
-	{
-		return std::nullopt;
-	}
-
-	// アクターマネージャーを取得
-	auto actorManager = gameScene->GetActorManager();
-
-	// 追従対象
-	auto players = actorManager->GetActiveActorData().find(ActorType::PLAYER);
-
-	// プレイヤーの座標を取得
-	for (const auto& player : players->second)
-	{
-		return player->GetTransform()->pos;
-	}
-
-}
-
-void Enemy::ChangeState(EnemyState state)
+void Enemy::ChangeState(const EnemyState state)
 {
 
 	// 状態遷移

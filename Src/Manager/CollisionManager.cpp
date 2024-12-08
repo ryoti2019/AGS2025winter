@@ -4,6 +4,7 @@
 #include <cmath>
 #include <DxLib.h>
 #include "CollisionManager.h"
+#include "../Object/Stage.h"
 
 CollisionManager::CollisionManager()
 	:
@@ -246,7 +247,7 @@ void CollisionManager::CheckActorsAndStageCollision()
 
 				// カプセルとの衝突判定
 				auto hits = MV1CollCheck_Capsule(
-					stage->GetTransform()->modelId, -1,
+					stage->GetCollisionModelId(), -1,
 					target->GetCollisionData().bodyCapsuleUpPos, target->GetCollisionData().bodyCapsuleDownPos, target->GetCollisionData().bodyCollisionRadius);
 
 				// 衝突した複数のポリゴンと衝突回避するまで、
@@ -294,7 +295,7 @@ void CollisionManager::CheckActorsAndStageCollision()
 				
 				// 地面との衝突
 				auto hit = MV1CollCheck_Line(
-					stage->GetTransform()->modelId, -1,
+					stage->GetCollisionModelId(), -1,
 					VAdd(target->GetCollisionData().bodyCapsuleUpPos, VECTOR(0.0f,target->GetCollisionData().bodyCollisionRadius,0.0f)),
 					VAdd(target->GetCollisionData().bodyCapsuleDownPos, VECTOR(0.0f, -target->GetCollisionData().bodyCollisionRadius, 0.0f)));
 
@@ -313,10 +314,10 @@ void CollisionManager::CheckActorsAndStageCollision()
 			}
 
 			// もし地面を貫通して下に行ってしまったとき
-			if (target->GetTransform()->pos.y < -19500.0f)
-			{
-				target->SetPos({ target->GetTransform()->pos.x, -19500.0f,target->GetTransform()->pos.z });
-			}
+			//if (target->GetTransform()->pos.y < -19500.0f)
+			//{
+			//	target->SetPos({ target->GetTransform()->pos.x, -19500.0f,target->GetTransform()->pos.z });
+			//}
 
 		}
 	}
@@ -349,7 +350,7 @@ void CollisionManager::CheckCameraAndStageCollision()
 	{
 
 		// ステージと衝突しているか判定
-		MV1_COLL_RESULT_POLY hit = MV1CollCheck_Line(stage->GetTransform()->modelId, -1, camera_.lock()->GetTargetPos(), camera_.lock()->GetPos());
+		MV1_COLL_RESULT_POLY hit = MV1CollCheck_Line(stage->GetCollisionModelId(), -1, camera_.lock()->GetTargetPos(), camera_.lock()->GetPos());
 
 		if (hit.HitFlag)
 		{
@@ -364,7 +365,8 @@ void CollisionManager::CheckCameraAndStageCollision()
 			auto tmpTPos = camera_.lock()->GetTargetPos();
 
 			// ワールドの上方向と地面の法線が近しい方向だったらカメラの上昇補正を処理しない
-			if (VDot({ 0.0f,1.0f,0.0f }, hit.Normal) > 0.9f)return;
+			auto a = VDot({ 0.0f,1.0f,0.0f }, hit.Normal);
+			if (a >0.9f)return;
 
 			// カメラと注視点の距離を計算
 			auto disPow2 = Utility::SqrMagnitude(tmpCPos, tmpTPos);

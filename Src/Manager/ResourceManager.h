@@ -47,9 +47,21 @@ public:
 
 #pragma endregion
 
+#pragma region ボスのアニメーション
+
+		BOSS,
+		BOSS_IDLE,
+		BOSS_RUN,
+		BOSS_PUNCH,
+		BOSS_KICK,
+		BOSS_SONIC_BOOM,
+
+#pragma endregion
+
 #pragma region ステージ
 
-		STAGE
+		STAGE_MODEL,
+		STAGE_COLLISION_MODEL
 
 #pragma endregion
 

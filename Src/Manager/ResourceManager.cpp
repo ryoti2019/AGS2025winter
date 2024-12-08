@@ -136,11 +136,43 @@ void ResourceManager::Init(void)
 
 #pragma endregion
 
+#pragma region ボスのアニメーション
+
+	// ボスのモデル
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Boss/Boss.mv1");
+	resourcesMap_.emplace(SRC::BOSS, res);
+
+	// ボスの待機アニメーション
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Boss/Idle.mv1");
+	resourcesMap_.emplace(SRC::BOSS_IDLE, res);
+
+	// ボスの走るアニメーション
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Boss/Run.mv1");
+	resourcesMap_.emplace(SRC::BOSS_RUN, res);
+
+	// ボスのパンチアニメーション
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Boss/Punch.mv1");
+	resourcesMap_.emplace(SRC::BOSS_PUNCH, res);
+
+	// ボスのキックアニメーション
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Boss/Kick.mv1");
+	resourcesMap_.emplace(SRC::BOSS_KICK, res);
+
+	// ボスのソニックブームアニメーション
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Boss/SonicBoom.mv1");
+	resourcesMap_.emplace(SRC::BOSS_SONIC_BOOM, res);
+
+#pragma endregion
+
 #pragma region ステージ
 
-	// 敵のモデル
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Stage/Stage.mv1");
-	resourcesMap_.emplace(SRC::STAGE, res);
+	// ステージのモデル
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Stage/Building.mv1");
+	resourcesMap_.emplace(SRC::STAGE_MODEL, res);
+
+	// ステージの衝突判定モデル
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Stage/Collision.mv1");
+	resourcesMap_.emplace(SRC::STAGE_COLLISION_MODEL, res);
 
 #pragma endregion
 

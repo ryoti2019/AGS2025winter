@@ -48,4 +48,7 @@ void DrawComponent::DrawDebug()
 	//	VAdd(actor_->GetCollisionData().bodyCapsuleUpPos,VGet(0.0f, actor_->GetCollisionData().bodyCollisionRadius,0.0f)),
 	//	VAdd(actor_->GetCollisionData().bodyCapsuleDownPos, VGet(0.0f, -actor_->GetCollisionData().bodyCollisionRadius, 0.0f)), 0x00ff00);
 
+	// ステージの当たり判定モデルの描画
+	//MV1DrawModel(actor_->GetCollisionModelId());
+
 }
