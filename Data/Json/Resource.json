@@ -1,0 +1,204 @@
+{
+  "ResourceData": [
+    {
+      "ModelData": {
+        "Player": [
+          {
+            "TYPE": 3,
+            "PATH": "Player/Player.mv1",
+            "SRC": 0
+          },
+          {
+            "TYPE": 3,
+            "PATH": "Player/Idle.mv1",
+            "SRC": 1
+          },
+          {
+            "TYPE": 3,
+            "PATH": "Player/Run.mv1",
+            "SRC": 2
+          },
+          {
+            "TYPE": 3,
+            "PATH": "Player/Jab.mv1",
+            "SRC": 3
+          },
+          {
+            "TYPE": 3,
+            "PATH": "Player/Straight.mv1",
+            "SRC": 4
+          },
+          {
+            "TYPE": 3,
+            "PATH": "Player/Hook.mv1",
+            "SRC": 5
+          },
+          {
+            "TYPE": 3,
+            "PATH": "Player/LeftKick.mv1",
+            "SRC": 6
+          },
+          {
+            "TYPE": 3,
+            "PATH": "Player/RightKick.mv1",
+            "SRC": 7
+          },
+          {
+            "TYPE": 3,
+            "PATH": "Player/Upper.mv1",
+            "SRC": 8
+          },
+          {
+            "TYPE": 3,
+            "PATH": "Player/ChargePunch.mv1",
+            "SRC": 9
+          },
+          {
+            "TYPE": 3,
+            "PATH": "Player/SpecialAttack.mv1",
+            "SRC": 10
+          },
+          {
+            "TYPE": 3,
+            "PATH": "Player/PowerUp.mv1",
+            "SRC": 11
+          },
+          {
+            "TYPE": 3,
+            "PATH": "Player/HitHead.mv1",
+            "SRC": 12
+          },
+          {
+            "TYPE": 3,
+            "PATH": "Player/HitBody.mv1",
+            "SRC": 13
+          }
+        ],
+        "Enemy": [
+          {
+            "TYPE": 3,
+            "PATH": "Enemy/Enemy.mv1",
+            "SRC": 14
+          },
+          {
+            "TYPE": 3,
+            "PATH": "Enemy/Idle.mv1",
+            "SRC": 15
+          },
+          {
+            "TYPE": 3,
+            "PATH": "Enemy/Run.mv1",
+            "SRC": 16
+          },
+          {
+            "TYPE": 3,
+            "PATH": "Enemy/Punch.mv1",
+            "SRC": 17
+          },
+          {
+            "TYPE": 3,
+            "PATH": "Enemy/Kick.mv1",
+            "SRC": 18
+          },
+          {
+            "TYPE": 3,
+            "PATH": "Enemy/HitHead.mv1",
+            "SRC": 19
+          },
+          {
+            "TYPE": 3,
+            "PATH": "Enemy/HitBody.mv1",
+            "SRC": 20
+          },
+          {
+            "TYPE": 3,
+            "PATH": "Enemy/HitFly.mv1",
+            "SRC": 21
+          },
+          {
+            "TYPE": 3,
+            "PATH": "Enemy/FlinchUp.mv1",
+            "SRC": 22
+          },
+          {
+            "TYPE": 3,
+            "PATH": "Enemy/KnockBack.mv1",
+            "SRC": 23
+          },
+          {
+            "TYPE": 3,
+            "PATH": "Enemy/KipUp.mv1",
+            "SRC": 24
+          },
+          {
+            "TYPE": 3,
+            "PATH": "Enemy/Death.mv1",
+            "SRC": 25
+          }
+        ],
+        "Boss": [
+          {
+            "TYPE": 3,
+            "PATH": "Boss/Boss.mv1",
+            "SRC": 26
+          },
+          {
+            "TYPE": 3,
+            "PATH": "Boss/Idle.mv1",
+            "SRC": 27
+          },
+          {
+            "TYPE": 3,
+            "PATH": "Boss/Run.mv1",
+            "SRC": 28
+          },
+          {
+            "TYPE": 3,
+            "PATH": "Boss/Punch.mv1",
+            "SRC": 29
+          },
+          {
+            "TYPE": 3,
+            "PATH": "Boss/Kick.mv1",
+            "SRC": 30
+          },
+          {
+            "TYPE": 3,
+            "PATH": "Boss/Projectile.mv1",
+            "SRC": 31
+          }
+        ],
+        "Stage": [
+          {
+            "TYPE": 3,
+            "PATH": "Stage/Building.mv1",
+            "SRC": 32
+          },
+          {
+            "TYPE": 3,
+            "PATH": "Stage/Collision.mv1",
+            "SRC": 33
+          }
+        ]
+      },
+      "EffectData": {
+        "Player": [
+
+        ],
+        "Enemy": [
+
+        ],
+        "Boss": [
+          {
+            "TYPE": 4,
+            "PATH": "Stage/Collision.mv1",
+            "SRC": 34
+          }
+        ],
+        "Stage": [
+
+        ]
+      }
+    }
+  ]
+}

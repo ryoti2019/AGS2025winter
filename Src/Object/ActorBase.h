@@ -70,8 +70,8 @@ public:
 		// 体全体の中心座標
 		VECTOR bodyPos;
 
-		// 必殺技の球体の中心座標
-		VECTOR specialAttackPos;
+		// 飛び道具の球体の中心座標
+		VECTOR projectilePos;
 
 #pragma endregion
 
@@ -137,8 +137,8 @@ public:
 		// 体の当たり判定の半径
 		float bodyCollisionRadius;
 
-		// 必殺技の当たり判定の半径
-		float specialAttackCollisionRadius;
+		// 飛び道具の当たり判定の半径
+		float projectileCollisionRadius;
 
 #pragma endregion
 
@@ -156,8 +156,8 @@ public:
 		// 左足に攻撃判定があるかどうか
 		bool isLeftFootAttack;
 
-		// 必殺技に当たり判定があるかどうか
-		bool isSpecialAttack;
+		// 飛び道具に当たり判定があるかどうか
+		bool isProjectileAttack;
 
 #pragma endregion
 

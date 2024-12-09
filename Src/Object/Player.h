@@ -179,13 +179,13 @@ private:
 	};
 
 	// ƒRƒ“ƒ{’†‚Ì”»’è
-	const std::vector<PlayerState> comboState_=
+	const std::vector<PlayerState> comboState_ =
 	{
 		{PlayerState::ATTACK_JAB},
-		{ PlayerState::ATTACK_STRAIGHT },
-		{ PlayerState::ATTACK_HOOK },
-		{ PlayerState::ATTACK_LEFT_KICK },
-		{ PlayerState::ATTACK_RIGHT_KICK },
+		{PlayerState::ATTACK_STRAIGHT},
+		{PlayerState::ATTACK_HOOK},
+		{PlayerState::ATTACK_LEFT_KICK},
+		{PlayerState::ATTACK_RIGHT_KICK},
 	};
 
 	// UŒ‚‚ğó‚¯‚Ä‚¢‚éó‘Ô
