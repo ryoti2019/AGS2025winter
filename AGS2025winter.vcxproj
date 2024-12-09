@@ -158,6 +158,7 @@
     <ClCompile Include="Src\Lib\ImGuiWrapper.cpp" />
     <ClCompile Include="Src\Object\Boss.cpp" />
     <ClCompile Include="Src\Object\Common\ActorCreate.cpp" />
+    <ClCompile Include="Src\Object\Common\EffekseerController.cpp" />
     <ClCompile Include="Src\Object\Enemy.cpp" />
     <ClCompile Include="Src\Object\Common\AnimationController.cpp" />
     <ClCompile Include="Src\Object\Common\InputController.cpp" />
@@ -249,6 +250,7 @@
     <ClInclude Include="Src\Object\Boss.h" />
     <ClInclude Include="Src\Object\BossState.h" />
     <ClInclude Include="Src\Object\Common\ActorCreate.h" />
+    <ClInclude Include="Src\Object\Common\EffekseerController.h" />
     <ClInclude Include="Src\Object\Enemy.h" />
     <ClInclude Include="Src\Object\Common\AnimationController.h" />
     <ClInclude Include="Src\Object\Common\InputController.h" />

@@ -37,7 +37,7 @@ AnimationController::~AnimationController(void)
 	MV1DeleteModel(modelId_);
 }
 
-void AnimationController::Add(const std::string state, const std::string& path, float startStep,
+void AnimationController::Add(const std::string state,float startStep,
 	float speed, int animHandle, bool isLoop, int animIndex, bool isReverse)
 {
 	// 1つのアニメーションデータの情報を入れていく

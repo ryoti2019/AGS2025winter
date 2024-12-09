@@ -1,6 +1,7 @@
 #pragma once
 #include <map>
 #include <string>
+#include "../Lib/nlohmann/json.hpp"
 #include "Resource.h"
 
 class ResourceManager
@@ -120,7 +121,7 @@ private:
 	std::map<SRC, Resource*> loadedMap_;
 
 	// リソースの初期化
-	void InitResource(const nlohmann::json_abi_v3_11_3::json data);
+	void InitResource(const std::string& pathName, const nlohmann::json_abi_v3_11_3::json jsonData);
 
 	// デフォルトコンストラクタをprivateにして、
 	// 外部から生成できない様にする

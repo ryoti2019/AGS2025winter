@@ -87,7 +87,7 @@ void BossAIComponent::Attack(const float deltaTime)
 	std::mt19937 gen(rd());
 
 	// 指定の範囲でランダムな数を取得
-	std::uniform_int_distribution<> dist_int(0, 2);
+	std::uniform_int_distribution<> dist_int(2, 2);
 	int number = dist_int(gen);
 
 	// プレイヤーの座標

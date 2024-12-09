@@ -19,17 +19,14 @@
 				"ANIM": [
 					{
 						"NAME": "IDLE",
-						"PATH": "Data/Model/Player/Idle.mv1",
 						"SPEED": 30.0
 					},
 					{
 						"NAME": "RUN",
-						"PATH": "Data/Model/Player/Run.mv1",
 						"SPEED": 30.0
 					},
 					{
 						"NAME": "ATTACK_JAB",
-						"PATH": "Data/Model/Player/Jab.mv1",
 						"SPEED": 50.0,
 						"ATTACK_START_FRAME": 12.0,
 						"ATTACK_END_FRAME": 18.0,
@@ -37,7 +34,6 @@
 					},
 					{
 						"NAME": "ATTACK_STRAIGHT",
-						"PATH": "Data/Model/Player/Straight.mv1",
 						"SPEED": 60.0,
 						"ATTACK_START_FRAME": 3.0,
 						"ATTACK_END_FRAME": 10.0,
@@ -45,7 +41,6 @@
 					},
 					{
 						"NAME": "ATTACK_HOOK",
-						"PATH": "Data/Model/Player/Hook.mv1",
 						"SPEED": 40.0,
 						"ATTACK_START_FRAME": 6.0,
 						"ATTACK_END_FRAME": 12.0,
@@ -53,7 +48,6 @@
 					},
 					{
 						"NAME": "ATTACK_LEFT_KICK",
-						"PATH": "Data/Model/Player/LeftKick.mv1",
 						"SPEED": 40.0,
 						"ATTACK_START_FRAME": 8.0,
 						"ATTACK_END_FRAME": 13.0,
@@ -61,7 +55,6 @@
 					},
 					{
 						"NAME": "ATTACK_RIGHT_KICK",
-						"PATH": "Data/Model/Player/RightKick.mv1",
 						"SPEED": 40.0,
 						"ATTACK_START_FRAME": 7.0,
 						"ATTACK_END_FRAME": 20.0,
@@ -69,7 +62,6 @@
 					},
 					{
 						"NAME": "ATTACK_UPPER",
-						"PATH": "Data/Model/Player/Upper.mv1",
 						"SPEED": 50.0,
 						"ATTACK_START_FRAME": 8.0,
 						"ATTACK_END_FRAME": 15.0,
@@ -77,7 +69,6 @@
 					},
 					{
 						"NAME": "ATTACK_CHARGE_PUNCH",
-						"PATH": "Data/Model/Player/ChargePunch.mv1",
 						"SPEED": 50.0,
 						"ATTACK_START_FRAME": 30.0,
 						"ATTACK_END_FRAME": 36.0,
@@ -85,24 +76,20 @@
 					},
 					{
 						"NAME": "ATTACK_SPECIAL_PUNCH",
-						"PATH": "Data/Model/Player/SpecilaAttack.mv1",
 						"SPEED": 20.0,
 						"ATTACK_START_FRAME": 27.0,
 						"DAMAGE": 500
 					},
 					{
 						"NAME": "POWER_CHARGE",
-						"PATH": "Data/Model/Player/ChargePunch.mv1",
 						"SPEED": 20.0
 					},
 					{
 						"NAME": "HIT_HEAD",
-						"PATH": "Data/Model/Player/HitHead.mv1",
 						"SPEED": 50.0
 					},
 					{
 						"NAME": "HIT_BODY",
-						"PATH": "Data/Model/Player/HitBody.mv1",
 						"SPEED": 30.0
 					}
 				]
@@ -139,17 +126,14 @@
 				"ANIM": [
 					{
 						"NAME": "IDLE",
-						"PATH": "Data/Model/Enemy/Idle.mv1",
 						"SPEED": 30.0
 					},
 					{
 						"NAME": "RUN",
-						"PATH": "Data/Model/Enemy/Run.mv1",
 						"SPEED": 30.0
 					},
 					{
 						"NAME": "ATTACK_PUNCH",
-						"PATH": "Data/Model/Enemy/Punch.mv1",
 						"SPEED": 30.0,
 						"ATTACK_START_FRAME": 26.0,
 						"ATTACK_END_FRAME": 35.0,
@@ -157,7 +141,6 @@
 					},
 					{
 						"NAME": "ATTACK_KICK",
-						"PATH": "Data/Model/Enemy/Kick.mv1",
 						"SPEED": 30.0,
 						"ATTACK_START_FRAME": 15.0,
 						"ATTACK_END_FRAME": 22.0,
@@ -165,37 +148,30 @@
 					},
 					{
 						"NAME": "HIT_HEAD",
-						"PATH": "Data/Model/Enemy/HitHead.mv1",
 						"SPEED": 50.0
 					},
 					{
 						"NAME": "HIT_BODY",
-						"PATH": "Data/Model/Enemy/HitBody.mv1",
 						"SPEED": 30.0
 					},
 					{
 						"NAME": "HIT_FLY",
-						"PATH": "Data/Model/Enemy/HitFly.mv1",
 						"SPEED": 30.0
 					},
 					{
 						"NAME": "HIT_FLINCH_UP",
-						"PATH": "Data/Model/Enemy/FlinchUp.mv1",
 						"SPEED": 30.0
 					},
 					{
 						"NAME": "HIT_KNOCK_BACK",
-						"PATH": "Data/Model/Enemy/KnockBack.mv1",
 						"SPEED": 30.0
 					},
 					{
 						"NAME": "KIP_UP",
-						"PATH": "Data/Model/Enemy/KipUp.mv1",
 						"SPEED": 30.0
 					},
 					{
 						"NAME": "DEATH",
-						"PATH": "Data/Model/Enemy/Death.mv1",
 						"SPEED": 30.0
 					}
 				]
@@ -211,7 +187,7 @@
 				"ATTACK_MOVE_POW": 0.0,
 				"RUN_MOVE_POW": 100.0,
 				"ACTIVATION_DISTANCE": 1000.0,
-				"COOL_TIME": 5.0,
+				"COOL_TIME": 1.0,
 				"TRACKING_MAX_TIME": 5.0,
 				"ATTACK_PROJECTILE_COLLISION_TIME": 5.0,
 				"ANIM_INDEX": 0,
@@ -222,17 +198,14 @@
 				"ANIM": [
 					{
 						"NAME": "IDLE",
-						"PATH": "Data/Model/Boss/Idle.mv1",
 						"SPEED": 30.0
 					},
 					{
 						"NAME": "RUN",
-						"PATH": "Data/Model/Boss/Run.mv1",
 						"SPEED": 30.0
 					},
 					{
 						"NAME": "ATTACK_PUNCH",
-						"PATH": "Data/Model/Boss/Punch.mv1",
 						"SPEED": 30.0,
 						"ATTACK_START_FRAME": 26.0,
 						"ATTACK_END_FRAME": 35.0,
@@ -240,7 +213,6 @@
 					},
 					{
 						"NAME": "ATTACK_KICK",
-						"PATH": "Data/Model/Boss/Kick.mv1",
 						"SPEED": 30.0,
 						"ATTACK_START_FRAME": 25.0,
 						"ATTACK_END_FRAME": 32.0,
@@ -248,10 +220,15 @@
 					},
 					{
 						"NAME": "ATTACK_PROJECTILE",
-						"PATH": "Data/Model/Boss/Projectile.mv1",
 						"SPEED": 30.0,
 						"ATTACK_START_FRAME": 20.0,
 						"DAMAGE": 10
+					}
+				],
+				"EFFECT": [
+					{
+						"NAME": "PROJECTILE",
+						"SCALE": 1000.0
 					}
 				]
 			}

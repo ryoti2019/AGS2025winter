@@ -1,4 +1,5 @@
 #include <DxLib.h>
+#include <EffekseerForDXLib.h>
 #include "Resource.h"
 
 Resource::Resource(void)
@@ -68,6 +69,9 @@ void Resource::Load(void)
 	case Resource::TYPE::MODEL:
 		// ???f??
 		handleId_ = MV1LoadModel(path_.c_str());
+		break;
+	case Resource::TYPE::EFFEKSEER:
+		handleId_ = LoadEffekseerEffect(path_.c_str());
 		break;
 	case Resource::TYPE::MUSIC:
 

@@ -103,6 +103,10 @@ void ActorBase::InitAnimation()
 {
 }
 
+void ActorBase::InitEffect()
+{
+}
+
 void ActorBase::InitFunctionPointer()
 {
 }

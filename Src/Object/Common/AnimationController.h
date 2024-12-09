@@ -76,7 +76,7 @@ public:
 	/// <param name="isLoop">アニメーションのループ再生</param>
 	/// <param name="animIndex">アニメーションの番号</param>
 	/// <param name="isReverse">アニメーションの逆再生</param>
-	void Add(const std::string state, const std::string& path, float startStep,
+	void Add(const std::string state, float startStep,
 		 float speed, int animHandle, bool isLoop, int animIndex, bool isReverse);
 
 	// アニメーションの更新

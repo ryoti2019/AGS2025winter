@@ -204,9 +204,6 @@ void Player::InitAnimation()
 			// アニメーションの名前
 			jsonData_["ANIM"][i - 1]["NAME"],
 
-			// アニメーションのパス
-			jsonData_["ANIM"][i - 1]["PATH"],
-
 			// アニメーションが始まる時間
 			0.0f,
 

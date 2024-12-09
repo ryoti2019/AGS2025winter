@@ -30,6 +30,9 @@ Boss::Boss(const VECTOR& pos, const json& data)
 	// アニメーションの初期化
 	InitAnimation();
 
+	// エフェクトの初期化
+	InitEffect();
+
 }
 
 void Boss::Init(const VECTOR& pos)
@@ -55,6 +58,9 @@ void Boss::Init(const VECTOR& pos)
 
 	// アニメーションの初期化
 	InitAnimation();
+
+	//エフェクトの初期化
+	InitEffect();
 
 	// AIコンポーネントを追加
 	aiComponent_ = std::make_unique<BossAIComponent>(std::static_pointer_cast<Boss>(GetThis()));
@@ -160,7 +166,7 @@ void Boss::InitParameter()
 void Boss::InitAnimation()
 {
 
-	// アニメーションコントローラの生成
+	// アニメーションコントローラーの生成
 	animationController_ = std::make_unique<AnimationController>(transform_->modelId);
 
 	// アニメーションコントローラーにアニメーションを追加
@@ -173,9 +179,6 @@ void Boss::InitAnimation()
 
 			// アニメーションの名前
 			jsonData_["ANIM"][i - 1]["NAME"],
-
-			// アニメーションのパス
-			jsonData_["ANIM"][i - 1]["PATH"],
 
 			// アニメーションが始まる時間
 			0.0f,
@@ -205,6 +208,31 @@ void Boss::InitAnimation()
 
 	// 初期状態
 	ChangeState(BossState::IDLE);
+
+}
+
+void Boss::InitEffect(void)
+{
+
+	// エフェクトコントローラーの生成
+	effekseerController_ = std::make_unique<EffekseerController>();
+
+	// エフェクトコントローラーにアニメーションを追加
+	for (int i = static_cast<int>(EffectData::PROJECTILE); i < static_cast<int>(EffectData::MAX); ++i)
+	{
+
+		effekseerController_->Add(
+
+			// エフェクトの名前
+			jsonData_["EFFECT"][i - 1]["NAME"],
+
+			// エフェクトハンドル
+			resMng_.Load(static_cast<ResourceManager::SRC>(static_cast<int>(ResourceManager::SRC::EFFECT_BOSS_PROJECTILE))).handleId_,
+
+			// エフェクトのスケール
+			jsonData_["EFFECT"][i - 1]["SCALE"]);
+
+	}
 
 }
 
@@ -455,6 +483,9 @@ void Boss::ChangeProjectile()
 	// 必殺技の当たり判定をリセット
 	collisionData_.isProjectileAttack = false;
 
+	// エフェクトを描画
+	effekseerController_->Draw(collisionData_.projectilePos, Quaternion::Identity(), { 0.0f,0.0f,0.0f }, "PROJECTILE");
+
 }
 
 void Boss::UpdateIdle(const float deltaTime)
@@ -589,10 +620,13 @@ void Boss::UpdateProjectile(const float deltaTime)
 		collisionData_.isProjectileAttack = true;
 
 		// 飛び道具の当たり判定の座標設定
-		collisionData_.projectilePos = VAdd(collisionData_.projectilePos, VScale(transform_->quaRot.GetForward(), 1000.0f));
+		collisionData_.projectilePos = VAdd(collisionData_.projectilePos, VScale(transform_->quaRot.GetForward(), 100.0f));
 
 		// 飛び道具の衝突判定が続く時間のカウンタを加算
 		attackProjectileCollisionCnt_ += deltaTime;
+
+		// エフェクトを追従させる
+		effekseerController_->FollowPos(collisionData_.projectilePos, Quaternion::Identity(), { 0.0f,0.0f,0.0f }, "PROJECTILE");
 
 	}
 

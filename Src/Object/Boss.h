@@ -28,6 +28,12 @@ public:
 		"ATTACK_PROJECTILE"
 	};
 
+	enum class EffectData
+	{
+		NONE,
+		PROJECTILE,
+		MAX
+	};
 	Boss(const VECTOR& pos, const json& data);
 
 	~Boss() = default;
@@ -89,6 +95,9 @@ private:
 
 	// アニメーションの初期化
 	void InitAnimation()override;
+
+	// エフェクトの初期化
+	void InitEffect(void)override;
 
 	// 関数ポインタの初期化
 	void InitFunctionPointer()override;

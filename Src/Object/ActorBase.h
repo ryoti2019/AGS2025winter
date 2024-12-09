@@ -9,6 +9,7 @@
 #include "../Component/DrawComponent.h"
 #include "../Manager/ResourceManager.h"
 #include "../Object/Common/AnimationController.h"
+#include "../Object/Common/EffekseerController.h"
 
 class Component;
 class Camera;
@@ -376,6 +377,9 @@ protected:
 	// アニメーション
 	std::unique_ptr<AnimationController> animationController_;
 
+	// エフェクト
+	std::unique_ptr<EffekseerController> effekseerController_;
+
 	// 移動用のコンポーネント
 	std::unique_ptr<MoveComponent> moveComponent_;
 
@@ -471,6 +475,9 @@ protected:
 
 	// アニメーションの初期化
 	virtual void InitAnimation();
+
+	// エフェクトの初期化
+	virtual void InitEffect();
 
 	// 関数ポインタの初期化
 	virtual void InitFunctionPointer();

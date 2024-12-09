@@ -191,7 +191,7 @@
         "Boss": [
           {
             "TYPE": 4,
-            "PATH": "Stage/Collision.mv1",
+            "PATH": "Boss/Projectile.efkefc",
             "SRC": 34
           }
         ],
