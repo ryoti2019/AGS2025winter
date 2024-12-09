@@ -8,15 +8,24 @@ class Boss : public EnemyBase
 
 public:
 
+	// 飛び道具の攻撃開始フレーム
+	const float ATTACK_PROJECTILE_START_FRAME;
+
+	// 飛び道具のダメージ量
+	const int ATTACK_PROJECTILE_DAMAGE;
+
+	// 飛び道具の攻撃が続く時間
+	const float ATTACK_PROJECTILE_COLLISION_TIME;
+
 	// アニメーションコントローラーに渡す引数
 	std::string ANIM_DATA_KEY[static_cast<int>(BossState::MAX)] =
 	{
 		"NONE",
 		"IDLE",
 		"RUN",
-		"PUNCH",
-		"KICK",
-		"SONIC_BOOM"
+		"ATTACK_PUNCH",
+		"ATTACK_KICK",
+		"ATTACK_PROJECTILE"
 	};
 
 	Boss(const VECTOR& pos, const json& data);
@@ -46,12 +55,15 @@ private:
 	// 攻撃中の状態
 	const std::vector<BossState>& attackState_ =
 	{
-		{BossState::PUNCH},
-		{BossState::KICK}
+		{BossState::ATTACK_PUNCH},
+		{BossState::ATTACK_KICK}
 	};
 
 	// 状態
 	BossState state_;
+
+	// 必殺技の衝突判定が続く時間のカウンタ
+	float attackProjectileCollisionCnt_;
 
 	// 状態遷移
 	std::unordered_map<BossState, std::function<void()>> stateChange_;
@@ -59,7 +71,7 @@ private:
 	void ChangeRun();
 	void ChangePunch();
 	void ChangeKick();
-	void ChangeSonicBoom();
+	void ChangeProjectile();
 
 	// 状態の更新
 	std::function<void(const float deltaTime)> stateUpdate_;
@@ -67,7 +79,7 @@ private:
 	void UpdateRun(const float deltaTime);
 	void UpdatePunch(const float deltaTime);
 	void UpdateKick(const float deltaTime);
-	void UpdateSonicBoom(const float deltaTime);
+	void UpdateProjectile(const float deltaTime);
 
 	// 機能の初期化
 	void InitFunction()override;

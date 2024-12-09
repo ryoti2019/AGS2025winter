@@ -152,14 +152,16 @@
 						"PATH": "Data/Model/Enemy/Punch.mv1",
 						"SPEED": 30.0,
 						"ATTACK_START_FRAME": 26.0,
-						"ATTACK_END_FRAME": 35.0
+						"ATTACK_END_FRAME": 35.0,
+						"DAMAGE": 10
 					},
 					{
 						"NAME": "ATTACK_KICK",
 						"PATH": "Data/Model/Enemy/Kick.mv1",
 						"SPEED": 30.0,
 						"ATTACK_START_FRAME": 15.0,
-						"ATTACK_END_FRAME": 22.0
+						"ATTACK_END_FRAME": 22.0,
+						"DAMAGE": 10
 					},
 					{
 						"NAME": "HIT_HEAD",
@@ -211,6 +213,7 @@
 				"ACTIVATION_DISTANCE": 1000.0,
 				"COOL_TIME": 5.0,
 				"TRACKING_MAX_TIME": 5.0,
+				"ATTACK_PROJECTILE_COLLISION_TIME": 5.0,
 				"ANIM_INDEX": 0,
 				"SCALE": 10.0,
 				"INIT_ANGLE": 0.0,
@@ -228,23 +231,27 @@
 						"SPEED": 30.0
 					},
 					{
-						"NAME": "PUNCH",
+						"NAME": "ATTACK_PUNCH",
 						"PATH": "Data/Model/Boss/Punch.mv1",
 						"SPEED": 30.0,
 						"ATTACK_START_FRAME": 26.0,
-						"ATTACK_END_FRAME": 35.0
+						"ATTACK_END_FRAME": 35.0,
+						"DAMAGE": 10
 					},
 					{
-						"NAME": "KICK",
+						"NAME": "ATTACK_KICK",
 						"PATH": "Data/Model/Boss/Kick.mv1",
 						"SPEED": 30.0,
 						"ATTACK_START_FRAME": 25.0,
-						"ATTACK_END_FRAME": 32.0
+						"ATTACK_END_FRAME": 32.0,
+						"DAMAGE": 10
 					},
 					{
-						"NAME": "SONIC_BOOM",
-						"PATH": "Data/Model/Boss/SonicBoom.mv1",
-						"SPEED": 30.0
+						"NAME": "ATTACK_PROJECTILE",
+						"PATH": "Data/Model/Boss/Projectile.mv1",
+						"SPEED": 30.0,
+						"ATTACK_START_FRAME": 20.0,
+						"DAMAGE": 10
 					}
 				]
 			}

@@ -26,7 +26,7 @@ Enemy::Enemy(const VECTOR& pos, const json& data)
 	InitFunction();
 
 	// モデルID
-	modelId_ = resMng_.LoadModelDuplicate(ResourceManager::SRC::ENEMY);
+	modelId_ = resMng_.LoadModelDuplicate(ResourceManager::SRC::MODEL_ENEMY);
 
 	// 関数ポインタの初期化
 	InitFunctionPointer();
@@ -52,7 +52,7 @@ void Enemy::Init(const VECTOR& pos)
 	InitFunction();
 
 	// モデルID
-	modelId_ = resMng_.LoadModelDuplicate(ResourceManager::SRC::ENEMY);
+	modelId_ = resMng_.LoadModelDuplicate(ResourceManager::SRC::MODEL_ENEMY);
 
 	// アクターの共通部分の初期化
 	ActorBase::Init(pos);
@@ -250,7 +250,7 @@ void Enemy::InitAnimation()
 			jsonData_["ANIM"][i - 1]["SPEED"],
 
 			// アニメーションハンドル
-			resMng_.LoadModelDuplicate(static_cast<ResourceManager::SRC>(static_cast<int>(ResourceManager::SRC::ENEMY) + i)),
+			resMng_.LoadModelDuplicate(static_cast<ResourceManager::SRC>(static_cast<int>(ResourceManager::SRC::MODEL_ENEMY) + i)),
 
 			// アニメーションのループ再生
 			isLoop,
@@ -286,6 +286,9 @@ void Enemy::Update(const float deltaTime)
 	// 攻撃や移動を更新
 	aiComponent_->Update(deltaTime);
 
+	// 衝突判定の更新
+	ActorBase::CollisionUpdate();
+
 	// 状態ごとの更新
 	// 重力がかかる前に処理しないとおかしな挙動になるので注意！
 	stateUpdate_(deltaTime);
@@ -297,14 +300,11 @@ void Enemy::Update(const float deltaTime)
 		Gravity(gravityScale_);
 	}
 
-	// アニメーション再生
-	animationController_->Update(deltaTime);
-
 	// モデル情報を更新
 	transform_->Update();
 
-	// 衝突判定の更新
-	ActorBase::CollisionUpdate();
+	// アニメーション再生
+	animationController_->Update(deltaTime);
 
 	// アニメーションのフレームを固定
 	AnimationFrame();

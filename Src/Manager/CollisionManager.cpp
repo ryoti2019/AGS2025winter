@@ -175,9 +175,9 @@ void CollisionManager::CheckAttackCollision(const float deltaTime)
 					OnAttackCollision(attacker, target);
 				}
 				// •KE‹Z‚Ì”»’è
-				if (HitCheck_Sphere_Capsule(attacker->GetCollisionData().specialAttackPos, attacker->GetCollisionData().specialAttackCollisionRadius,
+				if (HitCheck_Sphere_Capsule(attacker->GetCollisionData().projectilePos, attacker->GetCollisionData().projectileCollisionRadius,
 					target->GetCollisionData().bodyCapsuleUpPos, target->GetCollisionData().bodyCapsuleDownPos, target->GetCollisionData().bodyCollisionRadius)
-					&& attacker->GetCollisionData().isSpecialAttack)
+					&& attacker->GetCollisionData().isProjectileAttack)
 				{
 					// “–‚½‚Á‚½‚Ìˆ—
 					OnAttackCollision(attacker, target);

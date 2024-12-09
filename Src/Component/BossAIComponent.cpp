@@ -21,6 +21,9 @@ void BossAIComponent::Update(const float deltaTime)
 void BossAIComponent::SelectAction(const float deltaTime)
 {
 
+	// ヒット中は行動できない
+	if (boss_->GetHitState())return;
+
 	// 乱数
 
 	// 非決定的な乱数生成器
@@ -84,7 +87,7 @@ void BossAIComponent::Attack(const float deltaTime)
 	std::mt19937 gen(rd());
 
 	// 指定の範囲でランダムな数を取得
-	std::uniform_int_distribution<> dist_int(0, 1);
+	std::uniform_int_distribution<> dist_int(0, 2);
 	int number = dist_int(gen);
 
 	// プレイヤーの座標
@@ -105,7 +108,7 @@ void BossAIComponent::Attack(const float deltaTime)
 	if (number == 0)
 	{
 
-		boss_->ChangeState(BossState::PUNCH);
+		boss_->ChangeState(BossState::ATTACK_PUNCH);
 
 		// 行動を決めた
 		boss_->SetIsActionDecided(true);
@@ -114,7 +117,16 @@ void BossAIComponent::Attack(const float deltaTime)
 	else if (number == 1)
 	{
 
-		boss_->ChangeState(BossState::KICK);
+		boss_->ChangeState(BossState::ATTACK_KICK);
+
+		// 行動を決めた
+		boss_->SetIsActionDecided(true);
+
+	}
+	else if (number == 2)
+	{
+
+		boss_->ChangeState(BossState::ATTACK_PROJECTILE);
 
 		// 行動を決めた
 		boss_->SetIsActionDecided(true);

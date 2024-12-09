@@ -5,8 +5,8 @@ enum class BossState
 	NONE,
 	IDLE,
 	RUN,
-	PUNCH,
-	KICK,
-	SONIC_BOOM,
+	ATTACK_PUNCH,
+	ATTACK_KICK,
+	ATTACK_PROJECTILE,
 	MAX
 };

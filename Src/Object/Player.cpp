@@ -46,7 +46,7 @@ Player::Player(const VECTOR& pos, const json& data)
 	InitFunction();
 
 	// モデルID
-	modelId_ = resMng_.LoadModelDuplicate(ResourceManager::SRC::PLAYER);
+	modelId_ = resMng_.LoadModelDuplicate(ResourceManager::SRC::MODEL_PLAYER);
 
 	// 関数ポインタの初期化
 	InitFunctionPointer();
@@ -150,7 +150,7 @@ void Player::InitParameter()
 	collisionData_.body = MV1SearchFrame(transform_->modelId, BODY_FRAME.c_str());
 
 	// 必殺技の当たり判定の座標を設定
-	collisionData_.specialAttackPos = VAdd(transform_->pos, BODY_RELATIVE_CENTER_POS);
+	collisionData_.projectilePos = VAdd(transform_->pos, BODY_RELATIVE_CENTER_POS);
 
 	// 手足の衝突判定の半径
 	collisionData_.handAndFootCollisionRadius = HAND_AND_FOOT_COLLISION_RADIUS;
@@ -159,7 +159,7 @@ void Player::InitParameter()
 	collisionData_.bodyCollisionRadius = BODY_COLLISION_RADIUS;
 
 	// 必殺技の衝突判定の半径
-	collisionData_.specialAttackCollisionRadius = SPECIAL_ATTACK_COLLISION_RADIUS;
+	collisionData_.projectileCollisionRadius = SPECIAL_ATTACK_COLLISION_RADIUS;
 
 	// 右手に攻撃判定があるかどうか
 	collisionData_.isRightHandAttack = false;
@@ -174,7 +174,7 @@ void Player::InitParameter()
 	collisionData_.isLeftFootAttack = false;
 
 	// 必殺技に攻撃判定があるかどうか
-	collisionData_.isSpecialAttack = false;
+	collisionData_.isProjectileAttack = false;
 
 	// 溜めパンチのカウンタ
 	attackChargePunchCnt_ = 0.0f;
@@ -228,10 +228,10 @@ void Player::InitAnimation()
 	}
 
 	// アニメーション再生するキー
-	key_ = "IDLE";
+	key_ = "";
 
 	// 1個前のアニメーション
-	preKey_ = key_;
+	preKey_ = "";
 
 	// 初期状態
 	ChangeState(PlayerState::IDLE);
@@ -250,23 +250,23 @@ void Player::Update(const float deltaTime)
 	// 入力の更新
 	inputComponent_->Update(deltaTime);
 
+	// 衝突判定の更新
+	ActorBase::CollisionUpdate();
+	 
+	// 状態ごとの更新
+	stateUpdate_(deltaTime);
+
 	// 重力
 	if (velocity_.y != 0.0f)
 	{
 		Gravity(gravityScale_);
 	}
 
-	// 状態ごとの更新
-	stateUpdate_(deltaTime);
-
-	// アニメーション再生
-	animationController_->Update(deltaTime);
-
 	// モデル情報を更新
 	transform_->Update();
 
-	// 衝突判定の更新
-	ActorBase::CollisionUpdate();
+	// アニメーション再生
+	animationController_->Update(deltaTime);
 
 }
 
@@ -422,6 +422,15 @@ void Player::AttackHitCheck(const int state)
 void Player::ChangeState(const PlayerState state)
 {
 
+	// 前のアニメーションを保存
+	preKey_ = key_;
+
+	// 新しいアニメーションを保存
+	key_ = ANIM_DATA_KEY[static_cast<int>(state)];
+
+	// 前と同じアニメーションなら処理しない
+	if (preKey_ == key_)return;
+
 	// 状態遷移
 	state_ = state;
 
@@ -434,12 +443,6 @@ void Player::ChangeState(const PlayerState state)
 		// 溜めパンチのカウンタをリセット
 		attackChargePunchCnt_ = 0.0f;
 	}
-
-	// 前のアニメーションを保存
-	preKey_ = key_;
-
-	// 新しいアニメーションを保存
-	key_ = ANIM_DATA_KEY[static_cast<int>(state)];
 
 	// アニメーションコントローラー側のアニメーション遷移
 	animationController_->ChangeAnimation(key_);
@@ -599,13 +602,13 @@ void Player::ChangeSpecialAttack()
 	damage_ = ATTACK_SPECIAL_PUNCH_DAMAGE;
 
 	// 必殺技の当たり判定の座標を設定
-	collisionData_.specialAttackPos = VAdd(transform_->pos, BODY_RELATIVE_CENTER_POS);
+	collisionData_.projectilePos = VAdd(transform_->pos, BODY_RELATIVE_CENTER_POS);
 
 	// 必殺技の衝突判定が続く時間のカウンタをリセット
 	attackSpecialPunchCollisionCnt_ = 0.0f;
 
 	// 必殺技の当たり判定をリセット
-	collisionData_.isSpecialAttack = false;
+	collisionData_.isProjectileAttack = false;
 
 	// カメラを生成
 	std::weak_ptr<Camera> camera = SceneManager::GetInstance().GetCamera();
@@ -877,10 +880,10 @@ void Player::UpdateSpecialAttack(const float deltaTime)
 	if (ATTACK_SPECIAL_PUNCH_START_FRAME <= animationController_->GetStepAnim() && ATTACK_SPECIAL_PUNCH_COLLISION_TIME >= attackSpecialPunchCollisionCnt_)
 	{
 
-		collisionData_.isSpecialAttack = true;
+		collisionData_.isProjectileAttack = true;
 
 		// 必殺技の当たり判定の座標設定
-		collisionData_.specialAttackPos = VAdd(collisionData_.specialAttackPos, VScale(transform_->quaRot.GetForward(), 1000.0f));
+		collisionData_.projectilePos = VAdd(collisionData_.projectilePos, VScale(transform_->quaRot.GetForward(), 1000.0f));
 
 		// 必殺技の衝突判定が続く時間のカウンタを加算
 		attackSpecialPunchCollisionCnt_ += deltaTime;

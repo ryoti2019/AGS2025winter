@@ -12,58 +12,78 @@ public:
 	enum class SRC
 	{
 
-#pragma region プレイヤーのアニメーション
+#pragma region プレイヤーのモデルとアニメーション
 
-		PLAYER,
-		PLAYER_IDLE,
-		PLAYER_RUN,
-		PLAYER_JAB,
-		PLAYER_STRAIGHT,
-		PLAYER_HOOK,
-		PLAYER_LEFT_KICK,
-		PLAYER_RIGHT_KICK,
-		PLAYER_UPPER,
-		PLAYER_CHARGE_PUNCH,
-		PLAYER_SPECIAL_PUNCH,
-		PLAYER_POWER_CHARGE,
-		PLAYER_HIT_HEAD,
-		PLAYER_HIT_BODY,
+		MODEL_PLAYER,
+		ANIM_PLAYER_IDLE,
+		ANIM_PLAYER_RUN,
+		ANIM_PLAYER_JAB,
+		ANIM_PLAYER_STRAIGHT,
+		ANIM_PLAYER_HOOK,
+		ANIM_PLAYER_LEFT_KICK,
+		ANIM_PLAYER_RIGHT_KICK,
+		ANIM_PLAYER_UPPER,
+		ANIM_PLAYER_CHARGE_PUNCH,
+		ANIM_PLAYER_SPECIAL_ATTACK,
+		ANIM_PLAYER_POWER_CHARGE,
+		ANIM_PLAYER_HIT_HEAD,
+		ANIM_PLAYER_HIT_BODY,
 #pragma endregion
 
-#pragma region 敵のアニメーション
+#pragma region 敵のモデルとアニメーション
 
-		ENEMY,
-		ENEMY_IDLE,
-		ENEMY_RUN,
-		ENEMY_PUNCH,
-		ENEMY_KICK,
-		ENEMY_HIT_HEAD,
-		ENEMY_HIT_BODY,
-		ENEMY_HIT_FLY,
-		ENEMY_HIT_FLINCH,
-		ENEMY_HIT_KNOCK_BACK,
-		ENEMY_KIP_UP,
-		ENEMY_NORMAL_DEATH,
-
-#pragma endregion
-
-#pragma region ボスのアニメーション
-
-		BOSS,
-		BOSS_IDLE,
-		BOSS_RUN,
-		BOSS_PUNCH,
-		BOSS_KICK,
-		BOSS_SONIC_BOOM,
+		MODEL_ENEMY,
+		ANIM_ENEMY_IDLE,
+		ANIM_ENEMY_RUN,
+		ANIM_ENEMY_PUNCH,
+		ANIM_ENEMY_KICK,
+		ANIM_ENEMY_HIT_HEAD,
+		ANIM_ENEMY_HIT_BODY,
+		ANIM_ENEMY_HIT_FLY,
+		ANIM_ENEMY_HIT_FLINCH,
+		ANIM_ENEMY_HIT_KNOCK_BACK,
+		ANIM_ENEMY_KIP_UP,
+		ANIM_ENEMY_NORMAL_DEATH,
 
 #pragma endregion
 
-#pragma region ステージ
+#pragma region ボスのモデルとアニメーション
+
+		MODEL_BOSS,
+		ANIM_BOSS_IDLE,
+		ANIM_BOSS_RUN,
+		ANIM_BOSS_PUNCH,
+		ANIM_BOSS_KICK,
+		ANIM_BOSS_PROJECTILE,
+
+#pragma endregion
+
+#pragma region ステージのモデル
 
 		STAGE_MODEL,
-		STAGE_COLLISION_MODEL
+		STAGE_COLLISION_MODEL,
 
 #pragma endregion
+
+#pragma region プレイヤーのエフェクト
+
+
+
+#pragma endregion
+
+#pragma region 敵のエフェクト
+
+
+
+#pragma endregion
+
+#pragma region ボスのエフェクト
+
+		EFFECT_BOSS_PROJECTILE
+
+#pragma endregion
+
+
 
 	};
 
@@ -99,12 +119,15 @@ private:
 	// 読み込み済みリソース
 	std::map<SRC, Resource*> loadedMap_;
 
+	// リソースの初期化
+	void InitResource(const nlohmann::json_abi_v3_11_3::json data);
+
 	// デフォルトコンストラクタをprivateにして、
 	// 外部から生成できない様にする
-	ResourceManager(void);
+	ResourceManager();
 
 	// デストラクタも同様
-	~ResourceManager(void) = default;
+	~ResourceManager() = default;
 
 	// 内部ロード
 	Resource* _Load(SRC src);

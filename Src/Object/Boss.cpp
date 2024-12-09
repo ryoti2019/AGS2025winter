@@ -3,14 +3,17 @@
 
 Boss::Boss(const VECTOR& pos, const json& data)
 	:
-	EnemyBase(pos, data)
+	EnemyBase(pos, data),
+	ATTACK_PROJECTILE_START_FRAME(data["ANIM"][static_cast<int>(BossState::ATTACK_PROJECTILE) - 1]["ATTACK_START_FRAME"]),
+	ATTACK_PROJECTILE_DAMAGE(data["ANIM"][static_cast<int>(BossState::ATTACK_PROJECTILE) - 1]["DAMAGE"]),
+	ATTACK_PROJECTILE_COLLISION_TIME(data["ATTACK_PROJECTILE_COLLISION_TIME"])
 {
 
 	// 機能の初期化
 	InitFunction();
 
 	// モデルID
-	modelId_ = resMng_.LoadModelDuplicate(ResourceManager::SRC::BOSS);
+	modelId_ = resMng_.LoadModelDuplicate(ResourceManager::SRC::MODEL_BOSS);
 
 	// 関数ポインタの初期化
 	InitFunctionPointer();
@@ -36,7 +39,7 @@ void Boss::Init(const VECTOR& pos)
 	InitFunction();
 
 	// モデルID
-	modelId_ = resMng_.LoadModelDuplicate(ResourceManager::SRC::BOSS);
+	modelId_ = resMng_.LoadModelDuplicate(ResourceManager::SRC::MODEL_BOSS);
 
 	// 共通部分は基底クラスで初期化
 	ActorBase::Init(pos);
@@ -101,11 +104,17 @@ void Boss::InitParameter()
 	// 体のフレーム番号を取得
 	collisionData_.body = MV1SearchFrame(transform_->modelId, BODY_FRAME.c_str());
 
+	// 飛び道具の当たり判定の座標を設定
+	collisionData_.projectilePos = VAdd(transform_->pos, BODY_RELATIVE_CENTER_POS);
+
 	// 手足の衝突判定の半径
 	collisionData_.handAndFootCollisionRadius = HAND_AND_FOOT_COLLISION_RADIUS;
 
 	// 体の衝突判定の半径
 	collisionData_.bodyCollisionRadius = BODY_COLLISION_RADIUS;
+
+	// 飛び道具の衝突判定の半径
+	collisionData_.projectileCollisionRadius = SPECIAL_ATTACK_COLLISION_RADIUS;
 
 	// 右手に攻撃判定があるかどうか
 	collisionData_.isRightHandAttack = false;
@@ -119,6 +128,9 @@ void Boss::InitParameter()
 	// 左足に攻撃判定があるかどうか
 	collisionData_.isLeftFootAttack = false;
 
+	// 飛び道具に攻撃判定があるかどうか
+	collisionData_.isProjectileAttack = false;
+
 	// プレイヤーの座標
 	std::optional<VECTOR> playerPos = GetPlayerPos();
 
@@ -126,16 +138,16 @@ void Boss::InitParameter()
 	targetPos_ = playerPos.value();
 
 	// パンチの攻撃開始フレーム
-	PUNCH_ATTACK_START_FRAME = jsonData_["ANIM"][static_cast<int>(BossState::PUNCH) - 1]["ATTACK_START_FRAME"];
+	PUNCH_ATTACK_START_FRAME = jsonData_["ANIM"][static_cast<int>(BossState::ATTACK_PUNCH) - 1]["ATTACK_START_FRAME"];
 
 	// パンチの攻撃終了フレーム
-	PUNCH_ATTACK_END_FRAME = jsonData_["ANIM"][static_cast<int>(BossState::PUNCH) - 1]["ATTACK_END_FRAME"];
+	PUNCH_ATTACK_END_FRAME = jsonData_["ANIM"][static_cast<int>(BossState::ATTACK_PUNCH) - 1]["ATTACK_END_FRAME"];
 
 	// キックの攻撃開始フレーム
-	KICK_ATTACK_START_FRAME = jsonData_["ANIM"][static_cast<int>(BossState::KICK) - 1]["ATTACK_START_FRAME"];
+	KICK_ATTACK_START_FRAME = jsonData_["ANIM"][static_cast<int>(BossState::ATTACK_KICK) - 1]["ATTACK_START_FRAME"];
 
 	// キックの攻撃終了フレーム
-	KICK_ATTACK_END_FRAME = jsonData_["ANIM"][static_cast<int>(BossState::KICK) - 1]["ATTACK_END_FRAME"];
+	KICK_ATTACK_END_FRAME = jsonData_["ANIM"][static_cast<int>(BossState::ATTACK_KICK) - 1]["ATTACK_END_FRAME"];
 
 	// 走るときの移動量
 	RUN_MOVE_POW = jsonData_["RUN_MOVE_POW"];
@@ -172,7 +184,7 @@ void Boss::InitAnimation()
 			jsonData_["ANIM"][i - 1]["SPEED"],
 
 			// アニメーションハンドル
-			resMng_.LoadModelDuplicate(static_cast<ResourceManager::SRC>(static_cast<int>(ResourceManager::SRC::BOSS) + i)),
+			resMng_.LoadModelDuplicate(static_cast<ResourceManager::SRC>(static_cast<int>(ResourceManager::SRC::MODEL_BOSS) + i)),
 
 			// アニメーションのループ再生
 			isLoop,
@@ -202,9 +214,9 @@ void Boss::InitFunctionPointer()
 	//関数ポインタの初期化
 	stateChange_.emplace(BossState::IDLE, std::bind(&Boss::ChangeIdle, this));
 	stateChange_.emplace(BossState::RUN, std::bind(&Boss::ChangeRun, this));
-	stateChange_.emplace(BossState::PUNCH, std::bind(&Boss::ChangePunch, this));
-	stateChange_.emplace(BossState::KICK, std::bind(&Boss::ChangeKick, this));
-	stateChange_.emplace(BossState::SONIC_BOOM, std::bind(&Boss::ChangeSonicBoom, this));
+	stateChange_.emplace(BossState::ATTACK_PUNCH, std::bind(&Boss::ChangePunch, this));
+	stateChange_.emplace(BossState::ATTACK_KICK, std::bind(&Boss::ChangeKick, this));
+	stateChange_.emplace(BossState::ATTACK_PROJECTILE, std::bind(&Boss::ChangeProjectile, this));
 
 }
 
@@ -247,7 +259,7 @@ void Boss::AnimationFrame()
 	MV1ResetFrameUserLocalMatrix(transform_->modelId, collisionData_.body);
 
 	// 座標を固定する
-	if (animationController_->IsBlendPlay("KICK"))
+	if (animationController_->IsBlendPlay("ATTACK_KICK"))
 	{
 
 		// 対象フレームのローカル行列(大きさ、回転、位置)を取得する
@@ -286,6 +298,9 @@ void Boss::Update(const float deltaTime)
 	// 攻撃や移動を更新
 	aiComponent_->Update(deltaTime);
 
+	// 衝突判定の更新
+	ActorBase::CollisionUpdate();
+
 	// 状態ごとの更新
 	// 重力がかかる前に処理しないとおかしな挙動になるので注意！
 	stateUpdate_(deltaTime);
@@ -297,14 +312,11 @@ void Boss::Update(const float deltaTime)
 		Gravity(gravityScale_);
 	//}
 
-	// アニメーション再生
-	animationController_->Update(deltaTime);
-
 	// モデル情報を更新
 	transform_->Update();
 
-	// 衝突判定の更新
-	ActorBase::CollisionUpdate();
+	// アニメーション再生
+	animationController_->Update(deltaTime);
 
 	// アニメーションのフレームを固定
 	AnimationFrame();
@@ -424,9 +436,25 @@ void Boss::ChangeKick()
 
 }
 
-void Boss::ChangeSonicBoom()
+void Boss::ChangeProjectile()
 {
-	stateUpdate_ = std::bind(&Boss::UpdateSonicBoom, this, std::placeholders::_1);
+	stateUpdate_ = std::bind(&Boss::UpdateProjectile, this, std::placeholders::_1);
+
+	// 攻撃が当たっているかをリセットする
+	isAttackHit_ = false;
+
+	// ダメージ量
+	damage_ = ATTACK_PROJECTILE_DAMAGE;
+
+	// 必殺技の当たり判定の座標を設定
+	collisionData_.projectilePos = VAdd(transform_->pos, BODY_RELATIVE_CENTER_POS);
+
+	// 必殺技の衝突判定が続く時間のカウンタをリセット
+	attackProjectileCollisionCnt_ = 0.0f;
+
+	// 必殺技の当たり判定をリセット
+	collisionData_.isProjectileAttack = false;
+
 }
 
 void Boss::UpdateIdle(const float deltaTime)
@@ -550,6 +578,33 @@ void Boss::UpdateKick(const float deltaTime)
 
 }
 
-void Boss::UpdateSonicBoom(const float deltaTime)
+void Boss::UpdateProjectile(const float deltaTime)
 {
+
+	// 攻撃判定があるフレーム
+	if (ATTACK_PROJECTILE_START_FRAME <= animationController_->GetStepAnim() && ATTACK_PROJECTILE_COLLISION_TIME >= attackProjectileCollisionCnt_)
+	{
+
+		// 当たり判定をONにする
+		collisionData_.isProjectileAttack = true;
+
+		// 飛び道具の当たり判定の座標設定
+		collisionData_.projectilePos = VAdd(collisionData_.projectilePos, VScale(transform_->quaRot.GetForward(), 1000.0f));
+
+		// 飛び道具の衝突判定が続く時間のカウンタを加算
+		attackProjectileCollisionCnt_ += deltaTime;
+
+	}
+
+	// 待機状態に遷移
+	if (animationController_->IsEndPlayAnimation())
+	{
+
+		ChangeState(BossState::IDLE);
+
+		// クールタイムを設定
+		coolTime_ = COOL_TIME;
+
+	}
+
 }
