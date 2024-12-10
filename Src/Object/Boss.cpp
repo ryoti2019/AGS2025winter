@@ -7,6 +7,7 @@ Boss::Boss(const VECTOR& pos, const json& data)
 	ATTACK_PROJECTILE_START_FRAME(data["ANIM"][static_cast<int>(BossState::ATTACK_PROJECTILE) - 1]["ATTACK_START_FRAME"]),
 	ATTACK_PROJECTILE_DAMAGE(data["ANIM"][static_cast<int>(BossState::ATTACK_PROJECTILE) - 1]["DAMAGE"]),
 	ATTACK_PROJECTILE_COLLISION_TIME(data["ATTACK_PROJECTILE_COLLISION_TIME"]),
+	LONG_RANGE_ATTACK_DISTANCE(data["LONG_RANGE_ATTACK_DISTANCE"]),
 	projectileDir_({0.0f,0.0f,0.0f}),
 	projectileCollisionCnt_(0.0f)
 {
@@ -157,33 +158,6 @@ void Boss::InitParameter()
 	// キックの攻撃終了フレーム
 	KICK_ATTACK_END_FRAME = jsonData_["ANIM"][static_cast<int>(BossState::ATTACK_KICK) - 1]["ATTACK_END_FRAME"];
 
-	// 吹っ飛ぶ時の上方向
-	HIT_FLY_UP_VEC_POW = jsonData_["HIT_FLY_UP_VEC_POW"];
-
-	// 吹っ飛ぶ時の移動量
-	HIT_FLY_MOVE_POW = jsonData_["HIT_FLY_MOVE_POW"];
-
-	// まっすぐ飛んでいく時間
-	KNOCK_BACK_TIME = jsonData_["KNOCK_BACK_TIME"];
-
-	// まっすぐ飛んでいくとき調整する高さ
-	KNOCK_BACK_HEIGHT_OFFSET = jsonData_["KNOCK_BACK_HEIGHT_OFFSET"];
-
-	// 上に飛んでいくときの上方向の力
-	FLINCH_UP_UP_VEC_POW = jsonData_["FLINCH_UP_UP_VEC_POW"];
-
-	// 少し上に飛んでいくときの上方向の力
-	FLINCH_UP_UP_VEC_SMALL_POW = jsonData_["FLINCH_UP_UP_VEC_SMALL_POW"];
-
-	// 上に飛んでいくときのスピード
-	FLINCH_UP_SPEED = jsonData_["FLINCH_UP_SPEED"];
-
-	// 上に飛んでいくときのX軸の角度
-	FLINCH_UP_ANGLE_X = jsonData_["FLINCH_UP_ANGLE_X"];
-
-	// 上に飛んでいくときの重力を緩くする強さ
-	FLINCH_UP_GRAVITY_SCALE = jsonData_["FLINCH_UP_GRAVITY_SCALE"];
-
 	// 走るときの移動量
 	RUN_MOVE_POW = jsonData_["RUN_MOVE_POW"];
 
@@ -230,10 +204,10 @@ void Boss::InitAnimation()
 	}
 
 	// アニメーション再生するキー
-	key_ = "IDLE";
+	key_ = "";
 
 	// 1個前のアニメーション
-	preKey_ = key_;
+	preKey_ = "";
 
 	// 初期状態
 	ChangeState(BossState::IDLE);
@@ -274,6 +248,13 @@ void Boss::InitFunctionPointer()
 	stateChange_.emplace(BossState::ATTACK_PUNCH, std::bind(&Boss::ChangePunch, this));
 	stateChange_.emplace(BossState::ATTACK_KICK, std::bind(&Boss::ChangeKick, this));
 	stateChange_.emplace(BossState::ATTACK_PROJECTILE, std::bind(&Boss::ChangeProjectile, this));
+	stateChange_.emplace(BossState::HIT_HEAD, std::bind(&Boss::ChangeHitHead, this));
+	stateChange_.emplace(BossState::HIT_BODY, std::bind(&Boss::ChangeHitBody, this));
+	stateChange_.emplace(BossState::HIT_FLY, std::bind(&Boss::ChangeHitFly, this));
+	stateChange_.emplace(BossState::HIT_FLINCH_UP, std::bind(&Boss::ChangeHitFlinchUp, this));
+	stateChange_.emplace(BossState::HIT_KNOCK_BACK, std::bind(&Boss::ChangeHitKnockback, this));
+	stateChange_.emplace(BossState::KIP_UP, std::bind(&Boss::ChangeKipUp, this));
+	stateChange_.emplace(BossState::DEATH, std::bind(&Boss::ChangeDeath, this));
 
 }
 
@@ -343,6 +324,75 @@ void Boss::AnimationFrame()
 
 }
 
+void Boss::AttackHitCheck(const int state)
+{
+
+	// 上に飛ぶアニメーションかチェック
+	for (const auto hitState : hitFlinchUpState_)
+	{
+		if (hitState == static_cast<PlayerState>(state))
+		{
+			ChangeState(BossState::HIT_FLINCH_UP);
+			return;
+		}
+	}
+
+	// 地面についていないかチェック
+	if (velocity_.y != 0.0f)
+	{
+		// 空中に浮き続けるアニメーションかチェック
+		for (const auto hitState : hitAirState_)
+		{
+			if (hitState == static_cast<PlayerState>(state))
+			{
+				ChangeState(BossState::HIT_FLINCH_UP);
+				return;
+			}
+		}
+	}
+
+	// 頭にヒットするアニメーションかチェック
+	for (const auto hitState : hitHeadState_)
+	{
+		if (hitState == static_cast<PlayerState>(state))
+		{
+			ChangeState(BossState::HIT_HEAD);
+			return;
+		}
+	}
+
+	// 体にヒットするアニメーションかチェック
+	for (const auto hitState : hitBodyState_)
+	{
+		if (hitState == static_cast<PlayerState>(state))
+		{
+			ChangeState(BossState::HIT_BODY);
+			return;
+		}
+	}
+
+	// 吹っ飛んでいくアニメーションかチェック
+	for (const auto hitState : hitFlyState_)
+	{
+		if (hitState == static_cast<PlayerState>(state))
+		{
+			ChangeState(BossState::HIT_FLY);
+			return;
+		}
+	}
+
+	// 吹っ飛んでいくアニメーションかチェック
+	for (const auto hitState : hitKnockBackState_)
+	{
+		if (hitState == static_cast<PlayerState>(state))
+		{
+			ChangeState(BossState::HIT_KNOCK_BACK);
+			return;
+		}
+	}
+
+}
+
 void Boss::Update(const float deltaTime)
 {
 
@@ -365,12 +415,12 @@ void Boss::Update(const float deltaTime)
 	// 重力がかかる前に処理しないとおかしな挙動になるので注意！
 	stateUpdate_(deltaTime);
 
-	//// 重力がかかるアニメーションのみ処理する
-	//if (state_ != BossState::HIT_KNOCK_BACK && transform_->pos.y > FLOOR_HEIGHT)
-	//{
+	// 重力がかかるアニメーションのみ処理する
+	if (state_ != BossState::HIT_KNOCK_BACK && transform_->pos.y > FLOOR_HEIGHT)
+	{
 		// 重力
 		Gravity(gravityScale_);
-	//}
+	}
 
 	// モデル情報を更新
 	transform_->Update();
@@ -492,7 +542,7 @@ void Boss::ProjectileHit(const int damage)
 {
 
 	// ヒットアニメーションに遷移
-	ChangeState(BossState::HIT_BODY);
+	ChangeState(BossState::HIT_FLY);
 
 	// HPを減らす
 	SubHp(damage);
@@ -507,23 +557,11 @@ void Boss::ChangeIdle()
 
 	stateUpdate_ = std::bind(&Boss::UpdateIdle, this, std::placeholders::_1);
 
-	// 右手の攻撃判定をなくす
-	collisionData_.isRightHandAttack = false;
-
-	// 左手の攻撃判定をなくす
-	collisionData_.isLeftHandAttack = false;
-
-	// 右足の攻撃判定をなくす
-	collisionData_.isRightFootAttack = false;
-
-	// 左足の攻撃判定をなくす
-	collisionData_.isLeftFootAttack = false;
-
-	// 攻撃が当たっているかをリセットする
-	isAttackHit_ = false;
-
 	// 重力を通常状態に戻す
 	gravityScale_ = 1.0f;
+
+	// 角度が変更されたかどうかをリセットする
+	isChangeAngle_ = false;
 
 }
 
@@ -542,6 +580,9 @@ void Boss::ChangePunch()
 
 	stateUpdate_ = std::bind(&Boss::UpdatePunch, this, std::placeholders::_1);
 
+	// 右手の攻撃判定をなくす
+	collisionData_.isRightHandAttack = false;
+
 	// 攻撃が当たっているかをリセットする
 	isAttackHit_ = false;
 
@@ -554,6 +595,9 @@ void Boss::ChangeKick()
 {
 
 	stateUpdate_ = std::bind(&Boss::UpdateKick, this, std::placeholders::_1);
+
+	// 右足の攻撃判定をなくす
+	collisionData_.isRightFootAttack = false;
 
 	// 攻撃が当たっているかをリセットする
 	isAttackHit_ = false;
@@ -568,6 +612,9 @@ void Boss::ChangeProjectile()
 
 	stateUpdate_ = std::bind(&Boss::UpdateProjectile, this, std::placeholders::_1);
 
+	// 飛び道具の攻撃判定をなくす
+	collisionData_.isProjectileAttack = false;
+
 	// 攻撃が当たっているかをリセットする
 	isAttackHit_ = false;
 
@@ -579,9 +626,6 @@ void Boss::ChangeProjectile()
 
 	// 飛び道具の飛んでいく方向
 	projectileDir_ = VNorm(transform_->quaRot.GetForward());
-
-	// 飛び道具の当たり判定をリセット
-	collisionData_.isProjectileAttack = false;
 
 }
 
@@ -722,7 +766,7 @@ void Boss::ChangeHitKnockback()
 
 }
 
-void Boss::ChangeHitKipUp()
+void Boss::ChangeKipUp()
 {
 
 	stateUpdate_ = std::bind(&Boss::UpdateHitKipUp, this, std::placeholders::_1);
@@ -872,6 +916,7 @@ void Boss::UpdateProjectile(const float deltaTime)
 	if (!a && ATTACK_PROJECTILE_START_FRAME <= animationController_->GetStepAnim())
 	{
 
+		// 当たり判定をつける
 		collisionData_.isProjectileAttack = true;
 
 		// エフェクトを描画

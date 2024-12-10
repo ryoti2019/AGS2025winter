@@ -485,21 +485,6 @@ void Player::ChangeIdle(void)
 
 	stateUpdate_ = std::bind(&Player::UpdateIdle, this, std::placeholders::_1);
 
-	// 右手の攻撃判定をなくす
-	collisionData_.isRightHandAttack = false;
-
-	// 左手の攻撃判定をなくす
-	collisionData_.isLeftHandAttack = false;
-
-	// 右足の攻撃判定をなくす
-	collisionData_.isRightFootAttack = false;
-
-	// 左足の攻撃判定をなくす
-	collisionData_.isLeftFootAttack = false;
-
-	// 攻撃が当たっているかをリセットする
-	isAttackHit_ = false;
-
 	// 重力を通常状態に戻す
 	gravityScale_ = 1.0f;
 
@@ -520,6 +505,9 @@ void Player::ChangeJab()
 
 	stateUpdate_ = std::bind(&Player::UpdateJab, this, std::placeholders::_1);
 
+	// 左手の攻撃判定をなくす
+	collisionData_.isLeftHandAttack = false;
+
 	// 攻撃が当たっているかをリセットする
 	isAttackHit_ = false;
 
@@ -535,6 +523,9 @@ void Player::ChangeStraight()
 {
 
 	stateUpdate_ = std::bind(&Player::UpdateStraight, this, std::placeholders::_1);
+
+	// 右手の攻撃判定をなくす
+	collisionData_.isRightHandAttack = false;
 
 	// 攻撃が当たっているかをリセットする
 	isAttackHit_ = false;
@@ -552,6 +543,9 @@ void Player::ChangeHook()
 
 	stateUpdate_ = std::bind(&Player::UpdateHook, this, std::placeholders::_1);
 
+	// 左手の攻撃判定をなくす
+	collisionData_.isLeftHandAttack = false;
+
 	// 攻撃が当たっているかをリセットする
 	isAttackHit_ = false;
 
@@ -567,6 +561,9 @@ void Player::ChangeLeftKick()
 {
 
 	stateUpdate_ = std::bind(&Player::UpdateLeftKick, this, std::placeholders::_1);
+
+	// 左足の攻撃判定をなくす
+	collisionData_.isLeftFootAttack = false;
 
 	// 攻撃が当たっているかをリセットする
 	isAttackHit_ = false;
@@ -584,6 +581,9 @@ void Player::ChangeRightKick()
 
 	stateUpdate_ = std::bind(&Player::UpdateRightKick, this, std::placeholders::_1);
 
+	// 右足の攻撃判定をなくす
+	collisionData_.isRightFootAttack = false;
+
 	// 攻撃が当たっているかをリセットする
 	isAttackHit_ = false;
 
@@ -599,6 +599,9 @@ void Player::ChangeUpper()
 {
 
 	stateUpdate_ = std::bind(&Player::UpdateUpper, this, std::placeholders::_1);
+
+	// 右手の攻撃判定をなくす
+	collisionData_.isRightHandAttack = false;
 
 	// 攻撃が当たっているかをリセットする
 	isAttackHit_ = false;
@@ -616,6 +619,12 @@ void Player::ChangeChargePunch()
 
 	stateUpdate_ = std::bind(&Player::UpdateChargePunch, this, std::placeholders::_1);
 
+	// 右手の攻撃判定をなくす
+	collisionData_.isRightHandAttack = false;
+
+	// 攻撃が当たっているかをリセットする
+	isAttackHit_ = false;
+
 	// スピード
 	speed_ = ATTACK_MOVE_POW;
 
@@ -625,6 +634,9 @@ void Player::ChangeSpecialAttack()
 {
 
 	stateUpdate_ = std::bind(&Player::UpdateSpecialAttack, this, std::placeholders::_1);
+
+	// 必殺技の攻撃判定をなくす
+	collisionData_.isProjectileAttack = false;
 
 	// 攻撃が当たっているかをリセットする
 	isAttackHit_ = false;

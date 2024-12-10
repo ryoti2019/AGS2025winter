@@ -11,7 +11,7 @@
 				"ATTACK_MOVE_POW": 100.0,
 				"ATTACK_CHARGE_PUNCH_TIME": 1.0,
 				"ATTACK_SPECIAL_PUNCH_COLLISION_TIME": 3.0,
-				"PROJECTILE_COLLISION_RADIUS": 1000.0,
+				"PROJECTILE_COLLISION_RADIUS": 10000.0,
 				"ANIM_INDEX": 0,
 				"SCALE": 1.0,
 				"INIT_ANGLE": 90.0,
@@ -188,6 +188,7 @@
 				"ATTACK_MOVE_POW": 0.0,
 				"RUN_MOVE_POW": 100.0,
 				"ACTIVATION_DISTANCE": 1000.0,
+				"LONG_RANGE_ATTACK_DISTANCE": 5000.0,
 				"COOL_TIME": 5.0,
 				"TRACKING_MAX_TIME": 5.0,
 				"HIT_FLY_UP_VEC_POW": 1.2,
@@ -198,7 +199,7 @@
 				"FLINCH_UP_GRAVITY_SCALE": 4.0,
 				"FLINCH_UP_ANGLE_X": -30.0,
 				"KNOCK_BACK_HEIGHT_OFFSET": 1000.0,
-				"KNOCK_BACK_TIME;": 3.0,
+				"KNOCK_BACK_TIME": 3.0,
 				"ATTACK_PROJECTILE_COLLISION_TIME": 5.0,
 				"PROJECTILE_COLLISION_RADIUS": 500.0,
 				"ANIM_INDEX": 0,
@@ -234,6 +235,34 @@
 						"SPEED": 30.0,
 						"ATTACK_START_FRAME": 20.0,
 						"DAMAGE": 10
+					},
+					{
+						"NAME": "HIT_HEAD",
+						"SPEED": 30.0
+					},
+					{
+						"NAME": "HIT_BODY",
+						"SPEED": 30.0
+					},
+					{
+						"NAME": "HIT_FLY",
+						"SPEED": 30.0
+					},
+					{
+						"NAME": "HIT_FLINCH_UP",
+						"SPEED": 30.0
+					},
+					{
+						"NAME": "HIT_KNOCK_BACK",
+						"SPEED": 30.0
+					},
+					{
+						"NAME": "KIP_UP",
+						"SPEED": 30.0
+					},
+					{
+						"NAME": "DEATH",
+						"SPEED": 30.0
 					}
 				],
 				"EFFECT": [

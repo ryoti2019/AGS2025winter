@@ -186,17 +186,17 @@
             "TYPE": 3,
             "PATH": "Boss/FlinchUp.mv1",
             "SRC": 35
-          }
+          },
           {
             "TYPE": 3,
             "PATH": "Boss/HitBack.mv1",
             "SRC": 36
-          }
+          },
           {
             "TYPE": 3,
             "PATH": "Boss/KipUp.mv1",
             "SRC": 37
-          }
+          },
           {
             "TYPE": 3,
             "PATH": "Boss/Death.mv1",

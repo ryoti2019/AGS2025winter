@@ -62,9 +62,9 @@ private:
 	const std::vector<collisionChannnelInfo> attackCollisionChannelList_ =
 	{
 		{
-			{ActorType::PLAYER,ActorType::ENEMY},
-			{ActorType::PLAYER,ActorType::BOSS},
-			{ActorType::ENEMY,ActorType::PLAYER},
+			//{ActorType::PLAYER,ActorType::ENEMY},
+			//{ActorType::PLAYER,ActorType::BOSS},
+			//{ActorType::ENEMY,ActorType::PLAYER},
 			{ActorType::BOSS,ActorType::PLAYER}
 		}
 	};

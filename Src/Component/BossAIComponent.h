@@ -22,8 +22,11 @@ private:
 	// ˆÚ“®ˆ—
 	void Move(const float deltaTime);
 
-	// UŒ‚ˆ—
-	void Attack(const float deltaTime);
+	// ‹ß‹——£UŒ‚ˆ—
+	void CloseRangeAttack(const float deltaTime);
+
+	// ‰“‹——£UŒ‚ˆ—
+	void LongRangeAttack(const float deltaTime);
 
 };
 

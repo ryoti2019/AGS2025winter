@@ -2,6 +2,7 @@
 #include "../Component/BossAIComponent.h"
 #include "EnemyBase.h"
 #include "BossState.h"
+#include "PlayerState.h"
 
 class Boss : public EnemyBase
 {
@@ -17,6 +18,9 @@ public:
 	// 飛び道具の攻撃が続く時間
 	const float ATTACK_PROJECTILE_COLLISION_TIME;
 
+	// 遠距離攻撃してくる距離
+	const float LONG_RANGE_ATTACK_DISTANCE;
+
 	// アニメーションコントローラーに渡す引数
 	std::string ANIM_DATA_KEY[static_cast<int>(BossState::MAX)] =
 	{
@@ -25,7 +29,14 @@ public:
 		"RUN",
 		"ATTACK_PUNCH",
 		"ATTACK_KICK",
-		"ATTACK_PROJECTILE"
+		"ATTACK_PROJECTILE",
+		"HIT_HEAD",
+		"HIT_BODY",
+		"HIT_FLY",
+		"HIT_FLINCH_UP",
+		"HIT_KNOCK_BACK",
+		"KIP_UP",
+		"DEATH"
 	};
 
 	enum class EffectData
@@ -84,6 +95,64 @@ private:
 		{BossState::KIP_UP}
 	};
 
+	// 頭にヒットするプレイヤーの攻撃
+	const std::vector<PlayerState>& hitHeadState_ =
+	{
+		{PlayerState::ATTACK_JAB},
+		{PlayerState::ATTACK_STRAIGHT},
+		{PlayerState::ATTACK_HOOK},
+	};
+
+	// 体にヒットするプレイヤーの攻撃
+	const std::vector<PlayerState>& hitBodyState_ =
+	{
+		{PlayerState::ATTACK_LEFT_KICK}
+	};
+
+	// 吹っ飛ばされるプレイヤーの攻撃
+	const std::vector<PlayerState>& hitFlyState_ =
+	{
+		{PlayerState::ATTACK_RIGHT_KICK},
+		{PlayerState::ATTACK_SPECIAL_PUNCH}
+	};
+
+	// 上に飛ばされるプレイヤーの攻撃
+	const std::vector<PlayerState>& hitFlinchUpState_ =
+	{
+		{PlayerState::ATTACK_UPPER}
+	};
+
+	// 空中に浮き続けるプレイヤーの攻撃
+	const std::vector<PlayerState>& hitAirState_ =
+	{
+		{PlayerState::ATTACK_JAB},
+		{PlayerState::ATTACK_STRAIGHT},
+		{PlayerState::ATTACK_HOOK},
+		{PlayerState::ATTACK_LEFT_KICK}
+	};
+
+	// 真っすぐ飛ばされるプレイヤーの攻撃
+	const std::vector<PlayerState>& hitKnockBackState_ =
+	{
+		{PlayerState::ATTACK_CHARGE_PUNCH}
+	};
+
+	// その場で死ぬときのプレイヤーの攻撃
+	const std::vector<PlayerState>& deathState_ =
+	{
+		{PlayerState::ATTACK_JAB},
+		{PlayerState::ATTACK_STRAIGHT},
+		{PlayerState::ATTACK_HOOK},
+		{PlayerState::ATTACK_LEFT_KICK},
+		{PlayerState::ATTACK_UPPER}
+	};
+
+	// 吹っ飛んで死ぬときのプレイヤーの攻撃
+	const std::vector<PlayerState>& hitFlyDeathState_ =
+	{
+		{PlayerState::ATTACK_RIGHT_KICK}
+	};
+
 	// 状態
 	BossState state_;
 
@@ -105,7 +174,7 @@ private:
 	void ChangeHitFly();
 	void ChangeHitFlinchUp();
 	void ChangeHitKnockback();
-	void ChangeHitKipUp();
+	void ChangeKipUp();
 	void ChangeDeath();
 
 
@@ -144,6 +213,9 @@ private:
 
 	// アニメーションのフレームを固定
 	void AnimationFrame()override;
+
+	// どのヒットアニメーションかチェックする
+	void AttackHitCheck(const int state);
 
 	// 飛び道具の更新
 	void Projectile(const float deltaTime);

@@ -19,7 +19,6 @@ EnemyBase::EnemyBase(const VECTOR& pos, const json& data)
 	KNOCK_BACK_HEIGHT_OFFSET(data["TRACKING_MAX_TIME"]),
 	KNOCK_BACK_TIME(data["TRACKING_MAX_TIME"])
 {
-
 }
 
 void EnemyBase::Init()
