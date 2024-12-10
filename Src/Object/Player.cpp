@@ -159,7 +159,7 @@ void Player::InitParameter()
 	collisionData_.bodyCollisionRadius = BODY_COLLISION_RADIUS;
 
 	// 必殺技の衝突判定の半径
-	collisionData_.projectileCollisionRadius = SPECIAL_ATTACK_COLLISION_RADIUS;
+	collisionData_.projectileCollisionRadius = jsonData_["PROJECTILE_COLLISION_RADIUS"];
 
 	// 右手に攻撃判定があるかどうか
 	collisionData_.isRightHandAttack = false;
@@ -377,11 +377,11 @@ bool Player::GetComboState()
 
 }
 
-void Player::AttackHit(const int damage, const int state)
+void Player::AttackHit(const int damage, const int type)
 {
 
 	// どのアニメーションかチェックする
-	AttackHitCheck(state);
+	AttackHitCheck(type);
 
 	// HPを減らす
 	SubHp(damage);
@@ -391,13 +391,37 @@ void Player::AttackHit(const int damage, const int state)
 
 }
 
-void Player::AttackHitCheck(const int state)
+void Player::ProjectileHit(const int damage)
+{
+
+	// ヒットアニメーションに遷移
+	ChangeState(PlayerState::HIT_BODY);
+
+	// HPを減らす
+	SubHp(damage);
+
+	// アニメーションの再生時間をリセットする
+	animationController_->ResetStepAnim();
+
+}
+
+void Player::AttackHitCheck(const int type)
 {
 
 	// 頭にヒットするアニメーションかチェック
-	for (const auto hitState : hitHeadState_)
+	for (const auto hitState : hitHeadEnemyState_)
 	{
-		if (hitState == static_cast<EnemyState>(state))
+		if (hitState == static_cast<EnemyState>(type))
+		{
+			ChangeState(PlayerState::HIT_HEAD);
+			return;
+		}
+	}
+
+	// 頭にヒットするアニメーションかチェック
+	for (const auto hitState : hitHeadBossState_)
+	{
+		if (hitState == static_cast<BossState>(type))
 		{
 			ChangeState(PlayerState::HIT_HEAD);
 			return;
@@ -405,9 +429,19 @@ void Player::AttackHitCheck(const int state)
 	}
 
 	// 体にヒットするアニメーションかチェック
-	for (const auto hitState : hitBodyState_)
+	for (const auto hitState : hitBodyEnemyState_)
 	{
-		if (hitState == static_cast<EnemyState>(state))
+		if (hitState == static_cast<EnemyState>(type))
+		{
+			ChangeState(PlayerState::HIT_BODY);
+			return;
+		}
+	}
+
+	// 体にヒットするアニメーションかチェック
+	for (const auto hitState : hitBodyBossState_)
+	{
+		if (hitState == static_cast<BossState>(type))
 		{
 			ChangeState(PlayerState::HIT_BODY);
 			return;

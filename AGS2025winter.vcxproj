@@ -247,6 +247,7 @@
     <ClInclude Include="Src\Lib\nlohmann\thirdparty\hedley\hedley.hpp" />
     <ClInclude Include="Src\Lib\nlohmann\thirdparty\hedley\hedley_undef.hpp" />
     <ClInclude Include="Src\Lib\ImGuiWrapper.h" />
+    <ClInclude Include="Src\Manager\CollisionTypes.h" />
     <ClInclude Include="Src\Object\Boss.h" />
     <ClInclude Include="Src\Object\BossState.h" />
     <ClInclude Include="Src\Object\Common\ActorCreate.h" />

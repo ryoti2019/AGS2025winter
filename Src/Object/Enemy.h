@@ -3,7 +3,6 @@
 #include <functional>
 #include "../Component/EnemyAIComponent.h"
 #include "EnemyBase.h"
-#include "EnemyState.h"
 #include "Player.h"
 
 class AIComponent;
@@ -30,36 +29,6 @@ public:
 		"DEATH"
 	};
 
-	// 吹っ飛ぶ時の上方向の力
-	const float HIT_FLY_UP_VEC_POW;
-
-	// 吹っ飛ぶ時の移動量
-	const float HIT_FLY_MOVE_POW;
-
-	// まっすぐ飛んでいく時間
-	const float KNOCK_BACK_TIME;
-
-	// まっすぐ飛んでいくとき調整する高さ
-	const float KNOCK_BACK_HEIGHT_OFFSET;
-
-	// 上に飛んでいくときの上方向の力
-	const float FLINCH_UP_UP_VEC_POW;
-
-	// 少し上に飛んでいくときの上方向の力
-	const float FLINCH_UP_UP_VEC_SMALL_POW;
-
-	// 上に飛んでいくときのスピード
-	const float FLINCH_UP_SPEED;
-
-	// 上に飛んでいくときのX軸の角度
-	const float FLINCH_UP_ANGLE_X;
-
-	// 上に飛んでいくときの重力を緩くする強さ
-	const float FLINCH_UP_GRAVITY_SCALE;
-
-	// 移動中の動かす割合
-	const float MOVE_RATE;
-
 	Enemy(const VECTOR& pos, const json& data);
 
 	~Enemy() = default;
@@ -79,6 +48,9 @@ public:
 
 	// 攻撃のヒット処理
 	void AttackHit(const int damage, const int state)override;
+
+	// 飛び道具のヒット処理
+	void ProjectileHit(const int damage)override;
 
 	// 今の状態を取得
 	const int GetState()const override { return static_cast<int>(state_); }
@@ -172,12 +144,6 @@ private:
 
 	// 状態
 	EnemyState state_;
-
-	// すでに角度が変わっているかどうか
-	bool isChangeAngle_;
-
-	// 敵がまっすく飛んでいくときのカウンタ
-	float knockBackCnt_;
 
 	// 状態遷移
 	std::unordered_map<EnemyState, std::function<void()>> stateChange_;

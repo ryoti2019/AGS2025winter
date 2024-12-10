@@ -2,9 +2,11 @@
 #include <DxLib.h>
 #include <functional>
 #include "../Component/InputComponent.h"
+#include "../Manager/CollisionTypes.h"
 #include "ActorBase.h"
 #include "PlayerState.h"
 #include "EnemyState.h"
+#include "BossState.h"
 
 class InputComponent;
 
@@ -130,7 +132,10 @@ public:
 	bool GetComboState();
 
 	// 攻撃のヒット処理
-	void AttackHit(const int damage, const int state)override;
+	void AttackHit(const int damage, const int type)override;
+
+	// 飛び道具のヒット処理
+	void ProjectileHit(const int damage)override;
 
 	// 今の状態を取得
 	const int GetState()const override { return static_cast<int>(state_); }
@@ -195,7 +200,7 @@ private:
 		{PlayerState::HIT_BODY}
 	};
 
-	// 体にヒットする敵の攻撃
+	// スーパーアーマー状態
 	const std::vector<PlayerState> superArmorState_ =
 	{
 		{PlayerState::POWER_CHARGE},
@@ -203,15 +208,27 @@ private:
 	};
 
 	// 頭にヒットする敵の攻撃
-	const std::vector<EnemyState> hitHeadState_ =
+	const std::vector<EnemyState> hitHeadEnemyState_ =
 	{
 		{EnemyState::ATTACK_PUNCH}
 	};
 
+	// 頭にヒットするボスの攻撃
+	const std::vector<BossState> hitHeadBossState_ =
+	{
+		{BossState::ATTACK_PUNCH}
+	};
+
 	// 体にヒットする敵の攻撃
-	const std::vector<EnemyState> hitBodyState_ =
+	const std::vector<EnemyState> hitBodyEnemyState_ =
 	{
 		{EnemyState::ATTACK_KICK}
+	};
+
+	// 体にヒットする敵の攻撃
+	const std::vector<BossState> hitBodyBossState_ =
+	{
+		{BossState::ATTACK_KICK}
 	};
 
 	// 状態
@@ -274,7 +291,7 @@ private:
 	void UpdateDebugImGui()override;
 
 	// どのヒットアニメーションかチェックする
-	virtual void AttackHitCheck(const int state);
+	virtual void AttackHitCheck(const int type);
 
 
 };

@@ -6,7 +6,9 @@ Boss::Boss(const VECTOR& pos, const json& data)
 	EnemyBase(pos, data),
 	ATTACK_PROJECTILE_START_FRAME(data["ANIM"][static_cast<int>(BossState::ATTACK_PROJECTILE) - 1]["ATTACK_START_FRAME"]),
 	ATTACK_PROJECTILE_DAMAGE(data["ANIM"][static_cast<int>(BossState::ATTACK_PROJECTILE) - 1]["DAMAGE"]),
-	ATTACK_PROJECTILE_COLLISION_TIME(data["ATTACK_PROJECTILE_COLLISION_TIME"])
+	ATTACK_PROJECTILE_COLLISION_TIME(data["ATTACK_PROJECTILE_COLLISION_TIME"]),
+	projectileDir_({0.0f,0.0f,0.0f}),
+	projectileCollisionCnt_(0.0f)
 {
 
 	// 機能の初期化
@@ -120,7 +122,7 @@ void Boss::InitParameter()
 	collisionData_.bodyCollisionRadius = BODY_COLLISION_RADIUS;
 
 	// 飛び道具の衝突判定の半径
-	collisionData_.projectileCollisionRadius = SPECIAL_ATTACK_COLLISION_RADIUS;
+	collisionData_.projectileCollisionRadius = jsonData_["PROJECTILE_COLLISION_RADIUS"];
 
 	// 右手に攻撃判定があるかどうか
 	collisionData_.isRightHandAttack = false;
@@ -154,6 +156,33 @@ void Boss::InitParameter()
 
 	// キックの攻撃終了フレーム
 	KICK_ATTACK_END_FRAME = jsonData_["ANIM"][static_cast<int>(BossState::ATTACK_KICK) - 1]["ATTACK_END_FRAME"];
+
+	// 吹っ飛ぶ時の上方向
+	HIT_FLY_UP_VEC_POW = jsonData_["HIT_FLY_UP_VEC_POW"];
+
+	// 吹っ飛ぶ時の移動量
+	HIT_FLY_MOVE_POW = jsonData_["HIT_FLY_MOVE_POW"];
+
+	// まっすぐ飛んでいく時間
+	KNOCK_BACK_TIME = jsonData_["KNOCK_BACK_TIME"];
+
+	// まっすぐ飛んでいくとき調整する高さ
+	KNOCK_BACK_HEIGHT_OFFSET = jsonData_["KNOCK_BACK_HEIGHT_OFFSET"];
+
+	// 上に飛んでいくときの上方向の力
+	FLINCH_UP_UP_VEC_POW = jsonData_["FLINCH_UP_UP_VEC_POW"];
+
+	// 少し上に飛んでいくときの上方向の力
+	FLINCH_UP_UP_VEC_SMALL_POW = jsonData_["FLINCH_UP_UP_VEC_SMALL_POW"];
+
+	// 上に飛んでいくときのスピード
+	FLINCH_UP_SPEED = jsonData_["FLINCH_UP_SPEED"];
+
+	// 上に飛んでいくときのX軸の角度
+	FLINCH_UP_ANGLE_X = jsonData_["FLINCH_UP_ANGLE_X"];
+
+	// 上に飛んでいくときの重力を緩くする強さ
+	FLINCH_UP_GRAVITY_SCALE = jsonData_["FLINCH_UP_GRAVITY_SCALE"];
 
 	// 走るときの移動量
 	RUN_MOVE_POW = jsonData_["RUN_MOVE_POW"];
@@ -329,6 +358,9 @@ void Boss::Update(const float deltaTime)
 	// 衝突判定の更新
 	ActorBase::CollisionUpdate();
 
+	// 飛び道具の更新
+	Projectile(deltaTime);
+
 	// 状態ごとの更新
 	// 重力がかかる前に処理しないとおかしな挙動になるので注意！
 	stateUpdate_(deltaTime);
@@ -348,6 +380,39 @@ void Boss::Update(const float deltaTime)
 
 	// アニメーションのフレームを固定
 	AnimationFrame();
+
+}
+
+void Boss::Projectile(const float deltaTime)
+{
+
+	// 攻撃判定があるフレーム
+	if (collisionData_.isProjectileAttack && ATTACK_PROJECTILE_COLLISION_TIME >= projectileCollisionCnt_)
+	{
+
+		// 飛び道具の当たり判定の座標設定
+		collisionData_.projectilePos = VAdd(collisionData_.projectilePos, VScale(projectileDir_,100.0f));
+
+		// 飛び道具の衝突判定が続く時間のカウンタを加算
+		projectileCollisionCnt_ += deltaTime;
+
+		// エフェクトを追従させる
+		effekseerController_->FollowPos(collisionData_.projectilePos, Quaternion::Identity(), { 0.0f,500.0f,0.0f }, "PROJECTILE");
+
+	}
+	else if (ATTACK_PROJECTILE_COLLISION_TIME <= projectileCollisionCnt_)
+	{
+
+		// 飛び道具の当たり判定をなくす
+		collisionData_.isProjectileAttack = false;
+
+		// 必殺技の衝突判定が続く時間のカウンタをリセット
+		projectileCollisionCnt_ = 0.0f;
+
+		// エフェクトを止める
+		effekseerController_->DrawStop("PROJECTILE");
+
+	}
 
 }
 
@@ -400,6 +465,40 @@ const std::vector<int> Boss::GetTotalAttackTypes() const
 	}
 
 	return intStates;
+
+}
+
+void Boss::AttackHit(const int damage, const int state)
+{
+
+	// どのヒットアニメーションかチェックする
+	AttackHitCheck(state);
+
+	// HPを減らす
+	SubHp(damage);
+
+	// HPが0になったら死ぬアニメーションに遷移
+	if (hp_ <= 0)
+	{
+		DeathAnim(state);
+	}
+
+	// アニメーションの再生時間をリセットする
+	animationController_->ResetStepAnim();
+
+}
+
+void Boss::ProjectileHit(const int damage)
+{
+
+	// ヒットアニメーションに遷移
+	ChangeState(BossState::HIT_BODY);
+
+	// HPを減らす
+	SubHp(damage);
+
+	// アニメーションの再生時間をリセットする
+	animationController_->ResetStepAnim();
 
 }
 
@@ -466,6 +565,7 @@ void Boss::ChangeKick()
 
 void Boss::ChangeProjectile()
 {
+
 	stateUpdate_ = std::bind(&Boss::UpdateProjectile, this, std::placeholders::_1);
 
 	// 攻撃が当たっているかをリセットする
@@ -477,14 +577,170 @@ void Boss::ChangeProjectile()
 	// 必殺技の当たり判定の座標を設定
 	collisionData_.projectilePos = VAdd(transform_->pos, BODY_RELATIVE_CENTER_POS);
 
-	// 必殺技の衝突判定が続く時間のカウンタをリセット
-	attackProjectileCollisionCnt_ = 0.0f;
+	// 飛び道具の飛んでいく方向
+	projectileDir_ = VNorm(transform_->quaRot.GetForward());
 
-	// 必殺技の当たり判定をリセット
+	// 飛び道具の当たり判定をリセット
 	collisionData_.isProjectileAttack = false;
 
-	// エフェクトを描画
-	effekseerController_->Draw(collisionData_.projectilePos, Quaternion::Identity(), { 0.0f,0.0f,0.0f }, "PROJECTILE");
+}
+
+void Boss::ChangeHitHead()
+{
+
+	stateUpdate_ = std::bind(&Boss::UpdateHitHead, this, std::placeholders::_1);
+
+	// プレイヤーの方向を求める
+	VECTOR vec = VSub(targetPos_, transform_->pos);
+
+	// プレイヤーの方向と逆方向のベクトル
+	moveDir_ = { -vec.x, vec.y,-vec.z };
+
+	// スピード
+	speed_ = ATTACK_MOVE_POW;
+
+}
+
+void Boss::ChangeHitBody()
+{
+
+	stateUpdate_ = std::bind(&Boss::UpdateHitBody, this, std::placeholders::_1);
+
+	// プレイヤーの方向を求める
+	VECTOR vec = VSub(targetPos_, transform_->pos);
+
+	// プレイヤーの方向と逆方向のベクトル
+	moveDir_ = { -vec.x, vec.y,-vec.z };
+
+	// スピード
+	speed_ = ATTACK_MOVE_POW;
+
+}
+
+void Boss::ChangeHitFly()
+{
+
+	stateUpdate_ = std::bind(&Boss::UpdateHitFly, this, std::placeholders::_1);
+
+	// プレイヤーの方向を求める
+	VECTOR vec = VSub(targetPos_, transform_->pos);
+
+	// 正規化
+	vec = VNorm(vec);
+
+	// プレイヤーの方向と逆方向のベクトル
+	moveDir_ = { -vec.x, vec.y,-vec.z };
+
+	// 一個前のアニメーションがまっすぐ飛んでいくのだったら上方向に飛ばさない
+	if (key_ != ANIM_DATA_KEY[static_cast<int>(BossState::HIT_KNOCK_BACK)])
+	{
+
+		// 上方向に飛ばす
+		velocity_.y = HIT_FLY_UP_VEC_POW;
+		moveDir_.y = velocity_.y;
+
+		// スピード
+		speed_ = HIT_FLY_MOVE_POW;
+
+	}
+
+	// 体の角度をリセット
+	transform_->quaRot.x = Quaternion().x;
+	transform_->quaRot.z = Quaternion().z;
+
+	// 重力を通常状態に戻す
+	gravityScale_ = 1.0f;
+
+}
+
+void Boss::ChangeHitFlinchUp()
+{
+
+	stateUpdate_ = std::bind(&Boss::UpdateHitFlinchUp, this, std::placeholders::_1);
+
+	// プレイヤーの方向を求める
+	VECTOR vec = VSub(targetPos_, transform_->pos);
+
+	// 正規化
+	vec = VNorm(vec);
+
+	// プレイヤーの方向と逆方向のベクトル
+	vec = { -vec.x, vec.y,-vec.z };
+
+	// 地面についていたら上に移動させる
+	if (velocity_.y == 0.0f)
+	{
+		velocity_.y = FLINCH_UP_UP_VEC_POW;
+	}
+	// 地面についていなかったら少し移動させる
+	else
+	{
+		velocity_.y = FLINCH_UP_UP_VEC_SMALL_POW;
+	}
+
+	// 上方向に飛ばす
+	vec.y = velocity_.y;
+
+	// 実際に動く方向
+	moveDir_ = vec;
+
+	// スピード
+	speed_ = FLINCH_UP_SPEED;
+
+	// すでに角度が変わっていたら処理しない
+	if (!isChangeAngle_)
+	{
+		// 体の角度を変更
+		transform_->quaRot = Quaternion::Mult(transform_->quaRot, Quaternion::AngleAxis(Utility::Deg2RadF(FLINCH_UP_ANGLE_X), Utility::AXIS_X));
+		isChangeAngle_ = true;
+	}
+
+	// 重力を緩くする
+	gravityScale_ = FLINCH_UP_GRAVITY_SCALE;
+
+}
+
+void Boss::ChangeHitKnockback()
+{
+
+	stateUpdate_ = std::bind(&Boss::UpdateHitKnockback, this, std::placeholders::_1);
+
+	// プレイヤーの方向を求める
+	VECTOR vec = VSub(targetPos_, transform_->pos);
+
+	// プレイヤーの方向と逆方向のベクトル
+	moveDir_ = { -vec.x, vec.y,-vec.z };
+
+	// y方向を消す
+	moveDir_.y = 0.0f;
+
+	// スピード
+	speed_ = HIT_FLY_MOVE_POW;
+
+	// 高さを調整する
+	transform_->pos.y = transform_->pos.y + KNOCK_BACK_HEIGHT_OFFSET;
+
+}
+
+void Boss::ChangeHitKipUp()
+{
+
+	stateUpdate_ = std::bind(&Boss::UpdateHitKipUp, this, std::placeholders::_1);
+
+	// 体の角度をリセット
+	transform_->quaRot.x = Quaternion().x;
+	transform_->quaRot.z = Quaternion().z;
+
+}
+
+void Boss::ChangeDeath()
+{
+
+	stateUpdate_ = std::bind(&Boss::UpdateDeath, this, std::placeholders::_1);
+
+	// 体の角度をリセット
+	transform_->quaRot.x = Quaternion().x;
+	transform_->quaRot.z = Quaternion().z;
 
 }
 
@@ -612,21 +868,14 @@ void Boss::UpdateKick(const float deltaTime)
 void Boss::UpdateProjectile(const float deltaTime)
 {
 
-	// 攻撃判定があるフレーム
-	if (ATTACK_PROJECTILE_START_FRAME <= animationController_->GetStepAnim() && ATTACK_PROJECTILE_COLLISION_TIME >= attackProjectileCollisionCnt_)
+	bool a = effekseerController_->IsDraw("PROJECTILE");
+	if (!a && ATTACK_PROJECTILE_START_FRAME <= animationController_->GetStepAnim())
 	{
 
-		// 当たり判定をONにする
 		collisionData_.isProjectileAttack = true;
 
-		// 飛び道具の当たり判定の座標設定
-		collisionData_.projectilePos = VAdd(collisionData_.projectilePos, VScale(transform_->quaRot.GetForward(), 100.0f));
-
-		// 飛び道具の衝突判定が続く時間のカウンタを加算
-		attackProjectileCollisionCnt_ += deltaTime;
-
-		// エフェクトを追従させる
-		effekseerController_->FollowPos(collisionData_.projectilePos, Quaternion::Identity(), { 0.0f,0.0f,0.0f }, "PROJECTILE");
+		// エフェクトを描画
+		effekseerController_->Draw(collisionData_.projectilePos, Quaternion::Identity(), { 0.0f,500.0f,0.0f }, "PROJECTILE");
 
 	}
 
@@ -639,6 +888,121 @@ void Boss::UpdateProjectile(const float deltaTime)
 		// クールタイムを設定
 		coolTime_ = COOL_TIME;
 
+	}
+
+}
+
+void Boss::UpdateHitHead(const float deltaTime)
+{
+
+	// 少し後ろにゆっくり移動
+	moveComponent_->Lerp();
+
+	// アニメーションが終了したら待機状態へ遷移する
+	if (animationController_->IsEndPlayAnimation())
+	{
+		ChangeState(BossState::IDLE);
+	}
+
+}
+
+void Boss::UpdateHitBody(const float deltaTime)
+{
+
+	// 少し後ろにゆっくり移動
+	moveComponent_->Lerp();
+
+	// アニメーションが終了したら待機状態へ遷移する
+	if (animationController_->IsEndPlayAnimation())
+	{
+		ChangeState(BossState::IDLE);
+	}
+
+}
+
+void Boss::UpdateHitFly(const float deltaTime)
+{
+
+	// 地面につくまで加算する
+	if (velocity_.y != 0.0f)
+	{
+		// 後ろに飛んでいきながら移動
+		moveComponent_->HitMove();
+	}
+
+	// HPが0以下だったら非アクティブにする
+	if (animationController_->IsEndPlayAnimation() && hp_ <= 0)
+	{
+		isActive_ = false;
+	}
+
+	// HPが0以下は通らない
+	if (hp_ <= 0)return;
+
+	// アニメーションが終了したら起き上がり状態へ遷移する
+	if (animationController_->IsEndPlayAnimation())
+	{
+		ChangeState(BossState::KIP_UP);
+	}
+
+}
+
+void Boss::UpdateHitFlinchUp(const float deltaTime)
+{
+
+	// 地面につくまで加算する
+	if (velocity_.y != 0.0f)
+	{
+		// 上に緩く移動する
+		moveComponent_->HitMove();
+	}
+
+	// アニメーションが終了したら起き上がり状態へ遷移する
+	if (velocity_.y == 0.0f)
+	{
+		ChangeState(BossState::KIP_UP);
+	}
+
+}
+
+void Boss::UpdateHitKnockback(const float deltaTime)
+{
+	
+	// 飛んでいられる時間まで移動し続ける
+	if (KNOCK_BACK_TIME > knockBackCnt_)
+	{
+		// 後ろに飛んでいきながら移動
+		moveComponent_->Move();
+	}
+	else
+	{
+		knockBackCnt_ = 0.0f;
+		ChangeState(BossState::HIT_FLY);
+	}
+
+	// 飛んでいる時間をカウント
+	knockBackCnt_ += deltaTime;
+
+}
+
+void Boss::UpdateHitKipUp(const float deltaTime)
+{
+
+	// アニメーションが終了したら待機状態へ遷移する
+	if (animationController_->IsEndPlayAnimation())
+	{
+		ChangeState(BossState::IDLE);
+	}
+
+}
+
+void Boss::UpdateDeath(const float deltaTime)
+{
+
+	// アニメーションが終了したら非アクティブにする
+	if (animationController_->IsEndPlayAnimation())
+	{
+		isActive_ = false;
 	}
 
 }

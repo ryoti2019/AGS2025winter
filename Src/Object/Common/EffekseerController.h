@@ -27,6 +27,10 @@ public:
 
 		// 大きさ
 		float scale;
+
+		// 再生されているかどうか
+		bool isPlay;
+
 	};
 
 	// コンストラクタ
@@ -51,6 +55,9 @@ public:
 
 	// エフェクト追従
 	virtual void FollowPos(const VECTOR& pos, const Quaternion& quaRot, const VECTOR& relativePos, const std::string& handle);
+
+	// エフェクトを描画しているかチェック
+	bool IsDraw(const std::string& handle);
 
 protected:
 

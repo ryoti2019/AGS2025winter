@@ -9,17 +9,7 @@
 
 Enemy::Enemy(const VECTOR& pos, const json& data)
 	:
-	EnemyBase(pos, data),
-	HIT_FLY_UP_VEC_POW(data["HIT_FLY_UP_VEC_POW"]),
-	HIT_FLY_MOVE_POW(data["HIT_FLY_MOVE_POW"]),
-	KNOCK_BACK_TIME(data["KNOCK_BACK_TIME"]),
-	KNOCK_BACK_HEIGHT_OFFSET(data["KNOCK_BACK_HEIGHT_OFFSET"]),
-	FLINCH_UP_UP_VEC_POW(data["FLINCH_UP_UP_VEC_POW"]),
-	FLINCH_UP_UP_VEC_SMALL_POW(data["FLINCH_UP_UP_VEC_SMALL_POW"]),
-	FLINCH_UP_SPEED(data["FLINCH_UP_SPEED"]),
-	FLINCH_UP_ANGLE_X(data["FLINCH_UP_ANGLE_X"]),
-	FLINCH_UP_GRAVITY_SCALE(data["FLINCH_UP_GRAVITY_SCALE"]),
-	MOVE_RATE(data["MOVE_RATE"])
+	EnemyBase(pos, data)
 {
 
 	// 機能の初期化
@@ -152,6 +142,33 @@ void Enemy::InitParameter()
 
 	// キックの攻撃終了フレーム
 	KICK_ATTACK_END_FRAME = jsonData_["ANIM"][static_cast<int>(EnemyState::ATTACK_KICK) - 1]["ATTACK_END_FRAME"];
+
+	// 吹っ飛ぶ時の上方向
+	HIT_FLY_UP_VEC_POW = jsonData_["HIT_FLY_UP_VEC_POW"];
+
+	// 吹っ飛ぶ時の移動量
+	HIT_FLY_MOVE_POW = jsonData_["HIT_FLY_MOVE_POW"];
+
+	// まっすぐ飛んでいく時間
+	KNOCK_BACK_TIME = jsonData_["KNOCK_BACK_TIME"];
+
+	// まっすぐ飛んでいくとき調整する高さ
+	KNOCK_BACK_HEIGHT_OFFSET = jsonData_["KNOCK_BACK_HEIGHT_OFFSET"];
+
+	// 上に飛んでいくときの上方向の力
+	FLINCH_UP_UP_VEC_POW = jsonData_["FLINCH_UP_UP_VEC_POW"];
+
+	// 少し上に飛んでいくときの上方向の力
+	FLINCH_UP_UP_VEC_SMALL_POW = jsonData_["FLINCH_UP_UP_VEC_SMALL_POW"];
+
+	// 上に飛んでいくときのスピード
+	FLINCH_UP_SPEED = jsonData_["FLINCH_UP_SPEED"];
+
+	// 上に飛んでいくときのX軸の角度
+	FLINCH_UP_ANGLE_X = jsonData_["FLINCH_UP_ANGLE_X"];
+
+	// 上に飛んでいくときの重力を緩くする強さ
+	FLINCH_UP_GRAVITY_SCALE = jsonData_["FLINCH_UP_GRAVITY_SCALE"];
 
 	// 走るときの移動量
 	RUN_MOVE_POW = jsonData_["RUN_MOVE_POW"];
@@ -388,6 +405,20 @@ void Enemy::AttackHit(const int damage, const int state)
 	{
 		DeathAnim(state);
 	}
+
+	// アニメーションの再生時間をリセットする
+	animationController_->ResetStepAnim();
+
+}
+
+void Enemy::ProjectileHit(const int damage)
+{
+
+	// ヒットアニメーションに遷移
+	ChangeState(EnemyState::HIT_BODY);
+
+	// HPを減らす
+	SubHp(damage);
 
 	// アニメーションの再生時間をリセットする
 	animationController_->ResetStepAnim();

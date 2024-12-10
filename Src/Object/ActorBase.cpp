@@ -20,7 +20,6 @@ ActorBase::ActorBase(const VECTOR& pos, const json& data)
 	ROTATION_POW(0.3f),
 	HAND_AND_FOOT_COLLISION_RADIUS(2000.0f),
 	BODY_COLLISION_RADIUS(300.0f),
-	SPECIAL_ATTACK_COLLISION_RADIUS(10000.0f),
 	HP_MAX(data["HP"]),
 	resMng_(ResourceManager::GetInstance()),
 	dir_({ 0.0f,0.0f,0.0f }),
@@ -351,5 +350,9 @@ const bool ActorBase::GetIsLockOn()const
 }
 
 void ActorBase::AttackHit(const int damage, const int state)
+{
+}
+
+void ActorBase::ProjectileHit(const int damage)
 {
 }

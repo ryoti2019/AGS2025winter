@@ -102,6 +102,16 @@ void BossAIComponent::Attack(const float deltaTime)
 	// ベクトルの長さ
 	float length = Utility::Magnitude(vec);
 
+	if (number == 2)
+	{
+
+		boss_->ChangeState(BossState::ATTACK_PROJECTILE);
+
+		// 行動を決めた
+		boss_->SetIsActionDecided(true);
+
+	}
+
 	// プレイヤーとの距離が遠かったら攻撃できない
 	if (length >= boss_->ACTIVATION_DISTANCE) return;
 
@@ -123,14 +133,7 @@ void BossAIComponent::Attack(const float deltaTime)
 		boss_->SetIsActionDecided(true);
 
 	}
-	else if (number == 2)
-	{
 
-		boss_->ChangeState(BossState::ATTACK_PROJECTILE);
 
-		// 行動を決めた
-		boss_->SetIsActionDecided(true);
-
-	}
 
 }

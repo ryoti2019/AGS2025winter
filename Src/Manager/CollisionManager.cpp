@@ -174,13 +174,13 @@ void CollisionManager::CheckAttackCollision(const float deltaTime)
 					// “–‚½‚Á‚½‚Ìˆ—
 					OnAttackCollision(attacker, target);
 				}
-				// •KE‹Z‚Ì”»’è
+				// ”ò‚Ñ“¹‹ï‚Ì”»’è
 				if (HitCheck_Sphere_Capsule(attacker->GetCollisionData().projectilePos, attacker->GetCollisionData().projectileCollisionRadius,
 					target->GetCollisionData().bodyCapsuleUpPos, target->GetCollisionData().bodyCapsuleDownPos, target->GetCollisionData().bodyCollisionRadius)
 					&& attacker->GetCollisionData().isProjectileAttack)
 				{
 					// “–‚½‚Á‚½‚Ìˆ—
-					OnAttackCollision(attacker, target);
+					OnProjectileCollision(attacker, target);
 				}
 			}
 		}
@@ -196,6 +196,26 @@ void CollisionManager::OnAttackCollision(const std::shared_ptr<ActorBase>& attac
 
 	// UŒ‚‚ª“–‚½‚Á‚½ˆ—
 	target->AttackHit(attacker->GetDamage(), attacker->GetState());
+
+	// ‘Šè‚ÌÀ•W‚ğİ’è
+	target->SetTargetPos(attacker->GetTransform()->pos);
+
+	// “–‚½‚Á‚½ƒ^[ƒQƒbƒg‚Ìî•ñ‚ğæ“¾
+	auto& data = invincibleData_[target];
+
+	// ƒ^[ƒQƒbƒg‚É¡UŒ‚‚³‚ê‚½UŒ‚ó‘Ô‚Ì–³“GŠÔ‚ğİ’è‚·‚é
+	data[attacker->GetState() - ATTACK_START_NUM] = 1.0f;
+
+}
+
+void CollisionManager::OnProjectileCollision(const std::shared_ptr<ActorBase>& attacker, const std::shared_ptr<ActorBase>& target)
+{
+
+	// ”ò‚Ñ“¹‹ï‚ª‚¸‚Á‚Æ“–‚½‚ç‚È‚¢‚æ‚¤‚É‚·‚é
+	attacker->SetIsAttackHit(true);
+
+	// ”ò‚Ñ“¹‹ï‚ª“–‚½‚Á‚½ˆ—
+	target->ProjectileHit(attacker->GetDamage());
 
 	// ‘Šè‚ÌÀ•W‚ğİ’è
 	target->SetTargetPos(attacker->GetTransform()->pos);
@@ -314,10 +334,10 @@ void CollisionManager::CheckActorsAndStageCollision()
 			}
 
 			// ‚à‚µ’n–Ê‚ğŠÑ’Ê‚µ‚Ä‰º‚És‚Á‚Ä‚µ‚Ü‚Á‚½‚Æ‚«
-			//if (target->GetTransform()->pos.y < -19500.0f)
-			//{
-			//	target->SetPos({ target->GetTransform()->pos.x, -19500.0f,target->GetTransform()->pos.z });
-			//}
+			if (target->GetTransform()->pos.y < -19500.0f)
+			{
+				target->SetPos({ target->GetTransform()->pos.x, -19500.0f,target->GetTransform()->pos.z });
+			}
 
 		}
 	}
@@ -469,4 +489,3 @@ void CollisionManager::ResolveEnemysCollision(const std::shared_ptr<ActorBase>& 
 	}
 
 }
-

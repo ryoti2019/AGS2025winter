@@ -1,11 +1,14 @@
 #pragma once
 #include "../Object/ActorBase.h"
 #include "../Manager/Camera.h"
+#include "CollisionTypes.h"
 
 class CollisionManager
 {
 
 public:
+
+
 
 	// 攻撃の最初の状態の番号
 	const int ATTACK_START_NUM;
@@ -83,7 +86,7 @@ private:
 			{ActorType::PLAYER,ActorType::ENEMY},
 			{ActorType::PLAYER,ActorType::BOSS},
 			{ActorType::ENEMY,ActorType::ENEMY},
-			{ActorType::ENEMY,ActorType::BOSS},
+			{ActorType::ENEMY,ActorType::BOSS}
 		}
 	};
 
@@ -102,8 +105,11 @@ private:
 	// プレイヤーと敵の攻撃の当たり判定
 	void CheckAttackCollision(const float deltaTime);
 
-	// 当たった時の処理
+	// 攻撃が当たった時の処理
 	void OnAttackCollision(const std::shared_ptr<ActorBase>& attacker, const std::shared_ptr<ActorBase>& target);
+
+	// 飛び道具が当たった時の処理
+	void OnProjectileCollision(const std::shared_ptr<ActorBase>& attacker, const std::shared_ptr<ActorBase>& target);
 
 	// ステージとの当たり判定
 	void CheckStageCollision();

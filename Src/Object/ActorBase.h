@@ -8,6 +8,7 @@
 #include "../Component/MoveComponent.h"
 #include "../Component/DrawComponent.h"
 #include "../Manager/ResourceManager.h"
+#include "../Manager/CollisionTypes.h"
 #include "../Object/Common/AnimationController.h"
 #include "../Object/Common/EffekseerController.h"
 
@@ -235,8 +236,8 @@ public:
 	// ‘Ì‚Ì“–‚½‚è”»’è‚Ì”¼Œa
 	const float BODY_COLLISION_RADIUS;
 
-	// •KE‹Z‚Ì“–‚½‚è”»’è‚Ì”¼Œa
-	const float SPECIAL_ATTACK_COLLISION_RADIUS;
+	// ”ò‚Ñ“¹‹ï‚Ì“–‚½‚è”»’è‚Ì”¼Œa
+	float PROJECTILE_COLLISION_RADIUS;
 
 	// Å‰‚ÉŒü‚¢‚Ä‚¢‚éŠp“x
 	float INIT_ANGLE;
@@ -338,6 +339,9 @@ public:
 
 	// UŒ‚‚Ìƒqƒbƒgˆ—
 	virtual void AttackHit(const int damage, const int state);
+
+	// ”ò‚Ñ“¹‹ï‚Ìƒqƒbƒgˆ—
+	virtual void ProjectileHit(const int damage);
 
 	// ¡‚Ìó‘Ô‚ğæ“¾
 	virtual const int GetState()const { return 0; }

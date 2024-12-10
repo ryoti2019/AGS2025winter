@@ -93,3 +93,8 @@ void EffekseerController::FollowPos(const VECTOR& pos, const Quaternion& quaRot,
 		effectData_[handle].pos.x, effectData_[handle].pos.y, effectData_[handle].pos.z);
 
 }
+
+bool EffekseerController::IsDraw(const std::string& handle)
+{
+	return IsEffekseer3DEffectPlaying(effectData_[handle].playId) == 0;
+}
