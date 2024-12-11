@@ -60,11 +60,11 @@ ActorCreate::ActorCreate()
 	const auto& playerData = objectData[0]["PlayerData"];
 
 	// ƒvƒŒƒCƒ„[‚ð¶¬
-	//actorManager->CreateActor<Player>(playerData, { -80000.0f,-19500.0f,25900.0f });
-	//actorManager->ActiveData(ActorType::PLAYER, { -80000.0f,-19500.0f,25900.0f });
+	actorManager->CreateActor<Player>(playerData, { -80000.0f,-19500.0f,25900.0f });
+	actorManager->ActiveData(ActorType::PLAYER, { -80000.0f,-19500.0f,25900.0f });
 
-	actorManager->CreateActor<Player>(playerData, { -10800.0f,-19500.0f,-132000.0f });
-	actorManager->ActiveData(ActorType::PLAYER, { -10800.0f,-19500.0f,-132000.0f });
+	//actorManager->CreateActor<Player>(playerData, { -10800.0f,-19500.0f,-132000.0f });
+	//actorManager->ActiveData(ActorType::PLAYER, { -10800.0f,-19500.0f,-132000.0f });
 
 	// “G
 	const auto& enemyData = objectData[1]["EnemyData"];

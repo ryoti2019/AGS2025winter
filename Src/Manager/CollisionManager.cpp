@@ -31,6 +31,9 @@ void CollisionManager::Update(const float deltaTime)
 	// プレイヤーと敵の攻撃の当たり判定をチェック
 	CheckAttackCollision(deltaTime);
 
+	// プレイヤーと敵の飛び道具の当たり判定
+	CheckProjectileCollision(deltaTime);
+
 	// ステージとの当たり判定をチェック
 	CheckStageCollision();
 
@@ -69,7 +72,7 @@ void CollisionManager::CheckAttackCollision(const float deltaTime)
 {
 
 	// 無敵時間の計算
-	for (auto& data : invincibleData_)
+	for (auto& data : isCloseRangeAttackHitData_)
 	{
 		for (auto& state : data.second)
 		{
@@ -105,13 +108,13 @@ void CollisionManager::CheckAttackCollision(const float deltaTime)
 				if (!attacker->GetAttackState())continue;
 
 				// 中身があるか確認
-				auto hitData = invincibleData_.find(target);
+				auto hitData = isCloseRangeAttackHitData_.find(target);
 
 				// 生成されていない場合は、新しくvector配列の箱を作りその中に要素を入れていく
-				if (hitData == invincibleData_.end())
+				if (hitData == isCloseRangeAttackHitData_.end())
 				{
 
-					// 当たったもののデータを作る
+					// データを作る
 					std::map<int, float> data;
 					for (int type = 0; type < attacker->GetTotalAttackTypes().size(); type++)
 					{
@@ -119,10 +122,10 @@ void CollisionManager::CheckAttackCollision(const float deltaTime)
 					}
 
 					// 当たったものを格納
-					invincibleData_.emplace(target, data);
+					isCloseRangeAttackHitData_.emplace(target, data);
 
 					// 上で作ったデータを格納
-					hitData = invincibleData_.find(target);
+					hitData = isCloseRangeAttackHitData_.find(target);
 
 				}
 
@@ -174,6 +177,87 @@ void CollisionManager::CheckAttackCollision(const float deltaTime)
 					// 当たった時の処理
 					OnAttackCollision(attacker, target);
 				}
+
+			}
+		}
+	}
+
+}
+
+void CollisionManager::OnAttackCollision(const std::shared_ptr<ActorBase>& attacker, const std::shared_ptr<ActorBase>& target)
+{
+
+	// 攻撃が当たった処理
+	target->AttackHit(attacker->GetDamage(), attacker->GetState());
+
+	// 相手の座標を設定
+	target->SetTargetPos(attacker->GetTransform()->pos);
+
+	// 当たったターゲットの情報を取得
+	auto& data = isCloseRangeAttackHitData_[target];
+
+	// ターゲットに今攻撃された攻撃状態の無敵時間を設定する
+	data[attacker->GetState() - ATTACK_START_NUM] = 1.0f;
+
+}
+
+void CollisionManager::CheckProjectileCollision(const float deltaTime)
+{
+
+	// 無敵時間の計算
+	for (auto& data : isLongRangeAttackHitData_)
+	{
+		// 無敵時間を減算していく
+		data.second -= deltaTime;
+	}
+
+	// 衝突しているか判定する
+	for (const collisionChannnelInfo& info : attackCollisionChannelList_)
+	{
+
+		// 攻撃している側
+		const auto& attackers = collisionActorData_.find(info.type1);
+
+		// 攻撃を受ける側
+		const auto& targets = collisionActorData_.find(info.type2);
+
+		// 中身が入っているか確認
+		if (attackers == collisionActorData_.end())continue;
+		if (targets == collisionActorData_.end())continue;
+
+		for (const std::shared_ptr<ActorBase>& attacker : attackers->second)
+		{
+			for (const std::shared_ptr<ActorBase>& target : targets->second)
+			{
+
+				// ポインタが入っているか確認
+				if (!attacker)return;
+				if (!target)return;
+
+				// 中身があるか確認
+				auto hitData = isLongRangeAttackHitData_.find(target);
+
+				// 生成されていない場合は、新しくvector配列の箱を作りその中に要素を入れていく
+				if (hitData == isLongRangeAttackHitData_.end())
+				{
+
+					// 無敵時間を作る
+					float invincibleTime = 0.0f;
+
+					// 当たったものを格納
+					isLongRangeAttackHitData_.emplace(target, invincibleTime);
+
+					// 上で作ったデータを格納
+					hitData = isLongRangeAttackHitData_.find(target);
+
+				}
+
+				// このアニメーション中の無敵時間が消えていなければ処理しない
+				if (hitData->second > 0.0f)continue;
+
+				// 攻撃側がスーパーアーマー状態かチェック
+				if (target->GetSuperArmorState())continue;
+
 				// 飛び道具の判定
 				if (HitCheck_Sphere_Capsule(attacker->GetCollisionData().projectilePos, attacker->GetCollisionData().projectileCollisionRadius,
 					target->GetCollisionData().bodyCapsuleUpPos, target->GetCollisionData().bodyCapsuleDownPos, target->GetCollisionData().bodyCollisionRadius)
@@ -188,31 +272,8 @@ void CollisionManager::CheckAttackCollision(const float deltaTime)
 
 }
 
-void CollisionManager::OnAttackCollision(const std::shared_ptr<ActorBase>& attacker, const std::shared_ptr<ActorBase>& target)
-{
-
-	// 攻撃がずっと当たらないようにする
-	attacker->SetIsAttackHit(true);
-
-	// 攻撃が当たった処理
-	target->AttackHit(attacker->GetDamage(), attacker->GetState());
-
-	// 相手の座標を設定
-	target->SetTargetPos(attacker->GetTransform()->pos);
-
-	// 当たったターゲットの情報を取得
-	auto& data = invincibleData_[target];
-
-	// ターゲットに今攻撃された攻撃状態の無敵時間を設定する
-	data[attacker->GetState() - ATTACK_START_NUM] = 1.0f;
-
-}
-
 void CollisionManager::OnProjectileCollision(const std::shared_ptr<ActorBase>& attacker, const std::shared_ptr<ActorBase>& target)
 {
-
-	// 飛び道具がずっと当たらないようにする
-	attacker->SetIsAttackHit(true);
 
 	// 飛び道具が当たった処理
 	target->ProjectileHit(attacker->GetDamage());
@@ -220,11 +281,17 @@ void CollisionManager::OnProjectileCollision(const std::shared_ptr<ActorBase>& a
 	// 相手の座標を設定
 	target->SetTargetPos(attacker->GetTransform()->pos);
 
+	// 敵の飛び道具だけ当たり判定を消す
+	if (attacker->GetActorType() == ActorType::BOSS)
+	{
+		attacker->SetIsProjectileCollision(false);
+	}
+
 	// 当たったターゲットの情報を取得
-	auto& data = invincibleData_[target];
+	auto& data = isLongRangeAttackHitData_[target];
 
 	// ターゲットに今攻撃された攻撃状態の無敵時間を設定する
-	data[attacker->GetState() - ATTACK_START_NUM] = 1.0f;
+	data = 1.0f;
 
 }
 

@@ -248,6 +248,9 @@ public:
 	// HPの最大値
 	int HP_MAX;
 
+	// HPバーの長さ
+	int HP_BAR_LENGTH;
+
 	// アニメーション番号
 	int ANIM_INDEX;
 
@@ -322,12 +325,6 @@ public:
 	// スーパーアーマー状態かを取得
 	virtual const bool GetSuperArmorState()const;
 
-	// 攻撃が当たっているか設定
-	void SetIsAttackHit(const bool hit) { isAttackHit_ = hit; }
-
-	// 攻撃が当たっているか
-	const bool GetIsAttackHit()const { return isAttackHit_; }
-
 	// 地面に当たっているか
 	void SetIsOnGround(const bool isOnGround) { isOnGround_ = isOnGround; }
 
@@ -372,6 +369,9 @@ public:
 
 	// 衝突判定のモデルIDを取得
 	const int GetCollisionModelId()const { return collisionModelId_; }
+
+	// 飛び道具の当たり判定を設定
+	void SetIsProjectileCollision(const bool isCollision) { collisionData_.isProjectileAttack = isCollision; }
 
 protected:
 
@@ -455,9 +455,6 @@ protected:
 
 	// 生きているか
 	bool isAlive_;
-
-	// 攻撃が当たっているか
-	bool isAttackHit_;
 
 	// 地面に当たっているか
 	bool isOnGround_;

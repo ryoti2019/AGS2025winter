@@ -164,6 +164,21 @@ void Boss::InitParameter()
 	// アニメーション番号
 	ANIM_INDEX = jsonData_["ANIM_INDEX"];
 
+	// HPの最大値
+	HP_MAX = jsonData_["HP"];
+
+	// HP
+	hp_ = HP_MAX;
+
+	// HPバーの長さ
+	HP_BAR_LENGTH = jsonData_["HP_BAR_LENGTH"];
+
+	// パンチのダメージ量
+	ATTACK_PUNCH_DAMAGE = jsonData_["ANIM"][static_cast<int>(BossState::ATTACK_PUNCH) - 1]["DAMAGE"];
+
+	// キックのダメージ量
+	ATTACK_KICK_DAMAGE = jsonData_["ANIM"][static_cast<int>(BossState::ATTACK_KICK) - 1]["DAMAGE"];
+
 }
 
 void Boss::InitAnimation()
@@ -450,7 +465,7 @@ void Boss::Projectile(const float deltaTime)
 		effekseerController_->FollowPos(collisionData_.projectilePos, Quaternion::Identity(), { 0.0f,500.0f,0.0f }, "PROJECTILE");
 
 	}
-	else if (ATTACK_PROJECTILE_COLLISION_TIME <= projectileCollisionCnt_)
+	else if (!collisionData_.isProjectileAttack || ATTACK_PROJECTILE_COLLISION_TIME <= projectileCollisionCnt_)
 	{
 
 		// 飛び道具の当たり判定をなくす
@@ -583,8 +598,8 @@ void Boss::ChangePunch()
 	// 右手の攻撃判定をなくす
 	collisionData_.isRightHandAttack = false;
 
-	// 攻撃が当たっているかをリセットする
-	isAttackHit_ = false;
+	// ダメージ量
+	damage_ = ATTACK_PUNCH_DAMAGE;
 
 	// スピード
 	speed_ = ATTACK_MOVE_POW;
@@ -599,8 +614,8 @@ void Boss::ChangeKick()
 	// 右足の攻撃判定をなくす
 	collisionData_.isRightFootAttack = false;
 
-	// 攻撃が当たっているかをリセットする
-	isAttackHit_ = false;
+	// ダメージ量
+	damage_ = ATTACK_KICK_DAMAGE;
 
 	// スピード
 	speed_ = ATTACK_MOVE_POW;
@@ -614,9 +629,6 @@ void Boss::ChangeProjectile()
 
 	// 飛び道具の攻撃判定をなくす
 	collisionData_.isProjectileAttack = false;
-
-	// 攻撃が当たっているかをリセットする
-	isAttackHit_ = false;
 
 	// ダメージ量
 	damage_ = ATTACK_PROJECTILE_DAMAGE;

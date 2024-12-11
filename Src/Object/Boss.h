@@ -71,6 +71,9 @@ public:
 	// 今の状態を取得
 	const int GetState()const override { return static_cast<int>(state_); }
 
+	// ダメージ量を取得
+	const int GetDamage()const { return damage_; }
+
 private:
 
 	// AIコンポーネント

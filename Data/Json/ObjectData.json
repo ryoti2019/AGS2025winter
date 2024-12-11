@@ -16,6 +16,7 @@
 				"SCALE": 1.0,
 				"INIT_ANGLE": 90.0,
 				"HP": 100,
+				"HP_BAR_LENGTH": 360,
 				"ACTOR_TYPE": 0,
 				"ANIM": [
 					{
@@ -123,6 +124,7 @@
 				"SCALE": 10.0,
 				"INIT_ANGLE": 0.0,
 				"HP": 100,
+				"HP_BAR_LENGTH": 100,
 				"ACTOR_TYPE": 1,
 				"ANIM": [
 					{
@@ -206,6 +208,7 @@
 				"SCALE": 10.0,
 				"INIT_ANGLE": 0.0,
 				"HP": 1000,
+				"HP_BAR_LENGTH": 500,
 				"ACTOR_TYPE": 2,
 				"ANIM": [
 					{
@@ -278,7 +281,6 @@
 				"ATTACK_MOVE_POW": 0.0,
 				"SCALE": 10.0,
 				"INIT_ANGLE": 0.0,
-				"HP": 10,
 				"ACTOR_TYPE": 3,
 				"POS": {
 					"x": 0.0,

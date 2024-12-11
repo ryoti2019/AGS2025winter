@@ -20,7 +20,6 @@ ActorBase::ActorBase(const VECTOR& pos, const json& data)
 	ROTATION_POW(0.3f),
 	HAND_AND_FOOT_COLLISION_RADIUS(2000.0f),
 	BODY_COLLISION_RADIUS(300.0f),
-	HP_MAX(data["HP"]),
 	resMng_(ResourceManager::GetInstance()),
 	dir_({ 0.0f,0.0f,0.0f }),
 	moveDir_({ 0.0f,0.0f,0.0f }),
@@ -33,12 +32,10 @@ ActorBase::ActorBase(const VECTOR& pos, const json& data)
 	speed_(0.0f),
 	velocity_({ 0.0f,-1.0f,0.0f }),
 	acceleration_({ 0.0f,-GRAVITY,0.0f }),
-	hp_(HP_MAX),
 	actorType_(static_cast<ActorType>(data["ACTOR_TYPE"])),
 	isAlive_(false),
 	isActive_(false),
 	isLockOn_(false),
-	isAttackHit_(false),
 	isOnGround_(false),
 	jsonData_(data)
 {

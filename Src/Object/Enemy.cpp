@@ -152,6 +152,21 @@ void Enemy::InitParameter()
 	// アニメーション番号
 	ANIM_INDEX = jsonData_["ANIM_INDEX"];
 
+	// HPの最大値
+	HP_MAX = jsonData_["HP"];
+
+	// HP
+	hp_ = HP_MAX;
+
+	// HPバーの長さ
+	HP_BAR_LENGTH = jsonData_["HP_BAR_LENGTH"];
+
+	// パンチのダメージ量
+	ATTACK_PUNCH_DAMAGE = jsonData_["ANIM"][static_cast<int>(EnemyState::ATTACK_PUNCH) - 1]["DAMAGE"];
+
+	// キックのダメージ量
+	ATTACK_KICK_DAMAGE = jsonData_["ANIM"][static_cast<int>(EnemyState::ATTACK_KICK) - 1]["DAMAGE"];
+
 	// 追いかけている時間
 	trackingTime_ = 0.0f;
 
@@ -309,8 +324,16 @@ void Enemy::Draw()
 
 	hpGauge = hpLength * hp_ / HP_MAX;
 
+	VECTOR plusOffsetPos = VAdd(transform_->pos, { 0.0f,2000.0f,0.0f });
+
+	VECTOR minusOffsetPos = VAdd(transform_->pos, { 0.0f,1900.0f,0.0f });
+
+	auto plusOffsetScreenPos = ConvWorldPosToScreenPos(plusOffsetPos);
+
+	auto minusOffsetScreenPos = ConvWorldPosToScreenPos(minusOffsetPos);
+
 	// HPを描画
-	DrawBox(0, 100, 0 + hpGauge, 120, 0xff0000, true);
+	DrawBox(plusOffsetScreenPos.x - static_cast<float>(hpGauge / 2), plusOffsetScreenPos.y, minusOffsetScreenPos.x + static_cast<float>(hpGauge / 2), minusOffsetScreenPos.y, 0xff0000, true);
 
 	DrawFormatString(0, 15, 0xff0000, "velocity:(%0.2f,%0.2f,%0.2f)", velocity_.x, velocity_.y, velocity_.z);
 
@@ -574,9 +597,6 @@ void Enemy::ChangePunch()
 	// 右手の攻撃判定をなくす
 	collisionData_.isRightHandAttack = false;
 
-	// 攻撃が当たっているかをリセットする
-	isAttackHit_ = false;
-
 	// スピード
 	speed_ = ATTACK_MOVE_POW;
 
@@ -589,9 +609,6 @@ void Enemy::ChangeKick()
 
 	// 右足の攻撃判定をなくす
 	collisionData_.isRightFootAttack = false;
-
-	// 攻撃が当たっているかをリセットする
-	isAttackHit_ = false;
 
 	// スピード
 	speed_ = ATTACK_MOVE_POW;

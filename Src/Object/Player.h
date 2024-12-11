@@ -115,6 +115,7 @@ public:
 
 	void Init(const VECTOR& pos) override;
 	void Update(const float deltaTime) override;
+	void Draw()override;
 
 	// UŒ‚’†‚Ìó‘Ô‚©‚ğæ“¾
 	const bool GetAttackState()const override;

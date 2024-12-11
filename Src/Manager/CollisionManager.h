@@ -62,9 +62,9 @@ private:
 	const std::vector<collisionChannnelInfo> attackCollisionChannelList_ =
 	{
 		{
-			//{ActorType::PLAYER,ActorType::ENEMY},
-			//{ActorType::PLAYER,ActorType::BOSS},
-			//{ActorType::ENEMY,ActorType::PLAYER},
+			{ActorType::PLAYER,ActorType::ENEMY},
+			{ActorType::PLAYER,ActorType::BOSS},
+			{ActorType::ENEMY,ActorType::PLAYER},
 			{ActorType::BOSS,ActorType::PLAYER}
 		}
 	};
@@ -99,14 +99,20 @@ private:
 	// すべてのアクターの衝突判定をまとめたデータ
 	std::unordered_map<ActorType, std::vector<std::shared_ptr<ActorBase>>> collisionActorData_;
 
-	// 攻撃が当たっているかどうかのデータ
-	std::map<std::shared_ptr<ActorBase>, std::map<int, float>> invincibleData_;
+	// 近距離攻撃が当たっているかどうかのデータ
+	std::map<std::shared_ptr<ActorBase>, std::map<int, float>> isCloseRangeAttackHitData_;
+
+	// 遠距離攻撃が当たっているかどうかのデータ
+	std::map<std::shared_ptr<ActorBase>, float> isLongRangeAttackHitData_;
 
 	// プレイヤーと敵の攻撃の当たり判定
 	void CheckAttackCollision(const float deltaTime);
 
 	// 攻撃が当たった時の処理
 	void OnAttackCollision(const std::shared_ptr<ActorBase>& attacker, const std::shared_ptr<ActorBase>& target);
+
+	// プレイヤーと敵の飛び道具の当たり判定
+	void CheckProjectileCollision(const float deltaTime);
 
 	// 飛び道具が当たった時の処理
 	void OnProjectileCollision(const std::shared_ptr<ActorBase>& attacker, const std::shared_ptr<ActorBase>& target);

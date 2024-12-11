@@ -179,6 +179,15 @@ void Player::InitParameter()
 	// 溜めパンチのカウンタ
 	attackChargePunchCnt_ = 0.0f;
 
+	// HPの最大値
+	HP_MAX = jsonData_["HP"];
+
+	// HP
+	hp_ = HP_MAX;
+
+	// HPバーの長さ
+	HP_BAR_LENGTH = jsonData_["HP_BAR_LENGTH"];
+
 	// 走るときの移動量
 	RUN_MOVE_POW = jsonData_["RUN_MOVE_POW"];
 
@@ -264,6 +273,30 @@ void Player::Update(const float deltaTime)
 
 	// アニメーション再生
 	animationController_->Update(deltaTime);
+
+}
+
+void Player::Draw()
+{
+
+	// 基底クラスの描画処理
+	ActorBase::Draw();
+
+	// HPバー描画
+	int hpLength = HP_BAR_LENGTH;
+	int H;
+	int hpGauge;
+	H = hp_ * (512.0f / HP_MAX) - 100;
+	int R = min(max((384 - H), 0), 0xff);
+	int G = min(max((H + 64), 0), 0xff);
+	int B = max((H - 384), 0);
+	hpGauge = hpLength * hp_ / HP_MAX;
+
+	if (hp_ >= 0)
+	{
+		DrawBox(40, 20, 40 + hpGauge, 40, GetColor(R, G, B), true);
+	}
+
 
 }
 
@@ -508,9 +541,6 @@ void Player::ChangeJab()
 	// 左手の攻撃判定をなくす
 	collisionData_.isLeftHandAttack = false;
 
-	// 攻撃が当たっているかをリセットする
-	isAttackHit_ = false;
-
 	// ダメージ量
 	damage_ = ATTACK_JAB_DAMAGE;
 
@@ -526,9 +556,6 @@ void Player::ChangeStraight()
 
 	// 右手の攻撃判定をなくす
 	collisionData_.isRightHandAttack = false;
-
-	// 攻撃が当たっているかをリセットする
-	isAttackHit_ = false;
 
 	// ダメージ量
 	damage_ = ATTACK_STRAIGHT_DAMAGE;
@@ -546,9 +573,6 @@ void Player::ChangeHook()
 	// 左手の攻撃判定をなくす
 	collisionData_.isLeftHandAttack = false;
 
-	// 攻撃が当たっているかをリセットする
-	isAttackHit_ = false;
-
 	// ダメージ量
 	damage_ = ATTACK_HOOK_DAMAGE;
 
@@ -564,9 +588,6 @@ void Player::ChangeLeftKick()
 
 	// 左足の攻撃判定をなくす
 	collisionData_.isLeftFootAttack = false;
-
-	// 攻撃が当たっているかをリセットする
-	isAttackHit_ = false;
 
 	// ダメージ量
 	damage_ = ATTACK_LEFT_KICK_DAMAGE;
@@ -584,9 +605,6 @@ void Player::ChangeRightKick()
 	// 右足の攻撃判定をなくす
 	collisionData_.isRightFootAttack = false;
 
-	// 攻撃が当たっているかをリセットする
-	isAttackHit_ = false;
-
 	// ダメージ量
 	damage_ = ATTACK_RIGHT_KICK_DAMAGE;
 
@@ -602,9 +620,6 @@ void Player::ChangeUpper()
 
 	// 右手の攻撃判定をなくす
 	collisionData_.isRightHandAttack = false;
-
-	// 攻撃が当たっているかをリセットする
-	isAttackHit_ = false;
 
 	// ダメージ量
 	damage_ = ATTACK_UPPER_DAMAGE;
@@ -622,9 +637,6 @@ void Player::ChangeChargePunch()
 	// 右手の攻撃判定をなくす
 	collisionData_.isRightHandAttack = false;
 
-	// 攻撃が当たっているかをリセットする
-	isAttackHit_ = false;
-
 	// スピード
 	speed_ = ATTACK_MOVE_POW;
 
@@ -638,9 +650,6 @@ void Player::ChangeSpecialAttack()
 	// 必殺技の攻撃判定をなくす
 	collisionData_.isProjectileAttack = false;
 
-	// 攻撃が当たっているかをリセットする
-	isAttackHit_ = false;
-
 	// ダメージ量
 	damage_ = ATTACK_SPECIAL_PUNCH_DAMAGE;
 
@@ -649,9 +658,6 @@ void Player::ChangeSpecialAttack()
 
 	// 必殺技の衝突判定が続く時間のカウンタをリセット
 	attackSpecialPunchCollisionCnt_ = 0.0f;
-
-	// 必殺技の当たり判定をリセット
-	collisionData_.isProjectileAttack = false;
 
 	// カメラを生成
 	std::weak_ptr<Camera> camera = SceneManager::GetInstance().GetCamera();
@@ -923,6 +929,7 @@ void Player::UpdateSpecialAttack(const float deltaTime)
 	if (ATTACK_SPECIAL_PUNCH_START_FRAME <= animationController_->GetStepAnim() && ATTACK_SPECIAL_PUNCH_COLLISION_TIME >= attackSpecialPunchCollisionCnt_)
 	{
 
+		// 当たり判定をつける
 		collisionData_.isProjectileAttack = true;
 
 		// 必殺技の当たり判定の座標設定

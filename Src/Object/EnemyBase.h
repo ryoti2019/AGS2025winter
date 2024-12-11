@@ -54,6 +54,12 @@ public:
 	// まっすぐ飛んでいく時間
 	const float KNOCK_BACK_TIME;
 
+	// パンチのダメージ量
+	int ATTACK_PUNCH_DAMAGE;
+
+	// キックのダメージ量
+	int ATTACK_KICK_DAMAGE;
+
 	EnemyBase(const VECTOR& pos, const json& data);
 
 	virtual ~EnemyBase() = default;
