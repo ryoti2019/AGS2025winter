@@ -319,21 +319,51 @@ void Enemy::Draw()
 	ActorBase::Draw();
 
 	// HPƒo[
-	int hpLength = 200;
+	int hpLength = 100;
+	int hpHeight = 5;
+	int harfHpLength = hpLength / 2.0f;
 	int hpGauge;
 
 	hpGauge = hpLength * hp_ / HP_MAX;
 
-	VECTOR plusOffsetPos = VAdd(transform_->pos, { 0.0f,2000.0f,0.0f });
+	//	
+	//VECTOR plusOffsetPos = VAdd(transform_->pos, { 0.0f,2000.0f,0.0f });
 
-	VECTOR minusOffsetPos = VAdd(transform_->pos, { 0.0f,1900.0f,0.0f });
+	//VECTOR minusOffsetPos = VAdd(transform_->pos, { 0.0f,1900.0f,0.0f });
 
+	//auto plusOffsetScreenPos = ConvWorldPosToScreenPos(plusOffsetPos);
+
+	//auto minusOffsetScreenPos = ConvWorldPosToScreenPos(minusOffsetPos);
+
+	//// HP‚ð•`‰æ
+	//DrawBox(plusOffsetScreenPos.x - static_cast<float>(hpGauge / 2), plusOffsetScreenPos.y, minusOffsetScreenPos.x + static_cast<float>(hpGauge / 2), minusOffsetScreenPos.y, 0xff0000, true);
+
+	//DrawFormatString(0, 15, 0xff0000, "velocity:(%0.2f,%0.2f,%0.2f)", velocity_.x, velocity_.y, velocity_.z);
+
+	// ƒLƒƒƒ‰“ªã
+	auto dis = Utility::Distance(transform_->pos, SceneManager::GetInstance().GetCamera().lock()->GetPos());
+	float scale = 10000.0f / dis;
+	VECTOR plusOffsetPos = VAdd(transform_->pos, { 0.0f,2000.0f * scale,0.0f });
 	auto plusOffsetScreenPos = ConvWorldPosToScreenPos(plusOffsetPos);
+	auto harfX = static_cast<float>(hpGauge / 2);
 
-	auto minusOffsetScreenPos = ConvWorldPosToScreenPos(minusOffsetPos);
+
+	DrawBox(
+		plusOffsetScreenPos.x - harfHpLength,
+		plusOffsetScreenPos.y,
+		plusOffsetScreenPos.x + harfHpLength,
+		plusOffsetScreenPos.y + hpHeight,
+		0x000000, false);
 
 	// HP‚ð•`‰æ
-	DrawBox(plusOffsetScreenPos.x - static_cast<float>(hpGauge / 2), plusOffsetScreenPos.y, minusOffsetScreenPos.x + static_cast<float>(hpGauge / 2), minusOffsetScreenPos.y, 0xff0000, true);
+	DrawBox(
+		plusOffsetScreenPos.x - harfHpLength,
+		plusOffsetScreenPos.y,
+		plusOffsetScreenPos.x + harfX,
+		plusOffsetScreenPos.y + hpHeight,
+		0xff0000, true);
+
+
 
 	DrawFormatString(0, 15, 0xff0000, "velocity:(%0.2f,%0.2f,%0.2f)", velocity_.x, velocity_.y, velocity_.z);
 
