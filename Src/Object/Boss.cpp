@@ -1,4 +1,5 @@
 #include "../Lib/ImGui/imgui.h"
+#include "../Manager/ResourceManager.h"
 #include "Boss.h"
 
 Boss::Boss(const VECTOR& pos, const json& data)
@@ -16,7 +17,7 @@ Boss::Boss(const VECTOR& pos, const json& data)
 	InitFunction();
 
 	// モデルID
-	modelId_ = resMng_.LoadModelDuplicate(ResourceManager::SRC::MODEL_BOSS);
+	modelId_ = resMng_.LoadModelDuplicate(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::MODEL_BOSS)]);
 
 	// 関数ポインタの初期化
 	InitFunctionPointer();
@@ -45,7 +46,7 @@ void Boss::Init(const VECTOR& pos)
 	InitFunction();
 
 	// モデルID
-	modelId_ = resMng_.LoadModelDuplicate(ResourceManager::SRC::MODEL_BOSS);
+	modelId_ = resMng_.LoadModelDuplicate(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::MODEL_BOSS)]);
 
 	// 共通部分は基底クラスで初期化
 	ActorBase::Init(pos);
@@ -205,7 +206,7 @@ void Boss::InitAnimation()
 			jsonData_["ANIM"][i - 1]["SPEED"],
 
 			// アニメーションハンドル
-			resMng_.LoadModelDuplicate(static_cast<ResourceManager::SRC>(static_cast<int>(ResourceManager::SRC::MODEL_BOSS) + i)),
+			resMng_.LoadModelDuplicate(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::MODEL_BOSS) + i]),
 
 			// アニメーションのループ再生
 			isLoop,
@@ -245,7 +246,7 @@ void Boss::InitEffect(void)
 			jsonData_["EFFECT"][i - 1]["NAME"],
 
 			// エフェクトハンドル
-			resMng_.Load(static_cast<ResourceManager::SRC>(static_cast<int>(ResourceManager::SRC::EFFECT_BOSS_PROJECTILE))).handleId_,
+			resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::EFFECT_BOSS_PROJECTILE)]).handleId_,
 
 			// エフェクトのスケール
 			jsonData_["EFFECT"][i - 1]["SCALE"]);

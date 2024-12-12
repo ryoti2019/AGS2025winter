@@ -6,213 +6,238 @@
           {
             "TYPE": 3,
             "PATH": "Player/Player.mv1",
-            "SRC": 0
+            "SRC": "MODEL_PLAYER"
           },
           {
             "TYPE": 3,
             "PATH": "Player/Idle.mv1",
-            "SRC": 1
+            "SRC": "ANIM_PLAYER_IDLE"
           },
           {
             "TYPE": 3,
             "PATH": "Player/Run.mv1",
-            "SRC": 2
+            "SRC": "ANIM_PLAYER_RUN"
           },
           {
             "TYPE": 3,
             "PATH": "Player/Jab.mv1",
-            "SRC": 3
+            "SRC": "ANIM_PLAYER_JAB"
           },
           {
             "TYPE": 3,
             "PATH": "Player/Straight.mv1",
-            "SRC": 4
+            "SRC": "ANIM_PLAYER_STRAIGHT"
           },
           {
             "TYPE": 3,
             "PATH": "Player/Hook.mv1",
-            "SRC": 5
+            "SRC": "ANIM_PLAYER_HOOK"
           },
           {
             "TYPE": 3,
             "PATH": "Player/LeftKick.mv1",
-            "SRC": 6
+            "SRC": "ANIM_PLAYER_LEFT_KICK"
           },
           {
             "TYPE": 3,
             "PATH": "Player/RightKick.mv1",
-            "SRC": 7
+            "SRC": "ANIM_PLAYER_RIGHT_KICK"
           },
           {
             "TYPE": 3,
             "PATH": "Player/Upper.mv1",
-            "SRC": 8
+            "SRC": "ANIM_PLAYER_UPPER"
           },
           {
             "TYPE": 3,
             "PATH": "Player/ChargePunch.mv1",
-            "SRC": 9
+            "SRC": "ANIM_PLAYER_CHARGE_PUNCH"
           },
           {
             "TYPE": 3,
             "PATH": "Player/SpecialAttack.mv1",
-            "SRC": 10
+            "SRC": "ANIM_PLAYER_SPECIAL_ATTACK"
           },
           {
             "TYPE": 3,
             "PATH": "Player/PowerUp.mv1",
-            "SRC": 11
+            "SRC": "ANIM_PLAYER_POWER_CHARGE"
           },
           {
             "TYPE": 3,
             "PATH": "Player/HitHead.mv1",
-            "SRC": 12
+            "SRC": "ANIM_PLAYER_HIT_HEAD"
           },
           {
             "TYPE": 3,
             "PATH": "Player/HitBody.mv1",
-            "SRC": 13
+            "SRC": "ANIM_PLAYER_HIT_BODY"
           }
         ],
         "Enemy": [
           {
             "TYPE": 3,
             "PATH": "Enemy/Enemy.mv1",
-            "SRC": 14
+            "SRC": "MODEL_ENEMY"
           },
           {
             "TYPE": 3,
             "PATH": "Enemy/Idle.mv1",
-            "SRC": 15
+            "SRC": "ANIM_ENEMY_IDLE"
           },
           {
             "TYPE": 3,
             "PATH": "Enemy/Run.mv1",
-            "SRC": 16
+            "SRC": "ANIM_ENEMY_RUN"
           },
           {
             "TYPE": 3,
             "PATH": "Enemy/Punch.mv1",
-            "SRC": 17
+            "SRC": "ANIM_ENEMY_PUNCH"
           },
           {
             "TYPE": 3,
             "PATH": "Enemy/Kick.mv1",
-            "SRC": 18
+            "SRC": "ANIM_ENEMY_KICK"
           },
           {
             "TYPE": 3,
             "PATH": "Enemy/HitHead.mv1",
-            "SRC": 19
+            "SRC": "ANIM_ENEMY_HIT_HEAD"
           },
           {
             "TYPE": 3,
             "PATH": "Enemy/HitBody.mv1",
-            "SRC": 20
+            "SRC": "ANIM_ENEMY_HIT_BODY"
           },
           {
             "TYPE": 3,
             "PATH": "Enemy/HitFly.mv1",
-            "SRC": 21
+            "SRC": "ANIM_ENEMY_HIT_FLY"
           },
           {
             "TYPE": 3,
             "PATH": "Enemy/FlinchUp.mv1",
-            "SRC": 22
+            "SRC": "ANIM_ENEMY_HIT_FLINCH"
           },
           {
             "TYPE": 3,
             "PATH": "Enemy/KnockBack.mv1",
-            "SRC": 23
+            "SRC": "ANIM_ENEMY_HIT_KNOCK_BACK"
           },
           {
             "TYPE": 3,
             "PATH": "Enemy/KipUp.mv1",
-            "SRC": 24
+            "SRC": "ANIM_ENEMY_KIP_UP"
           },
           {
             "TYPE": 3,
             "PATH": "Enemy/Death.mv1",
-            "SRC": 25
+            "SRC": "ANIM_ENEMY_NORMAL_DEATH"
           }
         ],
         "Boss": [
           {
             "TYPE": 3,
             "PATH": "Boss/Boss.mv1",
-            "SRC": 26
+            "SRC": "MODEL_BOSS"
           },
           {
             "TYPE": 3,
             "PATH": "Boss/Idle.mv1",
-            "SRC": 27
+            "SRC": "ANIM_BOSS_IDLE"
           },
           {
             "TYPE": 3,
             "PATH": "Boss/Run.mv1",
-            "SRC": 28
+            "SRC": "ANIM_BOSS_RUN"
           },
           {
             "TYPE": 3,
             "PATH": "Boss/Punch.mv1",
-            "SRC": 29
+            "SRC": "ANIM_BOSS_PUNCH"
           },
           {
             "TYPE": 3,
             "PATH": "Boss/Kick.mv1",
-            "SRC": 30
+            "SRC": "ANIM_BOSS_KICK"
           },
           {
             "TYPE": 3,
             "PATH": "Boss/Projectile.mv1",
-            "SRC": 31
+            "SRC": "ANIM_BOSS_PROJECTILE"
           },
           {
             "TYPE": 3,
             "PATH": "Boss/HitHead.mv1",
-            "SRC": 32
+            "SRC": "ANIM_HIT_HEAD"
           },
           {
             "TYPE": 3,
             "PATH": "Boss/HitBody.mv1",
-            "SRC": 33
+            "SRC": "ANIM_HIT_BODY"
           },
           {
             "TYPE": 3,
             "PATH": "Boss/HitFly.mv1",
-            "SRC": 34
+            "SRC": "ANIM_HIT_FLY"
           },
           {
             "TYPE": 3,
             "PATH": "Boss/FlinchUp.mv1",
-            "SRC": 35
+            "SRC": "ANIM_HIT_FLINCH_UP"
           },
           {
             "TYPE": 3,
             "PATH": "Boss/HitBack.mv1",
-            "SRC": 36
+            "SRC": "ANIM_HIT_KNOCK_BACK"
           },
           {
             "TYPE": 3,
             "PATH": "Boss/KipUp.mv1",
-            "SRC": 37
+            "SRC": "ANIM_KIP_UP"
           },
           {
             "TYPE": 3,
             "PATH": "Boss/Death.mv1",
-            "SRC": 38
+            "SRC": "ANIM_DEATH"
           }
         ],
         "Stage": [
           {
             "TYPE": 3,
             "PATH": "Stage/Building.mv1",
-            "SRC": 39
+            "SRC": "STAGE_MODEL"
           },
           {
             "TYPE": 3,
             "PATH": "Stage/Collision.mv1",
-            "SRC": 40
+            "SRC": "STAGE_COLLISION_MODEL"
+          },
+          {
+            "TYPE": 3,
+            "PATH": "Stage/Area1.mv1",
+            "SRC": "STAGE_AREA1_COLLISION_MODEL"
+          },
+          {
+            "TYPE": 3,
+            "PATH": "Stage/Area2.mv1",
+            "SRC": "STAGE_AREA2_COLLISION_MODEL"
+          },
+          {
+            "TYPE": 3,
+            "PATH": "Stage/Area3.mv1",
+            "SRC": "STAGE_AREA3_COLLISION_MODEL"
+          },
+          {
+            "TYPE": 3,
+            "PATH": "Stage/Area4.mv1",
+            "SRC": "STAGE_AREA4_COLLISION_MODEL"
+          },
+          {
+            "TYPE": 3,
+            "PATH": "Stage/Area5.mv1",
+            "SRC": "STAGE_AREA5_COLLISION_MODEL"
           }
         ]
       },
@@ -227,7 +252,7 @@
           {
             "TYPE": 4,
             "PATH": "Boss/Projectile.efkefc",
-            "SRC": 41
+            "SRC": "EFFECT_BOSS_PROJECTILE"
           }
         ],
         "Stage": [

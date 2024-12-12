@@ -93,7 +93,7 @@ void ResourceManager::Destroy(void)
 	delete instance_;
 }
 
-Resource ResourceManager::Load(SRC src)
+Resource ResourceManager::Load(std::string src)
 {
 	Resource* res = _Load(src);
 	if (res == nullptr)
@@ -104,7 +104,7 @@ Resource ResourceManager::Load(SRC src)
 	return *res;
 }
 
-int ResourceManager::LoadModelDuplicate(SRC src)
+int ResourceManager::LoadModelDuplicate(std::string src)
 {
 	Resource* res = _Load(src);
 	if (res == nullptr)
@@ -133,7 +133,7 @@ void ResourceManager::InitResource(const std::string& pathName, const nlohmann::
 		std::string path = data["PATH"];
 
 		// äiî[Ç∑ÇÈî‘çÜ
-		SRC src = data["SRC"];
+		std::string src = data["SRC"];
 
 		// äiî[Ç∑ÇÈ
 		res = Resource(type, pathName + path);
@@ -147,7 +147,7 @@ ResourceManager::ResourceManager(void)
 {
 }
 
-Resource* ResourceManager::_Load(SRC src)
+Resource* ResourceManager::_Load(std::string src)
 {
 	const auto& lPair = loadedMap_.find(src);
 	if (lPair != loadedMap_.end())

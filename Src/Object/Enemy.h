@@ -61,6 +61,12 @@ public:
 	// 状態遷移
 	void ChangeState(const EnemyState state);
 
+	// 敵が死ぬときカウントするカウンタで使う生存判定を取得
+	const bool GetIsAlive() { return isAlive_; }
+
+	// 敵が死ぬときカウントするカウンタで使う生存判定を設定
+	void SetIsAlive(const bool isAlive) { isAlive_ = isAlive; }
+
 private:
 
 	// AIコンポーネント
@@ -144,6 +150,9 @@ private:
 
 	// 状態
 	EnemyState state_;
+
+	// 敵が死ぬときカウントするカウンタで使う生存判定
+	bool isAlive_;
 
 	// 状態遷移
 	std::unordered_map<EnemyState, std::function<void()>> stateChange_;

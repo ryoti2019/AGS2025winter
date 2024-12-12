@@ -9,14 +9,15 @@
 
 Enemy::Enemy(const VECTOR& pos, const json& data)
 	:
-	EnemyBase(pos, data)
+	EnemyBase(pos, data),
+	isAlive_(true)
 {
 
 	// 機能の初期化
 	InitFunction();
 
 	// モデルID
-	modelId_ = resMng_.LoadModelDuplicate(ResourceManager::SRC::MODEL_ENEMY);
+	modelId_ = resMng_.LoadModelDuplicate(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::MODEL_ENEMY)]);
 
 	// 関数ポインタの初期化
 	InitFunctionPointer();
@@ -42,7 +43,7 @@ void Enemy::Init(const VECTOR& pos)
 	InitFunction();
 
 	// モデルID
-	modelId_ = resMng_.LoadModelDuplicate(ResourceManager::SRC::MODEL_ENEMY);
+	modelId_ = resMng_.LoadModelDuplicate(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::MODEL_ENEMY)]);
 
 	// アクターの共通部分の初期化
 	ActorBase::Init(pos);
@@ -252,7 +253,7 @@ void Enemy::InitAnimation()
 			jsonData_["ANIM"][i - 1]["SPEED"],
 
 			// アニメーションハンドル
-			resMng_.LoadModelDuplicate(static_cast<ResourceManager::SRC>(static_cast<int>(ResourceManager::SRC::MODEL_ENEMY) + i)),
+			resMng_.LoadModelDuplicate(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::MODEL_ENEMY) + i]),
 
 			// アニメーションのループ再生
 			isLoop,
@@ -318,54 +319,67 @@ void Enemy::Draw()
 
 	ActorBase::Draw();
 
+	// 描画範囲
+	const float RANGE_DRAW = 45000.0f;
+
+	// モデル頭上フレーム
+	const int FRAME_NO_HEAD_TOP = 7;
+
 	// HPバー
-	int hpLength = 100;
-	int hpHeight = 5;
-	int harfHpLength = hpLength / 2.0f;
-	int hpGauge;
+	const int HP_LENGTH = 40;
+	const int HP_LENGTH_HARF = HP_LENGTH / 2.0f;
+	const int HP_HEIGHT = 5;
 
-	hpGauge = hpLength * hp_ / HP_MAX;
+	// HPの長さ
+	const int hpLengthGauge = HP_LENGTH * hp_ / HP_MAX;
+	const int hpLengthGaugeHarfX = hpLengthGauge / 2;
 
-	//	
-	//VECTOR plusOffsetPos = VAdd(transform_->pos, { 0.0f,2000.0f,0.0f });
+	// モデルの頭上座標
+	VECTOR headTopPos = MV1GetFramePosition(transform_->modelId, FRAME_NO_HEAD_TOP);
+	headTopPos = VAdd(headTopPos, transform_->quaRot.PosAxis(VScale({ 0.0f, 15.0f, -6.0f }, scl_)));
 
-	//VECTOR minusOffsetPos = VAdd(transform_->pos, { 0.0f,1900.0f,0.0f });
-
-	//auto plusOffsetScreenPos = ConvWorldPosToScreenPos(plusOffsetPos);
-
-	//auto minusOffsetScreenPos = ConvWorldPosToScreenPos(minusOffsetPos);
-
-	//// HPを描画
-	//DrawBox(plusOffsetScreenPos.x - static_cast<float>(hpGauge / 2), plusOffsetScreenPos.y, minusOffsetScreenPos.x + static_cast<float>(hpGauge / 2), minusOffsetScreenPos.y, 0xff0000, true);
-
-	//DrawFormatString(0, 15, 0xff0000, "velocity:(%0.2f,%0.2f,%0.2f)", velocity_.x, velocity_.y, velocity_.z);
-
-	// キャラ頭上
+	// カメラからの距離
 	auto dis = Utility::Distance(transform_->pos, SceneManager::GetInstance().GetCamera().lock()->GetPos());
-	float scale = 10000.0f / dis;
-	VECTOR plusOffsetPos = VAdd(transform_->pos, { 0.0f,2000.0f * scale,0.0f });
-	auto plusOffsetScreenPos = ConvWorldPosToScreenPos(plusOffsetPos);
-	auto harfX = static_cast<float>(hpGauge / 2);
 
+	// 頭上からのオフセット計算
+	float scale = dis / 1000.0f;
+	float headTopOffset = (dis / 100.0f);
 
+	// オフセットを加算
+	headTopPos.y += headTopOffset;
+
+	// スクリーン座標変換
+	auto plusOffsetScreenPos = ConvWorldPosToScreenPos(headTopPos);
+
+	// カメラ範囲でなければ描画しない
+	if (plusOffsetScreenPos.z <= 0.0f && plusOffsetScreenPos.z >= 1.0f)
+	{
+		return;
+	}
+
+	// 一定距離外だったら描画しない
+	if (dis > RANGE_DRAW)
+	{
+		return;
+	}
+
+	// HPゲージ背景を描画
 	DrawBox(
-		plusOffsetScreenPos.x - harfHpLength,
+		plusOffsetScreenPos.x - HP_LENGTH_HARF,
 		plusOffsetScreenPos.y,
-		plusOffsetScreenPos.x + harfHpLength,
-		plusOffsetScreenPos.y + hpHeight,
-		0x000000, false);
+		plusOffsetScreenPos.x + HP_LENGTH_HARF,
+		plusOffsetScreenPos.y + HP_HEIGHT,
+		0x000000, true);
 
-	// HPを描画
+	// HPゲージを描画
 	DrawBox(
-		plusOffsetScreenPos.x - harfHpLength,
+		plusOffsetScreenPos.x - HP_LENGTH_HARF,
 		plusOffsetScreenPos.y,
-		plusOffsetScreenPos.x + harfX,
-		plusOffsetScreenPos.y + hpHeight,
+		plusOffsetScreenPos.x + hpLengthGaugeHarfX,
+		plusOffsetScreenPos.y + HP_HEIGHT,
 		0xff0000, true);
 
-
-
-	DrawFormatString(0, 15, 0xff0000, "velocity:(%0.2f,%0.2f,%0.2f)", velocity_.x, velocity_.y, velocity_.z);
+	//DrawFormatString(0, 15, 0xff0000, "velocity:(%0.2f,%0.2f,%0.2f)", velocity_.x, velocity_.y, velocity_.z);
 
 }
 

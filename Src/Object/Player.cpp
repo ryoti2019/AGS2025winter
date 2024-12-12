@@ -46,7 +46,7 @@ Player::Player(const VECTOR& pos, const json& data)
 	InitFunction();
 
 	// モデルID
-	modelId_ = resMng_.LoadModelDuplicate(ResourceManager::SRC::MODEL_PLAYER);
+	modelId_ = resMng_.LoadModelDuplicate(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::MODEL_PLAYER)]);
 
 	// 関数ポインタの初期化
 	InitFunctionPointer();
@@ -220,7 +220,7 @@ void Player::InitAnimation()
 			jsonData_["ANIM"][i - 1]["SPEED"],
 
 			// アニメーションハンドル
-			resMng_.LoadModelDuplicate(static_cast<ResourceManager::SRC>(i)),
+			resMng_.LoadModelDuplicate(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::MODEL_PLAYER) + i]),
 
 			// アニメーションのループ再生
 			isLoop,

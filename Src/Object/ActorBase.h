@@ -367,11 +367,11 @@ public:
 	// JSONデータ
 	const json& GetJsonData()const { return jsonData_; }
 
-	// 衝突判定のモデルIDを取得
-	const int GetCollisionModelId()const { return collisionModelId_; }
-
 	// 飛び道具の当たり判定を設定
 	void SetIsProjectileCollision(const bool isCollision) { collisionData_.isProjectileAttack = isCollision; }
+
+	// ポインタの取得
+	const std::shared_ptr<ActorBase>& GetThis() { return shared_from_this(); };
 
 protected:
 
@@ -435,9 +435,6 @@ protected:
 	// モデルID
 	int modelId_;
 
-	// 衝突判定のモデルID
-	int collisionModelId_;
-
 	// ダメージ量
 	int damage_;
 
@@ -464,9 +461,6 @@ protected:
 
 	// アクティブ状態かどうか
 	bool isActive_;
-	
-	// ポインタの取得
-	const std::shared_ptr<ActorBase>& GetThis() { return shared_from_this(); };
 
 	// 機能の初期化
 	virtual void InitFunction();
