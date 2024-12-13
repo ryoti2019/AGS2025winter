@@ -14,7 +14,7 @@ public:
 
 	void Init() override;
 	void Update(const float deltaTime) override;
-	void Draw() override;
+	void Draw(const float deltaTime) override;
 
 private:
 

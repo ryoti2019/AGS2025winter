@@ -216,14 +216,14 @@ void ActorCreate::DeactiveAreaCollision()
 		auto stageData = std::static_pointer_cast<Stage>(stage->GetThis());
 
 		// ƒGƒŠƒA1‚Ì“G‚ð‚·‚×‚Ä“|‚µ‚½‚çÕ“Ë”»’è‚ðÁ‚·
-		if (deathEnemyCnt_ == AREA1_TOTAL_ENEMYS)
+		if (deathEnemyCnt_ == AREA1_TOTAL_ENEMYS && stageData->GetIsArea1Collision())
 		{
 			stageData->SetIsArea1Collision(false);
 			deathEnemyCnt_ = 0;
 		}
 
 		// ƒGƒŠƒA2‚Ì“G‚ð‚·‚×‚Ä“|‚µ‚½‚çÕ“Ë”»’è‚ðÁ‚·
-		if (deathEnemyCnt_ == AREA2_TOTAL_ENEMYS)
+		if (deathEnemyCnt_ == AREA2_TOTAL_ENEMYS && stageData->GetIsArea2Collision())
 		{
 			stageData->SetIsArea2Collision(false);
 			deathEnemyCnt_ = 0;

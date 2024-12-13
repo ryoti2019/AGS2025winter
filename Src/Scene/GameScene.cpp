@@ -46,11 +46,11 @@ void GameScene::Update(const float deltaTime)
 
 }
 
-void GameScene::Draw()
+void GameScene::Draw(const float deltaTime)
 {
 
 	// アクターの管理クラスの更新
-	actorManager_->Draw();
+	actorManager_->Draw(deltaTime);
 
 	// アクターの生成クラスの描画
 	actorCreate_->Draw();

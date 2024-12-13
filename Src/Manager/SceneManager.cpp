@@ -122,7 +122,7 @@ void SceneManager::Draw(const float deltaTime)
 	camera_->SetBeforeDraw(deltaTime);
 
 	// 描画
-	scene_->Draw();
+	scene_->Draw(deltaTime);
 
 	// Effekseerにより再生中のエフェクトを描画する。
 	DrawEffekseer3D();

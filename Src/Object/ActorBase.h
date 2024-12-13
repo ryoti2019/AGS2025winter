@@ -261,7 +261,7 @@ public:
 	virtual void Init(const VECTOR& pos);
 	void Create(const VECTOR& pos);
 	virtual void Update(const float deltaTime);
-	virtual void Draw();
+	virtual void Draw(const float deltaTime);
 
 	// ç¿ïWÇê›íË
 	void SetPos(const VECTOR& pos) {

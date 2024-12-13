@@ -29,7 +29,7 @@ void TitleScene::Update(const float deltaTime)
 
 }
 
-void TitleScene::Draw()
+void TitleScene::Draw(const float deltaTime)
 {
 	DrawFormatString(0, 0, 0xff0000, "TitleScene");
 }

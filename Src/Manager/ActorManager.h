@@ -23,7 +23,7 @@ public:
 
 	void Init();
 	void Update(const float deltaTime);
-	void Draw();
+	void Draw(const float deltaTime);
 
 	// Actor‚Ì”h¶ƒNƒ‰ƒX‚ÌÀ‘Ì‚Ìì¬
 	template <typename actor>

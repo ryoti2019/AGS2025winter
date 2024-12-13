@@ -20,7 +20,7 @@ public:
 	virtual void Update(const float deltaTime) = 0;
 
 	// •`‰æˆ—
-	virtual void Draw() = 0;
+	virtual void Draw(const float deltaTime) = 0;
 
 protected:
 

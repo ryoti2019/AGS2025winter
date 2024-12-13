@@ -1,6 +1,9 @@
 #pragma once
 #include "ActorBase.h"
 
+class ModelMaterial;
+class Renderer;
+
 class Stage : public ActorBase
 {
 
@@ -24,38 +27,65 @@ public:
 
 	void Init(const VECTOR& pos)override;
 
+	void Update(const float deltaTime)override;
+
+	void Draw(const float deltaTime)override;
+
 	// 衝突モデルリストを取得
 	const std::vector<CollisionModel>& GetCollisionModels()const { return collisionModels_; }
 
-	// ステージの当たり判定を設定
+	// エリア1の当たり判定を設定
 	void SetIsArea1Collision(const bool isCollision)
 	{
 		isArea1Collision_ = isCollision;
 		collisionModels_.at(1) = { area1CollisionModelId_ ,isArea1Collision_ };
 	}
+
+	// エリア2の当たり判定を設定
 	void SetIsArea2Collision(const bool isCollision)
 	{
 		isArea2Collision_ = isCollision;
 		collisionModels_.at(2) = { area2CollisionModelId_ ,isArea2Collision_ };
 	}
+
+	// エリア3の当たり判定を設定
 	void SetIsArea3Collision(const bool isCollision) 
 	{
 		isArea3Collision_ = isCollision;
 		collisionModels_.at(3) = { area3CollisionModelId_ ,isArea3Collision_ };
 
 	}
+
+	// エリア4の当たり判定を設定
 	void SetIsArea4Collision(const bool isCollision) 
 	{
 		isArea4Collision_ = isCollision;
 		collisionModels_.at(4) = { area4CollisionModelId_ ,isArea4Collision_ };
 
 	}
+
+	// エリア5の当たり判定を設定
 	void SetIsArea5Collision(const bool isCollision)
 	{
 		isArea5Collision_ = isCollision;
 		collisionModels_.at(5) = { area5CollisionModelId_ ,isArea5Collision_ };
 
 	}
+
+	// エリア1の当たり判定を取得
+	const bool GetIsArea1Collision() { return isArea1Collision_; }
+
+	// エリア2の当たり判定を取得
+	const bool GetIsArea2Collision() { return isArea2Collision_; }
+
+	// エリア3の当たり判定を取得
+	const bool GetIsArea3Collision() { return isArea3Collision_; }
+
+	// エリア4の当たり判定を取得
+	const bool GetIsArea4Collision() { return isArea4Collision_; }
+
+	// エリア5の当たり判定を取得
+	const bool GetIsArea5Collision() { return isArea5Collision_; }
 
 private:
 
@@ -66,6 +96,12 @@ private:
 	std::unique_ptr<Transform> area3Collision_;
 	std::unique_ptr<Transform> area4Collision_;
 	std::unique_ptr<Transform> area5Collision_;
+
+	// モデルマテリアル
+	std::shared_ptr<ModelMaterial> modelMaterial_;
+
+	// レンダラー
+	std::shared_ptr<Renderer> renderer_;
 
 	// ステージモデルID
 	int stageCollisionModelId_;
@@ -82,6 +118,21 @@ private:
 	bool isArea3Collision_;
 	bool isArea4Collision_;
 	bool isArea5Collision_;
+
+	// テクスチャ
+	int texId_;
+
+	// デルタタイム
+	float deltaTime_;
+
+	// 透過用のタイム
+	float alphaTime_;
+
+	// ディゾルブさせるかどうか
+	bool isDissolve_;
+
+
+	float time_;
 
 	// 衝突モデルリスト
 	std::vector<CollisionModel> collisionModels_;

@@ -314,10 +314,10 @@ void Enemy::Update(const float deltaTime)
 
 }
 
-void Enemy::Draw()
+void Enemy::Draw(const float deltaTime)
 {
 
-	ActorBase::Draw();
+	ActorBase::Draw(deltaTime);
 
 	// •`‰æ”ÍˆÍ
 	const float RANGE_DRAW = 45000.0f;

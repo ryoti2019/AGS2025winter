@@ -19,7 +19,7 @@ public:
 
 	void Init() override;
 	void Update(const float deltaTime) override;
-	void Draw() override;
+	void Draw(const float deltaTime) override;
 
 	// アクターの管理クラスを取得
 	const std::shared_ptr<ActorManager>& GetActorManager() const { return actorManager_; }

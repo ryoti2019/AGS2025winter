@@ -258,6 +258,24 @@
         "Stage": [
 
         ]
+      },
+      "ImageData": {
+        "Player": [
+
+        ],
+        "Enemy": [
+
+        ],
+        "Boss": [
+
+        ],
+        "Stage": [
+          {
+            "TYPE": 1,
+            "PATH": "Stage/Noise2.png",
+            "SRC": "IMAGE_NOISE_TEXTURE"
+          }
+        ]
       }
     }
   ]

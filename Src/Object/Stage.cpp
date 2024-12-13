@@ -1,6 +1,9 @@
 #include "../Lib/ImGui/imgui.h"
+#include "../Application.h"
 #include "../Common/Quaternion.h"
 #include "../Object/Common/Transform.h"
+#include "../Object/Common/ModelMaterial.h"
+#include "../Object/Common/Renderer.h"
 #include "Stage.h"
 
 Stage::Stage(const VECTOR& pos, const json& data)
@@ -59,6 +62,30 @@ void Stage::Init(const VECTOR& pos)
 
 }
 
+void Stage::Update(const float deltaTime)
+{
+
+
+
+}
+
+void Stage::Draw(const float deltaTime)
+{
+
+	// ゲートミストの描画
+	deltaTime_ += deltaTime;
+	if (isDissolve_)
+	{
+		alphaTime_ -= 0.01f;
+		time_ += 0.01f;
+	}
+	modelMaterial_->SetConstBufsPS({ 0.0f,0.0f,0.0f,deltaTime_ }, 2);
+	modelMaterial_->SetConstBufsPS({ alphaTime_,time_,0.0f,0.0f }, 3);
+	modelMaterial_->SetTextureAddress(ModelMaterial::TEXADDRESS::MIRROR);
+	renderer_->Draw();
+
+}
+
 void Stage::CollisionInit(std::unique_ptr<Transform>& transform, const int modelId, const bool isCollision)
 {
 
@@ -78,5 +105,38 @@ void Stage::CollisionInit(std::unique_ptr<Transform>& transform, const int model
 
 	// 衝突モデルリストに追加
 	collisionModels_.emplace_back(data);
+
+	// テクスチャ
+	texId_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_NOISE_TEXTURE)]).handleId_;
+
+	// モデル描画用
+	std::vector<FLOAT4> constBufsPtrVS;
+	//constBufsPtrVS.push_back({ 1.0f, 1.0f, 1.0f, 1.0f });
+
+	std::vector<FLOAT4> constBufsPtrPS;
+	// 拡散光
+	constBufsPtrPS.push_back({ 1.0f, 1.0f, 1.0f, 1.0f });
+
+	// 環境光
+	constBufsPtrPS.push_back({ 0.2f, 0.2f, 0.2f, 1.0f });
+
+	// 光の向いている方向(ワールド空間)(ディレクショナルライト)
+	auto lDir = GetLightDirection();
+	deltaTime_ = 0.0f;
+	constBufsPtrPS.push_back({ lDir.x,lDir.y,lDir.z, deltaTime_ });
+	alphaTime_ = 0.0f;
+	time_ = 1.0f;
+	constBufsPtrPS.push_back({ alphaTime_,time_,0.0f,0.0f });
+
+	std::map<int, int> textures;
+	textures.emplace(1, texId_);
+	modelMaterial_ = std::make_shared<ModelMaterial>(
+		(Application::PATH_SHADER + "GateModelVS.cso"), sizeof(FLOAT4) * 1, constBufsPtrVS,
+		(Application::PATH_SHADER + "GateModelPS.cso"), sizeof(FLOAT4) * 4, constBufsPtrPS, textures
+	);
+
+	renderer_ = std::make_shared<Renderer>(transform->modelId, modelMaterial_);
+
+	isDissolve_ = false;
 
 }

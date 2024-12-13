@@ -35,7 +35,7 @@ public:
 
 	void Init(const VECTOR& pos)override;
 	void Update(const float deltaTime)override;
-	void Draw()override;
+	void Draw(const float deltaTime)override;
 
 	// UŒ‚’†‚©æ“¾
 	const bool GetAttackState()const override;

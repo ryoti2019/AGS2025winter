@@ -276,11 +276,11 @@ void Player::Update(const float deltaTime)
 
 }
 
-void Player::Draw()
+void Player::Draw(const float deltaTime)
 {
 
 	// 基底クラスの描画処理
-	ActorBase::Draw();
+	ActorBase::Draw(deltaTime);
 
 	// HPバー描画
 	int hpLength = HP_BAR_LENGTH;

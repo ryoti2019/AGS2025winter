@@ -16,6 +16,6 @@ void SceneBase::Update(const float deltaTime)
 {
 }
 
-void SceneBase::Draw()
+void SceneBase::Draw(const float deltaTime)
 {
 }

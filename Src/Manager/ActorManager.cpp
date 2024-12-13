@@ -127,7 +127,7 @@ void ActorManager::Update(const float deltaTime)
 
 }
 
-void ActorManager::Draw()
+void ActorManager::Draw(const float deltaTime)
 {
 
 	// activeActorData_‚Ì•`‰æ
@@ -135,7 +135,7 @@ void ActorManager::Draw()
 	{
 		for (const std::shared_ptr<ActorBase>& actor : data.second)
 		{
-			actor->Draw();
+			actor->Draw(deltaTime);
 		}
 	}
 

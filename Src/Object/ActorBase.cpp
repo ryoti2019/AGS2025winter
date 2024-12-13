@@ -310,7 +310,7 @@ void ActorBase::DeathAnim(int state)
 {
 }
 
-void ActorBase::Draw()
+void ActorBase::Draw(const float deltaTime)
 {
 	// •`‰æ‚ÌXV
 	drawComponent_->Update();

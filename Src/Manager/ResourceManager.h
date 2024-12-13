@@ -97,6 +97,24 @@ public:
 
 #pragma endregion
 
+#pragma region プレイヤーの画像
+
+#pragma endregion
+
+#pragma region 敵の画像
+
+#pragma endregion
+
+#pragma region ボスの画像
+
+#pragma endregion
+
+#pragma region ステージの画像
+
+		IMAGE_NOISE_TEXTURE,
+
+#pragma endregion
+
 		MAX
 
 	};
@@ -171,22 +189,35 @@ public:
 
 #pragma region プレイヤーのエフェクト
 
-
-
 #pragma endregion
 
 #pragma region 敵のエフェクト
-
-
 
 #pragma endregion
 
 #pragma region ボスのエフェクト
 
-		"EFFECT_BOSS_PROJECTILE"
+		"EFFECT_BOSS_PROJECTILE",
 
 #pragma endregion
 
+#pragma region プレイヤーの画像
+
+#pragma endregion
+
+#pragma region 敵の画像
+
+#pragma endregion
+
+#pragma region ボスの画像
+
+#pragma endregion
+
+#pragma region ステージの画像
+
+		"IMAGE_NOISE_TEXTURE"
+
+#pragma endregion
 
 
 	};
