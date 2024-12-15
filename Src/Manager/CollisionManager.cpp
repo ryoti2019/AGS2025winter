@@ -333,91 +333,83 @@ void CollisionManager::CheckActorsAndStageCollision()
 				if (!stage)return;
 
 				// ステージに情報を変更
-				auto stageData = std::static_pointer_cast<Stage>(stage->GetThis());
+				auto stageData = std::static_pointer_cast<StageBase>(stage);
 
-				// ステージの全衝突モデルを取得
-				const auto& models = stageData->GetCollisionModels();
+				// ステージに当たり判定があるかチェック
+				if (!stageData->GetIsCollision()) continue;
 
-				// 衝突判定ループ
-				for (const auto& model : models)
+				// カプセルとの衝突判定
+				MV1_COLL_RESULT_POLY_DIM hits = MV1CollCheck_Capsule(
+					stage->GetTransform()->modelId, -1,
+					target->GetCollisionData().bodyCapsuleUpPos, target->GetCollisionData().bodyCapsuleDownPos, target->GetCollisionData().bodyCollisionRadius);
+
+				// 衝突した複数のポリゴンと衝突回避するまで、
+				// プレイヤーの位置を移動させる
+				for (int i = 0; i < hits.HitNum; i++)
 				{
-					// モデルが衝突判定のフラグが立っているかどうか
-					if (model.isActive)
-					{
-						// カプセルとの衝突判定
-						MV1_COLL_RESULT_POLY_DIM hits = MV1CollCheck_Capsule(
-							model.modelId, -1,
-							target->GetCollisionData().bodyCapsuleUpPos, target->GetCollisionData().bodyCapsuleDownPos, target->GetCollisionData().bodyCollisionRadius);
 
-						// 衝突した複数のポリゴンと衝突回避するまで、
-						// プレイヤーの位置を移動させる
-						for (int i = 0; i < hits.HitNum; i++)
+					auto hit = hits.Dim[i];
+
+					// 地面と異なり、衝突回避位置が不明なため、何度か移動させる
+					// この時、移動させる方向は、移動前座標に向いた方向であったり、
+					// 衝突したポリゴンの法線方向だったりする
+					for (int tryCnt = 0; tryCnt < STAGE_COLLISION_COUNT; tryCnt++)
+					{
+
+						// 再度、モデル全体と衝突検出するには、効率が悪過ぎるので、
+						// 最初の衝突判定で検出した衝突ポリゴン1枚と衝突判定を取る
+						int pHit = HitCheck_Capsule_Triangle(
+							target->GetCollisionData().bodyCapsuleUpPos, target->GetCollisionData().bodyCapsuleDownPos, target->GetCollisionData().bodyCollisionRadius,
+							hit.Position[0], hit.Position[1], hit.Position[2]);
+
+						if (pHit)
 						{
 
-							auto hit = hits.Dim[i];
+							// y方向には処理しない
+							if (hit.Normal.y == 1.0f)continue;
 
-							// 地面と異なり、衝突回避位置が不明なため、何度か移動させる
-							// この時、移動させる方向は、移動前座標に向いた方向であったり、
-							// 衝突したポリゴンの法線方向だったりする
-							for (int tryCnt = 0; tryCnt < STAGE_COLLISION_COUNT; tryCnt++)
-							{
+							// 当たっているか判定したいActorの座標
+							VECTOR pos = target->GetTransform()->pos;
 
-								// 再度、モデル全体と衝突検出するには、効率が悪過ぎるので、
-								// 最初の衝突判定で検出した衝突ポリゴン1枚と衝突判定を取る
-								int pHit = HitCheck_Capsule_Triangle(
-									target->GetCollisionData().bodyCapsuleUpPos, target->GetCollisionData().bodyCapsuleDownPos, target->GetCollisionData().bodyCollisionRadius,
-									hit.Position[0], hit.Position[1], hit.Position[2]);
+							// 法線の方向にちょっとだけ移動させる
+							pos = VAdd(pos, VScale(hit.Normal, OBJECT_COLLISION_PUSH_FORCE));
 
-								if (pHit)
-								{
+							// カプセルも一緒に移動させる
+							target->SetPos(pos);
+							continue;
 
-									// y方向には処理しない
-									if (hit.Normal.y == 1.0f)continue;
-
-									// 当たっているか判定したいActorの座標
-									VECTOR pos = target->GetTransform()->pos;
-
-									// 法線の方向にちょっとだけ移動させる
-									pos = VAdd(pos, VScale(hit.Normal, OBJECT_COLLISION_PUSH_FORCE));
-
-									// カプセルも一緒に移動させる
-									target->SetPos(pos);
-									continue;
-
-								}
-								break;
-							}
 						}
-
-						// 検出した地面ポリゴン情報の後始末
-						MV1CollResultPolyDimTerminate(hits);
+						break;
 					}
-
-					// 地面との衝突
-					MV1_COLL_RESULT_POLY hit = MV1CollCheck_Line(
-						model.modelId, -1,
-						VAdd(target->GetCollisionData().bodyCapsuleUpPos, VECTOR(0.0f, target->GetCollisionData().bodyCollisionRadius, 0.0f)),
-						VAdd(target->GetCollisionData().bodyCapsuleDownPos, VECTOR(0.0f, -target->GetCollisionData().bodyCollisionRadius, 0.0f)));
-
-					// 地面に当たっている時と下方向に動いている時のみ判定する
-					if (hit.HitFlag > 0 && VDot({ 0.0f,-1.0f,0.0f }, target->GetVelocity()) > DOWN_DIR)
-					{
-
-						// 衝突地点から、少し上に移動
-						target->SetPos(hit.HitPosition);
-
-						// ジャンプリセット
-						target->SetVelocity(Utility::VECTOR_ZERO);
-
-					}
-
 				}
 
-				// もし地面を貫通して下に行ってしまったとき
-				if (target->GetTransform()->pos.y < -19500.0f)
+				// 検出した地面ポリゴン情報の後始末
+				MV1CollResultPolyDimTerminate(hits);
+
+				// 地面との衝突
+				MV1_COLL_RESULT_POLY hit = MV1CollCheck_Line(
+					stage->GetTransform()->modelId, -1,
+					VAdd(target->GetCollisionData().bodyCapsuleUpPos, VECTOR(0.0f, target->GetCollisionData().bodyCollisionRadius, 0.0f)),
+					VAdd(target->GetCollisionData().bodyCapsuleDownPos, VECTOR(0.0f, -target->GetCollisionData().bodyCollisionRadius, 0.0f)));
+
+				// 地面に当たっている時と下方向に動いている時のみ判定する
+				if (hit.HitFlag > 0 && VDot({ 0.0f,-1.0f,0.0f }, target->GetVelocity()) > DOWN_DIR)
 				{
-					target->SetPos({ target->GetTransform()->pos.x, -19500.0f,target->GetTransform()->pos.z });
+
+					// 衝突地点から、少し上に移動
+					target->SetPos(hit.HitPosition);
+
+					// ジャンプリセット
+					target->SetVelocity(Utility::VECTOR_ZERO);
+
 				}
+
+			}
+
+			// もし地面を貫通して下に行ってしまったとき
+			if (target->GetTransform()->pos.y < -19500.0f)
+			{
+				target->SetPos({ target->GetTransform()->pos.x, -19500.0f,target->GetTransform()->pos.z });
 			}
 		}
 	}
@@ -450,53 +442,43 @@ void CollisionManager::CheckCameraAndStageCollision()
 	{
 
 		// ステージに情報を変更
-		auto stageData = std::static_pointer_cast<Stage>(stage->GetThis());
+		auto stageData = std::static_pointer_cast<StageBase>(stage);
 
-		// ステージの全衝突モデルを取得
-		const auto& models = stageData->GetCollisionModels();
+		// ステージに当たり判定があるかチェック
+		if (!stageData->GetIsCollision()) continue;
 
-		// 衝突判定ループ
-		for (const auto& model : models)
+		// ステージと衝突しているか判定
+		MV1_COLL_RESULT_POLY hit = MV1CollCheck_Line(stage->GetTransform()->modelId, -1, camera_.lock()->GetTargetPos(), camera_.lock()->GetPos());
+
+		if (hit.HitFlag)
 		{
-			// モデルが衝突判定のフラグが立っているかどうか
-			if (model.isActive)
+
+			// 当たった地点に座標を設定
+			camera_.lock()->SetPos(VAdd(hit.HitPosition, VScale(cDir, 10.0f)));
+
+			// カメラ座標
+			auto tmpCPos = camera_.lock()->GetPos();
+
+			// 注視点
+			auto tmpTPos = camera_.lock()->GetTargetPos();
+
+			// ワールドの上方向と地面の法線が近しい方向だったらカメラの上昇補正を処理しない
+			auto a = VDot({ 0.0f,1.0f,0.0f }, hit.Normal);
+			if (a > 0.9f)return;
+
+			// カメラと注視点の距離を計算
+			auto disPow2 = Utility::SqrMagnitude(tmpCPos, tmpTPos);
+
+			// 距離
+			float len = 5000.0f;
+			if (disPow2 < len * len)
 			{
-
-				// ステージと衝突しているか判定
-				MV1_COLL_RESULT_POLY hit = MV1CollCheck_Line(model.modelId, -1, camera_.lock()->GetTargetPos(), camera_.lock()->GetPos());
-
-				if (hit.HitFlag)
-				{
-
-					// 当たった地点に座標を設定
-					camera_.lock()->SetPos(VAdd(hit.HitPosition, VScale(cDir, 10.0f)));
-
-					// カメラ座標
-					auto tmpCPos = camera_.lock()->GetPos();
-
-					// 注視点
-					auto tmpTPos = camera_.lock()->GetTargetPos();
-
-					// ワールドの上方向と地面の法線が近しい方向だったらカメラの上昇補正を処理しない
-					auto a = VDot({ 0.0f,1.0f,0.0f }, hit.Normal);
-					if (a > 0.9f)return;
-
-					// カメラと注視点の距離を計算
-					auto disPow2 = Utility::SqrMagnitude(tmpCPos, tmpTPos);
-
-					// 距離
-					float len = 5000.0f;
-					if (disPow2 < len * len)
-					{
-						auto l = Utility::Lerp(tmpCPos, VAdd(tmpCPos, { 0.0f,len ,0.0f }), 0.1f);
-						camera_.lock()->SetPos(l);
-					}
-
-				}
+				auto l = Utility::Lerp(tmpCPos, VAdd(tmpCPos, { 0.0f,len ,0.0f }), 0.1f);
+				camera_.lock()->SetPos(l);
 			}
+
 		}
 	}
-
 }
 
 void CollisionManager::CheckResolveCollision()

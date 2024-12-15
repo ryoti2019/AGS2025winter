@@ -28,8 +28,8 @@ Enemy::Enemy(const VECTOR& pos, const json& data)
 	// パラメータの初期化
 	InitParameter();
 
-	// 共通部分は基底クラスで初期化
-	ActorBase::Init(pos);
+	// 敵同士の共通部分の初期化
+	EnemyBase::Init();
 
 	// アニメーションの初期化
 	InitAnimation();

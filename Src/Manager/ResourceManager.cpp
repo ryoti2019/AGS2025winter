@@ -68,10 +68,16 @@ void ResourceManager::Init(void)
 	InitResource(Application::PATH_MODEL, stageModelData);
 
 	// ボスのエフェクトデータ
-	const auto& effectModelData = objectData[0]["EffectData"]["Boss"];
+	const auto& bossEffectData = objectData[0]["EffectData"]["Boss"];
 
 	// ステージのモデルとアニメーションの初期化
-	InitResource(Application::PATH_EFFECT, effectModelData);
+	InitResource(Application::PATH_EFFECT, bossEffectData);
+
+	// ステージの画像データ
+	const auto& stageImageData = objectData[0]["ImageData"]["Stage"];
+
+	// ステージのモデルとアニメーションの初期化
+	InitResource(Application::PATH_IMAGE, stageImageData);
 
 }
 

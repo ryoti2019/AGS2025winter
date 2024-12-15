@@ -141,6 +141,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Area2Collision.cpp" />
+    <ClCompile Include="Src\Object\Area1Collision.cpp" />
     <ClCompile Include="Src\Component\BossAIComponent.cpp" />
     <ClCompile Include="Src\Component\EnemyAIComponent.cpp" />
     <ClCompile Include="Src\Component\Component.cpp" />
@@ -185,9 +187,13 @@
     <ClCompile Include="Src\Scene\SceneBase.cpp" />
     <ClCompile Include="Src\Utility\Utility.cpp" />
     <ClCompile Include="Src\Scene\TitleScene.cpp" />
+    <ClCompile Include="Src\Object\StageBase.cpp" />
     <ClCompile Include="Src\Object\Stage.cpp" />
+    <ClCompile Include="Src\Object\StageCollision.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Area2Collision.h" />
+    <ClInclude Include="Src\Object\Area1Collision.h" />
     <ClInclude Include="Src\Component\BossAIComponent.h" />
     <ClInclude Include="Src\Component\EnemyAIComponent.h" />
     <ClInclude Include="Src\Component\Component.h" />
@@ -281,7 +287,19 @@
     <ClInclude Include="Src\Scene\SceneBase.h" />
     <ClInclude Include="Src\Utility\Utility.h" />
     <ClInclude Include="Src\Scene\TitleScene.h" />
+    <ClInclude Include="Src\Object\StageBase.h" />
     <ClInclude Include="Src\Object\Stage.h" />
+    <ClInclude Include="Src\Object\StageCollision.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Src\Shader\Model\GateModelPS.hlsl">
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)/Data/Shader/%(Filename).cso</ObjectFileOutput>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Src\Shader\Model\GateModelVS.hlsl">
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)/Data/Shader/%(Filename).cso</ObjectFileOutput>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
