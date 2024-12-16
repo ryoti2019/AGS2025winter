@@ -294,6 +294,8 @@ private:
 	// どのヒットアニメーションかチェックする
 	virtual void AttackHitCheck(const int type);
 
+	// 回転処理
+	void Rotation();
 
 };
 

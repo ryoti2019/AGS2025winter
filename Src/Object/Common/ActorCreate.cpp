@@ -14,6 +14,9 @@
 #include "../Object/StageCollision.h"
 #include "../Object/Area1Collision.h"
 #include "../Object/Area2Collision.h"
+#include "../Object/Area3Collision.h"
+#include "../Object/Area4Collision.h"
+#include "../Object/Area5Collision.h"
 #include "ActorCreate.h"
 
 ActorCreate::ActorCreate()
@@ -25,6 +28,9 @@ ActorCreate::ActorCreate()
 	AREA5_TOTAL_ENEMYS(10),
 	isCollisionArea1_(false),
 	isCollisionArea2_(false),
+	isCollisionArea3_(false),
+	isCollisionArea4_(false),
+	isCollisionArea5_(false),
 	deathEnemyCnt_(0)
 {
 
@@ -74,8 +80,20 @@ ActorCreate::ActorCreate()
 	actorManager->ActiveData(ActorType::STAGE, { stageData["POS"]["x"], stageData["POS"]["y"] ,stageData["POS"]["z"] });
 
 	// ステージの当たり判定を生成
-	//actorManager->CreateActor<Area2Collision>(stageData, { 0.0f,0.0f,0.0f });
-	//actorManager->ActiveData(ActorType::STAGE, { stageData["POS"]["x"], stageData["POS"]["y"] ,stageData["POS"]["z"] });
+	actorManager->CreateActor<Area2Collision>(stageData, { 0.0f,0.0f,0.0f });
+	actorManager->ActiveData(ActorType::STAGE, { stageData["POS"]["x"], stageData["POS"]["y"] ,stageData["POS"]["z"] });
+
+	// ステージの当たり判定を生成
+	actorManager->CreateActor<Area3Collision>(stageData, { 0.0f,0.0f,0.0f });
+	actorManager->ActiveData(ActorType::STAGE, { stageData["POS"]["x"], stageData["POS"]["y"] ,stageData["POS"]["z"] });
+
+	// ステージの当たり判定を生成
+	actorManager->CreateActor<Area4Collision>(stageData, { 0.0f,0.0f,0.0f });
+	actorManager->ActiveData(ActorType::STAGE, { stageData["POS"]["x"], stageData["POS"]["y"] ,stageData["POS"]["z"] });
+
+	// ステージの当たり判定を生成
+	actorManager->CreateActor<Area5Collision>(stageData, { 0.0f,0.0f,0.0f });
+	actorManager->ActiveData(ActorType::STAGE, { stageData["POS"]["x"], stageData["POS"]["y"] ,stageData["POS"]["z"] });
 
 	// プレイヤー
 	const auto& playerData = objectData[0]["PlayerData"];
@@ -103,7 +121,7 @@ ActorCreate::ActorCreate()
 
 	// ボスを生成
 	actorManager->CreateActor<Boss>(bossData, { -10800.0f,-10000.0f,-150000.0f });
-	//actorManager->ActiveData(ActorType::BOSS, { -10800.0f,-10000.0f,-150000.0f });
+	actorManager->ActiveData(ActorType::BOSS, { -10800.0f,-10000.0f,-150000.0f });
 
 }
 
@@ -168,7 +186,7 @@ void ActorCreate::AreaCollision()
 				isCollisionArea1_ = true;
 
 				// エリア1の当たり判定を付ける
-				area1Collision->SetIsArea1Collision(true);
+				area1Collision->SetIsCollision(true);
 
 				// 敵を生成
 				for (int i = 0; i < AREA1_TOTAL_ENEMYS; i++)
@@ -180,28 +198,97 @@ void ActorCreate::AreaCollision()
 
 			}
 
-			// Area1Collisionにキャスト
-			//auto area2Collision = std::static_pointer_cast<Area2Collision>(stage);
+			// Area2Collisionにキャスト
+			auto area2Collision = std::dynamic_pointer_cast<Area2Collision>(stage);
 
-			//// エリア1に衝突しているか判定
-			//if (area2Collision && !isCollisionArea1_ && HitCheck_Sphere_Sphere(player->GetTransform()->pos, player->GetCollisionData().bodyCollisionRadius, { 9300.0f,-18000.0f,23600.0f }, 10000.0f))
-			//{
+			// エリア2に衝突しているか判定
+			if (area2Collision && !isCollisionArea2_ && HitCheck_Sphere_Sphere(player->GetTransform()->pos, player->GetCollisionData().bodyCollisionRadius, { -3100.0f,-18000.0f,-22000.0f }, 10000.0f))
+			{
 
-			//	// エリア1と衝突した
-			//	isCollisionArea1_ = true;
+				// エリア2と衝突した
+				isCollisionArea2_ = true;
 
-			//	// エリア1の当たり判定を付ける
-			//	area2Collision->SetIsArea1Collision(true);
+				// エリア2の当たり判定を付ける
+				area2Collision->SetIsCollision(true);
 
-			//	// 敵を生成
-			//	for (int i = 0; i < AREA1_TOTAL_ENEMYS; i++)
-			//	{
-			//		float x = std::rand() % 10000;
-			//		float z = std::rand() % 10000;
-			//		actorManager->ActiveData(ActorType::ENEMY, { 9300.0f + x,-15000,23600.0f + z });
-			//	}
+				// 敵を生成
+				for (int i = 0; i < AREA2_TOTAL_ENEMYS; i++)
+				{
+					float x = std::rand() % 100;
+					float z = std::rand() % 100;
+					actorManager->ActiveData(ActorType::ENEMY, { -3100.0f + x,-18000.0f,-22000.0f + z });
+				}
 
-			//}
+			}
+
+			// Area3Collisionにキャスト
+			auto area3Collision = std::dynamic_pointer_cast<Area3Collision>(stage);
+
+			// エリア3に衝突しているか判定
+			if (area3Collision && !isCollisionArea3_ && HitCheck_Sphere_Sphere(player->GetTransform()->pos, player->GetCollisionData().bodyCollisionRadius, { 9300.0f,-18000.0f,23600.0f }, 10000.0f))
+			{
+
+				// エリア3と衝突した
+				isCollisionArea1_ = true;
+
+				// エリア3の当たり判定を付ける
+				area3Collision->SetIsCollision(true);
+
+				// 敵を生成
+				for (int i = 0; i < AREA3_TOTAL_ENEMYS; i++)
+				{
+					float x = std::rand() % 10000;
+					float z = std::rand() % 10000;
+					actorManager->ActiveData(ActorType::ENEMY, { 9300.0f + x,-15000,23600.0f + z });
+				}
+
+			}
+
+			// Area4Collisionにキャスト
+			auto area4Collision = std::dynamic_pointer_cast<Area4Collision>(stage);
+
+			// エリア4に衝突しているか判定
+			if (area4Collision && !isCollisionArea4_ && HitCheck_Sphere_Sphere(player->GetTransform()->pos, player->GetCollisionData().bodyCollisionRadius, { 9300.0f,-18000.0f,23600.0f }, 10000.0f))
+			{
+
+				// エリア4と衝突した
+				isCollisionArea4_ = true;
+
+				// エリア4の当たり判定を付ける
+				area4Collision->SetIsCollision(true);
+
+				// 敵を生成
+				for (int i = 0; i < AREA4_TOTAL_ENEMYS; i++)
+				{
+					float x = std::rand() % 10000;
+					float z = std::rand() % 10000;
+					actorManager->ActiveData(ActorType::ENEMY, { 9300.0f + x,-15000,23600.0f + z });
+				}
+
+			}
+
+			// Area5Collisionにキャスト
+			auto area5Collision = std::dynamic_pointer_cast<Area5Collision>(stage);
+
+			// エリア5に衝突しているか判定
+			if (area5Collision && !isCollisionArea5_ && HitCheck_Sphere_Sphere(player->GetTransform()->pos, player->GetCollisionData().bodyCollisionRadius, { 9300.0f,-18000.0f,23600.0f }, 10000.0f))
+			{
+
+				// エリア5と衝突した
+				isCollisionArea5_ = true;
+
+				// エリア5の当たり判定を付ける
+				area5Collision->SetIsCollision(true);
+
+				// 敵を生成
+				for (int i = 0; i < AREA5_TOTAL_ENEMYS; i++)
+				{
+					float x = std::rand() % 10000;
+					float z = std::rand() % 10000;
+					actorManager->ActiveData(ActorType::ENEMY, { 9300.0f + x,-15000,23600.0f + z });
+				}
+
+			}
 
 		}
 
@@ -237,7 +324,7 @@ void ActorCreate::DeactiveAreaCollision()
 		// エリア1の敵をすべて倒したら衝突判定を消す
 		if (area1Collision && deathEnemyCnt_ == AREA1_TOTAL_ENEMYS && area1Collision->GetIsCollision())
 		{
-			area1Collision->SetIsArea1Collision(false);
+			area1Collision->SetIsCollision(false);
 			area1Collision->SetIsDissolve(true);
 			deathEnemyCnt_ = 0;
 		}
@@ -245,6 +332,22 @@ void ActorCreate::DeactiveAreaCollision()
 		if (area1Collision && area1Collision->GetAlphaTime() >= 1.0f)
 		{
 			area1Collision->SetIsActive(false);
+		}
+
+		// Area1Collisionにキャスト
+		auto area2Collision = std::dynamic_pointer_cast<Area2Collision>(stage);
+
+		// エリア1の敵をすべて倒したら衝突判定を消す
+		if (area2Collision && deathEnemyCnt_ == AREA2_TOTAL_ENEMYS && area2Collision->GetIsCollision())
+		{
+			area2Collision->SetIsCollision(false);
+			area2Collision->SetIsDissolve(true);
+			deathEnemyCnt_ = 0;
+		}
+
+		if (area2Collision && area2Collision->GetAlphaTime() >= 1.0f)
+		{
+			area2Collision->SetIsActive(false);
 		}
 
 	}

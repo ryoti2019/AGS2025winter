@@ -62,7 +62,27 @@ void StageBase::Draw(const float deltaTime)
 
 }
 
-void StageBase::CollisionInit(std::shared_ptr<Transform>& transform, const int modelId, const bool isCollision)
+void StageBase::CollisionDraw(const float deltaTime)
+{
+
+	if (isStageCollision_ || isDissolve_)
+	{
+
+		// ゲートミストの描画
+		deltaTime_ += deltaTime;
+		if (isDissolve_)
+		{
+			alphaTime_ += 0.005f;
+		}
+		modelMaterial_->SetConstBufsPS({ 0.0f,0.0f,0.0f,deltaTime_ }, 2);
+		modelMaterial_->SetConstBufsPS({ alphaTime_,0.0f,0.0f,0.0f }, 3);
+		modelMaterial_->SetTextureAddress(ModelMaterial::TEXADDRESS::MIRROR);
+		renderer_->Draw();
+	}
+
+}
+
+void StageBase::CollisionInit(std::shared_ptr<Transform>& transform)
 {
 
 	// テクスチャ

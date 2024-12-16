@@ -141,6 +141,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Area5Collision.cpp" />
+    <ClCompile Include="Src\Object\Area4Collision.cpp" />
+    <ClCompile Include="Src\Object\Area3Collision.cpp" />
     <ClCompile Include="Src\Object\Area2Collision.cpp" />
     <ClCompile Include="Src\Object\Area1Collision.cpp" />
     <ClCompile Include="Src\Component\BossAIComponent.cpp" />
@@ -192,6 +195,9 @@
     <ClCompile Include="Src\Object\StageCollision.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Area5Collision.h" />
+    <ClInclude Include="Src\Object\Area4Collision.h" />
+    <ClInclude Include="Src\Object\Area3Collision.h" />
     <ClInclude Include="Src\Object\Area2Collision.h" />
     <ClInclude Include="Src\Object\Area1Collision.h" />
     <ClInclude Include="Src\Component\BossAIComponent.h" />

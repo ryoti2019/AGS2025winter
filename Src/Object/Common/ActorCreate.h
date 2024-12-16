@@ -35,6 +35,15 @@ private:
 	// エリア2と衝突しているか
 	bool isCollisionArea2_;
 
+	// エリア2と衝突しているか
+	bool isCollisionArea3_;
+
+	// エリア2と衝突しているか
+	bool isCollisionArea4_;
+
+	// エリア2と衝突しているか
+	bool isCollisionArea5_;
+
 	// 死んだ敵の数をカウント
 	int deathEnemyCnt_;
 

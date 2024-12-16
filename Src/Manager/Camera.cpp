@@ -625,7 +625,7 @@ void Camera::GamePadController()
 		axisDeg = VScale(axisDeg, 3.0f);
 	}
 	// 上方向
-	if (pad.AKeyRZ < 0 && Utility::Rad2DegF(angle_.x) >= -30.0f)
+	if (pad.AKeyRZ < 0/* && Utility::Rad2DegF(angle_.x) >= -30.0f*/)
 	{
 		axisDeg.x = pad.AKeyRZ;
 		// 方向を正規化
@@ -633,7 +633,7 @@ void Camera::GamePadController()
 		axisDeg = VScale(axisDeg, 3.0f);
 	}
 	// 下方向
-	if (pad.AKeyRZ > 0 && Utility::Rad2DegF(angle_.x) <= 30.0f)
+	if (pad.AKeyRZ > 0/* && Utility::Rad2DegF(angle_.x) <= 30.0f*/)
 	{
 		axisDeg.x = pad.AKeyRZ;
 		// 方向を正規化
@@ -664,10 +664,10 @@ void Camera::GamePadController()
 	VECTOR relativeCPos = rotXY_.PosAxis(LOCAL_P2C_POS);
 
 	// カメラ座標をゆっくり移動させる
-	pos_ = Utility::Lerp(pos_, VAdd(followPos, relativeCPos), 1.0f);
+	pos_ = Utility::Lerp(pos_, VAdd(followPos, relativeCPos), 0.1f);
 
 	// 注視点をゆっくり移動させる
-	targetPos_ = Utility::Lerp(targetPos_, VAdd(followPos, relativeTPos), 1.0f);
+	targetPos_ = Utility::Lerp(targetPos_, VAdd(followPos, relativeTPos), 0.1f);
 
 	// カメラの上方向
 	cameraUp_ = Utility::DIR_U;

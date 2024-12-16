@@ -19,8 +19,11 @@ public:
 
 	virtual void Draw(const float deltaTime)override;
 
+	// Õ“Ë‚Ì•Ç‚Ì•`‰æ
+	void CollisionDraw(const float deltaTime);
+
 	// “–‚½‚è”»’è‚Ìİ’è
-	void SetIsArea1Collision(const bool isCollision) { isStageCollision_ = isCollision; }
+	void SetIsCollision(const bool isCollision) { isStageCollision_ = isCollision; }
 
 	// “–‚½‚è”»’è‚ğæ“¾
 	const bool GetIsCollision() { return isStageCollision_; }
@@ -61,7 +64,7 @@ protected:
 	bool isDissolve_;
 
 	// ƒ‚ƒfƒ‹§Œä‚ÌŠî–{î•ñ‚ğ‰Šú‰»
-	void CollisionInit(std::shared_ptr<Transform>& transform, const int modelId, const bool isCollision);
+	void CollisionInit(std::shared_ptr<Transform>& transform);
 
 private:
 

@@ -17,26 +17,14 @@ Area1Collision::Area1Collision(const VECTOR& pos, const json& data)
 	ActorBase::Init(pos);
 
 	// モデル制御の基本情報を初期化
-	CollisionInit(transform_, stageCollisionModelId_, isStageCollision_);
+	CollisionInit(transform_);
 
 }
 
 void Area1Collision::Draw(const float deltaTime)
 {
 
-	if (isStageCollision_ || isDissolve_)
-	{
-
-		// ゲートミストの描画
-		deltaTime_ += deltaTime;
-		if (isDissolve_)
-		{
-			alphaTime_ += 0.005f;
-		}
-		modelMaterial_->SetConstBufsPS({ 0.0f,0.0f,0.0f,deltaTime_ }, 2);
-		modelMaterial_->SetConstBufsPS({ alphaTime_,0.0f,0.0f,0.0f }, 3);
-		modelMaterial_->SetTextureAddress(ModelMaterial::TEXADDRESS::MIRROR);
-		renderer_->Draw();
-	}
+	// 衝突の壁の描画
+	CollisionDraw(deltaTime);
 
 }

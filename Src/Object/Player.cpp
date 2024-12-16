@@ -250,9 +250,6 @@ void Player::Update(const float deltaTime)
 	// ImGuiのデバッグ描画の更新
 	UpdateDebugImGui();
 
-	// 回転行列を使用して、ベクトルを回転させる
-	moveDir_ = transform_->quaRot.GetForward();
-	
 	// 入力の更新
 	inputComponent_->Update(deltaTime);
 
@@ -483,6 +480,27 @@ void Player::AttackHitCheck(const int type)
 
 }
 
+void Player::Rotation()
+{
+
+	// カメラの角度
+	VECTOR cameraAngle = SceneManager::GetInstance().GetCamera().lock()->GetAngle();
+
+	// Y軸の行列
+	MATRIX mat = MGetIdent();
+	mat = MMult(mat, MGetRotY(cameraAngle.y));
+
+	// 方向を角度に変換する(XZ平面 Y軸)
+	float angle = atan2f(dir_.x, dir_.z);
+
+	// ゆっくり回転する
+	LazyRotation(cameraAngle.y + angle);
+
+	// 回転行列を使用して、ベクトルを回転させる
+	moveDir_ = transform_->quaRot.GetForward();
+
+}
+
 void Player::ChangeState(const PlayerState state)
 {
 
@@ -547,6 +565,9 @@ void Player::ChangeJab()
 	// スピード
 	speed_ = ATTACK_MOVE_POW;
 
+	// 移動処理
+	inputComponent_->Dir();
+
 }
 
 void Player::ChangeStraight()
@@ -562,6 +583,9 @@ void Player::ChangeStraight()
 
 	// スピード
 	speed_ = ATTACK_MOVE_POW;
+
+	// 移動処理
+	inputComponent_->Dir();
 
 }
 
@@ -579,6 +603,9 @@ void Player::ChangeHook()
 	// スピード
 	speed_ = ATTACK_MOVE_POW;
 
+	// 移動処理
+	inputComponent_->Dir();
+
 }
 
 void Player::ChangeLeftKick()
@@ -595,6 +622,9 @@ void Player::ChangeLeftKick()
 	// スピード
 	speed_ = ATTACK_MOVE_POW;
 
+	// 移動処理
+	inputComponent_->Dir();
+
 }
 
 void Player::ChangeRightKick()
@@ -610,6 +640,9 @@ void Player::ChangeRightKick()
 
 	// スピード
 	speed_ = ATTACK_MOVE_POW;
+
+	// 移動処理
+	inputComponent_->Dir();
 
 }
 
@@ -728,34 +761,25 @@ void Player::UpdateIdle(const float deltaTime)
 void Player::UpdateRun(const float deltaTime)
 {
 
-	if (state_ != PlayerState::RUN)
+	// 攻撃の入力を初期化
+	for (int i = static_cast<int>(PlayerState::ATTACK_JAB); i <= static_cast<int>(PlayerState::ATTACK_RIGHT_KICK); i++)
 	{
-		return;
+		isCombo_.at(static_cast<PlayerState>(i)) = false;
 	}
 
-	// カメラの角度
-	VECTOR cameraAngle = SceneManager::GetInstance().GetCamera().lock()->GetAngle();
-
-	// Y軸の行列
-	MATRIX mat = MGetIdent();
-	mat = MMult(mat, MGetRotY(cameraAngle.y));
-
-	// 回転行列を使用して、ベクトルを回転させる
-	moveDir_ = VTransform(dir_, mat);
+	// 回転処理
+	Rotation();
 
 	// 移動処理
 	moveComponent_->Move();
-
-	// 方向を角度に変換する(XZ平面 Y軸)
-	float angle = atan2f(dir_.x, dir_.z);
-
-	// ゆっくり回転する
-	LazyRotation(cameraAngle.y + angle);
 
 }
 
 void Player::UpdateJab(const float deltaTime)
 {
+
+	// 回転処理
+	Rotation();
 
 	// 少し前にゆっくり移動
 	moveComponent_->Lerp();
@@ -781,6 +805,9 @@ void Player::UpdateJab(const float deltaTime)
 void Player::UpdateStraight(const float deltaTime)
 {
 
+	// 回転処理
+	Rotation();
+
 	// 少し前にゆっくり移動
 	moveComponent_->Lerp();
 
@@ -804,6 +831,9 @@ void Player::UpdateStraight(const float deltaTime)
 
 void Player::UpdateHook(const float deltaTime)
 {
+
+	// 回転処理
+	Rotation();
 
 	// 少し前にゆっくり移動
 	moveComponent_->Lerp();
@@ -829,6 +859,9 @@ void Player::UpdateHook(const float deltaTime)
 void Player::UpdateLeftKick(const float deltaTime)
 {
 
+	// 回転処理
+	Rotation();
+
 	// 少し前にゆっくり移動
 	moveComponent_->Lerp();
 
@@ -852,6 +885,9 @@ void Player::UpdateLeftKick(const float deltaTime)
 
 void Player::UpdateRightKick(const float deltaTime)
 {
+
+	// 回転処理
+	Rotation();
 
 	// 少し前にゆっくり移動
 	moveComponent_->Lerp();

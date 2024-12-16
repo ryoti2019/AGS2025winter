@@ -333,7 +333,7 @@ void CollisionManager::CheckActorsAndStageCollision()
 				if (!stage)return;
 
 				// ステージに情報を変更
-				auto stageData = std::static_pointer_cast<StageBase>(stage);
+				auto stageData = std::dynamic_pointer_cast<StageBase>(stage);
 
 				// ステージに当たり判定があるかチェック
 				if (!stageData->GetIsCollision()) continue;
@@ -422,12 +422,8 @@ void CollisionManager::CheckCameraAndStageCollision()
 	// ステージ
 	const auto& stages = collisionActorData_.find(ActorType::STAGE);
 
-	// プレイヤー
-	const auto& players = collisionActorData_.find(ActorType::PLAYER);
-
 	// 中身が入っているか確認
 	if (stages == collisionActorData_.end())return;
-	if (players == collisionActorData_.end())return;
 
 	// カメラ座標
 	auto cPos = camera_.lock()->GetPos();
@@ -442,7 +438,7 @@ void CollisionManager::CheckCameraAndStageCollision()
 	{
 
 		// ステージに情報を変更
-		auto stageData = std::static_pointer_cast<StageBase>(stage);
+		auto stageData = std::dynamic_pointer_cast<StageBase>(stage);
 
 		// ステージに当たり判定があるかチェック
 		if (!stageData->GetIsCollision()) continue;

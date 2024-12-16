@@ -15,11 +15,25 @@ void InputComponent::Update(const float deltaTime)
 	// ヒット中は行動できない
 	if (player_->GetHitState())return;
 
+	// 攻撃
+	Attack(deltaTime);
+
 	// 移動
 	Move();
 
-	// 攻撃
-	Attack(deltaTime);
+}
+
+void InputComponent::Dir()
+{
+
+	// 入力方向
+	VECTOR dir = inputController_->Dir();
+
+	if (!Utility::EqualsVZero(dir))
+	{
+		// 方向を更新
+		player_->SetDir(dir);
+	}
 
 }
 
@@ -67,8 +81,9 @@ void InputComponent::Attack(const float deltaTime)
 	}
 
 	// 攻撃の先行入力 ため攻撃の後通らないようにする
-	if (inputController_->Attack() && player_->GetKey() != player_->ANIM_DATA_KEY[static_cast<int>(PlayerState::ATTACK_CHARGE_PUNCH)])
+	if (inputController_->Attack()/* && player_->GetKey() != player_->ANIM_DATA_KEY[static_cast<int>(PlayerState::ATTACK_CHARGE_PUNCH)]*/)
 	{
+
 		// コンボの先行入力の処理
 		for (int i = static_cast<int>(PlayerState::ATTACK_JAB); i <= static_cast<int>(PlayerState::ATTACK_RIGHT_KICK); i++)
 		{
@@ -82,7 +97,7 @@ void InputComponent::Attack(const float deltaTime)
 				player_->SetIsCombo(i, true);
 				break;
 			}
-
+			
 		}
 
 		// ジャブに遷移

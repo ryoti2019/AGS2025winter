@@ -15,6 +15,8 @@ public:
 
 	void Update(const float deltaTime);
 
+	void Dir();
+
 private:
 
 	// プレイヤーのポインター
