@@ -35,7 +35,7 @@ public:
 	// 非アクティブになったものを格納
 	void DeactiveData(const std::shared_ptr<ActorBase>& actor);
 
-	const auto& const GetActiveActorData() { return activeActorData_; };
+	const std::unordered_map<ActorType, std::vector<std::shared_ptr<ActorBase>>>& const GetActiveActorData() { return activeActorData_; };
 
 private:
 

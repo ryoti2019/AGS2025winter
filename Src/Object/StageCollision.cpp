@@ -11,6 +11,9 @@ StageCollision::StageCollision(const VECTOR& pos, const json& data)
 	// ステージの衝突判定しているかどうか
 	isStageCollision_ = true;
 
+	// 制限エリアかの判定
+	isRestrictedArea_ = false;
+
 	// 共通部分は基底クラスで初期化
 	ActorBase::Init(pos);
 

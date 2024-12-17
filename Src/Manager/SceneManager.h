@@ -38,16 +38,7 @@ public:
 	void Destroy();
 
 	// 状態遷移
-	void ChangeScene(const SCENE_ID& nextId) 
-	{
-
-		// フェード処理が終わってからシーンを変える場合もあるため、
-		// 遷移先シーンをメンバ変数に保持
-		waitSceneId_ = nextId;
-
-		isSceneChanging_ = true;
-
-	};
+	void ChangeScene(const SCENE_ID& nextId);
 
 	// カメラの取得
 	std::weak_ptr<Camera> GetCamera(void) const { return camera_; };

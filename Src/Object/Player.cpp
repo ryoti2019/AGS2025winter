@@ -255,7 +255,7 @@ void Player::Update(const float deltaTime)
 
 	// 衝突判定の更新
 	ActorBase::CollisionUpdate();
-	 
+
 	// 状態ごとの更新
 	stateUpdate_(deltaTime);
 
@@ -498,6 +498,13 @@ void Player::Rotation()
 
 	// 回転行列を使用して、ベクトルを回転させる
 	moveDir_ = transform_->quaRot.GetForward();
+
+}
+
+void Player::BossAreaCollisionCheck()
+{
+
+
 
 }
 

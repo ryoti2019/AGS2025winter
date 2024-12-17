@@ -1,6 +1,6 @@
 #pragma once
-#include <DxLib.h>
 #include <functional>
+#include <DxLib.h>
 #include "../Component/InputComponent.h"
 #include "../Manager/CollisionTypes.h"
 #include "ActorBase.h"
@@ -296,6 +296,9 @@ private:
 
 	// 回転処理
 	void Rotation();
+
+	// ボスエリアに衝突したかチェック
+	void BossAreaCollisionCheck();
 
 };
 

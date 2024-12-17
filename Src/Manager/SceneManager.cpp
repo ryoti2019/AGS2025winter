@@ -97,7 +97,7 @@ void SceneManager::Update(const float deltaTime)
 	}
 	else
 	{
-		scene_->Update(deltaTime);
+ 		scene_->Update(deltaTime);
 	}
 
 	// カメラ更新
@@ -135,6 +135,19 @@ void SceneManager::Draw(const float deltaTime)
 void SceneManager::Destroy()
 {
 	delete instance_;
+}
+
+void SceneManager::ChangeScene(const SCENE_ID& nextId)
+{
+
+	// フェード処理が終わってからシーンを変える場合もあるため、
+	// 遷移先シーンをメンバ変数に保持
+	waitSceneId_ = nextId;
+
+	// フェードアウト(暗転)を開始する
+	fader_->SetFade(Fader::STATE::FADE_OUT);
+	isSceneChanging_ = true;
+
 }
 
 SceneManager::SceneManager()

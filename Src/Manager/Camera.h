@@ -1,4 +1,5 @@
 #pragma once
+#include <functional>
 #include <DxLib.h>
 #include "../Common/Quaternion.h"
 #include "../Object/Common/Transform.h"
@@ -57,7 +58,8 @@ public:
 		FREE,			// フリーモード
 		FOLLOW,			// 追従モード
 		LOCKON,			// ロックオンモード
-		SPECIAL			// 必殺技モード
+		SPECIAL,		// 必殺技モード
+		APPEARANCE		// ボスの登場モード
 	};
 
 	Camera();
@@ -66,18 +68,12 @@ public:
 	void Init();
 	void Update();
 	void SetBeforeDraw(const float deltaTime);
-	void SetBeforeDrawFixedPoint();
-	void SetBeforeDrawFree();
-	void SetBeforeDrawLockOn();
-	void SetBeforeDrawSpecial(const float deltaTime);
 	void Draw();
 	void Release();
 
 	// プレイヤーが向いている角度
 	void SetLazyAngles(const VECTOR angles);
 
-	void SetBeforeDrawFollow();
-	
 	// 追従対象の設定
 	void SetPlayer(const std::shared_ptr<Transform>& follow);
 
@@ -186,6 +182,27 @@ private:
 
 	// 必殺技時のカメラの移動する時間
 	float specialMoveCnt_;
+
+	// カメラモードの遷移
+	std::unordered_map<MODE, std::function<void()>> modeChange_;
+	void ChangeFixedPoint();
+	void ChangeFree();
+	void ChangeFollow();
+	void ChangeLockOn();
+	void ChangeSpecial();
+	void ChangeAppearance();
+
+	// カメラモードの更新
+	std::function<void(const float deltaTime)> modeDraw_;
+	void SetBeforeDrawFixedPoint(const float deltaTime);
+	void SetBeforeDrawFree(const float deltaTime);
+	void SetBeforeDrawFollow(const float deltaTime);
+	void SetBeforeDrawLockOn(const float deltaTime);
+	void SetBeforeDrawSpecial(const float deltaTime);
+	void SetBeforeDrawAppearance(const float deltaTime);
+
+	// 関数ポインタの初期化
+	void InitFunctionPointer();
 
 	// カメラを初期位置に戻す
 	void SetDefault();

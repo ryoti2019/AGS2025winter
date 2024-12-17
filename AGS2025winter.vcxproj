@@ -141,6 +141,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Scene\BossAppearanceScene.cpp" />
     <ClCompile Include="Src\Object\Area5Collision.cpp" />
     <ClCompile Include="Src\Object\Area4Collision.cpp" />
     <ClCompile Include="Src\Object\Area3Collision.cpp" />
@@ -195,6 +196,7 @@
     <ClCompile Include="Src\Object\StageCollision.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Scene\BossAppearanceScene.h" />
     <ClInclude Include="Src\Object\Area5Collision.h" />
     <ClInclude Include="Src\Object\Area4Collision.h" />
     <ClInclude Include="Src\Object\Area3Collision.h" />

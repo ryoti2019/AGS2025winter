@@ -11,7 +11,6 @@
 Camera::Camera()
 {
 
-	mode_ = MODE::FIXED_POINT;
 	pos_ = { 0.0f,0.0f,0.0f };
 	targetPos_ = { 0.0f, 0.0f, 0.0f };
 	movePow_ = { 0.0f,0.0f,0.0f };
@@ -22,6 +21,11 @@ Camera::Camera()
 	// カメラの初期設定
 	SetDefault();
 
+	// 関数ポインタの初期化
+	InitFunctionPointer();
+
+	ChangeMode(MODE::FIXED_POINT);
+
 }
 
 Camera::~Camera()
@@ -30,6 +34,19 @@ Camera::~Camera()
 
 void Camera::Init()
 {
+}
+
+void Camera::InitFunctionPointer()
+{
+
+	//関数ポインタの初期化
+	modeChange_.emplace(MODE::FIXED_POINT, std::bind(&Camera::ChangeFixedPoint, this));
+	modeChange_.emplace(MODE::FREE, std::bind(&Camera::ChangeFree, this));
+	modeChange_.emplace(MODE::FOLLOW, std::bind(&Camera::ChangeFollow, this));
+	modeChange_.emplace(MODE::LOCKON, std::bind(&Camera::ChangeLockOn, this));
+	modeChange_.emplace(MODE::SPECIAL, std::bind(&Camera::ChangeSpecial, this));
+	modeChange_.emplace(MODE::APPEARANCE, std::bind(&Camera::ChangeAppearance, this));
+
 }
 
 void Camera::Update()
@@ -46,24 +63,8 @@ void Camera::SetBeforeDraw(const float deltaTime)
 	// クリップ距離を設定する(SetDrawScreenでリセットされる)
 	SetCameraNearFar(CAMERA_NEAR, CAMERA_FAR);
 
-	switch (mode_)
-	{
-	case Camera::MODE::FIXED_POINT:
-		SetBeforeDrawFixedPoint();
-		break;
-	case Camera::MODE::FREE:
-		SetBeforeDrawFree();
-		break;
-	case Camera::MODE::FOLLOW:
-		SetBeforeDrawFollow();
-		break;
-	case Camera::MODE::LOCKON:
-		SetBeforeDrawLockOn();
-		break;
-	case Camera::MODE::SPECIAL:
-		SetBeforeDrawSpecial(deltaTime);
-		break;
-	}
+	// モードごとの更新
+	modeDraw_(deltaTime);
 
 	// カメラの設定(位置と注視点による制御)
 	SetCameraPositionAndTargetAndUpVec(
@@ -77,12 +78,85 @@ void Camera::SetBeforeDraw(const float deltaTime)
 
 }
 
-void Camera::SetBeforeDrawFixedPoint()
+void Camera::ChangeMode(const MODE& mode)
+{
+
+	// カメラモードの変更
+	mode_ = mode;
+
+	// 関数ポインタの遷移
+	modeChange_[mode_]();
+
+}
+
+void Camera::ChangeFixedPoint()
+{
+	modeDraw_ = std::bind(&Camera::SetBeforeDrawFixedPoint, this, std::placeholders::_1);
+
+	// カメラの初期設定
+	SetDefault();
+	pos_ = { 0.0f,200.0f,-500.0f };
+	targetPos_ = { 0.0f,150.0f,0.0f };
+
+}
+
+void Camera::ChangeFree()
+{
+	modeDraw_ = std::bind(&Camera::SetBeforeDrawFree, this, std::placeholders::_1);
+}
+
+void Camera::ChangeFollow()
+{
+
+	modeDraw_ = std::bind(&Camera::SetBeforeDrawFollow, this, std::placeholders::_1);
+
+	targetPos_ = VAdd(playerTransform_->pos, playerTransform_->quaRot.PosAxis(LOCAL_P2T_POS));
+	angle_.y = playerTransform_->quaRot.ToEuler().y;
+	rotY_ = playerTransform_->quaRot;
+	rotXY_ = playerTransform_->quaRot;
+	lockOnAngles_ = { 0.0f, 0.0f, 0.0f };
+}
+
+void Camera::ChangeLockOn()
+{
+
+	modeDraw_ = std::bind(&Camera::SetBeforeDrawLockOn, this, std::placeholders::_1);
+
+	angle_ = { 0.0f,0.0f,0.0f };
+	lockOnAngles_ = { 0.0f, 0.0f, 0.0f };
+
+}
+
+void Camera::ChangeSpecial()
+{
+
+	modeDraw_ = std::bind(&Camera::SetBeforeDrawSpecial, this, std::placeholders::_1);
+
+	movePow_ = { 0.0f,0.0f,0.0f };
+
+	pos_ = VAdd(playerTransform_->pos, { 0.0f,1500.0f,0.0f });
+
+	// 回転してない
+	targetPos_ = VAdd(playerTransform_->pos, { 0.0f,1000.0f,0.0f });
+
+	// 回転している
+	targetPos_ = VAdd(playerTransform_->pos, playerTransform_->quaRot.PosAxis({ 0.0f,1000.0f,0.0f }));
+
+	specialMoveCnt_ = 0.0f;
+
+}
+
+void Camera::ChangeAppearance()
+{
+	modeDraw_ = std::bind(&Camera::SetBeforeDrawAppearance, this, std::placeholders::_1);
+}
+
+void Camera::SetBeforeDrawFixedPoint(const float deltaTime)
 {
 	pos_ = { 0.0f,5000.0f,-5000.0f };
 }
 
-void Camera::SetBeforeDrawFree()
+void Camera::SetBeforeDrawFree(const float deltaTime)
 {
 
 	auto& ins = InputManager::GetInstance();
@@ -153,7 +227,7 @@ void Camera::SetBeforeDrawFree()
 
 }
 
-void Camera::SetBeforeDrawFollow()
+void Camera::SetBeforeDrawFollow(const float deltaTime)
 {
 
 	auto& ins = InputManager::GetInstance();
@@ -183,7 +257,7 @@ void Camera::SetBeforeDrawFollow()
 
 }
 
-void Camera::SetBeforeDrawLockOn()
+void Camera::SetBeforeDrawLockOn(const float deltaTime)
 {
 
 	// 同期先の位置
@@ -256,6 +330,9 @@ void Camera::SetBeforeDrawSpecial(const float deltaTime)
 
 }
 
+void Camera::SetBeforeDrawAppearance(const float deltaTime)
+{
+}
 
 void Camera::Draw()
 {
@@ -286,53 +363,6 @@ void Camera::SetEnemy(const std::shared_ptr<Transform>& follow)
 void Camera::SetLockOn(const bool lockOn)
 {
 	lockOn_ = lockOn;
-}
-
-void Camera::ChangeMode(const MODE& mode)
-{
-
-	// カメラモードの変更
-	mode_ = mode;
-
-	// 変更時の初期化処理
-	switch (mode_)
-	{
-	case Camera::MODE::FIXED_POINT:
-		// カメラの初期設定
-		SetDefault();
-		pos_ = { 0.0f,200.0f,-500.0f };
-		targetPos_ = { 0.0f,150.0f,0.0f };
-		break;
-	case Camera::MODE::FREE:
-		break;
-	case Camera::MODE::FOLLOW:
-		targetPos_ = VAdd(playerTransform_->pos, playerTransform_->quaRot.PosAxis(LOCAL_P2T_POS));
-		angle_.y = playerTransform_->quaRot.ToEuler().y;
-		rotY_ = playerTransform_->quaRot;
-		rotXY_ = playerTransform_->quaRot;
-		lockOnAngles_ = { 0.0f, 0.0f, 0.0f };
-		break;
-	case Camera::MODE::LOCKON:
-		angle_ = { 0.0f,0.0f,0.0f };
-		lockOnAngles_ = { 0.0f, 0.0f, 0.0f };
-		break;
-	case Camera::MODE::SPECIAL:
-
-		movePow_ = { 0.0f,0.0f,0.0f };
-
-		pos_ = VAdd(playerTransform_->pos, { 0.0f,1500.0f,0.0f });
-
-		// 回転してない
-		targetPos_ = VAdd(playerTransform_->pos,{0.0f,1000.0f,0.0f});
-
-		// 回転している
-		targetPos_ = VAdd(playerTransform_->pos, playerTransform_->quaRot.PosAxis({ 0.0f,1000.0f,0.0f }));
-
-		specialMoveCnt_ = 0.0f;
-
-		break;
-	}
-
 }
 
 void Camera::AddLockOnAnglesY(float rad)

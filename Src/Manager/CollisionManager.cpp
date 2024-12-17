@@ -2,9 +2,15 @@
 #include <map>
 #include <algorithm>
 #include <cmath>
+#include <vector>
 #include <DxLib.h>
 #include "CollisionManager.h"
 #include "../Object/Stage.h"
+#include "../Object/Area1Collision.h"
+#include "../Object/Area2Collision.h"
+#include "../Object/Area3Collision.h"
+#include "../Object/Area4Collision.h"
+#include "../Object/Area5Collision.h"
 
 CollisionManager::CollisionManager()
 	:
@@ -40,6 +46,9 @@ void CollisionManager::Update(const float deltaTime)
 	// プレイヤーと敵同士が重ならないようにする当たり判定をチェック
 	CheckResolveCollision();
 
+	// 制限エリアが出てくる場所との当たり判定
+	CheckRestrictedAreasCollision();
+
 }
 
 void CollisionManager::Register(const std::shared_ptr<ActorBase>& actor)
@@ -60,6 +69,44 @@ void CollisionManager::Register(const std::shared_ptr<ActorBase>& actor)
 	{
 		collisionElem->second.emplace_back(actor);
 	}
+
+}
+
+void CollisionManager::StageErasure(std::shared_ptr<StageBase>& actor)
+{
+
+	// ステージデータを探す
+	auto stageData = collisionActorData_.find(ActorType::STAGE);
+
+	// ステージデータの中身があるかチェック
+	if (stageData == collisionActorData_.end()) return;
+
+	// エリア1に情報を変更
+	auto area1Data = std::dynamic_pointer_cast<Area1Collision>(actor);
+
+	auto& d = collisionActorData_.at(ActorType::STAGE);
+
+
+
+	erase_if(d, [this,&actor](std::shared_ptr<ActorBase> actVal) 
+		{
+			return (actor == std::dynamic_pointer_cast<StageBase>(actVal));
+		});
+
+	// エリア1だったら情報を消す
+	//stageData->second.(area1Data);
+
+	// エリア2に情報を変更
+	auto area2Data = std::dynamic_pointer_cast<Area2Collision>(actor);
+
+	// エリア3に情報を変更
+	auto area3Data = std::dynamic_pointer_cast<Area3Collision>(actor);
+
+	// エリア4に情報を変更
+	auto area4Data = std::dynamic_pointer_cast<Area4Collision>(actor);
+
+	// エリア5に情報を変更
+	auto area5Data = std::dynamic_pointer_cast<Area5Collision>(actor);
 
 }
 
@@ -559,6 +606,50 @@ void CollisionManager::ResolveEnemysCollision(const std::shared_ptr<ActorBase>& 
 		actor1->AddPos(VScale(normOverlap, -ENEMY_PUSH_FORCE / 2));
 		actor2->AddPos(VScale(normOverlap, ENEMY_PUSH_FORCE / 2));
 
+	}
+
+
+
+}
+
+void CollisionManager::CheckRestrictedAreasCollision()
+{
+
+	// ステージと当たっているか判定したいもの
+	const auto& players = collisionActorData_.find(ActorType::PLAYER);
+
+	// ステージ
+	const auto& stages = collisionActorData_.find(ActorType::STAGE);
+
+	// 中身が入っているか確認
+	if (players == collisionActorData_.end())return;
+	if (stages == collisionActorData_.end())return;
+
+	for (const std::shared_ptr<ActorBase>& player : players->second)
+	{
+		for (const std::shared_ptr<ActorBase>& stage : stages->second)
+		{
+
+			// ポインタが入っているか確認
+			if (!player)return;
+			if (!stage)return;
+
+			// ステージに情報を変更
+			auto stageData = std::dynamic_pointer_cast<StageBase>(stage);
+
+			// ステージに当たり判定があるかチェック
+			if ((!stageData->GetIsRestrictedArea() || stageData->GetIsCollision())) continue;
+
+			// 衝突しているか判定
+			if (HitCheck_Sphere_Sphere(
+				player->GetTransform()->pos,
+				player->GetCollisionData().bodyCollisionRadius,
+				stageData->GetRestrictedAreaPos(),stageData->GetRestrictedAreaRadius()))
+			{
+				// 制限エリアの当たり判定を付ける
+				stageData->SetIsCollision(true);
+			}
+		}
 	}
 
 }

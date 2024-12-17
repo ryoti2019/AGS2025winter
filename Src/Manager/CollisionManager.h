@@ -3,6 +3,8 @@
 #include "../Manager/Camera.h"
 #include "CollisionTypes.h"
 
+class StageBase;
+
 class CollisionManager
 {
 
@@ -42,6 +44,9 @@ public:
 
 	// “–‚½‚è”»’è‚ğŒ©‚½‚¢‚à‚Ì‚ğ“o˜^‚·‚é
 	void Register(const std::shared_ptr<ActorBase>& actor);
+
+	// “–‚½‚è”»’è‚ğÁ‚·
+	void StageErasure(std::shared_ptr<StageBase>& actor);
 
 	// ƒJƒƒ‰‚Ìî•ñ‚ğİ’è
 	void SetCamera(const std::weak_ptr<Camera>& camera);
@@ -134,6 +139,9 @@ private:
 
 	// “G“¯m‚ªd‚È‚Á‚Ä‚½‚Ìˆ—
 	void ResolveEnemysCollision(const std::shared_ptr<ActorBase>& actor1, const std::shared_ptr<ActorBase>& actor2);
+
+	// §ŒÀƒGƒŠƒA‚ªo‚Ä‚­‚éêŠ‚Æ‚Ì“–‚½‚è”»’è
+	void CheckRestrictedAreasCollision();
 
 };
 

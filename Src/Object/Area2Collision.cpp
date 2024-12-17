@@ -13,6 +13,12 @@ Area2Collision::Area2Collision(const VECTOR& pos, const json& data)
 	// ステージの衝突判定しているかどうか
 	isStageCollision_ = false;
 
+	// 制限エリアとの当たり判定を出す座標
+	restrictedAreaPos_ = { -3100.0f,-18000.0f,-22000.0f };
+
+	// 制限エリアかの判定
+	isRestrictedArea_ = true;
+
 	// 共通部分は基底クラスで初期化
 	ActorBase::Init(pos);
 

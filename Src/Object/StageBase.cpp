@@ -8,36 +8,9 @@
 
 StageBase::StageBase(const VECTOR& pos, const json& data)
 	:
-	ActorBase(pos,data)
+	ActorBase(pos,data),
+	restrictedAreaRadius_(10000.0f)
 {
-
-	// 衝突判定のモデルID
-	//stageCollisionModelId_ = resMng_.LoadModelDuplicate(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::STAGE_COLLISION_MODEL)]);
-	//area1CollisionModelId_ = resMng_.LoadModelDuplicate(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::STAGE_AREA1_COLLISION_MODEL)]);
-	//area2CollisionModelId_ = resMng_.LoadModelDuplicate(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::STAGE_AREA2_COLLISION_MODEL)]);
-	//area3CollisionModelId_ = resMng_.LoadModelDuplicate(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::STAGE_AREA3_COLLISION_MODEL)]);
-	//area4CollisionModelId_ = resMng_.LoadModelDuplicate(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::STAGE_AREA4_COLLISION_MODEL)]);
-	//area5CollisionModelId_ = resMng_.LoadModelDuplicate(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::STAGE_AREA5_COLLISION_MODEL)]);
-
-	// ステージの衝突判定しているかどうか
-	//isStageCollision_ = true;
-	//isArea1Collision_ = false;
-	//isArea2Collision_ = false;
-	//isArea3Collision_ = false;
-	//isArea4Collision_ = false;
-	//isArea5Collision_ = false;
-
-	// モデル制御の基本情報を初期化
-	//CollisionInit(stageCollision_,stageCollisionModelId_, isStageCollision_);
-	//CollisionInit(area1Collision_, area1CollisionModelId_, isArea1Collision_);
-	//CollisionInit(area2Collision_, area2CollisionModelId_, isArea2Collision_);
-	//CollisionInit(area3Collision_, area3CollisionModelId_, isArea3Collision_);
-	//CollisionInit(area4Collision_, area4CollisionModelId_, isArea4Collision_);
-	//CollisionInit(area5Collision_, area5CollisionModelId_, isArea5Collision_);
-
-	// 共通部分は基底クラスで初期化
-	//ActorBase::Init(pos);
-
 }
 
 void StageBase::Init(const VECTOR& pos)
