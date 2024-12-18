@@ -141,6 +141,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\BossAppearance.cpp" />
+    <ClCompile Include="Src\Object\Common\CreateBase.cpp" />
+    <ClCompile Include="Src\Object\Common\BossAppearanceCreate.cpp" />
     <ClCompile Include="Src\Scene\BossAppearanceScene.cpp" />
     <ClCompile Include="Src\Object\Area5Collision.cpp" />
     <ClCompile Include="Src\Object\Area4Collision.cpp" />
@@ -196,6 +199,9 @@
     <ClCompile Include="Src\Object\StageCollision.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\BossAppearance.h" />
+    <ClInclude Include="Src\Object\Common\CreateBase.h" />
+    <ClInclude Include="Src\Object\Common\BossAppearanceCreate.h" />
     <ClInclude Include="Src\Scene\BossAppearanceScene.h" />
     <ClInclude Include="Src\Object\Area5Collision.h" />
     <ClInclude Include="Src\Object\Area4Collision.h" />

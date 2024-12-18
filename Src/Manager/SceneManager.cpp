@@ -8,6 +8,7 @@
 #include "../Scene/SceneBase.h"
 #include "../Scene/TitleScene.h"
 #include "../Scene/GameScene.h"
+#include "../Scene/BossAppearanceScene.h"
 
 SceneManager* SceneManager::instance_ = nullptr;
 
@@ -24,12 +25,13 @@ void SceneManager::Init()
 {
 
 	// シーンID
-	sceneId_ = SCENE_ID::TITLE;
+	sceneId_ = SCENE_ID::BOSS_APPEARANCE;
 	waitSceneId_ = SCENE_ID::NONE;
 
 	//関数ポインタの初期化
 	sceneChange_.emplace(SCENE_ID::TITLE, std::bind(&SceneManager::ChangeTitleScene, this));
 	sceneChange_.emplace(SCENE_ID::GAME, std::bind(&SceneManager::ChangeGameScene, this));
+	sceneChange_.emplace(SCENE_ID::BOSS_APPEARANCE, std::bind(&SceneManager::ChangeBossAppearanceScene, this));
 	//sceneChange_.emplace(SCENE_ID::GAMEOVER, std::bind(&SceneManager::ChangeGameOverScene, this));
 
 	// フェーダーの初期化
@@ -39,7 +41,7 @@ void SceneManager::Init()
 	camera_ = std::make_shared<Camera>();
 
 	// シーンの初期化
-	scene_ = std::make_unique<TitleScene>();
+	scene_ = std::make_unique<BossAppearanceScene>();
 	scene_->Init();
 
 	// シーン遷移中判定
@@ -49,7 +51,7 @@ void SceneManager::Init()
 	Init3D();
 
 	// 初期シーンの設定
-	DoChangeScene(SCENE_ID::TITLE);
+	DoChangeScene(SCENE_ID::BOSS_APPEARANCE);
 
 	// ゲームパッドを使うときtrue
 	isGamePad_ = false;
@@ -228,4 +230,9 @@ void SceneManager::ChangeTitleScene()
 void SceneManager::ChangeGameScene()
 {
 	scene_ = std::make_unique<GameScene>();
+}
+
+void SceneManager::ChangeBossAppearanceScene()
+{
+	scene_ = std::make_unique<BossAppearanceScene>();
 }

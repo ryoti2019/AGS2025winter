@@ -1,5 +1,7 @@
 #pragma once
-class ActorCreate
+#include "CreateBase.h"
+
+class ActorCreate : public CreateBase
 {
 
 public:
@@ -23,9 +25,9 @@ public:
 
 	~ActorCreate() = default;
 
-	void Update();
+	void Update()override;
 
-	void Draw();
+	void Draw()override;
 
 private:
 

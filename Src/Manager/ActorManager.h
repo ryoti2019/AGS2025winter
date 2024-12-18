@@ -6,6 +6,7 @@
 #include "../Lib/nlohmann/json.hpp"
 #include "CollisionManager.h"
 #include "../Scene/GameScene.h"
+#include "../Scene/BossAppearanceScene.h"
 #include "../Object/ActorBase.h"
 #include "../Common/Vector2F.h"
 
@@ -44,7 +45,16 @@ private:
 
 	// すべてのアクターをまとめたデータ
 	std::unordered_map<ActorType, std::vector<std::shared_ptr<ActorBase>>> deactiveActorData_;
-	
+
+	// CreateActorでシーンがあるか確認するリスト
+	const std::vector<std::shared_ptr<SceneBase>> scenes_ =
+	{
+		{
+			{std::shared_ptr<GameScene>()},
+			{std::shared_ptr<BossAppearanceScene>()}
+		}
+	};
+
 	// 距離が一番短い敵のポインタ
 	std::shared_ptr<ActorBase> minEnemy_;
 
@@ -64,19 +74,30 @@ inline void ActorManager::CreateActor(const json& data, const VECTOR& pos)
 
 	//actor->Init(pos);
 
-	auto a = SceneManager::GetInstance().GetNowScene();
-	// 基底クラスから使いたい型へキャストする
+	// ゲームシーンがあるかチェック
 	std::shared_ptr<GameScene> gameScene =
-		std::dynamic_pointer_cast<GameScene>(a);
+		std::dynamic_pointer_cast<GameScene>(SceneManager::GetInstance().GetNowScene());
 
-	// NULLチェック
-	if (!gameScene) return;
+	// ゲームシーンがあるかチェック
+	std::shared_ptr<BossAppearanceScene> bossAppearanceScene =
+		std::dynamic_pointer_cast<BossAppearanceScene>(SceneManager::GetInstance().GetNowScene());
+
+	if (!gameScene && !bossAppearanceScene)return;
 
 	// コリジョンマネージャーを取得
-	std::shared_ptr<CollisionManager> collisionManager = gameScene->GetCollisionManager();
+	if (gameScene)
+	{
+		std::shared_ptr<CollisionManager> collisionManager = gameScene->GetCollisionManager();
+		// 衝突判定の管理クラスに登録
+		collisionManager->Register(actor);
+	}
 
-	// 衝突判定の管理クラスに登録
-	collisionManager->Register(actor);
+	if (bossAppearanceScene)
+	{
+		std::shared_ptr<CollisionManager> collisionManager = bossAppearanceScene->GetCollisionManager();
+		// 衝突判定の管理クラスに登録
+		collisionManager->Register(actor);
+	}
 
 	// deactiveActorData_の中にすでに同じ型が生成されているかチェックする
 	auto deactorElem = deactiveActorData_.find(actor->GetActorType());

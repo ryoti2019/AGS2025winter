@@ -4,6 +4,7 @@
 #include "../Manager/SceneManager.h"
 #include "../Object/Common/ActorCreate.h"
 #include "GameScene.h"
+#include "../Object/Area5Collision.h"
 
 GameScene::GameScene()
 {
@@ -43,6 +44,27 @@ void GameScene::Update(const float deltaTime)
 
 	// アクターの生成クラスの更新
 	actorCreate_->Update();
+
+	// ステージがあるかチェック
+	if (!actorManager_->GetActiveActorData().contains(ActorType::STAGE))return;
+
+	// ステージを取り出す
+	auto& stages = actorManager_->GetActiveActorData().at(ActorType::STAGE);
+
+	// Area5Collisionを探してあれば代入する
+	auto area5Collision = std::find_if(stages.begin(), stages.end(), [](const std::shared_ptr<ActorBase>& ptr)
+		{
+			return ptr == std::dynamic_pointer_cast<Area5Collision>(ptr);
+		});
+
+	// Area5にキャスト
+	auto area5 = std::dynamic_pointer_cast<Area5Collision>(*area5Collision);
+
+	// 衝突していればボスの登場シーンに遷移
+	if (area5->GetIsCollision())
+	{
+		SceneManager::GetInstance().ChangeScene(SCENE_ID::BOSS_APPEARANCE);
+	}
 
 }
 

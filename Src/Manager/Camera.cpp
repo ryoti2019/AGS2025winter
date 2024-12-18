@@ -148,7 +148,12 @@ void Camera::ChangeSpecial()
 
 void Camera::ChangeAppearance()
 {
+
 	modeDraw_ = std::bind(&Camera::SetBeforeDrawAppearance, this, std::placeholders::_1);
+
+
+	pos_ = { 0.0f,0.0f,0.0f };
+	
 }
 
 void Camera::SetBeforeDrawFixedPoint(const float deltaTime)

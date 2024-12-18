@@ -81,32 +81,14 @@ void CollisionManager::StageErasure(std::shared_ptr<StageBase>& actor)
 	// ステージデータの中身があるかチェック
 	if (stageData == collisionActorData_.end()) return;
 
-	// エリア1に情報を変更
-	auto area1Data = std::dynamic_pointer_cast<Area1Collision>(actor);
+	// ステージのデータを取り出す
+	auto& stages = collisionActorData_.at(ActorType::STAGE);
 
-	auto& d = collisionActorData_.at(ActorType::STAGE);
-
-
-
-	erase_if(d, [this,&actor](std::shared_ptr<ActorBase> actVal) 
+	// わたってきた引数と同じポインタがあれば配列から消す
+	std::erase_if(stages, [&actor](std::shared_ptr<ActorBase> actVal)
 		{
 			return (actor == std::dynamic_pointer_cast<StageBase>(actVal));
 		});
-
-	// エリア1だったら情報を消す
-	//stageData->second.(area1Data);
-
-	// エリア2に情報を変更
-	auto area2Data = std::dynamic_pointer_cast<Area2Collision>(actor);
-
-	// エリア3に情報を変更
-	auto area3Data = std::dynamic_pointer_cast<Area3Collision>(actor);
-
-	// エリア4に情報を変更
-	auto area4Data = std::dynamic_pointer_cast<Area4Collision>(actor);
-
-	// エリア5に情報を変更
-	auto area5Data = std::dynamic_pointer_cast<Area5Collision>(actor);
 
 }
 
@@ -649,6 +631,7 @@ void CollisionManager::CheckRestrictedAreasCollision()
 				// 制限エリアの当たり判定を付ける
 				stageData->SetIsCollision(true);
 			}
+
 		}
 	}
 

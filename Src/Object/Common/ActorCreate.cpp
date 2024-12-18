@@ -1,5 +1,4 @@
 #include <fstream>
-#include <memory>
 #include "../Lib/nlohmann/json.hpp"
 #include "../Application.h"
 #include "../Component/InputComponent.h"
@@ -198,9 +197,6 @@ void ActorCreate::AreaCollision()
 			// Area2Collisionにキャスト
 			auto area2Collision = std::dynamic_pointer_cast<Area2Collision>(stage);
 
-			// 中身があっているか確認
-			if (!area2Collision)continue;
-
 			// エリア2に衝突しているか判定
 			if (area2Collision && area2Collision->GetIsCollision() && !isCollisionArea2_)
 			{
@@ -220,9 +216,6 @@ void ActorCreate::AreaCollision()
 
 			// Area3Collisionにキャスト
 			auto area3Collision = std::dynamic_pointer_cast<Area3Collision>(stage);
-
-			// 中身があっているか確認
-			if (!area3Collision)continue;
 
 			// エリア3に衝突しているか判定
 			if (area3Collision && area3Collision->GetIsCollision() && !isCollisionArea3_)
@@ -247,9 +240,6 @@ void ActorCreate::AreaCollision()
 			// Area4Collisionにキャスト
 			auto area4Collision = std::dynamic_pointer_cast<Area4Collision>(stage);
 
-			// 中身があっているか確認
-			if (!area4Collision)continue;
-
 			// エリア4に衝突しているか判定
 			if (area4Collision && area4Collision->GetIsCollision() && !isCollisionArea4_)
 			{
@@ -263,29 +253,6 @@ void ActorCreate::AreaCollision()
 					float x = std::rand() % 1000;
 					float z = std::rand() % 1000;
 					actorManager->ActiveData(ActorType::ENEMY, { -60000.0f + x,-18000.0f,-68000.0f + z });
-				}
-
-			}
-
-			// Area5Collisionにキャスト
-			auto area5Collision = std::dynamic_pointer_cast<Area5Collision>(stage);
-
-			// 中身があっているか確認
-			if (!area5Collision)continue;
-
-			// エリア5に衝突しているか判定
-			if (area5Collision && area5Collision->GetIsCollision() && !isCollisionArea5_)
-			{
-
-				// エリア5と衝突した
-				isCollisionArea5_ = true;
-
-				// 敵を生成
-				for (int i = 0; i < AREA5_TOTAL_ENEMYS; i++)
-				{
-					float x = std::rand() % 1000;
-					float z = std::rand() % 1000;
-					actorManager->ActiveData(ActorType::ENEMY, { -4000.0f + x,-18000.0f,-116000.0f + z});
 				}
 
 			}
@@ -312,90 +279,150 @@ void ActorCreate::DeactiveAreaCollision()
 	// コリジョンマネージャーを取得
 	std::shared_ptr<CollisionManager> collisionManager = gameScene->GetCollisionManager();
 
-	// ステージ
-
+	// ステージがあるかチェック
 	if (!actorManager->GetActiveActorData().contains(ActorType::STAGE)) return;
 
-
+	// ステージを取り出す
 	auto& stages = actorManager->GetActiveActorData().at(ActorType::STAGE);
-
-	// ステージの中身が入っているか確認
-
-
-	//if (stages == actorManager->GetActiveActorData().end()) return;
 
 	for (auto stage : stages)
 	{
 
+#pragma region Area1Collision
+
 		// Area1Collisionにキャスト
-		auto area1Collision = std::dynamic_pointer_cast<Area1Collision>(stage);
+		std::shared_ptr<Area1Collision> area1Collision = std::dynamic_pointer_cast<Area1Collision>(stage);
 
 		// エリア1の敵をすべて倒したら衝突判定を消す
 		if (area1Collision && deathEnemyCnt_ == AREA1_TOTAL_ENEMYS && area1Collision->GetIsCollision())
 		{
 
+			// 衝突判定を消す
 			area1Collision->SetIsCollision(false);
+
+			// 徐々に消していくようにする
 			area1Collision->SetIsDissolve(true);
 
-			auto sa = std::dynamic_pointer_cast<StageBase>(stage);
+			// 基底クラスにキャスト
+			std::shared_ptr<StageBase> stageBase = std::dynamic_pointer_cast<StageBase>(stage);
 
-			collisionManager->StageErasure(sa);
-			//deathEnemyCnt_ = 0;
+			//	collisionManagerの要素から消す
+			collisionManager->StageErasure(stageBase);
+
+			// 敵の倒したカウンタをリセット
+			deathEnemyCnt_ = 0;
 
 		}
 
+		// 完全に透過したら非アクティブにする
 		if (area1Collision && area1Collision->GetAlphaTime() >= 1.0f)
 		{
 			area1Collision->SetIsActive(false);
 		}
 
-		// Area2Collisionにキャスト
-		auto area2Collision = std::dynamic_pointer_cast<Area2Collision>(stage);
+#pragma endregion
 
-		// エリア2の敵をすべて倒したら衝突判定を消す
+#pragma region Area2Collision
+
+		// Area2Collisionにキャスト
+		std::shared_ptr<Area2Collision> area2Collision = std::dynamic_pointer_cast<Area2Collision>(stage);
+
+		// エリア1の敵をすべて倒したら衝突判定を消す
 		if (area2Collision && deathEnemyCnt_ == AREA2_TOTAL_ENEMYS && area2Collision->GetIsCollision())
 		{
+
+			// 衝突判定を消す
 			area2Collision->SetIsCollision(false);
+
+			// 徐々に消していくようにする
 			area2Collision->SetIsDissolve(true);
+
+			// 基底クラスにキャスト
+			std::shared_ptr<StageBase> stageBase = std::dynamic_pointer_cast<StageBase>(stage);
+
+			//	collisionManagerの要素から消す
+			collisionManager->StageErasure(stageBase);
+
+			// 敵の倒したカウンタをリセット
 			deathEnemyCnt_ = 0;
+
 		}
 
+		// 完全に透過したら非アクティブにする
 		if (area2Collision && area2Collision->GetAlphaTime() >= 1.0f)
 		{
 			area2Collision->SetIsActive(false);
 		}
 
-		// Area3Collisionにキャスト
-		auto area3Collision = std::dynamic_pointer_cast<Area3Collision>(stage);
+#pragma endregion
 
-		// エリア3の敵をすべて倒したら衝突判定を消す
+#pragma region Area3Collision
+
+		// Area3Collisionにキャスト
+		std::shared_ptr<Area3Collision> area3Collision = std::dynamic_pointer_cast<Area3Collision>(stage);
+
+		// エリア1の敵をすべて倒したら衝突判定を消す
 		if (area3Collision && deathEnemyCnt_ == AREA3_TOTAL_ENEMYS && area3Collision->GetIsCollision())
 		{
+
+			// 衝突判定を消す
 			area3Collision->SetIsCollision(false);
+
+			// 徐々に消していくようにする
 			area3Collision->SetIsDissolve(true);
+
+			// 基底クラスにキャスト
+			std::shared_ptr<StageBase> stageBase = std::dynamic_pointer_cast<StageBase>(stage);
+
+			//	collisionManagerの要素から消す
+			collisionManager->StageErasure(stageBase);
+
+			// 敵の倒したカウンタをリセット
 			deathEnemyCnt_ = 0;
+
 		}
 
+		// 完全に透過したら非アクティブにする
 		if (area3Collision && area3Collision->GetAlphaTime() >= 1.0f)
 		{
 			area3Collision->SetIsActive(false);
 		}
 
-		// Area4Collisionにキャスト
-		auto area4Collision = std::dynamic_pointer_cast<Area4Collision>(stage);
+#pragma endregion
 
-		// エリア4の敵をすべて倒したら衝突判定を消す
+#pragma region Area4Collision
+
+		// Area4Collisionにキャスト
+		std::shared_ptr<Area4Collision> area4Collision = std::dynamic_pointer_cast<Area4Collision>(stage);
+
+		// エリア1の敵をすべて倒したら衝突判定を消す
 		if (area4Collision && deathEnemyCnt_ == AREA4_TOTAL_ENEMYS && area4Collision->GetIsCollision())
 		{
+
+			// 衝突判定を消す
 			area4Collision->SetIsCollision(false);
+
+			// 徐々に消していくようにする
 			area4Collision->SetIsDissolve(true);
+
+			// 基底クラスにキャスト
+			std::shared_ptr<StageBase> stageBase = std::dynamic_pointer_cast<StageBase>(stage);
+
+			//	collisionManagerの要素から消す
+			collisionManager->StageErasure(stageBase);
+
+			// 敵の倒したカウンタをリセット
 			deathEnemyCnt_ = 0;
+
 		}
 
+		// 完全に透過したら非アクティブにする
 		if (area4Collision && area4Collision->GetAlphaTime() >= 1.0f)
 		{
 			area4Collision->SetIsActive(false);
 		}
+
+#pragma endregion
 
 	}
 

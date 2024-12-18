@@ -15,6 +15,7 @@ enum class SCENE_ID
 	NONE,
 	TITLE,
 	GAME,
+	BOSS_APPEARANCE,
 	GAMEOVER,
 };
 
@@ -82,6 +83,7 @@ private:
 	std::unordered_map<SCENE_ID, std::function<void(void)>> sceneChange_;
 	void ChangeTitleScene();
 	void ChangeGameScene();
+	void ChangeBossAppearanceScene();
 	//void ChangeGameOverScene();
 
 	// ƒV[ƒ“‘JˆÚ’†”»’è

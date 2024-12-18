@@ -1,5 +1,7 @@
 #include "../Lib/ImGui/imgui.h"
 #include "../Manager/ResourceManager.h"
+#include "../Manager/SceneManager.h"
+#include "../Scene/GameScene.h"
 #include "Boss.h"
 
 Boss::Boss(const VECTOR& pos, const json& data)
@@ -143,6 +145,10 @@ void Boss::InitParameter()
 
 	// プレイヤーの座標
 	std::optional<VECTOR> playerPos = GetPlayerPos();
+
+	// 基底クラスから使いたい型へキャストする
+	std::shared_ptr<GameScene> gameScene =
+		std::dynamic_pointer_cast<GameScene>(SceneManager::GetInstance().GetNowScene());
 
 	// 相手の座標
 	targetPos_ = playerPos.value();
