@@ -33,13 +33,43 @@
         "GameScene": [
           {
             "TYPE": 1,
-            "PATH": "GameScene/UserGuide.png",
-            "SRC": "IMAGE_KEYBOARD_USER_GUIDE"
+            "PATH": "GameScene/UserGuideGamePad1.png",
+            "SRC": "IMAGE_GAME_PAD_USER_GUIDE_1"
           },
           {
             "TYPE": 1,
-            "PATH": "GameScene/UserGuide.png",
-            "SRC": "IMAGE_GAME_PAD_USER_GUIDE"
+            "PATH": "GameScene/UserGuideGamePad2.png",
+            "SRC": "IMAGE_GAME_PAD_USER_GUIDE_2"
+          },
+          {
+            "TYPE": 1,
+            "PATH": "GameScene/UserGuideGamePad3.png",
+            "SRC": "IMAGE_GAME_PAD_USER_GUIDE_3"
+          },
+          {
+            "TYPE": 1,
+            "PATH": "GameScene/UserGuideGamePad4.png",
+            "SRC": "IMAGE_GAME_PAD_USER_GUIDE_4"
+          },
+          {
+            "TYPE": 1,
+            "PATH": "GameScene/UserGuideKeyboard1.png",
+            "SRC": "IMAGE_KEYBOARD_USER_GUIDE_1"
+          },
+          {
+            "TYPE": 1,
+            "PATH": "GameScene/UserGuideKeyboard2.png",
+            "SRC": "IMAGE_KEYBOARD_USER_GUIDE_2"
+          },
+          {
+            "TYPE": 1,
+            "PATH": "GameScene/UserGuideKeyboard3.png",
+            "SRC": "IMAGE_KEYBOARD_USER_GUIDE_3"
+          },
+          {
+            "TYPE": 1,
+            "PATH": "GameScene/UserGuideKeyboard4.png",
+            "SRC": "IMAGE_KEYBOARD_USER_GUIDE_4"
           }
         ]
       },

@@ -30,8 +30,26 @@ private:
 	// キーボードの操作説明
 	int keyboardUserGuideImg_;
 
+	// キーボードの移動の操作説明
+	int keyboardUserGuideMoveImg_;
+
+	// キーボードの攻撃の操作説明
+	int keyboardUserGuideAttackImg_;
+
+	// キーボードの必殺技の操作説明
+	int keyboardUserGuideSpecialAttackImg_;
+
 	// ゲームパッドの操作説明
 	int gamePadUserGuideImg_;
+
+	// ゲームパッドの移動の操作説明
+	int gamePadUserGuideMoveImg_;
+
+	// ゲームパッドの攻撃の操作説明
+	int gamePadUserGuideAttackImg_;
+
+	// ゲームパッドの必殺技の操作説明
+	int gamePadUserGuideSpecialAttackImg_;
 
 	// 操作説明を見ているかのフラグ
 	bool isViewUserGuide_;

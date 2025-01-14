@@ -13,8 +13,6 @@ public:
 		"NONE",
 		"IDLE",
 		"RUN",
-		"JUMP_IDLE",
-		"LAND",
 		"ATTACK_PUNCH",
 		"ATTACK_KICK",
 		"ATTACK_PROJECTILE",
@@ -24,6 +22,8 @@ public:
 		"HIT_FLINCH_UP",
 		"HIT_KNOCK_BACK",
 		"KIP_UP",
+		"JUMP_IDLE",
+		"LAND",
 		"DEATH"
 	};
 

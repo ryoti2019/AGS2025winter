@@ -6,6 +6,8 @@
 #include "../Object/Common/ActorCreate.h"
 #include "../Object/Common/InputController.h"
 #include "GameScene.h"
+#include "../Object/Area1Collision.h"
+#include "../Object/Area2Collision.h"
 #include "../Object/Area5Collision.h"
 
 GameScene::GameScene()
@@ -49,10 +51,28 @@ void GameScene::InitImage()
 {
 
 	// キーボードの操作説明の画像の初期化
-	keyboardUserGuideImg_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_KEYBOARD_USER_GUIDE)]).handleId_;
+	keyboardUserGuideImg_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_KEYBOARD_USER_GUIDE_4)]).handleId_;
+
+	// キーボードの操作説明の画像の初期化
+	keyboardUserGuideMoveImg_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_KEYBOARD_USER_GUIDE_1)]).handleId_;
+
+	// キーボードの操作説明の画像の初期化
+	keyboardUserGuideAttackImg_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_KEYBOARD_USER_GUIDE_2)]).handleId_;
+
+	// キーボードの操作説明の画像の初期化
+	keyboardUserGuideSpecialAttackImg_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_KEYBOARD_USER_GUIDE_3)]).handleId_;
 
 	// ゲームパッドの操作説明の画像の初期化
-	gamePadUserGuideImg_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_GAME_PAD_USER_GUIDE)]).handleId_;
+	gamePadUserGuideImg_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_GAME_PAD_USER_GUIDE_4)]).handleId_;
+
+	// ゲームパッドの操作説明の画像の初期化
+	gamePadUserGuideMoveImg_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_GAME_PAD_USER_GUIDE_1)]).handleId_;
+
+	// ゲームパッドの操作説明の画像の初期化
+	gamePadUserGuideAttackImg_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_GAME_PAD_USER_GUIDE_2)]).handleId_;
+
+	// ゲームパッドの操作説明の画像の初期化
+	gamePadUserGuideSpecialAttackImg_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_GAME_PAD_USER_GUIDE_3)]).handleId_;
 
 }
 
@@ -131,12 +151,65 @@ void GameScene::Draw(const float deltaTime)
 		if (!SceneManager::GetInstance().GetGamePad())
 		{
 			// キーボードの操作説明の画像を描画
-			DrawRotaGraph(Application::SCREEN_SIZE_X / 2, 300, 1.0f, 0.0f, keyboardUserGuideImg_, true);
+			DrawRotaGraph(Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 2, 0.5f, 0.0f, keyboardUserGuideImg_, true);
 		}
 		else if (SceneManager::GetInstance().GetGamePad())
 		{
 			// ゲームパッドの操作説明の画像を描画
-			DrawRotaGraph(Application::SCREEN_SIZE_X / 2, 300, 1.0f, 0.0f, gamePadUserGuideImg_, true);
+			DrawRotaGraph(Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 2, 0.5f, 0.0f, gamePadUserGuideImg_, true);
+		}
+
+		return;
+	}
+
+	// ステージがあるかチェック
+	if (!actorManager_->GetActiveActorData().contains(ActorType::STAGE))return;
+
+	// ステージを取り出す
+	auto& stages = actorManager_->GetActiveActorData().at(ActorType::STAGE);
+
+	for (auto& stage : stages)
+	{
+
+		if (!SceneManager::GetInstance().GetGamePad())
+		{
+
+			// Area1Collisionにキャスト
+			auto area1Collision = std::dynamic_pointer_cast<Area1Collision>(stage);
+
+			if (area1Collision && !area1Collision->GetIsCollision() && !area1Collision->GetIsDissolve())
+			{
+				// 移動のチュートリアル画像を描画
+				DrawRotaGraph(150, 200, 0.5, 0.0, keyboardUserGuideMoveImg_, true);
+			}
+			else if (area1Collision && area1Collision->GetIsCollision())
+			{
+				// 攻撃のチュートリアル画像を描画
+				DrawRotaGraph(150, 200, 0.5, 0.0, keyboardUserGuideAttackImg_, true);
+			}
+
+			// Area2Collisionにキャスト
+			auto area2Collision = std::dynamic_pointer_cast<Area2Collision>(stage);
+
+			if (area2Collision && area2Collision->GetIsCollision())
+			{
+				// 移動のチュートリアル画像を描画
+				DrawRotaGraph(150, 200, 0.5, 0.0, keyboardUserGuideSpecialAttackImg_, true);
+			}
+
+		}
+		else if (SceneManager::GetInstance().GetGamePad())
+		{
+
+			// Area1Collisionにキャスト
+			auto area1Collision = std::dynamic_pointer_cast<Area1Collision>(stage);
+
+			if (area1Collision && !area1Collision->GetIsCollision() && !area1Collision->GetIsDissolve())
+			{
+				// 移動のチュートリアル画像を描画
+				DrawRotaGraph(150, 200, 0.5, 0.0, gamePadUserGuideMoveImg_, true);
+			}
+
 		}
 
 	}

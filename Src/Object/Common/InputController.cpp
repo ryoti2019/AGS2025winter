@@ -176,7 +176,7 @@ bool InputController::Upper()
 	auto& ins = InputManager::GetInstance();
 
 	// キーボード
-	if (!SceneManager::GetInstance().GetGamePad() && ins.IsTrgUpMouseLeft() && ins.IsNew(KEY_INPUT_LSHIFT))
+	if (!SceneManager::GetInstance().GetGamePad() && ins.IsTrgDown(KEY_INPUT_F))
 	{
 		return true;
 	}
@@ -195,7 +195,7 @@ bool InputController::SpecialAttack()
 	auto& ins = InputManager::GetInstance();
 
 	// キーボード
-	if (!SceneManager::GetInstance().GetGamePad() && ins.IsTrgUpMouseLeft() && ins.IsNew(KEY_INPUT_LCONTROL))
+	if (!SceneManager::GetInstance().GetGamePad() && ins.IsTrgDown(KEY_INPUT_G))
 	{
 		return true;
 	}

@@ -23,7 +23,7 @@ void BossAppearanceScene::Init()
 
 	// アクターの生成クラス
 	actorCreate_ = std::make_shared<BossAppearanceCreate>();
-
+	
 	// カメラモードをボスの登場用のモードに変更
 	SceneManager::GetInstance().GetCamera().lock()->ChangeMode(Camera::MODE::APPEARANCE);
 

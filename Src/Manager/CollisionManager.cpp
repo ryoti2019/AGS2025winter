@@ -448,6 +448,13 @@ void CollisionManager::CheckActorsAndStageCollision()
 					}
 				}
 			}
+
+			// ‚à‚µ’n–Ê‚ðŠÑ’Ê‚µ‚Ä‰º‚És‚Á‚Ä‚µ‚Ü‚Á‚½‚Æ‚«
+			if (target->GetTransform()->pos.y < -19500.0f)
+			{
+				target->SetPos({ target->GetTransform()->pos.x, -19500.0f,target->GetTransform()->pos.z });
+			}
+
 		}
 	}
 
