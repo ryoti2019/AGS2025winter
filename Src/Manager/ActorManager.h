@@ -5,7 +5,9 @@
 #include <vector>
 #include "../Lib/nlohmann/json.hpp"
 #include "CollisionManager.h"
+#include "../Scene/TitleScene.h"
 #include "../Scene/GameScene.h"
+#include "../Scene/BossBattleScene.h"
 #include "../Scene/BossAppearanceScene.h"
 #include "../Object/ActorBase.h"
 #include "../Common/Vector2F.h"
@@ -74,6 +76,10 @@ inline void ActorManager::CreateActor(const json& data, const VECTOR& pos)
 
 	//actor->Init(pos);
 
+	// タイトルシーンがあるかチェック
+	std::shared_ptr<TitleScene> titleScene =
+		std::dynamic_pointer_cast<TitleScene>(SceneManager::GetInstance().GetNowScene());
+
 	// ゲームシーンがあるかチェック
 	std::shared_ptr<GameScene> gameScene =
 		std::dynamic_pointer_cast<GameScene>(SceneManager::GetInstance().GetNowScene());
@@ -82,9 +88,12 @@ inline void ActorManager::CreateActor(const json& data, const VECTOR& pos)
 	std::shared_ptr<BossAppearanceScene> bossAppearanceScene =
 		std::dynamic_pointer_cast<BossAppearanceScene>(SceneManager::GetInstance().GetNowScene());
 
-	if (!gameScene && !bossAppearanceScene)return;
+	// ゲームシーンがあるかチェック
+	std::shared_ptr<BossBattleScene> bossBattleScene =
+		std::dynamic_pointer_cast<BossBattleScene>(SceneManager::GetInstance().GetNowScene());
 
-	// コリジョンマネージャーを取得
+	if (!titleScene && !gameScene && !bossAppearanceScene && !bossBattleScene)return;
+
 	if (gameScene)
 	{
 		std::shared_ptr<CollisionManager> collisionManager = gameScene->GetCollisionManager();
@@ -95,6 +104,13 @@ inline void ActorManager::CreateActor(const json& data, const VECTOR& pos)
 	if (bossAppearanceScene)
 	{
 		std::shared_ptr<CollisionManager> collisionManager = bossAppearanceScene->GetCollisionManager();
+		// 衝突判定の管理クラスに登録
+		collisionManager->Register(actor);
+	}
+
+	if (bossBattleScene)
+	{
+		std::shared_ptr<CollisionManager> collisionManager = bossBattleScene->GetCollisionManager();
 		// 衝突判定の管理クラスに登録
 		collisionManager->Register(actor);
 	}

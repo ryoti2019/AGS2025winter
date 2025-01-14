@@ -14,6 +14,8 @@ enum class BossState
 	HIT_FLINCH_UP,
 	HIT_KNOCK_BACK,
 	KIP_UP,
+	JUMP_IDLE,
+	LAND,
 	DEATH,
 	MAX
 };

@@ -53,11 +53,9 @@ void Resource::Load(void)
 	switch (resType_)
 	{
 	case Resource::TYPE::IMG:
-		// ÅÒ?Åe?
 		handleId_ = LoadGraph(path_.c_str());
 		break;
 	case Resource::TYPE::IMGS:
-		// ???ÅhÅÒ?Åe?
 		handleIds_ = new int[numX_ * numY_];
 		LoadDivGraph(
 			path_.c_str(),
@@ -67,13 +65,12 @@ void Resource::Load(void)
 			&handleIds_[0]);
 		break;
 	case Resource::TYPE::MODEL:
-		// ???f??
 		handleId_ = MV1LoadModel(path_.c_str());
 		break;
 	case Resource::TYPE::EFFEKSEER:
 		handleId_ = LoadEffekseerEffect(path_.c_str());
 		break;
-	case Resource::TYPE::MUSIC:
+	case Resource::TYPE::SOUND:
 
 		handleId_ = LoadSoundMem(path_.c_str(), 6);
 		break;
@@ -109,7 +106,7 @@ void Resource::Release(void)
 		}
 	}
 	break;
-	case Resource::TYPE::MUSIC:
+	case Resource::TYPE::SOUND:
 		DeleteSoundMem(handleId_);
 		break;
 

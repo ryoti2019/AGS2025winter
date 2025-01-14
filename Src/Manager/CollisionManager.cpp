@@ -6,6 +6,7 @@
 #include <DxLib.h>
 #include "CollisionManager.h"
 #include "../Object/Stage.h"
+#include "../Object/StageCollision.h"
 #include "../Object/Area1Collision.h"
 #include "../Object/Area2Collision.h"
 #include "../Object/Area3Collision.h"
@@ -17,7 +18,7 @@ CollisionManager::CollisionManager()
 	ATTACK_START_NUM(3),
 	STAGE_COLLISION_COUNT(10),
 	ENEMY_PUSH_FORCE(10.0f),
-	OBJECT_COLLISION_PUSH_FORCE(30.0f),
+	OBJECT_COLLISION_PUSH_FORCE(50.0f),
 	CAMERA_COLLISION_PUSH_FORCE(1000.0f),
 	DOWN_DIR(0.9f),
 	LEN_CAMERACOLLISION_LINE(500.0f),
@@ -405,40 +406,47 @@ void CollisionManager::CheckActorsAndStageCollision()
 
 							// カプセルも一緒に移動させる
 							target->SetPos(pos);
-							continue;
 
 						}
-						break;
 					}
 				}
 
 				// 検出した地面ポリゴン情報の後始末
 				MV1CollResultPolyDimTerminate(hits);
 
-				// 地面との衝突
-				MV1_COLL_RESULT_POLY hit = MV1CollCheck_Line(
-					stage->GetTransform()->modelId, -1,
-					VAdd(target->GetCollisionData().bodyCapsuleUpPos, VECTOR(0.0f, target->GetCollisionData().bodyCollisionRadius, 0.0f)),
-					VAdd(target->GetCollisionData().bodyCapsuleDownPos, VECTOR(0.0f, -target->GetCollisionData().bodyCollisionRadius, 0.0f)));
+				// StgaeCollisionにキャスト
+				auto stageCollision = std::dynamic_pointer_cast<StageCollision>(stage);
 
-				// 地面に当たっている時と下方向に動いている時のみ判定する
-				if (hit.HitFlag > 0 && VDot({ 0.0f,-1.0f,0.0f }, target->GetVelocity()) > DOWN_DIR)
+				// StageCollision出なければ処理しない
+				if (stageCollision)
 				{
 
-					// 衝突地点から、少し上に移動
-					target->SetPos(hit.HitPosition);
+					// 地面との衝突
+					MV1_COLL_RESULT_POLY hit = MV1CollCheck_Line(
+						stage->GetTransform()->modelId, -1,
+						VAdd(target->GetCollisionData().bodyCapsuleUpPos, VECTOR(0.0f, target->GetCollisionData().bodyCollisionRadius, 0.0f)),
+						VAdd(target->GetCollisionData().bodyCapsuleDownPos, VECTOR(0.0f, -target->GetCollisionData().bodyCollisionRadius, 0.0f)));
 
-					// ジャンプリセット
-					target->SetVelocity(Utility::VECTOR_ZERO);
+					// 地面に当たっている時と下方向に動いている時のみ判定する
+					if (hit.HitFlag > 0 && VDot({ 0.0f,-1.0f,0.0f }, target->GetVelocity()) > DOWN_DIR)
+					{
 
+						// 衝突地点から、少し上に移動
+						target->SetPos(hit.HitPosition);
+
+						// 衝突しているに変更
+						target->SetIsCollisionFloor(true);
+
+						// ジャンプリセット
+						target->SetVelocity(Utility::VECTOR_ZERO);
+
+					}
+					else
+					{
+						// 衝突していないに変更
+						target->SetIsCollisionFloor(false);
+					}
 				}
-
-			}
-
-			// もし地面を貫通して下に行ってしまったとき
-			if (target->GetTransform()->pos.y < -19500.0f)
-			{
-				target->SetPos({ target->GetTransform()->pos.x, -19500.0f,target->GetTransform()->pos.z });
 			}
 		}
 	}
@@ -552,7 +560,7 @@ void CollisionManager::CheckResolveCollision()
 void CollisionManager::ResolvePlayerEnemyCollision(const std::shared_ptr<ActorBase>& actor1, const std::shared_ptr<ActorBase>& actor2)
 {
 
-	// カプセル同氏の当たり判定
+	// カプセル同士の当たり判定
 	if (HitCheck_Capsule_Capsule(actor1->GetCollisionData().bodyCapsuleUpPos, actor1->GetCollisionData().bodyCapsuleDownPos, actor1->GetCollisionData().bodyCollisionRadius,
 								 actor2->GetCollisionData().bodyCapsuleUpPos, actor2->GetCollisionData().bodyCapsuleDownPos, actor2->GetCollisionData().bodyCollisionRadius))
 	{
@@ -573,7 +581,7 @@ void CollisionManager::ResolvePlayerEnemyCollision(const std::shared_ptr<ActorBa
 void CollisionManager::ResolveEnemysCollision(const std::shared_ptr<ActorBase>& actor1, const std::shared_ptr<ActorBase>& actor2)
 {
 
-	// カプセル同氏の当たり判定
+	// カプセル同士の当たり判定
 	if (HitCheck_Capsule_Capsule(actor1->GetCollisionData().bodyCapsuleUpPos, actor1->GetCollisionData().bodyCapsuleDownPos, actor1->GetCollisionData().bodyCollisionRadius,
 								 actor2->GetCollisionData().bodyCapsuleUpPos, actor2->GetCollisionData().bodyCapsuleDownPos, actor2->GetCollisionData().bodyCollisionRadius))
 	{

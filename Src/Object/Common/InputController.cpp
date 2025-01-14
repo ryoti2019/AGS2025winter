@@ -47,7 +47,7 @@ VECTOR InputController::Dir()
 			dir_.x += 1.0f;
 		}
 	}
-	// コントローラー
+	// ゲームパッド
 	else
 	{
 		// ゲームパッドの番号を取得
@@ -95,7 +95,7 @@ VECTOR InputController::LockOnDir(Transform transform)
 			dir_ = transform.GetRight();
 		}
 	}
-	// コントローラー
+	// ゲームパッド
 	else
 	{
 		// ゲームパッドの番号を取得
@@ -120,7 +120,7 @@ bool InputController::Run()
 	{
 		return true;
 	}
-	// コントローラー
+	// ゲームパッド
 	else if (SceneManager::GetInstance().GetGamePad() && ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN))
 	{
 		return true;
@@ -140,7 +140,7 @@ bool InputController::Attack()
 	{
 		return true;
 	}
-	// コントローラー
+	// ゲームパッド
 	else if (SceneManager::GetInstance().GetGamePad() && ins.IsPadBtnTrgUp(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::RIGHT))
 	{
 		return true;
@@ -160,7 +160,7 @@ bool InputController::ChargeAttack()
 	{
 		return true;
 	}
-	// コントローラー
+	// ゲームパッド
 	else if (SceneManager::GetInstance().GetGamePad() && ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::RIGHT))
 	{
 		return true;
@@ -180,7 +180,7 @@ bool InputController::Upper()
 	{
 		return true;
 	}
-	// コントローラー
+	// ゲームパッド
 	else if (SceneManager::GetInstance().GetGamePad() && ins.IsPadBtnTrgUp(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::R_BOTTON))
 	{
 		return true;
@@ -191,6 +191,7 @@ bool InputController::Upper()
 
 bool InputController::SpecialAttack()
 {
+
 	auto& ins = InputManager::GetInstance();
 
 	// キーボード
@@ -198,10 +199,49 @@ bool InputController::SpecialAttack()
 	{
 		return true;
 	}
-	// コントローラー
+	// ゲームパッド
 	else if (SceneManager::GetInstance().GetGamePad() && ins.IsPadBtnTrgUp(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::LEFT))
 	{
 		return true;
 	}
 	return false;
+
+}
+
+bool InputController::Decide()
+{
+
+	auto& ins = InputManager::GetInstance();
+
+	// キーボード
+	if (!SceneManager::GetInstance().GetGamePad() && ins.IsNew(KEY_INPUT_SPACE))
+	{
+		return true;
+	}
+	// ゲームパッド
+	else if (SceneManager::GetInstance().GetGamePad() && ins.IsPadBtnTrgUp(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN))
+	{
+		return true;
+	}
+	return false;
+
+}
+
+bool InputController::Cancel()
+{
+
+	auto& ins = InputManager::GetInstance();
+
+	// キーボード
+	if (!SceneManager::GetInstance().GetGamePad() && ins.IsNew(KEY_INPUT_ESCAPE))
+	{
+		return true;
+	}
+	// ゲームパッド
+	else if (SceneManager::GetInstance().GetGamePad() && ins.IsPadBtnTrgUp(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::RIGHT))
+	{
+		return true;
+	}
+	return false;
+
 }

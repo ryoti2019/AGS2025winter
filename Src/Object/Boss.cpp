@@ -30,8 +30,8 @@ Boss::Boss(const VECTOR& pos, const json& data)
 	// パラメータの初期化
 	InitParameter();
 
-	// 共通部分は基底クラスで初期化
-	ActorBase::Init(pos);
+	// 敵同士の共通部分の初期化
+	EnemyBase::Init();
 
 	// アニメーションの初期化
 	InitAnimation();
@@ -146,10 +146,6 @@ void Boss::InitParameter()
 	// プレイヤーの座標
 	std::optional<VECTOR> playerPos = GetPlayerPos();
 
-	// 基底クラスから使いたい型へキャストする
-	std::shared_ptr<GameScene> gameScene =
-		std::dynamic_pointer_cast<GameScene>(SceneManager::GetInstance().GetNowScene());
-
 	// 相手の座標
 	targetPos_ = playerPos.value();
 
@@ -185,6 +181,9 @@ void Boss::InitParameter()
 
 	// キックのダメージ量
 	ATTACK_KICK_DAMAGE = jsonData_["ANIM"][static_cast<int>(BossState::ATTACK_KICK) - 1]["DAMAGE"];
+
+	// 敵がまっすく飛んでいくときのカウンタ
+	knockBackCnt_ = 0.0f;
 
 }
 
@@ -319,7 +318,7 @@ void Boss::AnimationFrame()
 	MV1ResetFrameUserLocalMatrix(transform_->modelId, collisionData_.body);
 
 	// 座標を固定する
-	if (animationController_->IsBlendPlay("ATTACK_KICK"))
+	if (animationController_->IsBlendPlay("ATTACK_KICK") || animationController_->IsBlendPlay("HIT_FLY"))
 	{
 
 		// 対象フレームのローカル行列(大きさ、回転、位置)を取得する
@@ -336,7 +335,14 @@ void Boss::AnimationFrame()
 
 		// ここでローカル座標を行列に、そのまま戻さず、
 		// 調整したローカル座標を設定する
-		mix = MMult(mix, MGetTranslate({ 0.0f, pos.y, 0.0f }));
+		if (animationController_->IsBlendPlay("ATTACK_KICK"))
+		{
+			mix = MMult(mix, MGetTranslate({ 0.0f, pos.y, 0.0f }));
+		}
+		else if (animationController_->IsBlendPlay("HIT_FLY"))
+		{
+			mix = MMult(mix, MGetTranslate({ 0.0f, 0.0f, 0.0f }));
+		}
 
 		// 合成した行列を対象フレームにセットし直して、
 		// アニメーションの移動値を無効化
@@ -360,7 +366,7 @@ void Boss::AttackHitCheck(const int state)
 	}
 
 	// 地面についていないかチェック
-	if (velocity_.y != 0.0f)
+	if (!isOnGround_)
 	{
 		// 空中に浮き続けるアニメーションかチェック
 		for (const auto hitState : hitAirState_)
@@ -438,9 +444,9 @@ void Boss::Update(const float deltaTime)
 	stateUpdate_(deltaTime);
 
 	// 重力がかかるアニメーションのみ処理する
-	if (state_ != BossState::HIT_KNOCK_BACK && transform_->pos.y > FLOOR_HEIGHT)
+	// 重力
+	if (state_ != BossState::HIT_KNOCK_BACK)
 	{
-		// 重力
 		Gravity(gravityScale_);
 	}
 
@@ -537,6 +543,22 @@ const std::vector<int> Boss::GetTotalAttackTypes() const
 	}
 
 	return intStates;
+
+}
+
+const bool Boss::GetHitState() const
+{
+
+	// 攻撃を受けている状態か判定
+	for (const auto state : hitState_)
+	{
+		if (state_ == state)
+		{
+			return true;
+		}
+	}
+
+	return false;
 
 }
 
@@ -731,7 +753,7 @@ void Boss::ChangeHitFlinchUp()
 	vec = { -vec.x, vec.y,-vec.z };
 
 	// 地面についていたら上に移動させる
-	if (velocity_.y == 0.0f)
+	if (isOnGround_)
 	{
 		velocity_.y = FLINCH_UP_UP_VEC_POW;
 	}
@@ -782,6 +804,9 @@ void Boss::ChangeHitKnockback()
 
 	// 高さを調整する
 	transform_->pos.y = transform_->pos.y + KNOCK_BACK_HEIGHT_OFFSET;
+
+	// 衝突判定の更新
+	ActorBase::CollisionUpdate();
 
 }
 
@@ -931,8 +956,8 @@ void Boss::UpdateKick(const float deltaTime)
 void Boss::UpdateProjectile(const float deltaTime)
 {
 
-	bool a = effekseerController_->IsDraw("PROJECTILE");
-	if (!a && ATTACK_PROJECTILE_START_FRAME <= animationController_->GetStepAnim())
+	// すでに描画しているかとアニメーションが始まっているか判定
+	if (!effekseerController_->IsDraw("PROJECTILE") && ATTACK_PROJECTILE_START_FRAME <= animationController_->GetStepAnim())
 	{
 
 		// 当たり判定をつける
@@ -988,7 +1013,7 @@ void Boss::UpdateHitFly(const float deltaTime)
 {
 
 	// 地面につくまで加算する
-	if (velocity_.y != 0.0f)
+	if (!isOnGround_)
 	{
 		// 後ろに飛んでいきながら移動
 		moveComponent_->HitMove();
@@ -1015,14 +1040,14 @@ void Boss::UpdateHitFlinchUp(const float deltaTime)
 {
 
 	// 地面につくまで加算する
-	if (velocity_.y != 0.0f)
+	if (!isOnGround_)
 	{
 		// 上に緩く移動する
 		moveComponent_->HitMove();
 	}
 
 	// アニメーションが終了したら起き上がり状態へ遷移する
-	if (velocity_.y == 0.0f)
+	if (isOnGround_)
 	{
 		ChangeState(BossState::KIP_UP);
 	}

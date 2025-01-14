@@ -1,3 +1,4 @@
+#include "../Manager/SceneManager.h"
 #include "Area5Collision.h"
 
 Area5Collision::Area5Collision(const VECTOR& pos, const json& data)
@@ -28,7 +29,14 @@ Area5Collision::Area5Collision(const VECTOR& pos, const json& data)
 void Area5Collision::Draw(const float deltaTime)
 {
 
-	// 衝突の壁の描画
-	CollisionDraw(deltaTime);
+	// ボスバトルのみ描画する
+	if (SceneManager::GetInstance().GetSceneID() == SCENE_ID::BOSS_BATTLE)
+	{
+		// 衝突の壁の描画
+		CollisionDraw(deltaTime);
+	}
+
+	// 制限エリアとの当たり判定を出す座標
+	DrawSphere3D(restrictedAreaPos_, restrictedAreaRadius_, 10, 0xff0000, 0xff0000, false);
 
 }

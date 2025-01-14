@@ -339,7 +339,7 @@ public:
 
 	// ”ò‚Ñ“¹‹ï‚Ìƒqƒbƒgˆ—
 	virtual void ProjectileHit(const int damage);
-
+	
 	// ¡‚Ìó‘Ô‚ğæ“¾
 	virtual const int GetState()const { return 0; }
 
@@ -372,6 +372,12 @@ public:
 
 	// ƒ|ƒCƒ“ƒ^‚Ìæ“¾
 	const std::shared_ptr<ActorBase>& GetThis() { return shared_from_this(); };
+
+	// °‚Æ“–‚½‚Á‚Ä‚¢‚é‚©”»’è‚ğæ“¾
+	void SetIsCollisionFloor(const bool isOnGround) { isOnGround_ = isOnGround; }
+
+	// ’x‰„‰ñ“]
+	void LazyRotation(float goalRot);
 
 protected:
 
@@ -488,9 +494,6 @@ protected:
 
 	// UŒ‚ˆ—
 	virtual void Attack(const float deltaTime);
-
-	// ’x‰„‰ñ“]
-	void LazyRotation(float goalRot);
 
 	// Õ“Ë”»’è‚Åg‚¤‚à‚Ì‚ğ“o˜^
 	void CollisionRegister();

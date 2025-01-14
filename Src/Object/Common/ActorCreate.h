@@ -18,9 +18,6 @@ public:
 	// エリア4のすべての敵の数
 	const int AREA4_TOTAL_ENEMYS;
 
-	// エリア5のすべての敵の数
-	const int AREA5_TOTAL_ENEMYS;
-
 	ActorCreate();
 
 	~ActorCreate() = default;
@@ -37,13 +34,13 @@ private:
 	// エリア2と衝突しているか
 	bool isCollisionArea2_;
 
-	// エリア2と衝突しているか
+	// エリア3と衝突しているか
 	bool isCollisionArea3_;
 
-	// エリア2と衝突しているか
+	// エリア4と衝突しているか
 	bool isCollisionArea4_;
 
-	// エリア2と衝突しているか
+	// エリア5と衝突しているか
 	bool isCollisionArea5_;
 
 	// 死んだ敵の数をカウント

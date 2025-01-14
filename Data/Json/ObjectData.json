@@ -7,7 +7,7 @@
 				"RIGHT_FOOT_FRAME_NAME": "mixamorig:RightFoot",
 				"LEFT_FOOT_FRAME_NAME": "mixamorig:LeftFoot",
 				"BODY_FRAME_NAME": "mixamorig:Hips",
-				"RUN_MOVE_POW": 300.0,
+				"RUN_MOVE_POW": 200.0,
 				"ATTACK_MOVE_POW": 100.0,
 				"ATTACK_CHARGE_PUNCH_TIME": 1.0,
 				"ATTACK_SPECIAL_PUNCH_COLLISION_TIME": 3.0,
@@ -92,6 +92,10 @@
 					},
 					{
 						"NAME": "HIT_BODY",
+						"SPEED": 30.0
+					},
+					{
+						"NAME": "TITLE_IDLE",
 						"SPEED": 30.0
 					}
 				]
@@ -261,7 +265,15 @@
 					},
 					{
 						"NAME": "KIP_UP",
+						"SPEED": 50.0
+					},
+					{
+						"NAME": "JUMP_IDLE",
 						"SPEED": 30.0
+					},
+					{
+						"NAME": "LAND",
+						"SPEED": 10.0
 					},
 					{
 						"NAME": "DEATH",

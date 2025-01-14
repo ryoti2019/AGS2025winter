@@ -36,7 +36,7 @@ public:
 	static constexpr float DIS_FOLLOW2TARGET = 350.0f;
 
 	// カメラスピード
-	static constexpr float SPEED = 20.0f;
+	static constexpr float SPEED = 100.0f;
 
 	// カメラクリップ：NEAR
 	static constexpr float CAMERA_NEAR = 40.0f;
@@ -56,6 +56,7 @@ public:
 		NONE,
 		FIXED_POINT,	// 定点カメラ
 		FREE,			// フリーモード
+		TITLE,			// タイトルシーンモード
 		FOLLOW,			// 追従モード
 		LOCKON,			// ロックオンモード
 		SPECIAL,		// 必殺技モード
@@ -75,10 +76,10 @@ public:
 	void SetLazyAngles(const VECTOR angles);
 
 	// 追従対象の設定
-	void SetPlayer(const std::shared_ptr<Transform>& follow);
+	void SetPlayer(const std::shared_ptr<Transform>& follow) { playerTransform_ = follow; }
 
 	// 追従対象の設定
-	void SetEnemy(const std::shared_ptr<Transform>& follow);
+	void SetBoss(const std::shared_ptr<Transform>& follow) { bossTransform_ = follow; }
 
 	// ロックオンの設定
 	void SetLockOn(const bool lockOn);
@@ -110,11 +111,23 @@ public:
 	// 角度を取得
 	const VECTOR& GetAngle()const { return angle_; }
 
+	// ボスの登場シーンの1つ目のカメラの動きのフラグを取得
+	const bool GetIsBossAppearanceCameraMove1() { return isBossAppearanceCameraMove1_; }
+
+	// ボスの登場シーンの2つ目のカメラの動きのフラグを取得
+	const bool GetIsBossAppearanceCameraMove2() { return isBossAppearanceCameraMove2_; }
+
+	// ボスの登場シーンの2つ目のカメラの動きのフラグを取得
+	const bool GetIsBossAppearanceCameraMove3() { return isBossAppearanceCameraMove3_; }
+
+	// ボスシーンが終わったかのフラグ
+	const bool GetIsEndBossAppearanceScene() { return isEndBossAppearanceScene_; }
+
 private:
 
 	// 追従対象
 	std::shared_ptr<Transform> playerTransform_;
-	std::shared_ptr<Transform> enemyTransform_;
+	std::shared_ptr<Transform> bossTransform_;
 
 	// カメラモード
 	MODE mode_;
@@ -183,10 +196,26 @@ private:
 	// 必殺技時のカメラの移動する時間
 	float specialMoveCnt_;
 
+	// カメラが何秒移動したか計るカウンタ
+	float elapsedTime_;
+
+	// ボスの登場シーンの1つ目のカメラの動きのフラグ
+	bool isBossAppearanceCameraMove1_;
+
+	// ボスの登場シーンの2つ目のカメラの動きのフラグ
+	bool isBossAppearanceCameraMove2_;
+
+	// ボスの登場シーンの3つ目のカメラの動きのフラグ
+	bool isBossAppearanceCameraMove3_;
+
+	// ボスシーンが終わったかのフラグ
+	bool isEndBossAppearanceScene_;
+
 	// カメラモードの遷移
 	std::unordered_map<MODE, std::function<void()>> modeChange_;
 	void ChangeFixedPoint();
 	void ChangeFree();
+	void ChangeTitle();
 	void ChangeFollow();
 	void ChangeLockOn();
 	void ChangeSpecial();
@@ -196,6 +225,7 @@ private:
 	std::function<void(const float deltaTime)> modeDraw_;
 	void SetBeforeDrawFixedPoint(const float deltaTime);
 	void SetBeforeDrawFree(const float deltaTime);
+	void SetBeforeDrawTitle(const float deltaTime);
 	void SetBeforeDrawFollow(const float deltaTime);
 	void SetBeforeDrawLockOn(const float deltaTime);
 	void SetBeforeDrawSpecial(const float deltaTime);

@@ -37,11 +37,51 @@ void ResourceManager::Init(void)
 	// ファイルストリームからjsonオブジェクトに変換
 	nlohmann::json objectJson = nlohmann::json::parse(ifs);
 
-	const auto& objectData = objectJson["ResourceData"];
+	const nlohmann::json_abi_v3_11_3::json& objectData = objectJson["ResourceData"];
 
 	// スコープが切れる際に 自動的にファイルクローズして貰えますが、
 	// お行儀良く、明示的にファイルストリームを閉じる
 	ifs.close();
+
+	// 画像のロード
+	ImgLoad(objectData);
+
+	// モデルとアニメーションのロード
+	ModelAndAnimationLoad(objectData);
+
+	// エフェクトのロード
+	EffectLoad(objectData);
+
+	// BGMとSEのロード
+	BGMAndSELoad(objectData);
+
+}
+
+void ResourceManager::ImgLoad(const nlohmann::json_abi_v3_11_3::json& objectData)
+{
+
+	// ステージの画像データ
+	const auto& stageImageData = objectData[0]["ImageData"]["Stage"];
+
+	// ステージの画像データの初期化
+	InitResource(Application::PATH_IMAGE, stageImageData);
+
+	// タイトルシーンの画像データ
+	const auto& titleSceneImageData = objectData[0]["ImageData"]["TitleScene"];
+
+	// タイトルシーンの画像データの初期化
+	InitResource(Application::PATH_IMAGE, titleSceneImageData);
+
+	// ゲームシーンの画像データ
+	const auto& gameSceneImageData = objectData[0]["ImageData"]["GameScene"];
+
+	// ゲームシーンの画像データの初期化
+	InitResource(Application::PATH_IMAGE, gameSceneImageData);
+
+}
+
+void ResourceManager::ModelAndAnimationLoad(const nlohmann::json_abi_v3_11_3::json& objectData)
+{
 
 	// プレイヤーのモデルとアニメーションデータ
 	const auto& playerModelData = objectData[0]["ModelData"]["Player"];
@@ -67,17 +107,33 @@ void ResourceManager::Init(void)
 	// ステージのモデルとアニメーションの初期化
 	InitResource(Application::PATH_MODEL, stageModelData);
 
+}
+
+void ResourceManager::EffectLoad(const nlohmann::json_abi_v3_11_3::json& objectData)
+{
+
 	// ボスのエフェクトデータ
 	const auto& bossEffectData = objectData[0]["EffectData"]["Boss"];
 
-	// ステージのモデルとアニメーションの初期化
+	// ボスのエフェクトデータの初期化
 	InitResource(Application::PATH_EFFECT, bossEffectData);
 
-	// ステージの画像データ
-	const auto& stageImageData = objectData[0]["ImageData"]["Stage"];
+}
 
-	// ステージのモデルとアニメーションの初期化
-	InitResource(Application::PATH_IMAGE, stageImageData);
+void ResourceManager::BGMAndSELoad(const nlohmann::json_abi_v3_11_3::json& objectData)
+{
+
+	// タイトルシーンの画像データ
+	const auto& titleSceneSoundData = objectData[0]["SoundData"]["TitleScene"];
+
+	// タイトルシーンの画像データの初期化
+	InitResource(Application::PATH_SOUND, titleSceneSoundData);
+
+	// タイトルシーンの画像データ
+	const auto& gameSceneSoundData = objectData[0]["SoundData"]["GameScene"];
+
+	// タイトルシーンの画像データの初期化
+	InitResource(Application::PATH_SOUND, gameSceneSoundData);
 
 }
 

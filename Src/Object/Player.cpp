@@ -89,7 +89,7 @@ void Player::InitFunction()
 
 void Player::InitFunctionPointer()
 {
-
+	
 	//関数ポインタの初期化
 	stateChange_.emplace(PlayerState::IDLE, std::bind(&Player::ChangeIdle, this));
 	stateChange_.emplace(PlayerState::RUN, std::bind(&Player::ChangeRun, this));
@@ -116,8 +116,19 @@ void Player::InitParameter()
 		isCombo_.emplace(static_cast<PlayerState>(i), false);
 	}
 
+	// 方向
+	dir_ = { 0.0f,0.0f,1.0f };
+
 	// 動く方向
-	moveDir_ = { 0.0f,0.0f,1.0f };
+	moveDir_ = transform_->quaRot.GetForward();
+
+	// ボス戦のみ角度を変える
+	if (SceneManager::GetInstance().GetSceneID() == SCENE_ID::BOSS_BATTLE)
+	{
+		// 角度を変更
+		transform_->quaRot = Quaternion::Euler({ Utility::Deg2RadF(0.0f) , Utility::Deg2RadF(180.0f),Utility::Deg2RadF(0.0f) });
+		transform_->Update();
+	}
 
 	// 右手のフレーム名
 	RIGHT_HAND_FRAME = jsonData_["RIGHT_HAND_FRAME_NAME"];
@@ -259,11 +270,13 @@ void Player::Update(const float deltaTime)
 	// 状態ごとの更新
 	stateUpdate_(deltaTime);
 
+	//gravityScale_ = 10.0f;
+
 	// 重力
-	if (velocity_.y != 0.0f)
-	{
+	//if (velocity_.y != 0.0f)
+	//{
 		Gravity(gravityScale_);
-	}
+	//}
 
 	// モデル情報を更新
 	transform_->Update();
@@ -490,14 +503,14 @@ void Player::Rotation()
 	MATRIX mat = MGetIdent();
 	mat = MMult(mat, MGetRotY(cameraAngle.y));
 
+	// 回転行列を使用して、ベクトルを回転させる
+	moveDir_ = VTransform(dir_, mat);
+
 	// 方向を角度に変換する(XZ平面 Y軸)
 	float angle = atan2f(dir_.x, dir_.z);
 
 	// ゆっくり回転する
 	LazyRotation(cameraAngle.y + angle);
-
-	// 回転行列を使用して、ベクトルを回転させる
-	moveDir_ = transform_->quaRot.GetForward();
 
 }
 

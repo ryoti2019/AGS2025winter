@@ -36,6 +36,8 @@ public:
 		"HIT_FLINCH_UP",
 		"HIT_KNOCK_BACK",
 		"KIP_UP",
+		"JUMP_IDLE",
+		"LAND",
 		"DEATH"
 	};
 
@@ -61,6 +63,9 @@ public:
 
 	// UŒ‚í—Ş‚ğæ“¾
 	const std::vector<int> GetTotalAttackTypes()const;
+
+	// UŒ‚‚ğó‚¯‚Ä‚¢‚éó‘Ô‚ğæ“¾
+	const bool GetHitState()const override;
 
 	// UŒ‚‚Ìƒqƒbƒgˆ—
 	void AttackHit(const int damage, const int state)override;
@@ -179,7 +184,6 @@ private:
 	void ChangeHitKnockback();
 	void ChangeKipUp();
 	void ChangeDeath();
-
 
 	// ó‘Ô‚ÌXV
 	std::function<void(const float deltaTime)> stateUpdate_;

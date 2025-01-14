@@ -1,6 +1,48 @@
 {
   "ResourceData": [
     {
+      "ImageData": {
+        "Player": [
+
+        ],
+        "Enemy": [
+
+        ],
+        "Boss": [
+
+        ],
+        "Stage": [
+          {
+            "TYPE": 1,
+            "PATH": "Stage/Noise2.png",
+            "SRC": "IMAGE_NOISE_TEXTURE"
+          }
+        ],
+        "TitleScene": [
+          {
+            "TYPE": 1,
+            "PATH": "TitleScene/TitleLogo.png",
+            "SRC": "IMAGE_TITLE_LOGO"
+          },
+          {
+            "TYPE": 1,
+            "PATH": "TitleScene/Press A Botton.png",
+            "SRC": "IMAGE_PRESS_A_BOTTON"
+          }
+        ],
+        "GameScene": [
+          {
+            "TYPE": 1,
+            "PATH": "GameScene/UserGuide.png",
+            "SRC": "IMAGE_KEYBOARD_USER_GUIDE"
+          },
+          {
+            "TYPE": 1,
+            "PATH": "GameScene/UserGuide.png",
+            "SRC": "IMAGE_GAME_PAD_USER_GUIDE"
+          }
+        ]
+      },
       "ModelData": {
         "Player": [
           {
@@ -72,6 +114,11 @@
             "TYPE": 3,
             "PATH": "Player/HitBody.mv1",
             "SRC": "ANIM_PLAYER_HIT_BODY"
+          },
+          {
+            "TYPE": 3,
+            "PATH": "Player/TitleIdle.mv1",
+            "SRC": "ANIM_PLAYER_TITLE_IDLE"
           }
         ],
         "Enemy": [
@@ -199,6 +246,16 @@
           },
           {
             "TYPE": 3,
+            "PATH": "Boss/JumpIdle.mv1",
+            "SRC": "ANIM_BOSS_JUMP_IDLE"
+          },
+          {
+            "TYPE": 3,
+            "PATH": "Boss/Land.mv1",
+            "SRC": "ANIM_BOSS_LAND"
+          },
+          {
+            "TYPE": 3,
             "PATH": "Boss/Death.mv1",
             "SRC": "ANIM_DEATH"
           }
@@ -259,7 +316,7 @@
 
         ]
       },
-      "ImageData": {
+      "SoundData": {
         "Player": [
 
         ],
@@ -269,11 +326,23 @@
         "Boss": [
 
         ],
-        "Stage": [
+        "TitleScene": [
           {
-            "TYPE": 1,
-            "PATH": "Stage/Noise2.png",
-            "SRC": "IMAGE_NOISE_TEXTURE"
+            "TYPE": 5,
+            "PATH": "TitleScene/TitleSceneBGM.mp3",
+            "SRC": "SOUND_TITLE_SCENE_BGM"
+          },
+          {
+            "TYPE": 5,
+            "PATH": "TitleScene/DecideSE.mp3",
+            "SRC": "SOUND_TITLE_SCENE_DECIDE_SE"
+          }
+        ],
+        "GameScene": [
+          {
+            "TYPE": 5,
+            "PATH": "GameScene/GameSceneBGM.mp3",
+            "SRC": "SOUND_GAME_SCENE_BGM"
           }
         ]
       }

@@ -297,9 +297,9 @@ void Enemy::Update(const float deltaTime)
 	stateUpdate_(deltaTime);
 
 	// 重力がかかるアニメーションのみ処理する
-	if (state_ != EnemyState::HIT_KNOCK_BACK && transform_->pos.y > FLOOR_HEIGHT)
+	// 重力
+	if (state_ != EnemyState::HIT_KNOCK_BACK)
 	{
-		// 重力
 		Gravity(gravityScale_);
 	}
 
@@ -479,7 +479,7 @@ void Enemy::AttackHitCheck(const int state)
 	}
 
 	// 地面についていないかチェック
-	if (velocity_ .y != 0.0f)
+	if (!isOnGround_)
 	{
 		// 空中に浮き続けるアニメーションかチェック
 		for (const auto hitState : hitAirState_)
@@ -491,7 +491,7 @@ void Enemy::AttackHitCheck(const int state)
 			}
 		}
 	}
-
+	
 	// 頭にヒットするアニメーションかチェック
 	for (const auto hitState : hitHeadState_)
 	{
@@ -742,7 +742,7 @@ void Enemy::ChangeHitFlinchUp()
 	vec = { -vec.x, vec.y,-vec.z };
 
 	// 地面についていたら上に移動させる
-	if (velocity_.y == 0.0f)
+	if (isOnGround_)
 	{
 		velocity_.y = FLINCH_UP_UP_VEC_POW;
 	}
@@ -793,6 +793,9 @@ void Enemy::ChangeHitKnockBack()
 
 	// 高さを調整する
 	transform_->pos.y = transform_->pos.y + KNOCK_BACK_HEIGHT_OFFSET;
+
+	// 衝突判定の更新
+	ActorBase::CollisionUpdate();
 
 }
 
@@ -970,7 +973,7 @@ void Enemy::UpdateHitFly(const float deltaTime)
 {
 
 	// 地面につくまで加算する
-	if (velocity_.y != 0.0f)
+	if (!isOnGround_)
 	{
 		// 後ろに飛んでいきながら移動
 		moveComponent_->HitMove();
@@ -997,14 +1000,14 @@ void Enemy::UpdateHitFlinchUp(const float deltaTime)
 {
 
 	// 地面につくまで加算する
-	if (velocity_.y != 0.0f)
+	if (!isOnGround_)
 	{
 		// 上に緩く移動する
 		moveComponent_->HitMove();
 	}
 
 	// アニメーションが終了したら起き上がり状態へ遷移する
-	if (velocity_.y == 0.0f)
+	if (isOnGround_)
 	{
 		ChangeState(EnemyState::KIP_UP);
 	}

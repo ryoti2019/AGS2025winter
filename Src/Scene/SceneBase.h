@@ -1,6 +1,8 @@
 #pragma once
 #include <memory>
 #include "../Manager/Camera.h"
+#include "../Manager/ResourceManager.h"
+#include "../Object/Common/InputController.h"
 
 class ActorManager;
 class CollisionManager;
@@ -33,6 +35,9 @@ public:
 
 protected:
 
+	// リソース管理
+	ResourceManager& resMng_;
+
 	//カメラ
 	std::unique_ptr<Camera> camera_;
 
@@ -41,6 +46,21 @@ protected:
 
 	// 衝突判定の管理クラス
 	std::shared_ptr<CollisionManager> collisionManager_;
+
+	// 入力用コントローラー
+	std::unique_ptr<InputController> inputController_;
+
+	// BGM
+	int bgm_;
+
+	// 決定ボタンのSE
+	int decideSE_;
+
+	// 画像の初期化
+	virtual void InitImage();
+
+	// BGMとSEの初期化
+	virtual void InitBGMAndSE();
 
 private:
 

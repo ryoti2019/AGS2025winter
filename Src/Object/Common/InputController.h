@@ -36,6 +36,15 @@ public:
 	// 必殺技
 	bool SpecialAttack();
 
+	// キーボードかコントローラーどちらかを決める
+	bool SelectInputDevice();
+
+	// 決定
+	bool Decide();
+
+	// キャンセル
+	bool Cancel();
+
 private:
 
 	// アニメーション

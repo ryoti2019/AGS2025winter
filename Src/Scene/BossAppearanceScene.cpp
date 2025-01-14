@@ -24,6 +24,7 @@ void BossAppearanceScene::Init()
 	// アクターの生成クラス
 	actorCreate_ = std::make_shared<BossAppearanceCreate>();
 
+	// カメラモードをボスの登場用のモードに変更
 	SceneManager::GetInstance().GetCamera().lock()->ChangeMode(Camera::MODE::APPEARANCE);
 
 }
@@ -39,6 +40,15 @@ void BossAppearanceScene::Update(const float deltaTime)
 
 	// アクターの生成クラスの更新
 	actorCreate_->Update();
+
+	// カメラを生成
+	std::weak_ptr<Camera> camera = SceneManager::GetInstance().GetCamera();
+
+	// ボスの登場シーンが終わっっているか
+	if (camera.lock()->GetIsEndBossAppearanceScene())
+	{
+		SceneManager::GetInstance().ChangeScene(SCENE_ID::BOSS_BATTLE);
+	}
 
 }
 

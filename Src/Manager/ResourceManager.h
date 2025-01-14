@@ -14,7 +14,45 @@ public:
 	enum class SRC
 	{
 
-#pragma region プレイヤーのモデルとアニメーション
+#pragma region 画像
+
+#pragma region プレイヤー
+
+#pragma endregion
+
+#pragma region 敵
+
+#pragma endregion
+
+#pragma region ボス
+
+#pragma endregion
+
+#pragma region ステージ
+
+		IMAGE_NOISE_TEXTURE,
+
+#pragma endregion
+
+#pragma region タイトルシーン
+
+		IMAGE_TITLE_LOGO,
+		IMAGE_PRESS_A_BOTTON,
+
+#pragma endregion
+
+#pragma region ゲームシーン
+
+		IMAGE_KEYBOARD_USER_GUIDE,
+		IMAGE_GAME_PAD_USER_GUIDE,
+
+#pragma endregion
+
+#pragma endregion
+
+#pragma region モデルとアニメーション
+
+#pragma region プレイヤー
 
 		MODEL_PLAYER,
 		ANIM_PLAYER_IDLE,
@@ -30,9 +68,10 @@ public:
 		ANIM_PLAYER_POWER_CHARGE,
 		ANIM_PLAYER_HIT_HEAD,
 		ANIM_PLAYER_HIT_BODY,
+		ANIM_PLAYER_TITLE_IDLE,
 #pragma endregion
 
-#pragma region 敵のモデルとアニメーション
+#pragma region 敵
 
 		MODEL_ENEMY,
 		ANIM_ENEMY_IDLE,
@@ -49,7 +88,7 @@ public:
 
 #pragma endregion
 
-#pragma region ボスのモデルとアニメーション
+#pragma region ボス
 
 		MODEL_BOSS,
 		ANIM_BOSS_IDLE,
@@ -63,11 +102,13 @@ public:
 		ANIM_HIT_FLINCH_UP,
 		ANIM_HIT_KNOCK_BACK,
 		ANIM_KIP_UP,
+		ANIM_BOSS_JUMP_IDLE,
+		ANIM_BOSS_LAND,
 		ANIM_DEATH,
 
 #pragma endregion
 
-#pragma region ステージのモデル
+#pragma region ステージ
 
 		STAGE_MODEL,
 		STAGE_COLLISION_MODEL,
@@ -79,39 +120,44 @@ public:
 
 #pragma endregion
 
-#pragma region プレイヤーのエフェクト
+#pragma endregion
+
+#pragma region エフェクト
+
+#pragma region プレイヤー
 
 
 
 #pragma endregion
 
-#pragma region 敵のエフェクト
+#pragma region 敵
 
 
 
 #pragma endregion
 
-#pragma region ボスのエフェクト
+#pragma region ボス
 
 		EFFECT_BOSS_PROJECTILE,
 
 #pragma endregion
 
-#pragma region プレイヤーの画像
+#pragma endregion
+
+#pragma region BGM・SE
+
+#pragma region タイトルシーン
+
+		SOUND_TITLE_SCENE_BGM,
+		SOUND_TITLE_SCENE_DECIDE_SE,
 
 #pragma endregion
 
-#pragma region 敵の画像
+#pragma region ゲームシーン
+
+		SOUND_GAME_SCENE_BGM,
 
 #pragma endregion
-
-#pragma region ボスの画像
-
-#pragma endregion
-
-#pragma region ステージの画像
-
-		IMAGE_NOISE_TEXTURE,
 
 #pragma endregion
 
@@ -122,7 +168,45 @@ public:
 	const std::string RESOURCE_KEY[static_cast<int>(SRC::MAX)] =
 	{
 
-#pragma region プレイヤーのモデルとアニメーション
+#pragma region 画像
+
+#pragma region プレイヤー
+
+#pragma endregion
+
+#pragma region 敵
+
+#pragma endregion
+
+#pragma region ボス
+
+#pragma endregion
+
+#pragma region ステージ
+
+		"IMAGE_NOISE_TEXTURE",
+
+#pragma endregion
+
+#pragma region タイトルシーン
+
+		"IMAGE_TITLE_LOGO",
+		"IMAGE_PRESS_A_BOTTON",
+
+#pragma endregion
+
+#pragma region ゲームシーン
+
+		"IMAGE_KEYBOARD_USER_GUIDE",
+		"IMAGE_GAME_PAD_USER_GUIDE",
+
+#pragma endregion
+
+#pragma endregion
+
+#pragma region モデルとアニメーション
+
+#pragma region プレイヤー
 
 		"MODEL_PLAYER",
 		"ANIM_PLAYER_IDLE",
@@ -138,9 +222,10 @@ public:
 		"ANIM_PLAYER_POWER_CHARGE",
 		"ANIM_PLAYER_HIT_HEAD",
 		"ANIM_PLAYER_HIT_BODY",
+		"ANIM_PLAYER_TITLE_IDLE",
 #pragma endregion
 
-#pragma region 敵のモデルとアニメーション
+#pragma region 敵
 
 		"MODEL_ENEMY",
 		"ANIM_ENEMY_IDLE",
@@ -157,7 +242,7 @@ public:
 
 #pragma endregion
 
-#pragma region ボスのモデルとアニメーション
+#pragma region ボス
 
 		"MODEL_BOSS",
 		"ANIM_BOSS_IDLE",
@@ -171,11 +256,13 @@ public:
 		"ANIM_HIT_FLINCH_UP",
 		"ANIM_HIT_KNOCK_BACK",
 		"ANIM_KIP_UP",
+		"ANIM_BOSS_JUMP_IDLE",
+		"ANIM_BOSS_LAND",
 		"ANIM_DEATH",
 
 #pragma endregion
 
-#pragma region ステージのモデル
+#pragma region ステージ
 
 		"STAGE_MODEL",
 		"STAGE_COLLISION_MODEL",
@@ -187,38 +274,42 @@ public:
 
 #pragma endregion
 
-#pragma region プレイヤーのエフェクト
+#pragma endregion
+
+#pragma region エフェクト
+
+#pragma region プレイヤー
 
 #pragma endregion
 
-#pragma region 敵のエフェクト
+#pragma region 敵
 
 #pragma endregion
 
-#pragma region ボスのエフェクト
+#pragma region ボス
 
 		"EFFECT_BOSS_PROJECTILE",
 
 #pragma endregion
 
-#pragma region プレイヤーの画像
+#pragma endregion
+
+#pragma region BGM・SE
+
+#pragma region タイトルシーン
+
+		"SOUND_TITLE_SCENE_BGM",
+		"SOUND_TITLE_SCENE_DECIDE_SE",
 
 #pragma endregion
 
-#pragma region 敵の画像
+#pragma region ゲームシーン
+
+		"SOUND_GAME_SCENE_BGM"
 
 #pragma endregion
 
-#pragma region ボスの画像
-
 #pragma endregion
-
-#pragma region ステージの画像
-
-		"IMAGE_NOISE_TEXTURE"
-
-#pragma endregion
-
 
 	};
 
@@ -266,5 +357,17 @@ private:
 
 	// 内部ロード
 	Resource* _Load(std::string src);
+
+	// 画像のロード
+	void ImgLoad(const nlohmann::json_abi_v3_11_3::json& objectData);
+
+	// モデルとアニメーションのロード
+	void ModelAndAnimationLoad(const nlohmann::json_abi_v3_11_3::json& objectData);
+
+	// エフェクトのロード
+	void EffectLoad(const nlohmann::json_abi_v3_11_3::json& objectData);
+
+	// BGMとSEのロード
+	void BGMAndSELoad(const nlohmann::json_abi_v3_11_3::json& objectData);
 
 };

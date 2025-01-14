@@ -17,6 +17,7 @@ Camera::Camera()
 	angle_ = { 0.0f, Utility::Deg2RadF(90.0f), 0.0f};
 	lockOn_ = false;
 	specialMoveCnt_ = 0.0f;
+	isEndBossAppearanceScene_ = false;
 
 	// カメラの初期設定
 	SetDefault();
@@ -42,6 +43,7 @@ void Camera::InitFunctionPointer()
 	//関数ポインタの初期化
 	modeChange_.emplace(MODE::FIXED_POINT, std::bind(&Camera::ChangeFixedPoint, this));
 	modeChange_.emplace(MODE::FREE, std::bind(&Camera::ChangeFree, this));
+	modeChange_.emplace(MODE::TITLE, std::bind(&Camera::ChangeTitle, this));
 	modeChange_.emplace(MODE::FOLLOW, std::bind(&Camera::ChangeFollow, this));
 	modeChange_.emplace(MODE::LOCKON, std::bind(&Camera::ChangeLockOn, this));
 	modeChange_.emplace(MODE::SPECIAL, std::bind(&Camera::ChangeSpecial, this));
@@ -105,6 +107,17 @@ void Camera::ChangeFree()
 	modeDraw_ = std::bind(&Camera::SetBeforeDrawFree, this, std::placeholders::_1);
 }
 
+void Camera::ChangeTitle()
+{
+
+	modeDraw_ = std::bind(&Camera::SetBeforeDrawTitle, this, std::placeholders::_1);
+
+	targetPos_ = VAdd(playerTransform_->pos, playerTransform_->quaRot.PosAxis({-1200.0f, 1000.0f, 0.0f}));
+
+	pos_ = VAdd(playerTransform_->pos, playerTransform_->quaRot.PosAxis({ -1200.0f,800.0f,2500.0f }));
+
+}
+
 void Camera::ChangeFollow()
 {
 
@@ -134,10 +147,9 @@ void Camera::ChangeSpecial()
 
 	movePow_ = { 0.0f,0.0f,0.0f };
 
-	pos_ = VAdd(playerTransform_->pos, { 0.0f,1500.0f,0.0f });
+	movedPos_ = { 0.0f,0.0f,0.0f };
 
-	// 回転してない
-	targetPos_ = VAdd(playerTransform_->pos, { 0.0f,1000.0f,0.0f });
+	pos_ = VAdd(playerTransform_->pos, { 0.0f,1500.0f,0.0f });
 
 	// 回転している
 	targetPos_ = VAdd(playerTransform_->pos, playerTransform_->quaRot.PosAxis({ 0.0f,1000.0f,0.0f }));
@@ -151,8 +163,30 @@ void Camera::ChangeAppearance()
 
 	modeDraw_ = std::bind(&Camera::SetBeforeDrawAppearance, this, std::placeholders::_1);
 
+	movePow_ = { 0.0f,0.0f,0.0f };
 
-	pos_ = { 0.0f,0.0f,0.0f };
+	movedPos_ = { 0.0f,0.0f,0.0f };
+
+	// プレイヤーから見たカメラのローカル座標
+	VECTOR localRotPos = bossTransform_->quaRot.PosAxis({ 500.0f,2000.0f,-2000.0f });
+
+	// カメラが何秒移動したか計るカウンタ
+	elapsedTime_ = 0.0f;
+
+	// ボスの登場シーンの1つ目のカメラの動きのフラグ
+	isBossAppearanceCameraMove1_ = true;
+
+	// ボスの登場シーンの2つ目のカメラの動きのフラグ
+	isBossAppearanceCameraMove2_ = false;
+
+	// ボスの登場シーンの3つ目のカメラの動きのフラグ
+	isBossAppearanceCameraMove3_ = false;
+
+	// カメラの座標を設定
+	pos_ = VAdd(bossTransform_->pos, localRotPos);
+
+	// 回転している
+	targetPos_ = VAdd(bossTransform_->pos, bossTransform_->quaRot.PosAxis({ 0.0f,1000.0f,0.0f }));
 	
 }
 
@@ -169,10 +203,10 @@ void Camera::SetBeforeDrawFree(const float deltaTime)
 #pragma region 回転
 
 	VECTOR axisDeg = Utility::VECTOR_ZERO;
-	if (ins.IsNew(KEY_INPUT_UP)) { axisDeg.x += -1.0f; }
-	if (ins.IsNew(KEY_INPUT_DOWN)) { axisDeg.x += 1.0f; }
-	if (ins.IsNew(KEY_INPUT_LEFT)) { axisDeg.y += -1.0f; }
-	if (ins.IsNew(KEY_INPUT_RIGHT)) { axisDeg.y += 1.0f; }
+	if (ins.IsNew(KEY_INPUT_UP)) { axisDeg.x += -0.01f; }
+	if (ins.IsNew(KEY_INPUT_DOWN)) { axisDeg.x += 0.01f; }
+	if (ins.IsNew(KEY_INPUT_LEFT)) { axisDeg.y += -0.01f; }
+	if (ins.IsNew(KEY_INPUT_RIGHT)) { axisDeg.y += 0.01f; }
 
 
 	if (!Utility::EqualsVZero(axisDeg))
@@ -188,7 +222,7 @@ void Camera::SetBeforeDrawFree(const float deltaTime)
 
 	// 注視点(通常重力でいうところのY値を追従対象と同じにする)
 	VECTOR localPos = rotXY_.PosAxis(LOCAL_P2T_POS);
-	targetPos_ = VAdd(pos_, localPos);
+	targetPos_ = VAdd(bossTransform_->pos, localPos);
 
 	//// カメラ位置
 	//localPos = rotXY_.PosAxis(LOCAL_P2C_POS);
@@ -232,6 +266,10 @@ void Camera::SetBeforeDrawFree(const float deltaTime)
 
 }
 
+void Camera::SetBeforeDrawTitle(const float deltaTime)
+{
+}
+
 void Camera::SetBeforeDrawFollow(const float deltaTime)
 {
 
@@ -273,7 +311,7 @@ void Camera::SetBeforeDrawLockOn(const float deltaTime)
 
 	if (lockOn_)
 	{
-		enemyPos = enemyTransform_->pos;
+		enemyPos = bossTransform_->pos;
 		enemyPos = VAdd(enemyPos, { 0.0f,1000.0f,0.0f });
 	}
 
@@ -337,6 +375,114 @@ void Camera::SetBeforeDrawSpecial(const float deltaTime)
 
 void Camera::SetBeforeDrawAppearance(const float deltaTime)
 {
+
+	// 敵の背中側を通っていくカメラの動き
+	if (isBossAppearanceCameraMove1_)
+	{
+		// 移動する力
+		movePow_.x = 10.0f;
+
+		// 移動後座標
+		movedPos_.x += movePow_.x;
+
+		// 敵から見たカメラのローカル座標
+		VECTOR localRotPos = bossTransform_->quaRot.PosAxis({ -1000.0f + movedPos_.x ,2000.0f,-1000.0f });
+
+		// カメラの座標を設定
+		pos_ = VAdd(bossTransform_->pos, localRotPos);
+
+		// 注視点の座標を設定
+		targetPos_ = VAdd(pos_, { 0.0f,-1000.0f,1000.0f });
+
+		// カメラが何秒動いたか計算
+		elapsedTime_ += deltaTime;
+
+		// カメラが一定秒数動いたらカメラの動きを変える
+		if (elapsedTime_ >= 3.0f)
+		{
+			isBossAppearanceCameraMove1_ = false;
+			isBossAppearanceCameraMove2_ = true;
+			elapsedTime_ = 0.0f;
+		}
+
+	}
+	// 敵の足元から少し顔が映るカメラの動き
+	else if (isBossAppearanceCameraMove2_)
+	{
+
+		// 移動する力
+		movePow_.y = 10.0f;
+
+		// 移動後座標
+		movedPos_.y += movePow_.y;
+
+		// 敵から見たカメラのローカル座標
+		VECTOR localRotPos = bossTransform_->quaRot.PosAxis({ 300.0f ,100.0f + movedPos_.y,300.0f });
+
+		// カメラの座標を設定
+		pos_ = VAdd(bossTransform_->pos, localRotPos);
+
+		// 注視点の座標を設定
+		targetPos_ = VAdd(bossTransform_->pos, bossTransform_->quaRot.PosAxis({ 10.0f,movedPos_.y,0.0f }));
+
+		// カメラが何秒動いたか計算
+		elapsedTime_ += deltaTime;
+
+		// カメラが一定秒数動いたらカメラの動きを変える
+		if (elapsedTime_ >= 2.0f)
+		{
+			isBossAppearanceCameraMove2_ = false;
+			isBossAppearanceCameraMove3_ = true;
+		}
+
+	}
+	// 敵が地面についた時のカメラの動き
+	else if (isBossAppearanceCameraMove3_)
+	{
+
+		// 敵が地面に降りてきて待機状態になるまで
+		if (elapsedTime_ < 5.0f)
+		{
+
+			// プレイヤーから見たカメラのローカル座標
+			VECTOR localRotPos = playerTransform_->quaRot.PosAxis({ 2000.0f ,2000.0f ,-2000.0f });
+
+			// カメラの座標を設定
+			pos_ = VAdd(playerTransform_->pos, localRotPos);
+
+			// 注視点の座標を設定
+			targetPos_ = { -10800.0f,-18000.0f,-140000.0f };
+		
+		}
+		// 敵が地面に降りてきて待機状態になるまで
+		else if (elapsedTime_ >= 5.0f && elapsedTime_ < 10.0f)
+		{
+
+			// ボスから見たカメラのローカル座標
+			VECTOR localRotCameraPos = bossTransform_->quaRot.PosAxis({ 0.0f ,1000.0f ,2000.0f });
+
+			// ボスから見た注視点のローカル座標
+			VECTOR localRotTargetPos = bossTransform_->quaRot.PosAxis({ 0.0f ,1000.0f ,0.0f });
+
+			// 徐々に敵に近づけていく
+			pos_ = Utility::Lerp(pos_, VAdd(bossTransform_->pos, localRotCameraPos),0.05f);
+
+			// 注視点
+			targetPos_ = VAdd(bossTransform_->pos, localRotTargetPos);
+
+		}
+		// ボスの登場シーンが終わったらゲームシーンに戻る
+		else if (elapsedTime_ >= 10.0f)
+		{
+			isEndBossAppearanceScene_ = true;
+		}
+
+		// カメラが何秒動いたか計算
+		elapsedTime_ += deltaTime;
+
+	}
+
+
 }
 
 void Camera::Draw()
@@ -353,16 +499,6 @@ void Camera::SetLazyAngles(const VECTOR angles)
 	lazyGoalRotY_ = Quaternion::Euler(0.0f, angles.y, 0.0f);
 	isLazy_ = true;
 
-}
-
-void Camera::SetPlayer(const std::shared_ptr<Transform>& follow)
-{
-	playerTransform_ = follow;
-}
-
-void Camera::SetEnemy(const std::shared_ptr<Transform>& follow)
-{
-	enemyTransform_ = follow;
 }
 
 void Camera::SetLockOn(const bool lockOn)

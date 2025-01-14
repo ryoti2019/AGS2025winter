@@ -141,7 +141,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Src\Object\BossAppearance.cpp" />
+    <ClCompile Include="Src\Object\Common\BossBattleActorCreate.cpp" />
+    <ClCompile Include="Src\Object\BossAppearancePlayer.cpp" />
+    <ClCompile Include="Src\Object\BossAppearanceBoss.cpp" />
     <ClCompile Include="Src\Object\Common\CreateBase.cpp" />
     <ClCompile Include="Src\Object\Common\BossAppearanceCreate.cpp" />
     <ClCompile Include="Src\Scene\BossAppearanceScene.cpp" />
@@ -177,6 +179,7 @@
     <ClCompile Include="Src\Object\Player.cpp" />
     <ClCompile Include="Src\Manager\ActorManager.cpp" />
     <ClCompile Include="Src\Object\ActorBase.cpp" />
+    <ClCompile Include="Src\Scene\BossBattleScene.cpp" />
     <ClCompile Include="Src\Scene\GameScene.cpp" />
     <ClCompile Include="Src\Application.cpp" />
     <ClCompile Include="Src\Common\Fader.cpp" />
@@ -197,9 +200,13 @@
     <ClCompile Include="Src\Object\StageBase.cpp" />
     <ClCompile Include="Src\Object\Stage.cpp" />
     <ClCompile Include="Src\Object\StageCollision.cpp" />
+    <ClCompile Include="Src\Object\Common\TitleActorCreate.cpp" />
+    <ClCompile Include="Src\Object\TitlePlayer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Src\Object\BossAppearance.h" />
+    <ClInclude Include="Src\Object\Common\BossBattleActorCreate.h" />
+    <ClInclude Include="Src\Object\BossAppearancePlayer.h" />
+    <ClInclude Include="Src\Object\BossAppearanceBoss.h" />
     <ClInclude Include="Src\Object\Common\CreateBase.h" />
     <ClInclude Include="Src\Object\Common\BossAppearanceCreate.h" />
     <ClInclude Include="Src\Scene\BossAppearanceScene.h" />
@@ -285,6 +292,7 @@
     <ClInclude Include="Src\Manager\ActorManager.h" />
     <ClInclude Include="Src\Object\ActorBase.h" />
     <ClInclude Include="Src\Object\PlayerState.h" />
+    <ClInclude Include="Src\Scene\BossBattleScene.h" />
     <ClInclude Include="Src\Scene\GameScene.h" />
     <ClInclude Include="Src\Application.h" />
     <ClInclude Include="Src\Common\Fader.h" />
@@ -304,6 +312,8 @@
     <ClInclude Include="Src\Object\StageBase.h" />
     <ClInclude Include="Src\Object\Stage.h" />
     <ClInclude Include="Src\Object\StageCollision.h" />
+    <ClInclude Include="Src\Object\Common\TitleActorCreate.h" />
+    <ClInclude Include="Src\Object\TitlePlayer.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shader\Model\GateModelPS.hlsl">

@@ -1,6 +1,7 @@
 #include "../Manager/SceneManager.h"
 #include "../Manager/ActorManager.h"
 #include "../Scene/GameScene.h"
+#include "../Scene/BossBattleScene.h"
 #include "EnemyBase.h"
 
 EnemyBase::EnemyBase(const VECTOR& pos, const json& data)
@@ -34,25 +35,51 @@ void EnemyBase::Init()
 
 std::optional<VECTOR> EnemyBase::GetPlayerPos()
 {
+
 	// ゲームシーンの情報を持ってくる
 	std::shared_ptr<GameScene> gameScene =
 		std::dynamic_pointer_cast<GameScene>(SceneManager::GetInstance().GetNowScene());
 
+	// 
+	std::shared_ptr<BossBattleScene> bossBattleScene =
+		std::dynamic_pointer_cast<BossBattleScene>(SceneManager::GetInstance().GetNowScene());
+
 	// NULLチェック
-	if (!gameScene)
+	if (!gameScene && !bossBattleScene)
 	{
 		return std::nullopt;
 	}
 
 	// アクターマネージャーを取得
-	auto actorManager = gameScene->GetActorManager();
-
-	// 追従対象
-	auto players = actorManager->GetActiveActorData().find(ActorType::PLAYER);
-
-	// プレイヤーの座標を取得
-	for (const auto& player : players->second)
+	if (gameScene)
 	{
-		return player->GetTransform()->pos;
+
+		std::shared_ptr<ActorManager> actorManager = gameScene->GetActorManager();
+
+		// 追従対象
+		auto players = actorManager->GetActiveActorData().find(ActorType::PLAYER);
+
+		// プレイヤーの座標を取得
+		for (const auto& player : players->second)
+		{
+			return player->GetTransform()->pos;
+		}
+
 	}
+
+	if (bossBattleScene)
+	{
+		std::shared_ptr<ActorManager> actorManager = bossBattleScene->GetActorManager();
+
+		// 追従対象
+		auto players = actorManager->GetActiveActorData().find(ActorType::PLAYER);
+
+		// プレイヤーの座標を取得
+		for (const auto& player : players->second)
+		{
+			return player->GetTransform()->pos;
+		}
+
+	}
+
 }

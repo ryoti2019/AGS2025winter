@@ -1,8 +1,10 @@
 #include <DxLib.h>
+#include "../Application.h"
 #include "../Manager/ActorManager.h"
 #include "../Manager/CollisionManager.h"
 #include "../Manager/SceneManager.h"
 #include "../Object/Common/ActorCreate.h"
+#include "../Object/Common/InputController.h"
 #include "GameScene.h"
 #include "../Object/Area5Collision.h"
 
@@ -29,12 +31,52 @@ void GameScene::Init()
 	// アクターの生成クラス
 	actorCreate_ = std::make_shared<ActorCreate>();
 
+	// プレイヤーに追従するモードに変更
 	SceneManager::GetInstance().GetCamera().lock()->ChangeMode(Camera::MODE::FOLLOW);
+
+	// 画像の初期化
+	InitImage();
+
+	// BGMとSEの初期化
+	InitBGMAndSE();
+
+	// 操作説明を見ているかのフラグ
+	isViewUserGuide_ = true;
+
+}
+
+void GameScene::InitImage()
+{
+
+	// キーボードの操作説明の画像の初期化
+	keyboardUserGuideImg_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_KEYBOARD_USER_GUIDE)]).handleId_;
+
+	// ゲームパッドの操作説明の画像の初期化
+	gamePadUserGuideImg_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_GAME_PAD_USER_GUIDE)]).handleId_;
+
+}
+
+void GameScene::InitBGMAndSE()
+{
+
+	// BGMの初期化
+	bgm_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::SOUND_GAME_SCENE_BGM)]).handleId_;
+
+	// BGM再生
+	PlaySoundMem(bgm_, DX_PLAYTYPE_LOOP, true);
 
 }
 
 void GameScene::Update(const float deltaTime)
 {
+
+	// 操作説明をスキップ
+	if (inputController_->Decide())
+	{
+		isViewUserGuide_ = false;
+	}
+
+	if (isViewUserGuide_)return;
 
 	// アクターの管理クラスの更新
 	actorManager_->Update(deltaTime);
@@ -77,5 +119,26 @@ void GameScene::Draw(const float deltaTime)
 	// アクターの生成クラスの描画
 	actorCreate_->Draw();
 
-	DrawFormatString(0, 0, 0xff0000, "GameScene");
+	// 操作説明をスキップされるまで描画
+	if (isViewUserGuide_)
+	{
+
+		// 半透明の黒い矩形を画面全体に描画
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200); // 半透明（128: 50%の透明度）
+		DrawBox(0, 0, Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, GetColor(0, 0, 0), TRUE);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0); // ブレンドモード解除
+		
+		if (!SceneManager::GetInstance().GetGamePad())
+		{
+			// キーボードの操作説明の画像を描画
+			DrawRotaGraph(Application::SCREEN_SIZE_X / 2, 300, 1.0f, 0.0f, keyboardUserGuideImg_, true);
+		}
+		else if (SceneManager::GetInstance().GetGamePad())
+		{
+			// ゲームパッドの操作説明の画像を描画
+			DrawRotaGraph(Application::SCREEN_SIZE_X / 2, 300, 1.0f, 0.0f, gamePadUserGuideImg_, true);
+		}
+
+	}
+
 }

@@ -24,7 +24,6 @@ ActorCreate::ActorCreate()
 	AREA2_TOTAL_ENEMYS(10),
 	AREA3_TOTAL_ENEMYS(10),
 	AREA4_TOTAL_ENEMYS(10),
-	AREA5_TOTAL_ENEMYS(10),
 	isCollisionArea1_(false),
 	isCollisionArea2_(false),
 	isCollisionArea3_(false),
@@ -101,8 +100,8 @@ ActorCreate::ActorCreate()
 	actorManager->CreateActor<Player>(playerData, { -80000.0f,-19500.0f,25900.0f });
 	actorManager->ActiveData(ActorType::PLAYER, { -80000.0f,-19500.0f,25900.0f });
 
-	//actorManager->CreateActor<Player>(playerData, { -10800.0f,-19500.0f,-132000.0f });
-	//actorManager->ActiveData(ActorType::PLAYER, { -10800.0f,-19500.0f,-132000.0f });
+	//actorManager->CreateActor<Player>(playerData, { -10800.0f,20000.0f,-160000.0f });
+	//actorManager->ActiveData(ActorType::PLAYER, { -10800.0f,20000.0f,-160000.0f });
 
 	// 敵
 	const auto& enemyData = objectData[1]["EnemyData"];
@@ -119,8 +118,8 @@ ActorCreate::ActorCreate()
 	const auto& bossData = objectData[2]["BossData"];
 
 	// ボスを生成
-	actorManager->CreateActor<Boss>(bossData, { -10800.0f,-10000.0f,-150000.0f });
-	actorManager->ActiveData(ActorType::BOSS, { -10800.0f,-10000.0f,-150000.0f });
+	//actorManager->CreateActor<Boss>(bossData, { -10800.0f,-10000.0f,-150000.0f });
+	//actorManager->ActiveData(ActorType::BOSS, { -10800.0f,-10000.0f,-150000.0f });
 
 }
 
@@ -140,8 +139,6 @@ void ActorCreate::Update()
 
 void ActorCreate::Draw()
 {
-	DrawSphere3D({ 9300.0f,-18000.0f,23600.0f }, 10000.0f, 10, 0xff0000, 0xff0000, false);
-	DrawSphere3D({ -3100.0f,-18000.0f,-22000.0f }, 10000.0f, 10, 0xff0000, 0xff0000, false);
 }
 
 void ActorCreate::AreaCollision()
@@ -189,7 +186,7 @@ void ActorCreate::AreaCollision()
 				{
 					float x = std::rand() % 10000;
 					float z = std::rand() % 10000;
-					actorManager->ActiveData(ActorType::ENEMY, { 9300.0f + x,-15000,23600.0f + z });
+					actorManager->ActiveData(ActorType::ENEMY, { 25000.0f + x,-18000.0f,26000.0f + z });
 				}
 
 			}
@@ -209,7 +206,7 @@ void ActorCreate::AreaCollision()
 				{
 					float x = std::rand() % 100;
 					float z = std::rand() % 100;
-					actorManager->ActiveData(ActorType::ENEMY, { -3100.0f + x,-18000.0f,-22000.0f + z });
+					actorManager->ActiveData(ActorType::ENEMY, { -30000.0f + x,-18000.0f,-21000.0f + z});
 				}
 
 			}
@@ -224,15 +221,12 @@ void ActorCreate::AreaCollision()
 				// エリア3と衝突した
 				isCollisionArea3_ = true;
 
-				// エリア3の当たり判定を付ける
-				area3Collision->SetIsCollision(true);
-
 				// 敵を生成
 				for (int i = 0; i < AREA3_TOTAL_ENEMYS; i++)
 				{
 					float x = std::rand() % 100;
 					float z = std::rand() % 100;
-					actorManager->ActiveData(ActorType::ENEMY, { -81000.0f + x,-19500.0f,-34000.0f + z });
+					actorManager->ActiveData(ActorType::ENEMY, { -82000.0f + x ,-18000.0f,-62000.0f + z});
 				}
 
 			}
@@ -252,7 +246,7 @@ void ActorCreate::AreaCollision()
 				{
 					float x = std::rand() % 1000;
 					float z = std::rand() % 1000;
-					actorManager->ActiveData(ActorType::ENEMY, { -60000.0f + x,-18000.0f,-68000.0f + z });
+					actorManager->ActiveData(ActorType::ENEMY, { -26000.0f + x,-18000.0f,-68000.0f + z });
 				}
 
 			}

@@ -38,7 +38,7 @@ void DrawComponent::DrawDebug()
 	//DrawCapsule3D(actor_->GetCollisionData().leftFootCapsuleUpPos, actor_->GetCollisionData().leftFootCapsuleDownPos, actor_->GetCollisionData().handAndFootCollisionRadius, 10, 0xff0000, 0xff0000, false);
 
 	// ‘Ì‚Ì“–‚½‚è”»’è‚Ì•`‰æ
-	//DrawCapsule3D(actor_->GetCollisionData().bodyCapsuleUpPos, actor_->GetCollisionData().bodyCapsuleDownPos, actor_->GetCollisionData().bodyCollisionRadius, 10, 0xff0000, 0xff0000, false);
+	DrawCapsule3D(actor_->GetCollisionData().bodyCapsuleUpPos, actor_->GetCollisionData().bodyCapsuleDownPos, actor_->GetCollisionData().bodyCollisionRadius, 10, 0xff0000, 0xff0000, false);
 
 	// •KŽE‹Z‚Ì“–‚½‚è”»’è‚Ì•`‰æ
 	DrawSphere3D(actor_->GetCollisionData().projectilePos, actor_->GetCollisionData().projectileCollisionRadius, 10, 0xff0000, 0xff0000, false);

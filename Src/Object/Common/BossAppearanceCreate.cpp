@@ -5,7 +5,8 @@
 #include "../Manager/ActorManager.h"
 #include "../Scene/BossAppearanceScene.h"
 #include "BossAppearanceCreate.h"
-#include "../Object/Boss.h"
+#include "../Object/BossAppearanceBoss.h"
+#include "../Object/BossAppearancePlayer.h"
 #include "../Object/Stage.h"
 #include "../Object/StageCollision.h"
 
@@ -53,12 +54,19 @@ BossAppearanceCreate::BossAppearanceCreate()
 	actorManager->CreateActor<StageCollision>(stageData, { 0.0f,0.0f,0.0f });
 	actorManager->ActiveData(ActorType::STAGE, { stageData["POS"]["x"], stageData["POS"]["y"] ,stageData["POS"]["z"] });
 
+	// プレイヤー
+	const auto& playerData = objectData[0]["PlayerData"];
+
+	// プレイヤーを生成
+	actorManager->CreateActor<BossAppearancePlayer>(playerData, { -10800.0f,-19500.0f,-120000.0f });
+	actorManager->ActiveData(ActorType::PLAYER, { -10800.0f,-19500.0f,-120000.0f });
+
 	// ボス
 	const auto& bossData = objectData[2]["BossData"];
 
 	// ボスを生成
-	actorManager->CreateActor<Boss>(bossData, { -10800.0f,-10000.0f,-150000.0f });
-	actorManager->ActiveData(ActorType::BOSS, { -10800.0f,-10000.0f,-150000.0f });
+	actorManager->CreateActor<BossAppearanceBoss>(bossData, { -10800.0f,10380.0f,-156000.0f });
+	actorManager->ActiveData(ActorType::BOSS, { -10800.0f,10380.0f,-156000.0f });
 
 }
 

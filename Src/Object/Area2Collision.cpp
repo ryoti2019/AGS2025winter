@@ -33,4 +33,7 @@ void Area2Collision::Draw(const float deltaTime)
 	// 衝突の壁の描画
 	CollisionDraw(deltaTime);
 
+	// 制限エリアとの当たり判定を出す座標
+	DrawSphere3D(restrictedAreaPos_, restrictedAreaRadius_, 10, 0xff0000, 0xff0000, false);
+
 }

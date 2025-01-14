@@ -16,6 +16,7 @@ enum class SCENE_ID
 	TITLE,
 	GAME,
 	BOSS_APPEARANCE,
+	BOSS_BATTLE,
 	GAMEOVER,
 };
 
@@ -84,6 +85,7 @@ private:
 	void ChangeTitleScene();
 	void ChangeGameScene();
 	void ChangeBossAppearanceScene();
+	void ChangeBossBattleScene();
 	//void ChangeGameOverScene();
 
 	// ƒV[ƒ“‘JˆÚ’†”»’è

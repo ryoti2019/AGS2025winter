@@ -110,6 +110,36 @@ void BossAIComponent::CloseRangeAttack(const float deltaTime)
 	// プレイヤーとの距離が遠かったら攻撃できない
 	if (length >= boss_->ACTIVATION_DISTANCE) return;
 
+	// 方向を角度に変換する
+	float angle = atan2f(vec.x, vec.z);
+
+	// プレイヤー方向に回転
+	boss_->LazyRotation(angle);
+
+	// ラジアンからデグリー
+	float goalDeg = Utility::Rad2DegF(angle);
+
+	// 向きたい角度を360度内に収める
+	goalDeg = Utility::DegIn360(goalDeg);
+
+	// ボスのラジアン角
+	auto rad = boss_->GetTransform()->quaRot.ToEuler();
+
+	// ボスのデグリー角
+	auto deg = Utility::Rad2DegF(rad.y);
+
+	// ボスの角度を360度に収める
+	deg = Utility::DegIn360(deg);
+
+	// 目的の角度と自分の角度の差を測る
+	float sub = goalDeg - deg;
+
+	// 絶対値を求める
+	sub = abs(sub);
+
+	// 回転しきるまで処理しない
+	if (sub >= 1.0f)return;
+
 	if (number == 0)
 	{
 
@@ -150,6 +180,36 @@ void BossAIComponent::LongRangeAttack(const float deltaTime)
 
 	// プレイヤーとの距離が遠かったら攻撃できない
 	if (length < boss_->LONG_RANGE_ATTACK_DISTANCE) return;
+
+	// 方向を角度に変換する
+	float angle = atan2f(vec.x, vec.z);
+
+	// プレイヤー方向に回転
+	boss_->LazyRotation(angle);
+
+	// ラジアンからデグリー
+	float goalDeg = Utility::Rad2DegF(angle);
+
+	// 向きたい角度を360度内に収める
+	goalDeg = Utility::DegIn360(goalDeg);
+
+	// ボスのラジアン角
+	auto rad = boss_->GetTransform()->quaRot.ToEuler();
+
+	// ボスのデグリー角
+	auto deg = Utility::Rad2DegF(rad.y);
+
+	// ボスの角度を360度に収める
+	deg = Utility::DegIn360(deg);
+
+	// 目的の角度と自分の角度の差を測る
+	float sub = goalDeg - deg;
+
+	// 絶対値を求める
+	sub = abs(sub);
+
+	// 回転しきるまで処理しない
+	if (sub >= 1.0f)return;
 
 	// 飛び道具攻撃に遷移
 	boss_->ChangeState(BossState::ATTACK_PROJECTILE);

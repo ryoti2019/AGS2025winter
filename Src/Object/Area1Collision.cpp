@@ -14,7 +14,7 @@ Area1Collision::Area1Collision(const VECTOR& pos, const json& data)
 	isStageCollision_ = false;
 
 	// 制限エリアとの当たり判定を出す座標
-	restrictedAreaPos_ = { 9300.0f,-18000.0f,23600.0f };
+	restrictedAreaPos_ = { 14000.0f,-18000.0f,30000.0f };
 
 	// 制限エリアかの判定
 	isRestrictedArea_ = true;
@@ -32,5 +32,8 @@ void Area1Collision::Draw(const float deltaTime)
 
 	// 衝突の壁の描画
 	CollisionDraw(deltaTime);
+
+	// 制限エリアとの当たり判定を出す座標
+	DrawSphere3D(restrictedAreaPos_, restrictedAreaRadius_, 10, 0xff0000, 0xff0000, false);
 
 }

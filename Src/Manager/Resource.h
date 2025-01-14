@@ -15,7 +15,7 @@ public:
 		IMGS,
 		MODEL,
 		EFFEKSEER,
-		MUSIC
+		SOUND
 	};
 
 	// コンストラクタ

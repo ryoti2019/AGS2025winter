@@ -31,6 +31,7 @@ ActorBase::ActorBase(const VECTOR& pos, const json& data)
 	stepRotTime_(0.0f),
 	speed_(0.0f),
 	velocity_({ 0.0f,-1.0f,0.0f }),
+	gravityScale_(1.0f),
 	acceleration_({ 0.0f,-GRAVITY,0.0f }),
 	actorType_(static_cast<ActorType>(data["ACTOR_TYPE"])),
 	isAlive_(false),
