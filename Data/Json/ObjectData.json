@@ -32,55 +32,55 @@
 						"SPEED": 50.0,
 						"ATTACK_START_FRAME": 12.0,
 						"ATTACK_END_FRAME": 18.0,
-						"DAMAGE": 10
+						"DAMAGE": 0
 					},
 					{
 						"NAME": "ATTACK_STRAIGHT",
 						"SPEED": 60.0,
 						"ATTACK_START_FRAME": 3.0,
 						"ATTACK_END_FRAME": 10.0,
-						"DAMAGE": 10
+						"DAMAGE": 0
 					},
 					{
 						"NAME": "ATTACK_HOOK",
 						"SPEED": 40.0,
 						"ATTACK_START_FRAME": 6.0,
 						"ATTACK_END_FRAME": 12.0,
-						"DAMAGE": 10
+						"DAMAGE": 0
 					},
 					{
 						"NAME": "ATTACK_LEFT_KICK",
 						"SPEED": 40.0,
 						"ATTACK_START_FRAME": 8.0,
 						"ATTACK_END_FRAME": 13.0,
-						"DAMAGE": 10
+						"DAMAGE": 0
 					},
 					{
 						"NAME": "ATTACK_RIGHT_KICK",
 						"SPEED": 40.0,
 						"ATTACK_START_FRAME": 7.0,
 						"ATTACK_END_FRAME": 20.0,
-						"DAMAGE": 10
+						"DAMAGE": 0
 					},
 					{
 						"NAME": "ATTACK_UPPER",
 						"SPEED": 50.0,
 						"ATTACK_START_FRAME": 8.0,
 						"ATTACK_END_FRAME": 15.0,
-						"DAMAGE": 10
+						"DAMAGE": 0
 					},
 					{
 						"NAME": "ATTACK_CHARGE_PUNCH",
 						"SPEED": 50.0,
 						"ATTACK_START_FRAME": 30.0,
 						"ATTACK_END_FRAME": 36.0,
-						"DAMAGE": 50
+						"DAMAGE": 0
 					},
 					{
 						"NAME": "ATTACK_SPECIAL_PUNCH",
 						"SPEED": 20.0,
 						"ATTACK_START_FRAME": 27.0,
-						"DAMAGE": 500
+						"DAMAGE": 0
 					},
 					{
 						"NAME": "POWER_CHARGE",

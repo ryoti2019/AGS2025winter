@@ -700,9 +700,6 @@ void Player::ChangeSpecialAttack()
 
 	stateUpdate_ = std::bind(&Player::UpdateSpecialAttack, this, std::placeholders::_1);
 
-	// 必殺技の攻撃判定をなくす
-	collisionData_.isProjectileAttack = false;
-
 	// ダメージ量
 	damage_ = ATTACK_SPECIAL_PUNCH_DAMAGE;
 
@@ -1000,6 +997,10 @@ void Player::UpdateSpecialAttack(const float deltaTime)
 	if (animationController_->IsEndPlayAnimation())
 	{
 		ChangeState(PlayerState::IDLE);
+
+		// 当たり判定を消す
+		collisionData_.isProjectileAttack = false;
+
 	}
 
 }

@@ -44,7 +44,7 @@ void InputComponent::Move()
 	VECTOR dir = inputController_->Dir();
 
 	// UŒ‚’†‚ÍˆÚ“®‚Å‚«‚È‚¢
-	if (!player_->GetAttackState())
+	if (!player_->GetAttackState() && player_->GetState() != static_cast<int>(PlayerState::POWER_CHARGE))
 	{
 		// “ü—Í‚µ‚Ä‚¢‚½‚çˆÚ“®‚·‚é
 		if (!Utility::EqualsVZero(dir))

@@ -114,13 +114,6 @@ ActorCreate::ActorCreate()
 		actorManager->CreateActor<Enemy>(enemyData, { 0.0f,0.0f,0.0f });
 	}
 
-	// ボス
-	const auto& bossData = objectData[2]["BossData"];
-
-	// ボスを生成
-	//actorManager->CreateActor<Boss>(bossData, { -10800.0f,-10000.0f,-150000.0f });
-	//actorManager->ActiveData(ActorType::BOSS, { -10800.0f,-10000.0f,-150000.0f });
-
 }
 
 void ActorCreate::Update()

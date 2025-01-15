@@ -36,7 +36,7 @@ void TitleScene::InitImage()
 	titleLogoImg_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_TITLE_LOGO)]).handleId_;
 
 	// Press A Bottonの画像の初期化
-	pressABottonImg_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_PRESS_A_BOTTON)]).handleId_;
+	pressABottonImg_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_PRESS_A_BOTTON_OR_SPACE)]).handleId_;
 
 	// Press A Botton用のカウンタの初期化
 	frameCount_ = 0.0f;

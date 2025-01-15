@@ -50,29 +50,29 @@ void GameScene::Init()
 void GameScene::InitImage()
 {
 
-	// キーボードの操作説明の画像の初期化
-	keyboardUserGuideImg_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_KEYBOARD_USER_GUIDE_4)]).handleId_;
-
-	// キーボードの操作説明の画像の初期化
-	keyboardUserGuideMoveImg_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_KEYBOARD_USER_GUIDE_1)]).handleId_;
-
-	// キーボードの操作説明の画像の初期化
-	keyboardUserGuideAttackImg_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_KEYBOARD_USER_GUIDE_2)]).handleId_;
-
-	// キーボードの操作説明の画像の初期化
-	keyboardUserGuideSpecialAttackImg_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_KEYBOARD_USER_GUIDE_3)]).handleId_;
-
 	// ゲームパッドの操作説明の画像の初期化
-	gamePadUserGuideImg_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_GAME_PAD_USER_GUIDE_4)]).handleId_;
+	gamePadUserGuideImg_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_GAME_PAD_USER_GUIDE)]).handleId_;
 
-	// ゲームパッドの操作説明の画像の初期化
-	gamePadUserGuideMoveImg_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_GAME_PAD_USER_GUIDE_1)]).handleId_;
+	// ゲームパッドの移動の説明の画像の初期化
+	gamePadUserGuideMoveImg_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_GAME_PAD_USER_GUIDE_MOVE)]).handleId_;
 
-	// ゲームパッドの操作説明の画像の初期化
-	gamePadUserGuideAttackImg_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_GAME_PAD_USER_GUIDE_2)]).handleId_;
+	// ゲームパッドの攻撃の説明の画像の初期化
+	gamePadUserGuideAttackImg_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_GAME_PAD_USER_GUIDE_ATTACK)]).handleId_;
 
-	// ゲームパッドの操作説明の画像の初期化
-	gamePadUserGuideSpecialAttackImg_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_GAME_PAD_USER_GUIDE_3)]).handleId_;
+	// ゲームパッドの必殺技の説明の画像の初期化
+	gamePadUserGuideSpecialAttackImg_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_GAME_PAD_USER_GUIDE_SPECIAL_ATTACK)]).handleId_;
+
+	// キーボードの操作説明の画像の初期化
+	keyboardUserGuideImg_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_KEYBOARD_USER_GUIDE)]).handleId_;
+
+	// キーボードの移動の説明の画像の初期化
+	keyboardUserGuideMoveImg_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_KEYBOARD_USER_GUIDE_MOVE)]).handleId_;
+
+	// キーボードの攻撃の説明の画像の初期化
+	keyboardUserGuideAttackImg_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_KEYBOARD_USER_GUIDE_ATTACK)]).handleId_;
+
+	// キーボードの必殺技の説明の画像の初期化
+	keyboardUserGuideSpecialAttackImg_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_KEYBOARD_USER_GUIDE_SPECIAL_ATTACK)]).handleId_;
 
 }
 
@@ -193,7 +193,7 @@ void GameScene::Draw(const float deltaTime)
 
 			if (area2Collision && area2Collision->GetIsCollision())
 			{
-				// 移動のチュートリアル画像を描画
+				// 必殺技のチュートリアル画像を描画
 				DrawRotaGraph(150, 200, 0.5, 0.0, keyboardUserGuideSpecialAttackImg_, true);
 			}
 
@@ -208,6 +208,20 @@ void GameScene::Draw(const float deltaTime)
 			{
 				// 移動のチュートリアル画像を描画
 				DrawRotaGraph(150, 200, 0.5, 0.0, gamePadUserGuideMoveImg_, true);
+			}
+			else if (area1Collision && area1Collision->GetIsCollision())
+			{
+				// 攻撃のチュートリアル画像を描画
+				DrawRotaGraph(150, 200, 0.5, 0.0, gamePadUserGuideAttackImg_, true);
+			}
+
+			// Area2Collisionにキャスト
+			auto area2Collision = std::dynamic_pointer_cast<Area2Collision>(stage);
+
+			if (area2Collision && area2Collision->GetIsCollision())
+			{
+				// 必殺技のチュートリアル画像を描画
+				DrawRotaGraph(150, 200, 0.5, 0.0, gamePadUserGuideSpecialAttackImg_, true);
 			}
 
 		}

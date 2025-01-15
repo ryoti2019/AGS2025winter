@@ -180,7 +180,6 @@ private:
 		{PlayerState::ATTACK_RIGHT_KICK},
 		{PlayerState::ATTACK_UPPER},
 		{PlayerState::ATTACK_CHARGE_PUNCH},
-		{PlayerState::POWER_CHARGE},
 		{PlayerState::ATTACK_SPECIAL_PUNCH}
 	};
 

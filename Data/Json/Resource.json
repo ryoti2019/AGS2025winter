@@ -26,50 +26,50 @@
           },
           {
             "TYPE": 1,
-            "PATH": "TitleScene/Press A Botton.png",
-            "SRC": "IMAGE_PRESS_A_BOTTON"
+            "PATH": "TitleScene/Press A Botton Or Space.png",
+            "SRC": "IMAGE_PRESS_A_BOTTON_OR_SPACE"
           }
         ],
         "GameScene": [
           {
             "TYPE": 1,
-            "PATH": "GameScene/UserGuideGamePad1.png",
-            "SRC": "IMAGE_GAME_PAD_USER_GUIDE_1"
+            "PATH": "GameScene/GamePadUserGuide.png",
+            "SRC": "IMAGE_GAME_PAD_USER_GUIDE"
           },
           {
             "TYPE": 1,
-            "PATH": "GameScene/UserGuideGamePad2.png",
-            "SRC": "IMAGE_GAME_PAD_USER_GUIDE_2"
+            "PATH": "GameScene/GamePadUserGuideMove.png",
+            "SRC": "IMAGE_GAME_PAD_USER_GUIDE_MOVE"
           },
           {
             "TYPE": 1,
-            "PATH": "GameScene/UserGuideGamePad3.png",
-            "SRC": "IMAGE_GAME_PAD_USER_GUIDE_3"
+            "PATH": "GameScene/GamePadUserGuideAttack.png",
+            "SRC": "IMAGE_GAME_PAD_USER_GUIDE_ATTACK"
           },
           {
             "TYPE": 1,
-            "PATH": "GameScene/UserGuideGamePad4.png",
-            "SRC": "IMAGE_GAME_PAD_USER_GUIDE_4"
+            "PATH": "GameScene/GamePadUserGuideSpecialAttack.png",
+            "SRC": "IMAGE_GAME_PAD_USER_GUIDE_SPECIAL_ATTACK"
           },
           {
             "TYPE": 1,
-            "PATH": "GameScene/UserGuideKeyboard1.png",
-            "SRC": "IMAGE_KEYBOARD_USER_GUIDE_1"
+            "PATH": "GameScene/KeyboardUserGuide.png",
+            "SRC": "IMAGE_KEYBOARD_USER_GUIDE"
           },
           {
             "TYPE": 1,
-            "PATH": "GameScene/UserGuideKeyboard2.png",
-            "SRC": "IMAGE_KEYBOARD_USER_GUIDE_2"
+            "PATH": "GameScene/KeyboardUserGuideMove.png",
+            "SRC": "IMAGE_KEYBOARD_USER_GUIDE_MOVE"
           },
           {
             "TYPE": 1,
-            "PATH": "GameScene/UserGuideKeyboard3.png",
-            "SRC": "IMAGE_KEYBOARD_USER_GUIDE_3"
+            "PATH": "GameScene/KeyboardUserGuideAttack.png",
+            "SRC": "IMAGE_KEYBOARD_USER_GUIDE_ATTACK"
           },
           {
             "TYPE": 1,
-            "PATH": "GameScene/UserGuideKeyboard4.png",
-            "SRC": "IMAGE_KEYBOARD_USER_GUIDE_4"
+            "PATH": "GameScene/KeyboardUserGuideSpecialAttack.png",
+            "SRC": "IMAGE_KEYBOARD_USER_GUIDE_SPECIAL_ATTACK"
           }
         ]
       },
