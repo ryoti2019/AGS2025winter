@@ -332,12 +332,17 @@ const bool ActorBase::GetAttackState()const
 	return false;
 }
 
+const bool ActorBase::GetCloseRangeAttackState() const
+{
+	return false;
+}
+
 const bool ActorBase::GetHitState()const
 {
 	return false;
 }
 
-const bool ActorBase::GetSuperArmorState() const
+const bool ActorBase::GetIsSuperArmor() const
 {
 	return false;
 }

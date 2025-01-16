@@ -1,4 +1,5 @@
 #include "../Lib/ImGui/imgui.h"
+#include "../Application.h"
 #include "../Manager/ResourceManager.h"
 #include "../Manager/SceneManager.h"
 #include "../Scene/GameScene.h"
@@ -11,6 +12,8 @@ Boss::Boss(const VECTOR& pos, const json& data)
 	ATTACK_PROJECTILE_DAMAGE(data["ANIM"][static_cast<int>(BossState::ATTACK_PROJECTILE) - 1]["DAMAGE"]),
 	ATTACK_PROJECTILE_COLLISION_TIME(data["ATTACK_PROJECTILE_COLLISION_TIME"]),
 	LONG_RANGE_ATTACK_DISTANCE(data["LONG_RANGE_ATTACK_DISTANCE"]),
+	SUPER_ARMOR_HP(data["SUPER_ARMOR_HP"]),
+	SUPER_ARMOR_HP_COOL_TIME(data["SUPER_ARMOR_HP_COOL_TIME"]),
 	projectileDir_({0.0f,0.0f,0.0f}),
 	projectileCollisionCnt_(0.0f)
 {
@@ -172,6 +175,12 @@ void Boss::InitParameter()
 
 	// HP
 	hp_ = HP_MAX;
+
+	// スーパーアーマーHP
+	superArmorHp_ = SUPER_ARMOR_HP;
+
+	// スーパーアーマーが回復するまでのクールタイムのカウンタ
+	superArmorCoolTimeCnt_ = SUPER_ARMOR_HP_COOL_TIME;
 
 	// HPバーの長さ
 	HP_BAR_LENGTH = jsonData_["HP_BAR_LENGTH"];
@@ -439,6 +448,9 @@ void Boss::Update(const float deltaTime)
 	// 飛び道具の更新
 	Projectile(deltaTime);
 
+	// スーパーアーマーのHPを回復するまでのクールタイムを更新
+	ResetSuperArmorCoolTime(deltaTime);
+
 	// 状態ごとの更新
 	// 重力がかかる前に処理しないとおかしな挙動になるので注意！
 	stateUpdate_(deltaTime);
@@ -458,6 +470,102 @@ void Boss::Update(const float deltaTime)
 
 	// アニメーションのフレームを固定
 	AnimationFrame();
+
+}
+
+void Boss::Draw(const float deltaTime)
+{
+
+	ActorBase::Draw(deltaTime);
+
+	// HPバーの長さ
+	const int HP_LENGTH = 400;
+
+	// HPバーの半分の長さ
+	const int HP_LENGTH_HARF = HP_LENGTH / 2;
+
+	// HPバーの高さ
+	const int HP_HEIGHT = 10;
+
+	// HPバーの幅
+	const int HP_BAR_WIDTH = 25;
+
+	// RGBのスケール調整値
+	const float RGB_SCALE = 512.0f;
+
+	// RとBの変化を制御するためのバランス点
+	const int COLOR_BALANCE_POINT = 384;
+
+	// 緑色の変化を調整するオフセット
+	const int GREEN_COLOR_SHIFT_OFFSET = 64;
+
+	// HPの割合を元にバーの色を決める処理
+	int H = hp_ * (RGB_SCALE / HP_MAX) - 100;
+
+	// 赤成分
+	int R = min(max((COLOR_BALANCE_POINT - H), 0), 0xff);
+
+	//緑成分
+	int G = min(max((H + GREEN_COLOR_SHIFT_OFFSET), 0), 0xff);
+
+	// 青成分
+	int B = max((H - COLOR_BALANCE_POINT), 0);
+
+	// HPゲージ
+	int hpGauge = HP_LENGTH * hp_ / HP_MAX;
+
+	// HPゲージ背景を描画
+	DrawBox(
+		Application::SCREEN_SIZE_X / 2 - HP_LENGTH_HARF,
+		HP_HEIGHT,
+		Application::SCREEN_SIZE_X / 2 + HP_LENGTH_HARF,
+		HP_HEIGHT + HP_BAR_WIDTH,
+		0x000000, true);
+
+	// HPゲージを描画
+	DrawBox(
+		Application::SCREEN_SIZE_X / 2 - HP_LENGTH_HARF,
+		HP_HEIGHT,
+		Application::SCREEN_SIZE_X / 2 - HP_LENGTH_HARF + hpGauge,
+		HP_HEIGHT + HP_BAR_WIDTH,
+		GetColor(R, G, B), true);
+
+	// HPバーの高さ
+	const int SUPER_AMOR_HP_HEIGHT = 50;
+
+	// スーパーアーマーHPバーの幅
+	const int SUPER_ARMOR_HP_BAR_WIDTH = 10;
+
+	// スーパーアーマーHPの割合を元にバーの色を決める処理
+	H = superArmorHp_ * (RGB_SCALE / SUPER_ARMOR_HP) - 100;
+
+	// 赤成分
+	R = min(max((COLOR_BALANCE_POINT - H), 0), 0xff);
+
+	//緑成分
+	G = min(max((H + GREEN_COLOR_SHIFT_OFFSET), 0), 0xff);
+
+	// 青成分
+	B = max((H - COLOR_BALANCE_POINT), 0);
+
+	// HPゲージ
+	int superArmorHpGauge = HP_LENGTH * superArmorHp_ / SUPER_ARMOR_HP;
+
+	// HPゲージ背景を描画
+	DrawBox(
+		Application::SCREEN_SIZE_X / 2 - HP_LENGTH_HARF,
+		SUPER_AMOR_HP_HEIGHT,
+		Application::SCREEN_SIZE_X / 2 + HP_LENGTH_HARF,
+		SUPER_AMOR_HP_HEIGHT + SUPER_ARMOR_HP_BAR_WIDTH,
+		0x000000, true);
+
+	// HPゲージを描画
+	DrawBox(
+		Application::SCREEN_SIZE_X / 2 - HP_LENGTH_HARF,
+		SUPER_AMOR_HP_HEIGHT,
+		Application::SCREEN_SIZE_X / 2 - HP_LENGTH_HARF + superArmorHpGauge,
+		SUPER_AMOR_HP_HEIGHT + SUPER_ARMOR_HP_BAR_WIDTH,
+		0xffffff, true);
 
 }
 
@@ -494,6 +602,27 @@ void Boss::Projectile(const float deltaTime)
 
 }
 
+void Boss::SubSuperArmorHp(const int superArmorHp)
+{
+	superArmorHp_ -= superArmorHp;
+}
+
+void Boss::ResetSuperArmorCoolTime(const float deltaTime)
+{
+
+	// スーパーアーマーHPが0以下か判定
+	if (superArmorHp_ <= 0)
+	{
+		superArmorCoolTimeCnt_ -= deltaTime;
+	}
+
+	if (superArmorCoolTimeCnt_ <= 0)
+	{
+		superArmorHp_ = SUPER_ARMOR_HP;
+	}
+
+}
+
 void Boss::ChangeState(const BossState state)
 {
 
@@ -519,6 +648,22 @@ const bool Boss::GetAttackState() const
 
 	// 攻撃の状態か判定
 	for (const auto state : attackState_)
+	{
+		if (state_ == state)
+		{
+			return true;
+		}
+	}
+
+	return false;
+
+}
+
+const bool Boss::GetCloseRangeAttackState() const
+{
+
+	// 近接攻撃の状態か判定
+	for (const auto state : closeRangeAttackState_)
 	{
 		if (state_ == state)
 		{
@@ -562,8 +707,21 @@ const bool Boss::GetHitState() const
 
 }
 
+const bool Boss::GetIsSuperArmor() const
+{
+	return superArmorHp_ > 0;
+}
+
 void Boss::AttackHit(const int damage, const int state)
 {
+
+	// スーパーアーマー状態か判定
+	if (GetIsSuperArmor())
+	{
+		// スーパーアーマーの耐久値を減らす
+		SubSuperArmorHp(damage);
+		return;
+	}
 
 	// どのヒットアニメーションかチェックする
 	AttackHitCheck(state);
@@ -571,9 +729,9 @@ void Boss::AttackHit(const int damage, const int state)
 	// HPを減らす
 	SubHp(damage);
 
-	// HPが0になったら死ぬアニメーションに遷移
 	if (hp_ <= 0)
 	{
+		// 死ぬアニメーションに遷移
 		DeathAnim(state);
 	}
 
@@ -584,6 +742,14 @@ void Boss::AttackHit(const int damage, const int state)
 
 void Boss::ProjectileHit(const int damage)
 {
+
+	// スーパーアーマー状態か判定
+	if (GetIsSuperArmor())
+	{
+		// スーパーアーマーの耐久値を減らす
+		SubSuperArmorHp(damage);
+		return;
+	}
 
 	// ヒットアニメーションに遷移
 	ChangeState(BossState::HIT_FLY);

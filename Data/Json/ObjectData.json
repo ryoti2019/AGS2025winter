@@ -32,55 +32,55 @@
 						"SPEED": 50.0,
 						"ATTACK_START_FRAME": 12.0,
 						"ATTACK_END_FRAME": 18.0,
-						"DAMAGE": 0
+						"DAMAGE": 10
 					},
 					{
 						"NAME": "ATTACK_STRAIGHT",
 						"SPEED": 60.0,
 						"ATTACK_START_FRAME": 3.0,
 						"ATTACK_END_FRAME": 10.0,
-						"DAMAGE": 0
+						"DAMAGE": 10
 					},
 					{
 						"NAME": "ATTACK_HOOK",
 						"SPEED": 40.0,
 						"ATTACK_START_FRAME": 6.0,
 						"ATTACK_END_FRAME": 12.0,
-						"DAMAGE": 0
+						"DAMAGE": 10
 					},
 					{
 						"NAME": "ATTACK_LEFT_KICK",
 						"SPEED": 40.0,
 						"ATTACK_START_FRAME": 8.0,
 						"ATTACK_END_FRAME": 13.0,
-						"DAMAGE": 0
+						"DAMAGE": 20
 					},
 					{
 						"NAME": "ATTACK_RIGHT_KICK",
 						"SPEED": 40.0,
 						"ATTACK_START_FRAME": 7.0,
 						"ATTACK_END_FRAME": 20.0,
-						"DAMAGE": 0
+						"DAMAGE": 30
 					},
 					{
 						"NAME": "ATTACK_UPPER",
 						"SPEED": 50.0,
 						"ATTACK_START_FRAME": 8.0,
 						"ATTACK_END_FRAME": 15.0,
-						"DAMAGE": 0
+						"DAMAGE": 10
 					},
 					{
 						"NAME": "ATTACK_CHARGE_PUNCH",
 						"SPEED": 50.0,
 						"ATTACK_START_FRAME": 30.0,
 						"ATTACK_END_FRAME": 36.0,
-						"DAMAGE": 0
+						"DAMAGE": 500
 					},
 					{
 						"NAME": "ATTACK_SPECIAL_PUNCH",
 						"SPEED": 20.0,
 						"ATTACK_START_FRAME": 27.0,
-						"DAMAGE": 0
+						"DAMAGE": 500
 					},
 					{
 						"NAME": "POWER_CHARGE",
@@ -212,6 +212,8 @@
 				"SCALE": 10.0,
 				"INIT_ANGLE": 0.0,
 				"HP": 1000,
+				"SUPER_ARMOR_HP": 200,
+				"SUPER_ARMOR_HP_COOL_TIME": 20,
 				"HP_BAR_LENGTH": 500,
 				"ACTOR_TYPE": 2,
 				"ANIM": [

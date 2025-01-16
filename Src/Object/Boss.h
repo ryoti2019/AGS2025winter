@@ -21,6 +21,12 @@ public:
 	// 遠距離攻撃してくる距離
 	const float LONG_RANGE_ATTACK_DISTANCE;
 
+	// スーパーアーマーHPの最大値
+	const int SUPER_ARMOR_HP;
+
+	// スーパーアーマーHPが回復するまでのクールタイム
+	const int SUPER_ARMOR_HP_COOL_TIME;
+
 	// アニメーションコントローラーに渡す引数
 	std::string ANIM_DATA_KEY[static_cast<int>(BossState::MAX)] =
 	{
@@ -54,6 +60,7 @@ public:
 
 	void Init(const VECTOR& pos)override;
 	void Update(const float deltaTime)override;
+	void Draw(const float deltaTime)override;
 
 	// 状態遷移
 	void ChangeState(const BossState state);
@@ -61,11 +68,17 @@ public:
 	// 攻撃中か取得
 	const bool GetAttackState()const override;
 
+	// 近接攻撃か取得
+	const bool GetCloseRangeAttackState()const override;
+
 	// 攻撃種類を取得
 	const std::vector<int> GetTotalAttackTypes()const;
 
 	// 攻撃を受けている状態を取得
 	const bool GetHitState()const override;
+
+	// スーパーアーマー状態かを取得
+	const bool GetIsSuperArmor()const override;
 
 	// 攻撃のヒット処理
 	void AttackHit(const int damage, const int state)override;
@@ -90,6 +103,13 @@ private:
 		{BossState::ATTACK_PUNCH},
 		{BossState::ATTACK_KICK},
 		{BossState::ATTACK_PROJECTILE}
+	};
+
+	// 近接攻撃中の状態
+	const std::vector<BossState> closeRangeAttackState_ =
+	{
+		{BossState::ATTACK_PUNCH},
+		{BossState::ATTACK_KICK}
 	};
 
 	// 攻撃を受けている状態
@@ -170,6 +190,12 @@ private:
 	// 飛び道具の衝突判定が続く時間のカウンタ
 	float projectileCollisionCnt_;
 
+	// スーパーアーマーの耐久値
+	int superArmorHp_;
+
+	// スーパーアーマーが回復するまでのクールタイムのカウンタ
+	int superArmorCoolTimeCnt_;
+
 	// 状態遷移
 	std::unordered_map<BossState, std::function<void()>> stateChange_;
 	void ChangeIdle();
@@ -226,6 +252,12 @@ private:
 
 	// 飛び道具の更新
 	void Projectile(const float deltaTime);
+
+	// スーパーアーマーのHPを減らす
+	void SubSuperArmorHp(const int superArmorHp);
+
+	// スーパーアーマーのHPを回復するまでのクールタイム
+	void ResetSuperArmorCoolTime(const float deltaTime);
 
 };
 

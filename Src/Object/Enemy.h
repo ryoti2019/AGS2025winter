@@ -40,6 +40,9 @@ public:
 	// UŒ‚’†‚©æ“¾
 	const bool GetAttackState()const override;
 
+	// ‹ßÚUŒ‚‚©æ“¾
+	const bool GetCloseRangeAttackState()const override;
+
 	// UŒ‚í—Ş‚ğæ“¾
 	const std::vector<int> GetTotalAttackTypes()const;
 

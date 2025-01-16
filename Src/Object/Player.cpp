@@ -358,6 +358,22 @@ const bool Player::GetAttackState()const
 
 }
 
+const bool Player::GetCloseRangeAttackState() const
+{
+
+	// 近接攻撃の状態か判定
+	for (const auto state : closeRangeAttackState_)
+	{
+		if (state_ == state)
+		{
+			return true;
+		}
+	}
+
+	return false;
+
+}
+
 const std::vector<int> Player::GetTotalAttackTypes() const
 {
 
@@ -390,7 +406,7 @@ const bool Player::GetHitState()const
 
 }
 
-const bool Player::GetSuperArmorState() const
+const bool Player::GetIsSuperArmor() const
 {
 	// スーパーアーマー状態か判定
 	for (const auto state : superArmorState_)
@@ -423,6 +439,12 @@ bool Player::GetComboState()
 void Player::AttackHit(const int damage, const int type)
 {
 
+	// スーパーアーマー状態か判定
+	if (GetIsSuperArmor())
+	{
+		return;
+	}
+
 	// どのアニメーションかチェックする
 	AttackHitCheck(type);
 
@@ -436,6 +458,12 @@ void Player::AttackHit(const int damage, const int type)
 
 void Player::ProjectileHit(const int damage)
 {
+
+	// スーパーアーマー状態か判定
+	if (GetIsSuperArmor())
+	{
+		return;
+	}
 
 	// ヒットアニメーションに遷移
 	ChangeState(PlayerState::HIT_BODY);

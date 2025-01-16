@@ -117,8 +117,11 @@ public:
 	void Update(const float deltaTime) override;
 	void Draw(const float deltaTime)override;
 
-	// 攻撃中の状態かを取得
+	// 攻撃中の状態か取得
 	const bool GetAttackState()const override;
+
+	// 近接攻撃か取得
+	const bool GetCloseRangeAttackState()const override;
 
 	// 攻撃種類を取得
 	const std::vector<int> GetTotalAttackTypes()const;
@@ -127,7 +130,7 @@ public:
 	const bool GetHitState()const override;
 
 	// スーパーアーマー状態かを取得
-	const bool GetSuperArmorState()const override;
+	const bool GetIsSuperArmor()const override;
 
 	// コンボ中の状態かを取得
 	bool GetComboState();
@@ -181,6 +184,18 @@ private:
 		{PlayerState::ATTACK_UPPER},
 		{PlayerState::ATTACK_CHARGE_PUNCH},
 		{PlayerState::ATTACK_SPECIAL_PUNCH}
+	};
+
+	// 近接攻撃中の状態
+	const std::vector<PlayerState> closeRangeAttackState_ =
+	{
+		{PlayerState::ATTACK_JAB},
+		{PlayerState::ATTACK_STRAIGHT},
+		{PlayerState::ATTACK_HOOK},
+		{PlayerState::ATTACK_LEFT_KICK},
+		{PlayerState::ATTACK_RIGHT_KICK},
+		{PlayerState::ATTACK_UPPER},
+		{PlayerState::ATTACK_CHARGE_PUNCH}
 	};
 
 	// コンボ中の判定

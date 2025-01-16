@@ -329,10 +329,11 @@ void Enemy::Draw(const float deltaTime)
 	const int HP_LENGTH = 40;
 	const int HP_LENGTH_HARF = HP_LENGTH / 2.0f;
 	const int HP_HEIGHT = 5;
-
-	// HPの長さ
-	const int hpLengthGauge = HP_LENGTH * hp_ / HP_MAX;
-	const int hpLengthGaugeHarfX = hpLengthGauge / 2;
+	int H = hp_ * (512.0f / HP_MAX) - 100;
+	int R = min(max((384 - H), 0), 0xff);
+	int G = min(max((H + 64), 0), 0xff);
+	int B = max((H - 384), 0);
+	int hpGauge = HP_LENGTH * hp_ / HP_MAX;
 
 	// モデルの頭上座標
 	VECTOR headTopPos = MV1GetFramePosition(transform_->modelId, FRAME_NO_HEAD_TOP);
@@ -350,6 +351,12 @@ void Enemy::Draw(const float deltaTime)
 
 	// スクリーン座標変換
 	auto plusOffsetScreenPos = ConvWorldPosToScreenPos(headTopPos);
+
+	// 自分の座標がカメラ内に写っているかどうか
+	if (CheckCameraViewClip(headTopPos))
+	{
+		return;
+	}
 
 	// カメラ範囲でなければ描画しない
 	if (plusOffsetScreenPos.z <= 0.0f && plusOffsetScreenPos.z >= 1.0f)
@@ -375,7 +382,7 @@ void Enemy::Draw(const float deltaTime)
 	DrawBox(
 		plusOffsetScreenPos.x - HP_LENGTH_HARF,
 		plusOffsetScreenPos.y,
-		plusOffsetScreenPos.x + hpLengthGaugeHarfX,
+		plusOffsetScreenPos.x - HP_LENGTH_HARF + hpGauge,
 		plusOffsetScreenPos.y + HP_HEIGHT,
 		0xff0000, true);
 
@@ -384,6 +391,22 @@ void Enemy::Draw(const float deltaTime)
 }
 
 const bool Enemy::GetAttackState()const
+{
+
+	// 攻撃の状態か判定
+	for (const auto state : attackState_)
+	{
+		if (state_ == state)
+		{
+			return true;
+		}
+	}
+
+	return false;
+
+}
+
+const bool Enemy::GetCloseRangeAttackState() const
 {
 
 	// 攻撃の状態か判定
@@ -443,6 +466,7 @@ void Enemy::AttackHit(const int damage, const int state)
 	// HPが0になったら死ぬアニメーションに遷移
 	if (hp_ <= 0)
 	{
+		hp_ = 0;
 		DeathAnim(state);
 	}
 
@@ -459,6 +483,12 @@ void Enemy::ProjectileHit(const int damage)
 
 	// HPを減らす
 	SubHp(damage);
+
+	// HPが0以下だったら0にする
+	if (hp_ <= 0)
+	{
+		hp_ = 0;
+	}
 
 	// アニメーションの再生時間をリセットする
 	animationController_->ResetStepAnim();

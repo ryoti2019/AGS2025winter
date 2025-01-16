@@ -135,7 +135,7 @@ void CollisionManager::CheckAttackCollision(const float deltaTime)
 				if (!target)return;
 
 				// 攻撃状態に入っていなかったら当たり判定を通らない
-				if (!attacker->GetAttackState())continue;
+				if (!attacker->GetCloseRangeAttackState())continue;
 
 				// 中身があるか確認
 				auto hitData = isCloseRangeAttackHitData_.find(target);
@@ -167,9 +167,6 @@ void CollisionManager::CheckAttackCollision(const float deltaTime)
 
 				// このアニメーション中の無敵時間が消えていなければ処理しない
 				if (a->second > 0.0f)continue;
-
-				// 攻撃側がスーパーアーマー状態かチェック
-				if (target->GetSuperArmorState())continue;
 
 				// 右手の判定
 				if (HitCheck_Capsule_Capsule(attacker->GetCollisionData().rightHandCapsuleUpPos, attacker->GetCollisionData().rightHandCapsuleDownPos,
@@ -284,9 +281,6 @@ void CollisionManager::CheckProjectileCollision(const float deltaTime)
 
 				// このアニメーション中の無敵時間が消えていなければ処理しない
 				if (hitData->second > 0.0f)continue;
-
-				// 攻撃側がスーパーアーマー状態かチェック
-				if (target->GetSuperArmorState())continue;
 
 				// 飛び道具の判定
 				if (HitCheck_Sphere_Capsule(attacker->GetCollisionData().projectilePos, attacker->GetCollisionData().projectileCollisionRadius,

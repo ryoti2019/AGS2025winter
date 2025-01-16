@@ -313,8 +313,11 @@ public:
 	// 生存判定を取得
 	const bool GetIsActive() const { return isActive_; }
 
-	// 攻撃状態を取得
-	virtual const bool GetAttackState()const ;
+	// 攻撃状態か取得
+	virtual const bool GetAttackState()const;
+
+	// 近接攻撃か取得
+	virtual const bool GetCloseRangeAttackState()const;
 
 	// 攻撃種類を取得
 	virtual const std::vector<int> GetTotalAttackTypes()const { return {}; }
@@ -323,7 +326,7 @@ public:
 	virtual const bool GetHitState()const;
 
 	// スーパーアーマー状態かを取得
-	virtual const bool GetSuperArmorState()const;
+	virtual const bool GetIsSuperArmor()const;
 
 	// 地面に当たっているか
 	void SetIsOnGround(const bool isOnGround) { isOnGround_ = isOnGround; }
