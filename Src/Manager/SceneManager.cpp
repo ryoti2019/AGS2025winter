@@ -26,7 +26,7 @@ void SceneManager::Init()
 {
 
 	// シーンID
-	sceneId_ = SCENE_ID::BOSS_BATTLE;
+	sceneId_ = SCENE_ID::TITLE;
 	waitSceneId_ = SCENE_ID::NONE;
 
 	//関数ポインタの初期化
@@ -43,7 +43,7 @@ void SceneManager::Init()
 	camera_ = std::make_shared<Camera>();
 
 	// シーンの初期化
-	scene_ = std::make_unique<BossBattleScene>();
+	scene_ = std::make_unique<TitleScene>();
 	scene_->Init();
 
 	// シーン遷移中判定
@@ -53,7 +53,7 @@ void SceneManager::Init()
 	Init3D();
 
 	// 初期シーンの設定
-	DoChangeScene(SCENE_ID::BOSS_BATTLE);
+	DoChangeScene(SCENE_ID::TITLE);
 
 	// ゲームパッドを使うときtrue
 	isGamePad_ = false;

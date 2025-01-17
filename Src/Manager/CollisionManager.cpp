@@ -444,10 +444,10 @@ void CollisionManager::CheckActorsAndStageCollision()
 			}
 
 			// ‚à‚µ’n–Ê‚ðŠÑ’Ê‚µ‚Ä‰º‚És‚Á‚Ä‚µ‚Ü‚Á‚½‚Æ‚«
-			if (target->GetTransform()->pos.y < -19500.0f)
-			{
-				target->SetPos({ target->GetTransform()->pos.x, -19500.0f,target->GetTransform()->pos.z });
-			}
+			//if (target->GetTransform()->pos.y < -19500.0f)
+			//{
+			//	target->SetPos({ target->GetTransform()->pos.x, -19500.0f,target->GetTransform()->pos.z });
+			//}
 
 		}
 	}
@@ -593,13 +593,14 @@ void CollisionManager::ResolveEnemysCollision(const std::shared_ptr<ActorBase>& 
 		// ³‹K‰»‚·‚é
 		VECTOR normOverlap = VNorm(overlap);
 
+		// ‚‚³‚ð‚È‚­‚·
+		normOverlap.y = 0.0f;
+
 		// ‚¨ŒÝ‚¢‚ÉˆÚ“®‚³‚¹‚é
 		actor1->AddPos(VScale(normOverlap, -ENEMY_PUSH_FORCE / 2));
 		actor2->AddPos(VScale(normOverlap, ENEMY_PUSH_FORCE / 2));
 
 	}
-
-
 
 }
 

@@ -67,20 +67,20 @@
 						"SPEED": 50.0,
 						"ATTACK_START_FRAME": 8.0,
 						"ATTACK_END_FRAME": 15.0,
-						"DAMAGE": 10
+						"DAMAGE": 20
 					},
 					{
 						"NAME": "ATTACK_CHARGE_PUNCH",
 						"SPEED": 50.0,
 						"ATTACK_START_FRAME": 30.0,
 						"ATTACK_END_FRAME": 36.0,
-						"DAMAGE": 500
+						"DAMAGE": 50
 					},
 					{
 						"NAME": "ATTACK_SPECIAL_PUNCH",
 						"SPEED": 20.0,
 						"ATTACK_START_FRAME": 27.0,
-						"DAMAGE": 500
+						"DAMAGE":500
 					},
 					{
 						"NAME": "POWER_CHARGE",
@@ -213,7 +213,7 @@
 				"INIT_ANGLE": 0.0,
 				"HP": 1000,
 				"SUPER_ARMOR_HP": 200,
-				"SUPER_ARMOR_HP_COOL_TIME": 20,
+				"SUPER_ARMOR_HP_COOL_TIME": 20.0,
 				"HP_BAR_LENGTH": 500,
 				"ACTOR_TYPE": 2,
 				"ANIM": [
@@ -277,6 +277,10 @@
 						"NAME": "LAND",
 						"SPEED": 10.0
 					},
+					{
+						"NAME": "CALL",
+						"SPEED": 30.0
+					}
 					{
 						"NAME": "DEATH",
 						"SPEED": 30.0

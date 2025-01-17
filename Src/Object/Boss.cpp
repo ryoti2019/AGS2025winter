@@ -177,7 +177,11 @@ void Boss::InitParameter()
 	hp_ = HP_MAX;
 
 	// スーパーアーマーHP
-	superArmorHp_ = SUPER_ARMOR_HP;
+	//superArmorHp_ = SUPER_ARMOR_HP;
+	superArmorHp_ = 0;
+
+	// スーパーアーマーが回復中のHP
+	superArmorRecoveryHp_ = 0;
 
 	// スーパーアーマーが回復するまでのクールタイムのカウンタ
 	superArmorCoolTimeCnt_ = SUPER_ARMOR_HP_COOL_TIME;
@@ -551,6 +555,9 @@ void Boss::Draw(const float deltaTime)
 	// HPゲージ
 	int superArmorHpGauge = HP_LENGTH * superArmorHp_ / SUPER_ARMOR_HP;
 
+	// スーパーアーマーが回復していくゲージ
+	int superArmorRecoveryGauge = HP_LENGTH * superArmorRecoveryHp_ / SUPER_ARMOR_HP;
+
 	// HPゲージ背景を描画
 	DrawBox(
 		Application::SCREEN_SIZE_X / 2 - HP_LENGTH_HARF,
@@ -566,6 +573,14 @@ void Boss::Draw(const float deltaTime)
 		Application::SCREEN_SIZE_X / 2 - HP_LENGTH_HARF + superArmorHpGauge,
 		SUPER_AMOR_HP_HEIGHT + SUPER_ARMOR_HP_BAR_WIDTH,
 		0xffffff, true);
+
+	// HPゲージを描画
+	DrawBox(
+		Application::SCREEN_SIZE_X / 2 - HP_LENGTH_HARF,
+		SUPER_AMOR_HP_HEIGHT,
+		Application::SCREEN_SIZE_X / 2 - HP_LENGTH_HARF + superArmorRecoveryGauge,
+		SUPER_AMOR_HP_HEIGHT + SUPER_ARMOR_HP_BAR_WIDTH,
+		0xff00ff, true);
 
 }
 
@@ -611,14 +626,32 @@ void Boss::ResetSuperArmorCoolTime(const float deltaTime)
 {
 
 	// スーパーアーマーHPが0以下か判定
-	if (superArmorHp_ <= 0)
-	{
-		superArmorCoolTimeCnt_ -= deltaTime;
-	}
+	//if (superArmorHp_ <= 0)
+	//{
 
-	if (superArmorCoolTimeCnt_ <= 0)
+	//	// クールタイムを計算
+	//	superArmorCoolTimeCnt_ -= deltaTime;
+
+	//	// 1秒あたりの回復量
+	//	float recoveryVolume = SUPER_ARMOR_HP / SUPER_ARMOR_HP_COOL_TIME;
+
+	//	// スーパーアーマーを回復させる
+	//	superArmorRecoveryHp_ += recoveryVolume * deltaTime;
+	//	
+	//}
+
+	if (superArmorCoolTimeCnt_ <= 0.0f)
 	{
+
+		// スーパーアーマーを最大値まで回復する
 		superArmorHp_ = SUPER_ARMOR_HP;
+
+		// スーパーアーマーのクールタイムをリセット
+		superArmorCoolTimeCnt_ = SUPER_ARMOR_HP_COOL_TIME;
+
+		// スーパーアーマーの回復中の数値をリセット
+		superArmorRecoveryHp_ = 0.0f;
+
 	}
 
 }
@@ -718,9 +751,18 @@ void Boss::AttackHit(const int damage, const int state)
 	// スーパーアーマー状態か判定
 	if (GetIsSuperArmor())
 	{
+
 		// スーパーアーマーの耐久値を減らす
 		SubSuperArmorHp(damage);
+
+		if (superArmorHp_ <= 0)
+		{
+			// 0以下にならないようにする
+			superArmorHp_ = 0;
+		}
+
 		return;
+
 	}
 
 	// どのヒットアニメーションかチェックする
@@ -731,8 +773,13 @@ void Boss::AttackHit(const int damage, const int state)
 
 	if (hp_ <= 0)
 	{
+
+		// 0以下にならないようにする
+		hp_ = 0;
+
 		// 死ぬアニメーションに遷移
 		DeathAnim(state);
+
 	}
 
 	// アニメーションの再生時間をリセットする
@@ -746,9 +793,18 @@ void Boss::ProjectileHit(const int damage)
 	// スーパーアーマー状態か判定
 	if (GetIsSuperArmor())
 	{
+
 		// スーパーアーマーの耐久値を減らす
 		SubSuperArmorHp(damage);
+
+		if (superArmorHp_ <= 0)
+		{
+			// 0以下にならないようにする
+			superArmorHp_ = 0;
+		}
+
 		return;
+
 	}
 
 	// ヒットアニメーションに遷移
@@ -756,6 +812,12 @@ void Boss::ProjectileHit(const int damage)
 
 	// HPを減らす
 	SubHp(damage);
+
+	if (hp_ <= 0)
+	{
+		// 0以下にならないようにする
+		hp_ = 0;
+	}
 
 	// アニメーションの再生時間をリセットする
 	animationController_->ResetStepAnim();

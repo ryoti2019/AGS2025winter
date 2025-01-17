@@ -463,11 +463,15 @@ void Enemy::AttackHit(const int damage, const int state)
 	// HPを減らす
 	SubHp(damage);
 	
-	// HPが0になったら死ぬアニメーションに遷移
 	if (hp_ <= 0)
 	{
+
+		// 0以下にならないようにする
 		hp_ = 0;
+
+		// 死ぬアニメーションに遷移
 		DeathAnim(state);
+
 	}
 
 	// アニメーションの再生時間をリセットする
@@ -484,9 +488,9 @@ void Enemy::ProjectileHit(const int damage)
 	// HPを減らす
 	SubHp(damage);
 
-	// HPが0以下だったら0にする
 	if (hp_ <= 0)
 	{
+		// 0以下にならないようにする
 		hp_ = 0;
 	}
 

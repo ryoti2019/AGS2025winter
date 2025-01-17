@@ -6,6 +6,7 @@
 #include "../Scene/BossBattleScene.h"
 #include "BossBattleActorCreate.h"
 #include "../Object/Player.h"
+#include "../Object/Enemy.h"
 #include "../Object/Boss.h"
 #include "../Object/Stage.h"
 #include "../Object/StageCollision.h"
@@ -88,6 +89,17 @@ BossBattleActorCreate::BossBattleActorCreate()
 	// プレイヤーを生成
 	actorManager->CreateActor<Player>(playerData, { -10800.0f,-19500.0f,-120000.0f });
 	actorManager->ActiveData(ActorType::PLAYER, { -10800.0f,-19500.0f,-120000.0f });
+
+	// 敵
+	const auto& enemyData = objectData[1]["EnemyData"];
+
+	// 敵を生成
+	for (int i = 0; i < 50; i++)
+	{
+		float x = std::rand() % 10;
+		float z = std::rand() % 10;
+		actorManager->CreateActor<Enemy>(enemyData, { 0.0f,0.0f,0.0f });
+	}
 
 	// ボス
 	const auto& bossData = objectData[2]["BossData"];

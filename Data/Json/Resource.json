@@ -286,6 +286,11 @@
           },
           {
             "TYPE": 3,
+            "PATH": "Boss/Call.mv1",
+            "SRC": "ANIM_BOSS_CALL"
+          },
+          {
+            "TYPE": 3,
             "PATH": "Boss/Death.mv1",
             "SRC": "ANIM_DEATH"
           }

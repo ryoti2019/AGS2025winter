@@ -190,11 +190,14 @@ private:
 	// 飛び道具の衝突判定が続く時間のカウンタ
 	float projectileCollisionCnt_;
 
-	// スーパーアーマーの耐久値
+	// スーパーアーマーのHP
 	int superArmorHp_;
 
+	// スーパーアーマーが回復中の時の数値
+	float superArmorRecoveryHp_;
+
 	// スーパーアーマーが回復するまでのクールタイムのカウンタ
-	int superArmorCoolTimeCnt_;
+	float superArmorCoolTimeCnt_;
 
 	// 状態遷移
 	std::unordered_map<BossState, std::function<void()>> stateChange_;
