@@ -280,7 +280,7 @@
 					{
 						"NAME": "CALL",
 						"SPEED": 30.0
-					}
+					},
 					{
 						"NAME": "DEATH",
 						"SPEED": 30.0
