@@ -173,6 +173,9 @@ private:
 	// 入力用のコンポーネント
 	std::unique_ptr<InputComponent> inputComponent_;
 
+	// 入力用コントローラー
+	std::unique_ptr<InputController> inputController_;
+
 	// 攻撃中の状態
 	const std::vector<PlayerState> attackState_ =
 	{
@@ -258,6 +261,36 @@ private:
 	// 必殺技の衝突判定が続く時間のカウンタ
 	float attackSpecialPunchCollisionCnt_;
 
+	// カメラの角度
+	float cameraAngleY_;
+
+	// 足音
+	int footStepsSE_;
+
+	// ジャブの音
+	int jabSE_;
+
+	// ストレートの音
+	int straightSE_;
+
+	// フックの音
+	int hookSE_;
+
+	// アッパーの音
+	int upperSE_;
+
+	// ため攻撃の音
+	int chargePunchSE_;
+
+	// 左キックの音
+	int leftKickSE_;
+
+	// 右キックの音
+	int rightKickSE_;
+
+	// 必殺技の音
+	int specialAttackSE_;
+
 	// 状態遷移
 	std::unordered_map<PlayerState, std::function<void()>> stateChange_;
 	void ChangeIdle();
@@ -298,6 +331,9 @@ private:
 
 	// アニメーションの初期化
 	void InitAnimation()override;
+
+	// BGMとSEの初期化
+	void InitBGMAndSE()override;
 
 	// 関数ポインタの初期化
 	void InitFunctionPointer()override;

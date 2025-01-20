@@ -36,11 +36,11 @@ void EnemyBase::Init()
 std::optional<VECTOR> EnemyBase::GetPlayerPos()
 {
 
-	// ゲームシーンの情報を持ってくる
+	// ゲームシーンの情報を取得
 	std::shared_ptr<GameScene> gameScene =
 		std::dynamic_pointer_cast<GameScene>(SceneManager::GetInstance().GetNowScene());
 
-	// 
+	// ボスバトルシーンの情報を取得
 	std::shared_ptr<BossBattleScene> bossBattleScene =
 		std::dynamic_pointer_cast<BossBattleScene>(SceneManager::GetInstance().GetNowScene());
 

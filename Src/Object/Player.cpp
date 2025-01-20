@@ -60,6 +60,9 @@ Player::Player(const VECTOR& pos, const json& data)
 	// アニメーションの初期化
 	InitAnimation();
 
+	// BGMとSEの初期化
+	InitBGMAndSE();
+
 }
 
 void Player::Init(const VECTOR& pos)
@@ -81,6 +84,8 @@ void Player::InitFunction()
 
 	// カメラを生成
 	std::weak_ptr<Camera> camera = SceneManager::GetInstance().GetCamera();
+
+	inputController_ = std::make_unique<InputController>();
 
 	// カメラのターゲットをプレイヤーに設定
 	camera.lock()->SetPlayer(transform_);
@@ -120,7 +125,7 @@ void Player::InitParameter()
 	dir_ = { 0.0f,0.0f,1.0f };
 
 	// 動く方向
-	moveDir_ = transform_->quaRot.GetForward();
+	moveDir_ = { 0.0f,0.0f,0.0f };
 
 	// ボス戦のみ角度を変える
 	if (SceneManager::GetInstance().GetSceneID() == SCENE_ID::BOSS_BATTLE)
@@ -255,6 +260,41 @@ void Player::InitAnimation()
 
 }
 
+void Player::InitBGMAndSE()
+{
+
+	// 足音の初期化
+	footStepsSE_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::SOUND_PLAYER_FOOT_STEPS_SE)]).handleId_;
+
+	// 足音のボリュームの変更
+	ChangeVolumeSoundMem(255 * 60 / 100, footStepsSE_);
+
+	// ジャブの音の初期化
+	jabSE_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::SOUND_PLAYER_JAB_SE)]).handleId_;
+
+	// ストレートの音の初期化
+	straightSE_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::SOUND_PLAYER_STRAIGHT_SE)]).handleId_;
+
+	// フックの音の初期化
+	hookSE_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::SOUND_PLAYER_HOOK_SE)]).handleId_;
+
+	// アッパーの音の初期化
+	upperSE_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::SOUND_PLAYER_UPPER_SE)]).handleId_;
+
+	// ため攻撃の音の初期化
+	chargePunchSE_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::SOUND_PLAYER_CHARGE_PUNCH_SE)]).handleId_;
+	
+	// 左キックの音の初期化
+	leftKickSE_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::SOUND_PLAYER_LEFT_KICK_SE)]).handleId_;
+	
+	// 右キックの音の初期化
+	rightKickSE_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::SOUND_PLAYER_RIGHT_KICK_SE)]).handleId_;
+
+	// 必殺輪のの音の初期化
+	specialAttackSE_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::SOUND_PLAYER_SPECIAL_ATTACK_SE)]).handleId_;
+
+}
+
 void Player::Update(const float deltaTime)
 {
 
@@ -270,19 +310,20 @@ void Player::Update(const float deltaTime)
 	// 状態ごとの更新
 	stateUpdate_(deltaTime);
 
-	//gravityScale_ = 10.0f;
-
 	// 重力
-	//if (velocity_.y != 0.0f)
-	//{
-		Gravity(gravityScale_);
-	//}
+	Gravity(gravityScale_);
 
 	// モデル情報を更新
 	transform_->Update();
 
 	// アニメーション再生
 	animationController_->Update(deltaTime);
+
+	// 走っているとき以外は足音を止める
+	if (state_ != PlayerState::RUN)
+	{
+		StopSoundMem(footStepsSE_);
+	}
 
 }
 
@@ -296,7 +337,7 @@ void Player::Draw(const float deltaTime)
 	int hpLength = HP_BAR_LENGTH;
 	int H;
 	int hpGauge;
-	H = hp_ * (512.0f / HP_MAX) - 100;
+	H = hp_ * (static_cast<int>(512.0f) / HP_MAX) - 100;
 	int R = min(max((384 - H), 0), 0xff);
 	int G = min(max((H + 64), 0), 0xff);
 	int B = max((H - 384), 0);
@@ -322,9 +363,9 @@ void Player::UpdateDebugImGui()
 
 	// 角度
 	VECTOR rotDeg = VECTOR();
-	rotDeg.x = Utility::Rad2DegF(transform_->quaRot.x);
-	rotDeg.y = Utility::Rad2DegF(transform_->quaRot.y);
-	rotDeg.z = Utility::Rad2DegF(transform_->quaRot.z);
+	rotDeg.x = Utility::Rad2DegF(static_cast<float>(transform_->quaRot.x));
+	rotDeg.y = Utility::Rad2DegF(static_cast<float>(transform_->quaRot.y));
+	rotDeg.z = Utility::Rad2DegF(static_cast<float>(transform_->quaRot.z));
 	ImGui::Text("angle(deg)");
 	ImGui::SliderFloat("RotX", &rotDeg.x, -90.0f, 90.0f);
 	ImGui::SliderFloat("RotY", &rotDeg.y, -90.0f, 90.0f);
@@ -524,28 +565,30 @@ void Player::AttackHitCheck(const int type)
 void Player::Rotation()
 {
 
+	float cameraAngleY = 0.0f;
+
 	// カメラの角度
-	VECTOR cameraAngle = SceneManager::GetInstance().GetCamera().lock()->GetAngle();
+	if (!Utility::EqualsVZero(inputController_->Dir()))
+	{
+		cameraAngleY_ = SceneManager::GetInstance().GetCamera().lock()->GetAngle().y;
+		cameraAngleY = cameraAngleY_;
+	}
 
 	// Y軸の行列
 	MATRIX mat = MGetIdent();
-	mat = MMult(mat, MGetRotY(cameraAngle.y));
+	mat = MMult(mat, MGetRotY(cameraAngleY_));
 
 	// 回転行列を使用して、ベクトルを回転させる
 	moveDir_ = VTransform(dir_, mat);
 
 	// 方向を角度に変換する(XZ平面 Y軸)
 	float angle = atan2f(dir_.x, dir_.z);
-
+	
 	// ゆっくり回転する
-	LazyRotation(cameraAngle.y + angle);
-
-}
-
-void Player::BossAreaCollisionCheck()
-{
-
-
+	if (cameraAngleY != 0.0f)
+	{
+		LazyRotation(cameraAngleY + angle);
+	}
 
 }
 
@@ -818,6 +861,12 @@ void Player::UpdateRun(const float deltaTime)
 	// 移動処理
 	moveComponent_->Move();
 
+	if (!CheckSoundMem(footStepsSE_))
+	{
+		// 足音を再生
+		PlaySoundMem(footStepsSE_, DX_PLAYTYPE_BACK, true);
+	}
+
 }
 
 void Player::UpdateJab(const float deltaTime)
@@ -837,6 +886,13 @@ void Player::UpdateJab(const float deltaTime)
 	else
 	{
 		collisionData_.isLeftHandAttack = false;
+	}
+
+	// 攻撃が当たっていたら音を再生
+	if (isHitAttack_)
+	{
+		PlaySoundMem(jabSE_, DX_PLAYTYPE_BACK, true);
+		isHitAttack_ = false;
 	}
 
 	// ストレートに遷移
@@ -866,6 +922,13 @@ void Player::UpdateStraight(const float deltaTime)
 		collisionData_.isRightHandAttack = false;
 	}
 
+	// 攻撃が当たっていたら音を再生
+	if (isHitAttack_)
+	{
+		PlaySoundMem(straightSE_, DX_PLAYTYPE_BACK, true);
+		isHitAttack_ = false;
+	}
+
 	// フックに遷移
 	if (animationController_->IsEndPlayAnimation() && isCombo_.at(PlayerState::ATTACK_HOOK))
 	{
@@ -891,6 +954,13 @@ void Player::UpdateHook(const float deltaTime)
 	else
 	{
 		collisionData_.isLeftHandAttack = false;
+	}
+
+	// 攻撃が当たっていたら音を再生
+	if (isHitAttack_)
+	{
+		PlaySoundMem(hookSE_, DX_PLAYTYPE_BACK, true);
+		isHitAttack_ = false;
 	}
 
 	// 左キックに遷移
@@ -920,6 +990,13 @@ void Player::UpdateLeftKick(const float deltaTime)
 		collisionData_.isLeftFootAttack = false;
 	}
 
+	// 攻撃が当たっていたら音を再生
+	if (isHitAttack_)
+	{
+		PlaySoundMem(leftKickSE_, DX_PLAYTYPE_BACK, true);
+		isHitAttack_ = false;
+	}
+
 	// 右キックに遷移
 	if (animationController_->IsEndPlayAnimation() && isCombo_.at(PlayerState::ATTACK_RIGHT_KICK))
 	{
@@ -947,6 +1024,13 @@ void Player::UpdateRightKick(const float deltaTime)
 		collisionData_.isRightFootAttack = false;
 	}
 
+	// 攻撃が当たっていたら音を再生
+	if (isHitAttack_)
+	{
+		PlaySoundMem(rightKickSE_, DX_PLAYTYPE_BACK, true);
+		isHitAttack_ = false;
+	}
+
 	// 待機状態に遷移
 	if (animationController_->IsEndPlayAnimation())
 	{
@@ -969,6 +1053,13 @@ void Player::UpdateUpper(const float deltaTime)
 	else
 	{
 		collisionData_.isRightHandAttack = false;
+	}
+
+	// 攻撃が当たっていたら音を再生
+	if (isHitAttack_)
+	{
+		PlaySoundMem(upperSE_, DX_PLAYTYPE_BACK, true);
+		isHitAttack_ = false;
 	}
 
 	// 待機状態に遷移
@@ -995,6 +1086,13 @@ void Player::UpdateChargePunch(const float deltaTime)
 		collisionData_.isRightHandAttack = false;
 	}
 
+	// 攻撃が当たっていたら音を再生
+	if (isHitAttack_)
+	{
+		PlaySoundMem(chargePunchSE_, DX_PLAYTYPE_BACK, true);
+		isHitAttack_ = false;
+	}
+
 	// 待機状態に遷移
 	if (animationController_->IsEndPlayAnimation())
 	{
@@ -1019,6 +1117,13 @@ void Player::UpdateSpecialAttack(const float deltaTime)
 		// 必殺技の衝突判定が続く時間のカウンタを加算
 		attackSpecialPunchCollisionCnt_ += deltaTime;
 
+	}
+
+	// 攻撃が当たっていたら音を再生
+	if (isHitAttack_)
+	{
+		PlaySoundMem(specialAttackSE_, DX_PLAYTYPE_BACK, true);
+		isHitAttack_ = false;
 	}
 
 	// 待機状態に遷移

@@ -220,6 +220,9 @@ void CollisionManager::OnAttackCollision(const std::shared_ptr<ActorBase>& attac
 	// 相手の座標を設定
 	target->SetTargetPos(attacker->GetTransform()->pos);
 
+	// 攻撃が当たったフラグをtrueにする
+	attacker->SetIsHitAttack(true);
+
 	// 当たったターゲットの情報を取得
 	auto& data = isCloseRangeAttackHitData_[target];
 
@@ -304,6 +307,9 @@ void CollisionManager::OnProjectileCollision(const std::shared_ptr<ActorBase>& a
 
 	// 相手の座標を設定
 	target->SetTargetPos(attacker->GetTransform()->pos);
+
+	// 攻撃が当たったフラグをtrueにする
+	attacker->SetIsHitAttack(true);
 
 	// 敵の飛び道具だけ当たり判定を消す
 	if (attacker->GetActorType() == ActorType::BOSS)

@@ -82,6 +82,9 @@ void GameScene::InitBGMAndSE()
 	// BGM‚Ì‰Šú‰»
 	bgm_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::SOUND_GAME_SCENE_BGM)]).handleId_;
 
+	// BGM‚Ìƒ{ƒŠƒ…[ƒ€‚Ì•ÏX
+	ChangeVolumeSoundMem(255 * 0.5, bgm_);
+
 	// BGMÄ¶
 	PlaySoundMem(bgm_, DX_PLAYTYPE_LOOP, true);
 

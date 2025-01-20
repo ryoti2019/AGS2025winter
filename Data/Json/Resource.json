@@ -353,7 +353,51 @@
       },
       "SoundData": {
         "Player": [
-
+          {
+            "TYPE": 5,
+            "PATH": "Player/FootSteps.mp3",
+            "SRC": "SOUND_PLAYER_FOOT_STEPS_SE"
+          },
+          {
+            "TYPE": 5,
+            "PATH": "Player/Jab.mp3",
+            "SRC": "SOUND_PLAYER_JAB_SE"
+          },
+          {
+            "TYPE": 5,
+            "PATH": "Player/Straight.mp3",
+            "SRC": "SOUND_PLAYER_STRAIGHT_SE"
+          },
+          {
+            "TYPE": 5,
+            "PATH": "Player/Hook.mp3",
+            "SRC": "SOUND_PLAYER_HOOK_SE"
+          },
+          {
+            "TYPE": 5,
+            "PATH": "Player/Upper.mp3",
+            "SRC": "SOUND_PLAYER_UPPER_SE"
+          },
+          {
+            "TYPE": 5,
+            "PATH": "Player/ChargePunch.mp3",
+            "SRC": "SOUND_PLAYER_CHARGE_PUNCH_SE"
+          },
+          {
+            "TYPE": 5,
+            "PATH": "Player/LeftKick.mp3",
+            "SRC": "SOUND_PLAYER_LEFT_KICK_SE"
+          },
+          {
+            "TYPE": 5,
+            "PATH": "Player/RightKick.mp3",
+            "SRC": "SOUND_PLAYER_RIGHT_KICK_SE"
+          },
+          {
+            "TYPE": 5,
+            "PATH": "Player/SpecialAttack.mp3",
+            "SRC": "SOUND_PLAYER_SPECIAL_ATTACK_SE"
+          }
         ],
         "Enemy": [
 

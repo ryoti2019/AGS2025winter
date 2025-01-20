@@ -38,6 +38,7 @@ ActorBase::ActorBase(const VECTOR& pos, const json& data)
 	isActive_(false),
 	isLockOn_(false),
 	isOnGround_(false),
+	isHitAttack_(false),
 	jsonData_(data)
 {
 
@@ -308,6 +309,10 @@ void ActorBase::Gravity(const float scale)
 }
 
 void ActorBase::DeathAnim(int state)
+{
+}
+
+void ActorBase::InitBGMAndSE()
 {
 }
 

@@ -382,6 +382,12 @@ public:
 	// 遅延回転
 	void LazyRotation(float goalRot);
 
+	// 自分の攻撃が当たったかどうか取得
+	const bool GetIsHitAttack()const { return isHitAttack_; }
+
+	// 自分の攻撃が当たったかどうか設定
+	void SetIsHitAttack(const bool isHitAttack) { isHitAttack_ = isHitAttack; }
+
 protected:
 
 	// リソース管理
@@ -471,6 +477,9 @@ protected:
 	// アクティブ状態かどうか
 	bool isActive_;
 
+	// 自分の攻撃が当たったかどうか
+	bool isHitAttack_;
+
 	// 機能の初期化
 	virtual void InitFunction();
 
@@ -482,6 +491,9 @@ protected:
 
 	// エフェクトの初期化
 	virtual void InitEffect();
+
+	// BGMとSEの初期化
+	virtual void InitBGMAndSE();
 
 	// 関数ポインタの初期化
 	virtual void InitFunctionPointer();

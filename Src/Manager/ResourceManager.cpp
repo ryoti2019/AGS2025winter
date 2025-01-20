@@ -124,6 +124,12 @@ void ResourceManager::BGMAndSELoad(const nlohmann::json_abi_v3_11_3::json& objec
 {
 
 	// タイトルシーンの画像データ
+	const auto& playerSoundData = objectData[0]["SoundData"]["Player"];
+
+	// タイトルシーンの画像データの初期化
+	InitResource(Application::PATH_SOUND, playerSoundData);
+
+	// タイトルシーンの画像データ
 	const auto& titleSceneSoundData = objectData[0]["SoundData"]["TitleScene"];
 
 	// タイトルシーンの画像データの初期化
