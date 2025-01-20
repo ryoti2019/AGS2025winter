@@ -168,6 +168,8 @@ public:
 	// 状態遷移
 	void ChangeState(const PlayerState state);
 
+	// 
+
 private:
 
 	// 入力用のコンポーネント
@@ -264,6 +266,12 @@ private:
 	// カメラの角度
 	float cameraAngleY_;
 
+	// アイコンの画像
+	int iconImg_;
+
+	// HPバーの画像
+	int hpBarImg_;
+
 	// 足音
 	int footStepsSE_;
 
@@ -329,6 +337,9 @@ private:
 	// パラメータの初期化
 	void InitParameter()override;
 
+	// 画像の初期化
+	void InitImage()override;
+
 	// アニメーションの初期化
 	void InitAnimation()override;
 
@@ -346,9 +357,6 @@ private:
 
 	// 回転処理
 	void Rotation();
-
-	// ボスエリアに衝突したかチェック
-	void BossAreaCollisionCheck();
 
 };
 

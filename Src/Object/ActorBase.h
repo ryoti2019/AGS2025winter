@@ -251,6 +251,12 @@ public:
 	// HPバーの長さ
 	int HP_BAR_LENGTH;
 
+	// 必殺技ゲージの最大値
+	int SPECIAL_ATTACK_MAX_GAUGE;
+
+	// 必殺技ゲージの長さ
+	int SPECIAL_ATTACK_GAUGE_LENGTH;
+
 	// アニメーション番号
 	int ANIM_INDEX;
 
@@ -388,6 +394,18 @@ public:
 	// 自分の攻撃が当たったかどうか設定
 	void SetIsHitAttack(const bool isHitAttack) { isHitAttack_ = isHitAttack; }
 
+	// 必殺技ゲージを加算
+	void AddSpecialAttackGauge(const int gauge) {
+		specialAttackGauge_ += gauge;
+		if (specialAttackGauge_ >= SPECIAL_ATTACK_MAX_GAUGE)
+		{
+			specialAttackGauge_ = SPECIAL_ATTACK_MAX_GAUGE;
+		}
+	}
+
+	// 必殺技ゲージを取得
+	const int GetSpecialAttackGauge() { return specialAttackGauge_; }
+
 protected:
 
 	// リソース管理
@@ -447,6 +465,9 @@ protected:
 	// HP
 	int hp_;
 
+	// 必殺技ゲージ
+	int specialAttackGauge_;
+
 	// モデルID
 	int modelId_;
 
@@ -485,6 +506,9 @@ protected:
 
 	// パラメータの初期化
 	virtual void InitParameter();
+
+	// 画像の初期化
+	virtual void InitImage();
 
 	// アニメーションの初期化
 	virtual void InitAnimation();

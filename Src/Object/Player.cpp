@@ -57,6 +57,9 @@ Player::Player(const VECTOR& pos, const json& data)
 	// パラメータの初期化
 	InitParameter();
 
+	// 画像の初期化
+	InitImage();
+
 	// アニメーションの初期化
 	InitAnimation();
 
@@ -204,11 +207,31 @@ void Player::InitParameter()
 	// HPバーの長さ
 	HP_BAR_LENGTH = jsonData_["HP_BAR_LENGTH"];
 
+	// 必殺技ゲージ
+	specialAttackGauge_ = 0;
+
+	// 必殺技ゲージの最大値
+	SPECIAL_ATTACK_MAX_GAUGE = jsonData_["SPECIAL_ATTACK_MAX_GAUGE"];
+		
+	// 必殺技ゲージの長さ
+	SPECIAL_ATTACK_GAUGE_LENGTH = jsonData_["SPECIAL_ATTACK_GAUGE_LENGTH"];
+
 	// 走るときの移動量
 	RUN_MOVE_POW = jsonData_["RUN_MOVE_POW"];
 
 	// アニメーション番号
 	ANIM_INDEX = jsonData_["ANIM_INDEX"];
+
+}
+
+void Player::InitImage()
+{
+
+	// アイコンの画像
+	iconImg_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_PLAYER_ICON)]).handleId_;
+
+	// HPバーの画像
+	hpBarImg_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_PLAYER_HP_BAR)]).handleId_;
 
 }
 
@@ -312,7 +335,7 @@ void Player::Update(const float deltaTime)
 
 	// 重力
 	Gravity(gravityScale_);
-
+	 
 	// モデル情報を更新
 	transform_->Update();
 
@@ -334,20 +357,36 @@ void Player::Draw(const float deltaTime)
 	ActorBase::Draw(deltaTime);
 
 	// HPバー描画
-	int hpLength = HP_BAR_LENGTH;
 	int H;
 	int hpGauge;
 	H = hp_ * (static_cast<int>(512.0f) / HP_MAX) - 100;
 	int R = min(max((384 - H), 0), 0xff);
 	int G = min(max((H + 64), 0), 0xff);
 	int B = max((H - 384), 0);
-	hpGauge = hpLength * hp_ / HP_MAX;
+	hpGauge = HP_BAR_LENGTH * hp_ / HP_MAX;
+
+	// 必殺技ゲージの描画
+	int specialAttackGauge = SPECIAL_ATTACK_GAUGE_LENGTH * specialAttackGauge_ / SPECIAL_ATTACK_MAX_GAUGE;
 
 	if (hp_ >= 0)
 	{
-		DrawBox(40, 20, 40 + hpGauge, 40, GetColor(R, G, B), true);
+
+		// HPバー
+		DrawBox(200, 550, 200 + hpGauge, 570, GetColor(R, G, B), true);
+
+		// HPバーの箱
+		DrawExtendGraph(200, 550, 200 + HP_BAR_LENGTH, 570, hpBarImg_, true);
+
+		// 必殺技ゲージ
+		DrawBox(200, 600, 200 + specialAttackGauge, 620, 0x65bbe9, true);
+
+		// 必殺技ゲージの箱
+		DrawExtendGraph(200, 600, 200 + SPECIAL_ATTACK_GAUGE_LENGTH, 620, hpBarImg_, true);
+
 	}
 
+	// アイコンの描画
+	DrawRotaGraph(100, 550, 0.5, 0.0, iconImg_, true);
 
 }
 
@@ -773,6 +812,9 @@ void Player::ChangeSpecialAttack()
 
 	// ダメージ量
 	damage_ = ATTACK_SPECIAL_PUNCH_DAMAGE;
+
+	// 必殺技ゲージをリセット
+	specialAttackGauge_ = 0;
 
 	// 必殺技の当たり判定の座標を設定
 	collisionData_.projectilePos = VAdd(transform_->pos, BODY_RELATIVE_CENTER_POS);

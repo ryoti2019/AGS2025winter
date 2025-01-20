@@ -181,7 +181,7 @@ bool InputController::Upper()
 		return true;
 	}
 	// ゲームパッド
-	else if (SceneManager::GetInstance().GetGamePad() && ins.IsPadBtnTrgUp(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::R_BOTTON))
+	else if (SceneManager::GetInstance().GetGamePad() && ins.IsPadBtnTrgUp(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::R_BUTTON))
 	{
 		return true;
 	}

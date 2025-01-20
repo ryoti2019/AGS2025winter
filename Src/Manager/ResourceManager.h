@@ -18,6 +18,9 @@ public:
 
 #pragma region プレイヤー
 
+		IMAGE_PLAYER_ICON,
+		IMAGE_PLAYER_HP_BAR,
+
 #pragma endregion
 
 #pragma region 敵
@@ -37,7 +40,7 @@ public:
 #pragma region タイトルシーン
 
 		IMAGE_TITLE_LOGO,
-		IMAGE_PRESS_A_BOTTON_OR_SPACE,
+		IMAGE_PRESS_A_BUTTON_OR_SPACE,
 
 #pragma endregion
 
@@ -192,6 +195,9 @@ public:
 
 #pragma region プレイヤー
 
+		"IMAGE_PLAYER_ICON",
+		"IMAGE_PLAYER_HP_BAR",
+
 #pragma endregion
 
 #pragma region 敵
@@ -211,7 +217,7 @@ public:
 #pragma region タイトルシーン
 
 		"IMAGE_TITLE_LOGO",
-		"IMAGE_PRESS_A_BOTTON_OR_SPACE",
+		"IMAGE_PRESS_A_BUTTON_OR_SPACE",
 
 #pragma endregion
 

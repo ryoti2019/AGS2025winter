@@ -60,6 +60,12 @@ void ResourceManager::Init(void)
 void ResourceManager::ImgLoad(const nlohmann::json_abi_v3_11_3::json& objectData)
 {
 
+	// プレイヤーの画像データ
+	const auto& playerImageData = objectData[0]["ImageData"]["Player"];
+
+	// ステージの画像データの初期化
+	InitResource(Application::PATH_IMAGE, playerImageData);
+
 	// ステージの画像データ
 	const auto& stageImageData = objectData[0]["ImageData"]["Stage"];
 

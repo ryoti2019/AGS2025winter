@@ -45,7 +45,7 @@ public:
 	// 当たり判定を見たいものを登録する
 	void Register(const std::shared_ptr<ActorBase>& actor);
 
-	// 当たり判定を消す
+	// ステージの当たり判定を消す
 	void StageErasure(std::shared_ptr<StageBase>& actor);
 
 	// カメラの情報を設定
@@ -92,6 +92,16 @@ private:
 			{ActorType::PLAYER,ActorType::BOSS},
 			{ActorType::ENEMY,ActorType::ENEMY},
 			{ActorType::ENEMY,ActorType::BOSS}
+		}
+	};
+
+	// プレイヤーと敵の情報を登録する
+	const std::vector<ActorType> objectData_ =
+	{
+		{
+			{ActorType::PLAYER},
+			{ActorType::ENEMY},
+			{ActorType::BOSS},
 		}
 	};
 
@@ -142,6 +152,9 @@ private:
 
 	// 制限エリアが出てくる場所との当たり判定
 	void CheckRestrictedAreasCollision();
+
+	// オブジェクトの当たり判定を消す
+	void ObjectErasure();
 
 };
 

@@ -660,14 +660,20 @@ void Camera::KeyboardController()
 	// カメラ位置を中心にセット
 	SetMousePoint(center.x, center.y);
 
+	// 右方向
 	if (center.x <= mousePos.x) { axisDeg.y += rotPowY_; }
+	
+	// 左方向
 	if (center.x >= mousePos.x) { axisDeg.y += rotPowY_; }
 
-	if (center.y >= mousePos.y && Utility::Rad2DegF(angle_.x) >= -30.0f)
+	// 下方向
+	if (center.y >= mousePos.y && Utility::Rad2DegF(angle_.x) >= -20.0f)
 	{
 		axisDeg.x += rotPowX_;
 	}
-	if (center.y <= mousePos.y && Utility::Rad2DegF(angle_.x) <= 10.0f)
+
+	// 上方向
+	if (center.y <= mousePos.y && Utility::Rad2DegF(angle_.x) <= 50.0f)
 	{
 		axisDeg.x += rotPowX_;
 	}
@@ -787,6 +793,7 @@ void Camera::GamePadController()
 		axisDeg = VNorm(axisDeg);
 		axisDeg = VScale(axisDeg, 3.0f);
 	}
+
 	// 左方向
 	if (pad.AKeyRX < 0)
 	{
@@ -795,16 +802,9 @@ void Camera::GamePadController()
 		axisDeg = VNorm(axisDeg);
 		axisDeg = VScale(axisDeg, 3.0f);
 	}
+
 	// 上方向
-	if (pad.AKeyRZ < 0/* && Utility::Rad2DegF(angle_.x) >= -30.0f*/)
-	{
-		axisDeg.x = pad.AKeyRZ;
-		// 方向を正規化
-		axisDeg = VNorm(axisDeg);
-		axisDeg = VScale(axisDeg, 3.0f);
-	}
-	// 下方向
-	if (pad.AKeyRZ > 0/* && Utility::Rad2DegF(angle_.x) <= 30.0f*/)
+	if (pad.AKeyRZ > 0 && Utility::Rad2DegF(angle_.x) <= 50.0f)
 	{
 		axisDeg.x = pad.AKeyRZ;
 		// 方向を正規化
@@ -812,6 +812,14 @@ void Camera::GamePadController()
 		axisDeg = VScale(axisDeg, 3.0f);
 	}
 
+	// 下方向
+	if (pad.AKeyRZ < 0 && Utility::Rad2DegF(angle_.x) >= -20.0f)
+	{
+		axisDeg.x = pad.AKeyRZ;
+		// 方向を正規化
+		axisDeg = VNorm(axisDeg);
+		axisDeg = VScale(axisDeg, 3.0f);
+	}
 
 	if (axisDeg.x != 0.0f || axisDeg.y != 0.0f)
 	{

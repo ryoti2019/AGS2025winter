@@ -165,7 +165,7 @@ void ActorCreate::AreaCollision()
 		{
 
 			// Area1Collisionにキャスト
-			auto area1Collision = std::dynamic_pointer_cast<Area1Collision>(stage);
+			std::shared_ptr<Area1Collision> area1Collision = std::dynamic_pointer_cast<Area1Collision>(stage);
 
 			// エリア1に衝突しているか判定
 			if (area1Collision && area1Collision->GetIsCollision() && !isCollisionArea1_)
@@ -185,7 +185,7 @@ void ActorCreate::AreaCollision()
 			}
 
 			// Area2Collisionにキャスト
-			auto area2Collision = std::dynamic_pointer_cast<Area2Collision>(stage);
+			std::shared_ptr<Area2Collision> area2Collision = std::dynamic_pointer_cast<Area2Collision>(stage);
 
 			// エリア2に衝突しているか判定
 			if (area2Collision && area2Collision->GetIsCollision() && !isCollisionArea2_)
@@ -205,7 +205,7 @@ void ActorCreate::AreaCollision()
 			}
 
 			// Area3Collisionにキャスト
-			auto area3Collision = std::dynamic_pointer_cast<Area3Collision>(stage);
+			std::shared_ptr<Area3Collision> area3Collision = std::dynamic_pointer_cast<Area3Collision>(stage);
 
 			// エリア3に衝突しているか判定
 			if (area3Collision && area3Collision->GetIsCollision() && !isCollisionArea3_)
@@ -225,7 +225,7 @@ void ActorCreate::AreaCollision()
 			}
 
 			// Area4Collisionにキャスト
-			auto area4Collision = std::dynamic_pointer_cast<Area4Collision>(stage);
+			std::shared_ptr<Area4Collision> area4Collision = std::dynamic_pointer_cast<Area4Collision>(stage);
 
 			// エリア4に衝突しているか判定
 			if (area4Collision && area4Collision->GetIsCollision() && !isCollisionArea4_)

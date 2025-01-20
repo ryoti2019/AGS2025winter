@@ -97,6 +97,10 @@ void ActorBase::InitParameter()
 {
 }
 
+void ActorBase::InitImage()
+{
+}
+
 void ActorBase::InitAnimation()
 {
 }

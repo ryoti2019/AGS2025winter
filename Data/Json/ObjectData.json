@@ -17,6 +17,8 @@
 				"INIT_ANGLE": 90.0,
 				"HP": 100,
 				"HP_BAR_LENGTH": 360,
+				"SPECIAL_ATTACK_MAX_GAUGE": 200,
+				"SPECIAL_ATTACK_GAUGE_LENGTH": 360,
 				"ACTOR_TYPE": 0,
 				"ANIM": [
 					{

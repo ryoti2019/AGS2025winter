@@ -302,7 +302,7 @@ void Enemy::Update(const float deltaTime)
 	{
 		Gravity(gravityScale_);
 	}
-
+	 
 	// モデル情報を更新
 	transform_->Update();
 
@@ -462,7 +462,7 @@ void Enemy::AttackHit(const int damage, const int state)
 
 	// HPを減らす
 	SubHp(damage);
-	
+
 	if (hp_ <= 0)
 	{
 
@@ -571,7 +571,7 @@ void Enemy::AttackHitCheck(const int state)
 void Enemy::DeathAnim(int state)
 {
 
-	// ノーマルの死亡アニメーションかチェック
+	// その場で死ぬ死亡アニメーションかチェック
 	for (const auto hitState : deathState_)
 	{
 		if (hitState == static_cast<PlayerState>(state))
@@ -581,7 +581,7 @@ void Enemy::DeathAnim(int state)
 		}
 	}
 
-	// ノーマルの死亡アニメーションかチェック
+	// 吹っ飛んで死ぬ死亡アニメーションかチェック
 	for (const auto hitState : hitFlyDeathState_)
 	{
 		if (hitState == static_cast<PlayerState>(state))
@@ -675,6 +675,9 @@ void Enemy::ChangePunch()
 	// 右手の攻撃判定をなくす
 	collisionData_.isRightHandAttack = false;
 
+	// ダメージ量
+	damage_ = ATTACK_PUNCH_DAMAGE;
+
 	// スピード
 	speed_ = ATTACK_MOVE_POW;
 
@@ -687,6 +690,9 @@ void Enemy::ChangeKick()
 
 	// 右足の攻撃判定をなくす
 	collisionData_.isRightFootAttack = false;
+
+	// ダメージ量
+	damage_ = ATTACK_KICK_DAMAGE;
 
 	// スピード
 	speed_ = ATTACK_MOVE_POW;

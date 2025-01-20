@@ -35,8 +35,8 @@ private:
 	// タイトルロゴの画像
 	int titleLogoImg_;
 
-	// Press A Bottonの画像
-	int pressABottonImg_;
+	// Press A Buttonの画像
+	int pressAButtonImg_;
 
 	// Press A Botton用のカウンタ
 	int frameCount_;

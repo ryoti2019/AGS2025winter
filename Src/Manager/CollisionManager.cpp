@@ -5,6 +5,7 @@
 #include <vector>
 #include <DxLib.h>
 #include "CollisionManager.h"
+#include "../Object/Player.h"
 #include "../Object/Stage.h"
 #include "../Object/StageCollision.h"
 #include "../Object/Area1Collision.h"
@@ -49,6 +50,9 @@ void CollisionManager::Update(const float deltaTime)
 
 	// 制限エリアが出てくる場所との当たり判定
 	CheckRestrictedAreasCollision();
+
+	// オブジェクトの当たり判定を消す
+	ObjectErasure();
 
 }
 
@@ -168,6 +172,9 @@ void CollisionManager::CheckAttackCollision(const float deltaTime)
 				// このアニメーション中の無敵時間が消えていなければ処理しない
 				if (a->second > 0.0f)continue;
 
+				// HPが0以下だったら処理しない
+				if (target->GetHp() <= 0)continue;
+
 				// 右手の判定
 				if (HitCheck_Capsule_Capsule(attacker->GetCollisionData().rightHandCapsuleUpPos, attacker->GetCollisionData().rightHandCapsuleDownPos,
 					attacker->GetCollisionData().handAndFootCollisionRadius,
@@ -222,6 +229,16 @@ void CollisionManager::OnAttackCollision(const std::shared_ptr<ActorBase>& attac
 
 	// 攻撃が当たったフラグをtrueにする
 	attacker->SetIsHitAttack(true);
+
+	// プレイヤーにキャスト
+	std::shared_ptr<Player> player = std::dynamic_pointer_cast<Player>(attacker);
+
+	// プレイヤーか判定
+	if (player)
+	{
+		// 敵に与えた攻撃の半分を必殺技ゲージに追加
+		attacker->AddSpecialAttackGauge(attacker->GetDamage() / 10);
+	}
 
 	// 当たったターゲットの情報を取得
 	auto& data = isCloseRangeAttackHitData_[target];
@@ -284,6 +301,9 @@ void CollisionManager::CheckProjectileCollision(const float deltaTime)
 
 				// このアニメーション中の無敵時間が消えていなければ処理しない
 				if (hitData->second > 0.0f)continue;
+
+				// HPが0以下だったら処理しない
+				if (target->GetHp() <= 0)continue;
 
 				// 飛び道具の判定
 				if (HitCheck_Sphere_Capsule(attacker->GetCollisionData().projectilePos, attacker->GetCollisionData().projectileCollisionRadius,
@@ -519,6 +539,7 @@ void CollisionManager::CheckCameraAndStageCollision()
 
 		}
 	}
+
 }
 
 void CollisionManager::CheckResolveCollision()
@@ -646,6 +667,42 @@ void CollisionManager::CheckRestrictedAreasCollision()
 			{
 				// 制限エリアの当たり判定を付ける
 				stageData->SetIsCollision(true);
+			}
+
+		}
+	}
+
+}
+
+void CollisionManager::ObjectErasure()
+{
+
+	// データの中身があるかチェック
+	for (const auto actorType : objectData_)
+	{
+
+		// データを探す
+		const auto& actorData = collisionActorData_.find(static_cast<ActorType>(actorType));
+		
+		// オブジェクトデータの中身があるかチェック
+		if (actorData == collisionActorData_.end())continue;
+		
+		// データを取り出す
+		auto& data = collisionActorData_.at(actorType);
+
+		for (const std::shared_ptr<ActorBase>& objectData : actorData->second)
+		{
+
+			if (!objectData)continue;
+
+			// 非アクティブ状態かチェック
+			if (!objectData->GetIsActive() && objectData->GetHp() <= 0)
+			{
+				// わたってきた引数と同じポインタがあれば配列から消す
+				std::erase_if(data, [&objectData](std::shared_ptr<ActorBase> actVal)
+					{
+						return objectData == actVal;
+					});
 			}
 
 		}

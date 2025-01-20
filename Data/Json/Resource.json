@@ -3,7 +3,16 @@
     {
       "ImageData": {
         "Player": [
-
+          {
+            "TYPE": 1,
+            "PATH": "Player/PlayerIcon.png",
+            "SRC": "IMAGE_PLAYER_ICON"
+          },
+          {
+            "TYPE": 1,
+            "PATH": "Player/HpBar.png",
+            "SRC": "IMAGE_PLAYER_HP_BAR"
+          }
         ],
         "Enemy": [
 
@@ -26,8 +35,8 @@
           },
           {
             "TYPE": 1,
-            "PATH": "TitleScene/Press A Botton Or Space.png",
-            "SRC": "IMAGE_PRESS_A_BOTTON_OR_SPACE"
+            "PATH": "TitleScene/Press A Button Or Space.png",
+            "SRC": "IMAGE_PRESS_A_BUTTON_OR_SPACE"
           }
         ],
         "GameScene": [

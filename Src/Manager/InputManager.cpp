@@ -315,10 +315,10 @@ InputManager::JOYPAD_IN_STATE InputManager::GetJPadInputState(JOYPAD_NO no)
 		idx = static_cast<int>(JOYPAD_BTN::TOP);
 		ret.ButtonsNew[idx] = d.Buttons[3];// Yボタン
 
-		idx = static_cast<int>(JOYPAD_BTN::L_BOTTON);
+		idx = static_cast<int>(JOYPAD_BTN::L_BUTTON);
 		ret.ButtonsNew[idx] = d.Buttons[4];// Lボタン
 
-		idx = static_cast<int>(JOYPAD_BTN::R_BOTTON);
+		idx = static_cast<int>(JOYPAD_BTN::R_BUTTON);
 		ret.ButtonsNew[idx] = d.Buttons[5];// Rボタン
 
 		idx = static_cast<int>(JOYPAD_BTN::L_TRIGGER);
@@ -365,22 +365,22 @@ InputManager::JOYPAD_IN_STATE InputManager::GetJPadInputState(JOYPAD_NO no)
 		idx = static_cast<int>(JOYPAD_BTN::TOP);
 		ret.ButtonsNew[idx] = d.Buttons[3];// △
 
-		idx = static_cast<int>(JOYPAD_BTN::L_BOTTON);
+		idx = static_cast<int>(JOYPAD_BTN::L_BUTTON);
 		ret.ButtonsNew[idx] = d.Buttons[4];// L1ボタン
 
-		idx = static_cast<int>(JOYPAD_BTN::R_BOTTON);
+		idx = static_cast<int>(JOYPAD_BTN::R_BUTTON);
 		ret.ButtonsNew[idx] = d.Buttons[5];// R1ボタン
 
-		idx = static_cast<int>(JOYPAD_BTN::ZL_BOTTON);
+		idx = static_cast<int>(JOYPAD_BTN::ZL_BUTTON);
 		ret.ButtonsNew[idx] = d.Buttons[6];// L2ボタン
 
-		idx = static_cast<int>(JOYPAD_BTN::ZR_BOTTON);
+		idx = static_cast<int>(JOYPAD_BTN::ZR_BUTTON);
 		ret.ButtonsNew[idx] = d.Buttons[7];// R2ボタン
 
-		idx = static_cast<int>(JOYPAD_BTN::BACK_BOTTON);
+		idx = static_cast<int>(JOYPAD_BTN::BACK_BUTTON);
 		ret.ButtonsNew[idx] = d.Buttons[8]; // SHAREボタン
 
-		idx = static_cast<int>(JOYPAD_BTN::START_BOTTON);
+		idx = static_cast<int>(JOYPAD_BTN::START_BUTTON);
 		ret.ButtonsNew[idx] = d.Buttons[9]; // OPTIONボタン
 
 		idx = static_cast<int>(JOYPAD_BTN::L_TRIGGER);

@@ -177,8 +177,8 @@ void Boss::InitParameter()
 	hp_ = HP_MAX;
 
 	// スーパーアーマーHP
-	//superArmorHp_ = SUPER_ARMOR_HP;
-	superArmorHp_ = 0;
+	superArmorHp_ = SUPER_ARMOR_HP;
+	//superArmorHp_ = 0;
 
 	// スーパーアーマーが回復中のHP
 	superArmorRecoveryHp_ = 0;
@@ -465,7 +465,7 @@ void Boss::Update(const float deltaTime)
 	{
 		Gravity(gravityScale_);
 	}
-
+ 
 	// モデル情報を更新
 	transform_->Update();
 
@@ -626,19 +626,19 @@ void Boss::ResetSuperArmorCoolTime(const float deltaTime)
 {
 
 	// スーパーアーマーHPが0以下か判定
-	//if (superArmorHp_ <= 0)
-	//{
+	if (superArmorHp_ <= 0)
+	{
 
-	//	// クールタイムを計算
-	//	superArmorCoolTimeCnt_ -= deltaTime;
+		// クールタイムを計算
+		superArmorCoolTimeCnt_ -= deltaTime;
 
-	//	// 1秒あたりの回復量
-	//	float recoveryVolume = SUPER_ARMOR_HP / SUPER_ARMOR_HP_COOL_TIME;
+		// 1秒あたりの回復量
+		float recoveryVolume = SUPER_ARMOR_HP / SUPER_ARMOR_HP_COOL_TIME;
 
-	//	// スーパーアーマーを回復させる
-	//	superArmorRecoveryHp_ += recoveryVolume * deltaTime;
-	//	
-	//}
+		// スーパーアーマーを回復させる
+		superArmorRecoveryHp_ += recoveryVolume * deltaTime;
+		
+	}
 
 	if (superArmorCoolTimeCnt_ <= 0.0f)
 	{
@@ -652,6 +652,31 @@ void Boss::ResetSuperArmorCoolTime(const float deltaTime)
 		// スーパーアーマーの回復中の数値をリセット
 		superArmorRecoveryHp_ = 0.0f;
 
+	}
+
+}
+
+void Boss::DeathAnim(int state)
+{
+
+	// その場で死ぬ死亡アニメーションかチェック
+	for (const auto hitState : deathState_)
+	{
+		if (hitState == static_cast<PlayerState>(state))
+		{
+			ChangeState(BossState::DEATH);
+			return;
+		}
+	}
+
+	// 吹っ飛んで死ぬ死亡アニメーションかチェック
+	for (const auto hitState : hitFlyDeathState_)
+	{
+		if (hitState == static_cast<PlayerState>(state))
+		{
+			ChangeState(BossState::HIT_FLY);
+			return;
+		}
 	}
 
 }

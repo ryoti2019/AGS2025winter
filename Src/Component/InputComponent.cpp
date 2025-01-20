@@ -66,6 +66,15 @@ void InputComponent::Move()
 void InputComponent::Attack(const float deltaTime)
 {
 
+	// •KŽE‹Z‚É‘JˆÚ
+	if (inputController_->SpecialAttack() && player_->GetState() != static_cast<int>(PlayerState::ATTACK_SPECIAL_PUNCH)
+		&& player_->GetSpecialAttackGauge() >= player_->SPECIAL_ATTACK_MAX_GAUGE)
+	{
+		player_->ChangeState(PlayerState::POWER_CHARGE);
+	}
+
+	if (static_cast<PlayerState>(player_->GetState()) == PlayerState::POWER_CHARGE || static_cast<PlayerState>(player_->GetState()) == PlayerState::ATTACK_SPECIAL_PUNCH)return;
+
 	// —­‚ßƒpƒ“ƒ`—p‚Ìƒ{ƒ^ƒ“‚ð’·‰Ÿ‚µ‚µ‚Ä‚¢‚é‚©
 	if (inputController_->ChargeAttack() && player_->GetChargeCnt() <= player_->ATTACK_CHARGE_PUNCH_TIME)
 	{
@@ -112,12 +121,6 @@ void InputComponent::Attack(const float deltaTime)
 	if (inputController_->Upper() && player_->GetState() != static_cast<int>(PlayerState::ATTACK_UPPER))
 	{
 		player_->ChangeState(PlayerState::ATTACK_UPPER);
-	}
-
-	// •KŽE‹Z‚É‘JˆÚ
-	if (inputController_->SpecialAttack() && player_->GetState() != static_cast<int>(PlayerState::ATTACK_SPECIAL_PUNCH))
-	{
-		player_->ChangeState(PlayerState::POWER_CHARGE);
 	}
 
 	//ƒRƒ“ƒ{’†‚©”»’è

@@ -178,7 +178,7 @@ private:
 	// 吹っ飛んで死ぬときのプレイヤーの攻撃
 	const std::vector<PlayerState>& hitFlyDeathState_ =
 	{
-		{PlayerState::ATTACK_RIGHT_KICK}
+		{PlayerState::ATTACK_RIGHT_KICK},
 	};
 
 	// 状態
@@ -261,6 +261,9 @@ private:
 
 	// スーパーアーマーのHPを回復するまでのクールタイム
 	void ResetSuperArmorCoolTime(const float deltaTime);
+
+	// HPが0になったら死亡アニメーションに遷移
+	void DeathAnim(int state)override;
 
 };
 
