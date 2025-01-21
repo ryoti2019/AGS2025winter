@@ -3,7 +3,7 @@
 #include "../Object/Common/Transform.h"
 #include "../Object/ActorBase.h"
 
-DrawComponent::DrawComponent(std::shared_ptr<ActorBase> actor)
+DrawComponent::DrawComponent(std::weak_ptr<ActorBase> actor)
 {
 	actor_ = actor;
 }
@@ -12,7 +12,7 @@ void DrawComponent::Update()
 {
 
 	// ƒ‚ƒfƒ‹•`‰æ
-	MV1DrawModel(actor_->GetTransform()->modelId);
+	MV1DrawModel(actor_.lock()->GetTransform()->modelId);
 
 	// ƒfƒoƒbƒO•`‰æ
 	DrawDebug();
@@ -38,10 +38,10 @@ void DrawComponent::DrawDebug()
 	//DrawCapsule3D(actor_->GetCollisionData().leftFootCapsuleUpPos, actor_->GetCollisionData().leftFootCapsuleDownPos, actor_->GetCollisionData().handAndFootCollisionRadius, 10, 0xff0000, 0xff0000, false);
 
 	// ‘Ì‚Ì“–‚½‚è”»’è‚Ì•`‰æ
-	DrawCapsule3D(actor_->GetCollisionData().bodyCapsuleUpPos, actor_->GetCollisionData().bodyCapsuleDownPos, actor_->GetCollisionData().bodyCollisionRadius, 10, 0xff0000, 0xff0000, false);
+	DrawCapsule3D(actor_.lock()->GetCollisionData().bodyCapsuleUpPos, actor_.lock()->GetCollisionData().bodyCapsuleDownPos, actor_.lock()->GetCollisionData().bodyCollisionRadius, 10, 0xff0000, 0xff0000, false);
 
 	// •KE‹Z‚Ì“–‚½‚è”»’è‚Ì•`‰æ
-	DrawSphere3D(actor_->GetCollisionData().projectilePos, actor_->GetCollisionData().projectileCollisionRadius, 10, 0xff0000, 0xff0000, false);
+	DrawSphere3D(actor_.lock()->GetCollisionData().projectilePos, actor_.lock()->GetCollisionData().projectileCollisionRadius, 10, 0xff0000, 0xff0000, false);
 
 	// ’n–Ê‚Æ‚Ì“–‚½‚è”»’è‚Ì‚Ìü‚Ì•`‰æ
 	//DrawLine3D(

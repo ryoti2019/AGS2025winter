@@ -57,6 +57,12 @@ public:
 
 #pragma endregion
 
+#pragma region ゲームクリアシーン
+
+		IMAGE_GAME_CLEAR,
+
+#pragma endregion
+
 #pragma endregion
 
 #pragma region モデルとアニメーション
@@ -77,7 +83,10 @@ public:
 		ANIM_PLAYER_POWER_CHARGE,
 		ANIM_PLAYER_HIT_HEAD,
 		ANIM_PLAYER_HIT_BODY,
+		ANIM_PLAYER_DEATH,
 		ANIM_PLAYER_TITLE_IDLE,
+		ANIM_PLAYER_VICTORY,
+
 #pragma endregion
 
 #pragma region 敵
@@ -105,15 +114,16 @@ public:
 		ANIM_BOSS_PUNCH,
 		ANIM_BOSS_KICK,
 		ANIM_BOSS_PROJECTILE,
-		ANIM_HIT_HEAD,
-		ANIM_HIT_BODY,
-		ANIM_HIT_FLY,
-		ANIM_HIT_FLINCH_UP,
-		ANIM_HIT_KNOCK_BACK,
-		ANIM_KIP_UP,
+		ANIM_BOSS_HIT_HEAD,
+		ANIM_BOSS_HIT_BODY,
+		ANIM_BOSS_HIT_FLY,
+		ANIM_BOSS_HIT_FLINCH_UP,
+		ANIM_BOSS_HIT_KNOCK_BACK,
+		ANIM_BOSS_KIP_UP,
 		ANIM_BOSS_JUMP_IDLE,
 		ANIM_BOSS_LAND,
-		ANIM_DEATH,
+		ANIM_BOSS_CALL,
+		ANIM_BOSS_DEATH,
 
 #pragma endregion
 
@@ -234,6 +244,12 @@ public:
 
 #pragma endregion
 
+#pragma region ゲームシーン
+
+		"IMAGE_GAME_CLEAR",
+
+#pragma endregion
+
 #pragma endregion
 
 #pragma region モデルとアニメーション
@@ -254,7 +270,9 @@ public:
 		"ANIM_PLAYER_POWER_CHARGE",
 		"ANIM_PLAYER_HIT_HEAD",
 		"ANIM_PLAYER_HIT_BODY",
+		"ANIM_PLAYER_DEATH",
 		"ANIM_PLAYER_TITLE_IDLE",
+		"ANIM_PLAYER_VICTORY",
 
 #pragma endregion
 
@@ -283,15 +301,16 @@ public:
 		"ANIM_BOSS_PUNCH",
 		"ANIM_BOSS_KICK",
 		"ANIM_BOSS_PROJECTILE",
-		"ANIM_HIT_HEAD",
-		"ANIM_HIT_BODY",
-		"ANIM_HIT_FLY",
-		"ANIM_HIT_FLINCH_UP",
-		"ANIM_HIT_KNOCK_BACK",
-		"ANIM_KIP_UP",
+		"ANIM_BOSS_HIT_HEAD",
+		"ANIM_BOSS_HIT_BODY",
+		"ANIM_BOSS_HIT_FLY",
+		"ANIM_BOSS_HIT_FLINCH_UP",
+		"ANIM_BOSS_HIT_KNOCK_BACK",
+		"ANIM_BOSS_KIP_UP",
 		"ANIM_BOSS_JUMP_IDLE",
 		"ANIM_BOSS_LAND",
-		"ANIM_DEATH",
+		"ANIM_BOSS_CALL",
+		"ANIM_BOSS_DEATH",
 
 #pragma endregion
 

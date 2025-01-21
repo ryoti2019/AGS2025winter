@@ -24,7 +24,9 @@ public:
 		"POWER_CHARGE",
 		"HIT_HEAD",
 		"HIT_BODY",
-		"TITLE_IDLE"
+		"DEATH",
+		"TITLE_IDLE",
+		"VICTORY"
 	};
 
 	TitlePlayer(const VECTOR& pos, const json& data);
@@ -47,9 +49,6 @@ private:
 
 	// アニメーションの初期化
 	void InitAnimation()override;
-
-	// ImGuiのデバッグ描画の更新
-	void UpdateDebugImGui()override;
 
 	// 状態遷移
 	void ChangeState(const PlayerState state);

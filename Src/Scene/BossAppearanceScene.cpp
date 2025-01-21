@@ -58,6 +58,4 @@ void BossAppearanceScene::Draw(const float deltaTime)
 	// アクターの管理クラスの更新
 	actorManager_->Draw(deltaTime);
 
-	DrawFormatString(0, 0, 0xff0000, "BossAppearanceScene");
-
 }

@@ -303,6 +303,12 @@ void Enemy::Update(const float deltaTime)
 		Gravity(gravityScale_);
 	}
 	 
+	// HPが0以下だったら死ぬアニメーションに遷移
+	if (state_ != EnemyState::DEATH && state_ != EnemyState::HIT_FLY && hp_ <= 0)
+	{
+		ChangeState(EnemyState::DEATH);
+	}
+
 	// モデル情報を更新
 	transform_->Update();
 

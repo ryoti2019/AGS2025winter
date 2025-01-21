@@ -16,6 +16,8 @@ enum class PlayerState
 	POWER_CHARGE,
 	HIT_HEAD,
 	HIT_BODY,
+	DEATH,
 	TITLE_IDLE,
+	VICTORY,
 	MAX
 };

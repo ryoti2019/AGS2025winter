@@ -17,7 +17,8 @@ enum class SCENE_ID
 	GAME,
 	BOSS_APPEARANCE,
 	BOSS_BATTLE,
-	GAMEOVER,
+	GAME_OVER,
+	GAME_CLEAR
 };
 
 class SceneManager
@@ -86,7 +87,8 @@ private:
 	void ChangeGameScene();
 	void ChangeBossAppearanceScene();
 	void ChangeBossBattleScene();
-	//void ChangeGameOverScene();
+	void ChangeGameOverScene();
+	void ChangeGameClearScene();
 
 	// シーン遷移中判定
 	bool isSceneChanging_;
@@ -96,6 +98,9 @@ private:
 
 	// 操作説明のフラグ
 	bool isOperation_;
+
+	// 最初の1回目は通らない
+	bool isFirst_;
 
 	// デフォルトコンストラクタをprivateにして、
 	// 外部から生成できない様にする

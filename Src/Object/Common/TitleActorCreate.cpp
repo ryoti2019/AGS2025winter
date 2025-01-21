@@ -56,11 +56,3 @@ TitleActorCreate::TitleActorCreate()
 	actorManager->ActiveData(ActorType::PLAYER, { -80000.0f,-19500.0f,25900.0f });
 
 }
-
-void TitleActorCreate::Update()
-{
-}
-
-void TitleActorCreate::Draw()
-{
-}

@@ -51,6 +51,4 @@ void BossBattleScene::Draw(const float deltaTime)
 	// アクターの生成クラスの描画
 	actorCreate_->Draw();
 
-	DrawFormatString(0, 0, 0xff0000, "BossBattleScene");
-
 }

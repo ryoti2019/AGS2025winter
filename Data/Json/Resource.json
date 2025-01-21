@@ -80,6 +80,13 @@
             "PATH": "GameScene/KeyboardUserGuideSpecialAttack.png",
             "SRC": "IMAGE_KEYBOARD_USER_GUIDE_SPECIAL_ATTACK"
           }
+        ],
+        "GameClearScene": [
+          {
+            "TYPE": 1,
+            "PATH": "GameScene/GameClear.png",
+            "SRC": "IMAGE_GAME_CLEAR"
+          }
         ]
       },
       "ModelData": {
@@ -156,8 +163,18 @@
           },
           {
             "TYPE": 3,
+            "PATH": "Player/Death.mv1",
+            "SRC": "ANIM_PLAYER_DEATH"
+          },
+          {
+            "TYPE": 3,
             "PATH": "Player/TitleIdle.mv1",
             "SRC": "ANIM_PLAYER_TITLE_IDLE"
+          },
+          {
+            "TYPE": 3,
+            "PATH": "Player/Victory.mv1",
+            "SRC": "ANIM_PLAYER_VICTORY"
           }
         ],
         "Enemy": [
@@ -256,32 +273,32 @@
           {
             "TYPE": 3,
             "PATH": "Boss/HitHead.mv1",
-            "SRC": "ANIM_HIT_HEAD"
+            "SRC": "ANIM_BOSS_HIT_HEAD"
           },
           {
             "TYPE": 3,
             "PATH": "Boss/HitBody.mv1",
-            "SRC": "ANIM_HIT_BODY"
+            "SRC": "ANIM_BOSS_HIT_BODY"
           },
           {
             "TYPE": 3,
             "PATH": "Boss/HitFly.mv1",
-            "SRC": "ANIM_HIT_FLY"
+            "SRC": "ANIM_BOSS_HIT_FLY"
           },
           {
             "TYPE": 3,
             "PATH": "Boss/FlinchUp.mv1",
-            "SRC": "ANIM_HIT_FLINCH_UP"
+            "SRC": "ANIM_BOSS_HIT_FLINCH_UP"
           },
           {
             "TYPE": 3,
             "PATH": "Boss/HitBack.mv1",
-            "SRC": "ANIM_HIT_KNOCK_BACK"
+            "SRC": "ANIM_BOSS_HIT_KNOCK_BACK"
           },
           {
             "TYPE": 3,
             "PATH": "Boss/KipUp.mv1",
-            "SRC": "ANIM_KIP_UP"
+            "SRC": "ANIM_BOSS_KIP_UP"
           },
           {
             "TYPE": 3,
@@ -301,7 +318,7 @@
           {
             "TYPE": 3,
             "PATH": "Boss/Death.mv1",
-            "SRC": "ANIM_DEATH"
+            "SRC": "ANIM_BOSS_DEATH"
           }
         ],
         "Stage": [

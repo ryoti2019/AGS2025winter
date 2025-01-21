@@ -83,7 +83,7 @@ void Application::Destroy()
 	InputManager::GetInstance().Destroy();
 	ResourceManager::GetInstance().Destroy();
 	SceneManager::GetInstance().Destroy();
-	ImGuiWrapper::GetInstance().Destroy();
+	//ImGuiWrapper::GetInstance().Destroy();
 
 	Effkseer_End();
 
@@ -133,13 +133,13 @@ Application::Application()
 	SetUseDirectInputFlag(true);
 	InputManager::CreateInstance();
 
-	// リソース管理初期化
+	//// リソース管理初期化
 	ResourceManager::CreateInstance();
 
-	// シーン管理初期化
+	//// シーン管理初期化
 	SceneManager::CreateInstance();
 
-	// デバッグ描画初期化
-	ImGuiWrapper::CreateInstance();
+	//// デバッグ描画初期化
+	//ImGuiWrapper::CreateInstance();
 
 }

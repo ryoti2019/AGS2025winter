@@ -10,6 +10,7 @@
 #include "../Scene/GameScene.h"
 #include "../Scene/BossAppearanceScene.h"
 #include "../Scene/BossBattleScene.h"
+#include "../Scene/GameClearScene.h"
 
 SceneManager* SceneManager::instance_ = nullptr;
 
@@ -26,7 +27,7 @@ void SceneManager::Init()
 {
 
 	// シーンID
-	sceneId_ = SCENE_ID::TITLE;
+	sceneId_ = SCENE_ID::GAME_CLEAR;
 	waitSceneId_ = SCENE_ID::NONE;
 
 	//関数ポインタの初期化
@@ -34,7 +35,8 @@ void SceneManager::Init()
 	sceneChange_.emplace(SCENE_ID::GAME, std::bind(&SceneManager::ChangeGameScene, this));
 	sceneChange_.emplace(SCENE_ID::BOSS_APPEARANCE, std::bind(&SceneManager::ChangeBossAppearanceScene, this));
 	sceneChange_.emplace(SCENE_ID::BOSS_BATTLE, std::bind(&SceneManager::ChangeBossBattleScene, this));
-	//sceneChange_.emplace(SCENE_ID::GAMEOVER, std::bind(&SceneManager::ChangeGameOverScene, this));
+	sceneChange_.emplace(SCENE_ID::GAME_OVER, std::bind(&SceneManager::ChangeGameOverScene, this));
+	sceneChange_.emplace(SCENE_ID::GAME_CLEAR, std::bind(&SceneManager::ChangeGameClearScene, this));
 
 	// フェーダーの初期化
 	fader_ = std::make_unique<Fader>();
@@ -43,8 +45,8 @@ void SceneManager::Init()
 	camera_ = std::make_shared<Camera>();
 
 	// シーンの初期化
-	scene_ = std::make_unique<TitleScene>();
-	scene_->Init();
+	//scene_ = std::make_unique<GameClearScene>();
+	//scene_->Init();
 
 	// シーン遷移中判定
 	isSceneChanging_ = false;
@@ -52,11 +54,14 @@ void SceneManager::Init()
 	// 3D用の設定
 	Init3D();
 
+	// 最初だけReleaseに入らないようにする
+	isFirst_ = true;
+
 	// 初期シーンの設定
-	DoChangeScene(SCENE_ID::TITLE);
+	DoChangeScene(SCENE_ID::GAME_CLEAR);
 
 	// ゲームパッドを使うときtrue
-	isGamePad_ = false;
+	isGamePad_ = true;
 
 	// 操作説明のフラグ
 	isOperation_ = true;
@@ -197,8 +202,11 @@ void SceneManager::Fade(void)
 void SceneManager::DoChangeScene(const SCENE_ID& sceneId)
 {
 
-	// リソースの解放
-	ResourceManager::GetInstance().Release();
+	if (!isFirst_)
+	{
+		// リソースの解放
+		ResourceManager::GetInstance().Release();
+	}
 
 	// シーンを変更する
 	sceneId_ = sceneId;
@@ -211,6 +219,9 @@ void SceneManager::DoChangeScene(const SCENE_ID& sceneId)
 
 	// 待機中のシーンIDを初期化
 	waitSceneId_ = SCENE_ID::NONE;
+
+	// 最初通ったら通るようになる
+	isFirst_ = false;
 
 }
 
@@ -242,4 +253,14 @@ void SceneManager::ChangeBossAppearanceScene()
 void SceneManager::ChangeBossBattleScene()
 {
 	scene_ = std::make_unique<BossBattleScene>();
+}
+
+void SceneManager::ChangeGameOverScene()
+{
+	scene_ = std::make_unique<GameClearScene>();
+}
+
+void SceneManager::ChangeGameClearScene()
+{
+	scene_ = std::make_unique<GameClearScene>();
 }

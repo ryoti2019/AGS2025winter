@@ -112,6 +112,7 @@ void Player::InitFunctionPointer()
 	stateChange_.emplace(PlayerState::POWER_CHARGE, std::bind(&Player::ChangePowerCharge, this));
 	stateChange_.emplace(PlayerState::HIT_HEAD, std::bind(&Player::ChangeHitHead, this));
 	stateChange_.emplace(PlayerState::HIT_BODY, std::bind(&Player::ChangeHitBody, this));
+	stateChange_.emplace(PlayerState::DEATH, std::bind(&Player::ChangeDeath, this));
 
 }
 
@@ -516,7 +517,7 @@ bool Player::GetComboState()
 
 }
 
-void Player::AttackHit(const int damage, const int type)
+void Player::AttackHit(const int damage, const int state)
 {
 
 	// スーパーアーマー状態か判定
@@ -526,11 +527,22 @@ void Player::AttackHit(const int damage, const int type)
 	}
 
 	// どのアニメーションかチェックする
-	AttackHitCheck(type);
+	AttackHitCheck(state);
 
 	// HPを減らす
 	SubHp(damage);
 	
+	if (hp_ <= 0)
+	{
+
+		// 0以下にならないようにする
+		hp_ = 0;
+
+		// 死ぬアニメーションに遷移
+		DeathAnim(state);
+
+	}
+
 	// アニメーションの再生時間をリセットする
 	animationController_->ResetStepAnim();
 
@@ -627,6 +639,31 @@ void Player::Rotation()
 	if (cameraAngleY != 0.0f)
 	{
 		LazyRotation(cameraAngleY + angle);
+	}
+
+}
+
+void Player::DeathAnim(int state)
+{
+
+	// 死亡アニメーションかチェック
+	for (const auto hitState : deathEnemyState_)
+	{
+		if (hitState == static_cast<EnemyState>(state))
+		{
+			ChangeState(PlayerState::DEATH);
+			return;
+		}
+	}
+
+	// 死亡アニメーションかチェック
+	for (const auto hitState : deathBossState_)
+	{
+		if (hitState == static_cast<BossState>(state))
+		{
+			ChangeState(PlayerState::DEATH);
+			return;
+		}
 	}
 
 }
@@ -875,6 +912,11 @@ void Player::ChangeHitBody()
 	// スピード
 	speed_ = ATTACK_MOVE_POW;
 
+}
+
+void Player::ChangeDeath()
+{
+	stateUpdate_ = std::bind(&Player::UpdateDeath, this, std::placeholders::_1);
 }
 
 void Player::UpdateIdle(const float deltaTime)
@@ -1211,4 +1253,8 @@ void Player::UpdateHitBody(const float deltaTime)
 		ChangeState(PlayerState::IDLE);
 	}
 
+}
+
+void Player::UpdateDeath(const float deltaTime)
+{
 }

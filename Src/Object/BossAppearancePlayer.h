@@ -23,7 +23,10 @@ public:
 		"ATTACK_SPECIAL_PUNCH",
 		"POWER_CHARGE",
 		"HIT_HEAD",
-		"HIT_BODY"
+		"HIT_BODY",
+		"DEATH",
+		"TITLE_IDLE",
+		"VICTORY"
 	};
 
 	BossAppearancePlayer(const VECTOR& pos, const json& data);

@@ -9,6 +9,7 @@
 #include "../Scene/GameScene.h"
 #include "../Scene/BossBattleScene.h"
 #include "../Scene/BossAppearanceScene.h"
+#include "../Scene/GameClearScene.h"
 #include "../Object/ActorBase.h"
 #include "../Common/Vector2F.h"
 
@@ -22,7 +23,28 @@ class ActorManager
 public:
 
 	ActorManager();
-	~ActorManager() = default;
+	//~ActorManager() = default;
+	~ActorManager()
+	{
+		for (const auto& m : deactiveActorData_)
+		{
+			for (const auto& v : m.second)
+			{
+				int cnt = v.use_count();
+			}
+		}
+		deactiveActorData_.clear();
+		for (const auto& m : activeActorData_)
+		{
+			for (const auto& v : m.second)
+			{
+				int cnt = v.use_count();
+				int q = 1;
+				q = 2;
+			}
+		}
+		activeActorData_.clear();
+	}
 
 	void Init();
 	void Update(const float deltaTime);
@@ -37,6 +59,8 @@ public:
 
 	// 非アクティブになったものを格納
 	void DeactiveData(const std::shared_ptr<ActorBase>& actor);
+
+	const std::unordered_map<ActorType, std::vector<std::shared_ptr<ActorBase>>>& const GetDeActiveActorData() { return deactiveActorData_; };
 
 	const std::unordered_map<ActorType, std::vector<std::shared_ptr<ActorBase>>>& const GetActiveActorData() { return activeActorData_; };
 
@@ -74,7 +98,20 @@ inline void ActorManager::CreateActor(const json& data, const VECTOR& pos)
 	// ポインタを使うときはクラッシュしないようにNULLチェックを行うようにする
 	if (!actor) return;
 
-	//actor->Init(pos);
+
+	auto base = SceneManager::GetInstance().GetNowScene();
+
+	switch (SceneManager::GetInstance().GetSceneID())
+	{
+	case SCENE_ID::GAME:
+
+		std::shared_ptr<CollisionManager> collisionManager = base->GetCollisionManager();
+		// 衝突判定の管理クラスに登録
+		collisionManager->Register(actor);
+		break;
+	default:
+		break;
+	}
 
 	// タイトルシーンがあるかチェック
 	std::shared_ptr<TitleScene> titleScene =
@@ -84,15 +121,19 @@ inline void ActorManager::CreateActor(const json& data, const VECTOR& pos)
 	std::shared_ptr<GameScene> gameScene =
 		std::dynamic_pointer_cast<GameScene>(SceneManager::GetInstance().GetNowScene());
 
-	// ゲームシーンがあるかチェック
+	// ボスの登場シーンがあるかチェック
 	std::shared_ptr<BossAppearanceScene> bossAppearanceScene =
 		std::dynamic_pointer_cast<BossAppearanceScene>(SceneManager::GetInstance().GetNowScene());
 
-	// ゲームシーンがあるかチェック
+	// ボスバトルシーンがあるかチェック
 	std::shared_ptr<BossBattleScene> bossBattleScene =
 		std::dynamic_pointer_cast<BossBattleScene>(SceneManager::GetInstance().GetNowScene());
 
-	if (!titleScene && !gameScene && !bossAppearanceScene && !bossBattleScene)return;
+	// ゲームクリアシーンがあるかチェック
+	std::shared_ptr<GameClearScene> gameClearScene =
+		std::dynamic_pointer_cast<GameClearScene>(SceneManager::GetInstance().GetNowScene());
+
+	if (!titleScene && !gameScene && !bossAppearanceScene && !bossBattleScene && !gameClearScene)return;
 
 	if (gameScene)
 	{
@@ -121,9 +162,14 @@ inline void ActorManager::CreateActor(const json& data, const VECTOR& pos)
 	// 生成されていない場合は、新しくvector配列の箱を作りその中に要素を入れていく
 	if (deactorElem == deactiveActorData_.end())
 	{
+		int cnt = actor.use_count();
 		std::vector<std::shared_ptr<ActorBase>> data;
 		data.emplace_back(actor);
 		deactiveActorData_.emplace(actor->GetActorType(), data);
+
+		cnt = actor.use_count();
+		int b = 2;
+		b = 3;
 	}
 	// 生成されている場合はすでにある箱の中に要素を入れていく
 	else

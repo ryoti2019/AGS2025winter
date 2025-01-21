@@ -31,7 +31,10 @@ public:
 		"ATTACK_SPECIAL_PUNCH",
 		"POWER_CHARGE",
 		"HIT_HEAD",
-		"HIT_BODY"
+		"HIT_BODY",
+		"DEATH",
+		"TITLE_IDLE",
+		"VICTORY"
 	};
 
 	// ジャブの攻撃開始フレーム
@@ -136,7 +139,7 @@ public:
 	bool GetComboState();
 
 	// 攻撃のヒット処理
-	void AttackHit(const int damage, const int type)override;
+	void AttackHit(const int damage, const int state)override;
 
 	// 飛び道具のヒット処理
 	void ProjectileHit(const int damage)override;
@@ -245,10 +248,25 @@ private:
 		{EnemyState::ATTACK_KICK}
 	};
 
-	// 体にヒットする敵の攻撃
+	// 体にヒットするボスの攻撃
 	const std::vector<BossState> hitBodyBossState_ =
 	{
 		{BossState::ATTACK_KICK}
+	};
+
+	// その場で死ぬときの敵の攻撃
+	const std::vector<EnemyState> deathEnemyState_ =
+	{
+		{EnemyState::ATTACK_PUNCH},
+		{EnemyState::ATTACK_KICK}
+	};
+
+	// その場で死ぬときのボスの攻撃
+	const std::vector<BossState> deathBossState_ =
+	{
+		{BossState::ATTACK_PUNCH},
+		{BossState::ATTACK_KICK},
+		{BossState::ATTACK_PROJECTILE}
 	};
 
 	// 状態
@@ -314,6 +332,7 @@ private:
 	void ChangePowerCharge();
 	void ChangeHitHead();
 	void ChangeHitBody();
+	void ChangeDeath();
 
 	// 状態の更新
 	std::function<void(const float deltaTime)> stateUpdate_;
@@ -330,6 +349,7 @@ private:
 	void UpdatePowerCharge(const float deltaTime);
 	void UpdateHitHead(const float deltaTime);
 	void UpdateHitBody(const float deltaTime);
+	void UpdateDeath(const float deltaTime);
 
 	// 機能の初期化
 	void InitFunction()override;
@@ -357,6 +377,9 @@ private:
 
 	// 回転処理
 	void Rotation();
+
+	// HPが0になったら死亡アニメーションに遷移
+	void DeathAnim(int state)override;
 
 };
 

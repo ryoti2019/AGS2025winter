@@ -41,14 +41,14 @@
 						"SPEED": 60.0,
 						"ATTACK_START_FRAME": 3.0,
 						"ATTACK_END_FRAME": 10.0,
-						"DAMAGE": 10
+						"DAMAGE": 20
 					},
 					{
 						"NAME": "ATTACK_HOOK",
 						"SPEED": 40.0,
 						"ATTACK_START_FRAME": 6.0,
 						"ATTACK_END_FRAME": 12.0,
-						"DAMAGE": 10
+						"DAMAGE": 20
 					},
 					{
 						"NAME": "ATTACK_LEFT_KICK",
@@ -82,7 +82,7 @@
 						"NAME": "ATTACK_SPECIAL_PUNCH",
 						"SPEED": 20.0,
 						"ATTACK_START_FRAME": 27.0,
-						"DAMAGE":500
+						"DAMAGE": 500
 					},
 					{
 						"NAME": "POWER_CHARGE",
@@ -97,7 +97,15 @@
 						"SPEED": 30.0
 					},
 					{
+						"NAME": "DEATH",
+						"SPEED": 30.0
+					},
+					{
 						"NAME": "TITLE_IDLE",
+						"SPEED": 30.0
+					},
+					{
+						"NAME": "VICTORY",
 						"SPEED": 30.0
 					}
 				]

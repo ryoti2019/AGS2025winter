@@ -35,10 +35,10 @@ void TitleScene::InitImage()
 	// タイトルロゴの画像の初期化
 	titleLogoImg_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_TITLE_LOGO)]).handleId_;
 
-	// Press A Buttonの画像の初期化
-	pressAButtonImg_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_PRESS_A_BUTTON_OR_SPACE)]).handleId_;
+	// Press A Button or Spaceの画像の初期化
+	pressAButtonOrSpaceImg_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_PRESS_A_BUTTON_OR_SPACE)]).handleId_;
 
-	// Press A Button用のカウンタの初期化
+	// Press A Button or Space用のカウンタの初期化
 	frameCount_ = 0.0f;
 
 }
@@ -101,8 +101,8 @@ void TitleScene::Draw(const float deltaTime)
 	// スケールを時間に応じて変更（sin波で変化）
 	scale = 1.0 + 0.1f * std::sin(frameCount_ * animationSpeed);
 
-	// Press A Bottonの画像の描画
-	DrawRotaGraph(850, 500, scale, 0.0, pressAButtonImg_, true);
+	// Press A Button or Spaceの画像の描画
+	DrawRotaGraph(850, 500, scale, 0.0, pressAButtonOrSpaceImg_, true);
 
 	// フレームカウントを更新
 	frameCount_++;

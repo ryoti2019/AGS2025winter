@@ -20,7 +20,10 @@ void StageBase::Init(const VECTOR& pos)
 	ActorBase::Init(pos);
 
 	// 描画用のコンポーネント
-	drawComponent_ = std::make_unique<DrawComponent>(std::static_pointer_cast<StageBase>(GetThis()));
+	//drawComponent_ = std::make_unique<DrawComponent>(std::static_pointer_cast<StageBase>(GetThis()));
+	//drawComponent_ = std::make_unique<DrawComponent>(std::static_pointer_cast<ActorBase>(GetThis()));
+	//drawComponent_ = std::make_unique<DrawComponent>(GetThis().get());
+	drawComponent_ = std::make_unique<DrawComponent>(shared_from_this());
 
 }
 

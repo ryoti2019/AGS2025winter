@@ -48,6 +48,7 @@ void Camera::InitFunctionPointer()
 	modeChange_.emplace(MODE::LOCKON, std::bind(&Camera::ChangeLockOn, this));
 	modeChange_.emplace(MODE::SPECIAL, std::bind(&Camera::ChangeSpecial, this));
 	modeChange_.emplace(MODE::APPEARANCE, std::bind(&Camera::ChangeAppearance, this));
+	modeChange_.emplace(MODE::GAME_CLEAR, std::bind(&Camera::ChangeGameClear, this));
 
 }
 
@@ -188,6 +189,17 @@ void Camera::ChangeAppearance()
 	// ‰ñ“]‚µ‚Ä‚¢‚é
 	targetPos_ = VAdd(bossTransform_->pos, bossTransform_->quaRot.PosAxis({ 0.0f,1000.0f,0.0f }));
 	
+}
+
+void Camera::ChangeGameClear()
+{
+
+	modeDraw_ = std::bind(&Camera::SetBeforeDrawGameClear, this, std::placeholders::_1);
+
+	targetPos_ = VAdd(playerTransform_->pos, playerTransform_->quaRot.PosAxis({ -1200.0f, 1000.0f, 0.0f }));
+
+	pos_ = VAdd(playerTransform_->pos, playerTransform_->quaRot.PosAxis({ -1200.0f,800.0f,2500.0f }));
+
 }
 
 void Camera::SetBeforeDrawFixedPoint(const float deltaTime)
@@ -483,6 +495,10 @@ void Camera::SetBeforeDrawAppearance(const float deltaTime)
 	}
 
 
+}
+
+void Camera::SetBeforeDrawGameClear(const float deltaTime)
+{
 }
 
 void Camera::Draw()

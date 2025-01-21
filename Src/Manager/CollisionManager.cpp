@@ -172,8 +172,8 @@ void CollisionManager::CheckAttackCollision(const float deltaTime)
 				// このアニメーション中の無敵時間が消えていなければ処理しない
 				if (a->second > 0.0f)continue;
 
-				// HPが0以下だったら処理しない
-				if (target->GetHp() <= 0)continue;
+				// 非アクティブだったら処理しない
+				if (!target->GetIsActive())continue;
 
 				// 右手の判定
 				if (HitCheck_Capsule_Capsule(attacker->GetCollisionData().rightHandCapsuleUpPos, attacker->GetCollisionData().rightHandCapsuleDownPos,
@@ -234,7 +234,7 @@ void CollisionManager::OnAttackCollision(const std::shared_ptr<ActorBase>& attac
 	std::shared_ptr<Player> player = std::dynamic_pointer_cast<Player>(attacker);
 
 	// プレイヤーか判定
-	if (player)
+	if (player && target->GetHp() > 0)
 	{
 		// 敵に与えた攻撃の半分を必殺技ゲージに追加
 		attacker->AddSpecialAttackGauge(attacker->GetDamage() / 10);

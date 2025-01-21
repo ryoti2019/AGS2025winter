@@ -6,7 +6,7 @@ class MoveComponent : public Component
 
 public:
 
-	MoveComponent(std::shared_ptr<ActorBase> actor);
+	MoveComponent(std::weak_ptr<ActorBase> actor);
 
 	// ‘–‚éˆÚ“®
 	void Move();

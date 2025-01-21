@@ -44,6 +44,7 @@ public:
 		"KIP_UP",
 		"JUMP_IDLE",
 		"LAND",
+		"CALL",
 		"DEATH"
 	};
 

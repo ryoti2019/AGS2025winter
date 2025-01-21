@@ -9,10 +9,6 @@ public:
 
 	~TitleActorCreate() = default;
 
-	void Update()override;
-
-	void Draw()override;
-
 private:
 
 };

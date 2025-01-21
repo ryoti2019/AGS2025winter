@@ -8,7 +8,7 @@ public:
 
 	Stage(const VECTOR& pos, const json& data);
 
-	~Stage() = default;
+	~Stage() override = default;
 
 private:
 

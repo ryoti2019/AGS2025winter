@@ -11,7 +11,7 @@ public:
 	Component();
 
 	// アクターを取得する
-	const std::shared_ptr<ActorBase>& GetActor()const;
+	const std::weak_ptr<ActorBase>& GetActor()const;
 
 	virtual bool IsDead()const { return false; }
 	virtual void Init() {};
@@ -19,6 +19,6 @@ public:
 
 protected:
 
-	std::shared_ptr<ActorBase> actor_;
+	std::weak_ptr<ActorBase> actor_;
 
 };

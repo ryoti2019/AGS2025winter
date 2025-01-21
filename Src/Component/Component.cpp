@@ -5,7 +5,7 @@ Component::Component()
 {
 }
 
-const std::shared_ptr<ActorBase>& Component::GetActor() const
+const std::weak_ptr<ActorBase>& Component::GetActor() const
 {
 	return actor_;
 }

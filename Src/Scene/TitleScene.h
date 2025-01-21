@@ -35,10 +35,10 @@ private:
 	// タイトルロゴの画像
 	int titleLogoImg_;
 
-	// Press A Buttonの画像
-	int pressAButtonImg_;
+	// Press A Button or Spaceの画像
+	int pressAButtonOrSpaceImg_;
 
-	// Press A Botton用のカウンタ
+	// Press A Button or Spaceのカウンタ
 	int frameCount_;
 
 	// 画像の初期化
