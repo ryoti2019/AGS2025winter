@@ -114,7 +114,7 @@ public:
 
 	Player(const VECTOR& pos, const json& data);
 
-	~Player() = default;
+	~Player()override = default;
 
 	void Init(const VECTOR& pos) override;
 	void Update(const float deltaTime) override;

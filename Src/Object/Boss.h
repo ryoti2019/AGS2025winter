@@ -57,7 +57,7 @@ public:
 
 	Boss(const VECTOR& pos, const json& data);
 
-	~Boss() = default;
+	~Boss()override = default;
 
 	void Init(const VECTOR& pos)override;
 	void Update(const float deltaTime)override;

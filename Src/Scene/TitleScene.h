@@ -12,7 +12,7 @@ public:
 	TitleScene();
 
 	// デストラクタ
-	~TitleScene() = default;
+	~TitleScene()override = default;
 
 	void Init() override;
 	void Update(const float deltaTime) override;

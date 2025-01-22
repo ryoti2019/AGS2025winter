@@ -8,7 +8,7 @@ public:
 
 	StageCollision(const VECTOR& pos, const json& data);
 
-	StageCollision() = default;
+	~StageCollision()override = default;
 
 	void Draw(const float deltaTime)override;
 

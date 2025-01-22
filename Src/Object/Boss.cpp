@@ -438,7 +438,7 @@ void Boss::Update(const float deltaTime)
 {
 
 	// ImGuiのデバッグ描画の更新
-	UpdateDebugImGui();
+	//UpdateDebugImGui();
 
 	// クールタイムを計算
 	coolTime_ -= deltaTime;

@@ -31,7 +31,7 @@ public:
 
 	GameClearPlayer(const VECTOR& pos, const json& data);
 
-	~GameClearPlayer() = default;
+	~GameClearPlayer()override = default;
 
 	void Init(const VECTOR& pos)override;
 	void Update(const float deltaTime)override;

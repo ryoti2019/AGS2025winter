@@ -49,6 +49,9 @@ void TitleScene::InitBGMAndSE()
 	// BGMの初期化
 	bgm_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::SOUND_TITLE_SCENE_BGM)]).handleId_;
 
+	// BGMのボリュームの変更
+	ChangeVolumeSoundMem(255 * 0.5, bgm_);
+
 	// BGM再生
 	PlaySoundMem(bgm_, DX_PLAYTYPE_LOOP, true);
 
@@ -73,15 +76,24 @@ void TitleScene::Update(const float deltaTime)
 	{
 
 		// 決定ボタンSEの再生
-		PlaySoundMem(decideSE_, DX_PLAYTYPE_LOOP, true);
+		PlaySoundMem(decideSE_, DX_PLAYTYPE_BACK, true);
 
+		// ゲームシーンへ遷移
 		SceneManager::GetInstance().ChangeScene(SCENE_ID::GAME);
 
 	}
 	else if (ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN))
 	{
+
+		// 決定ボタンSEの再生
+		PlaySoundMem(decideSE_, DX_PLAYTYPE_BACK, true);
+
+		// ゲームシーンへ遷移
 		SceneManager::GetInstance().ChangeScene(SCENE_ID::GAME);
+
+		// ゲームパッドだけ使えるように変更
 		SceneManager::GetInstance().SetGamePad(true);
+
 	}
 
 }

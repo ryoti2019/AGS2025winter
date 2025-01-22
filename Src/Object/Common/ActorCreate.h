@@ -20,7 +20,7 @@ public:
 
 	ActorCreate();
 
-	~ActorCreate() = default;
+	~ActorCreate()override = default;
 
 	void Update()override;
 

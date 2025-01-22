@@ -161,13 +161,13 @@ std::shared_ptr<ActorBase> ActorManager::ActiveData(const ActorType type, const 
 	// deactiveActorData_の先頭部分を削除
 	deactiveActorData_[type].erase(deactiveActorData_[type].begin());
 	
-	if (deactiveActorData_[type].size() == 0)
-	{
-		deactiveActorData_.erase(type);
-		int cnt = active.use_count();
-		int b = 2;
-		b = 3;
-	}
+	//if (deactiveActorData_[type].size() == 0)
+	//{
+	//	deactiveActorData_.erase(type);
+	//	int cnt = active.use_count();
+	//	int b = 2;
+	//	b = 3;
+	//}
 
 	// アクティブ状態にする
 	active->Init(pos);

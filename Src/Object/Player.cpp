@@ -223,6 +223,25 @@ void Player::InitParameter()
 	// アニメーション番号
 	ANIM_INDEX = jsonData_["ANIM_INDEX"];
 
+	// ゲームシーンの情報を取得
+	std::shared_ptr<BossBattleScene> bossBattleScene =
+		std::dynamic_pointer_cast<BossBattleScene>(SceneManager::GetInstance().GetNowScene());
+
+	// NULLチェック
+	if (!bossBattleScene)return;
+
+	// アクターマネージャーを取得
+	if (bossBattleScene)
+	{
+
+		// プレイヤー必殺技のゲージを設定 
+		specialAttackGauge_ =SceneManager::GetInstance().GetPlayerSpecialAttackGauge();
+
+		// プレイヤーのHPを設定
+		hp_ = SceneManager::GetInstance().GetPlayerHp();
+
+	}
+
 }
 
 void Player::InitImage()
@@ -323,7 +342,7 @@ void Player::Update(const float deltaTime)
 {
 
 	// ImGuiのデバッグ描画の更新
-	UpdateDebugImGui();
+	//UpdateDebugImGui();
 
 	// 入力の更新
 	inputComponent_->Update(deltaTime);

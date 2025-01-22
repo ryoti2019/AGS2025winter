@@ -13,7 +13,7 @@ public:
 	GameScene();
 
 	// デストラクタ
-	~GameScene();
+	~GameScene()override = default;
 
 	void Init() override;
 	void Update(const float deltaTime) override;

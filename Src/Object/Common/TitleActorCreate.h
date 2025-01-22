@@ -7,7 +7,7 @@ public:
 
 	TitleActorCreate();
 
-	~TitleActorCreate() = default;
+	~TitleActorCreate()override = default;
 
 private:
 

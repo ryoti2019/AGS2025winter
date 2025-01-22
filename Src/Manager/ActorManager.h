@@ -5,6 +5,7 @@
 #include <vector>
 #include "../Lib/nlohmann/json.hpp"
 #include "CollisionManager.h"
+#include "../Manager/SceneManager.h"
 #include "../Scene/TitleScene.h"
 #include "../Scene/GameScene.h"
 #include "../Scene/BossBattleScene.h"
@@ -98,62 +99,28 @@ inline void ActorManager::CreateActor(const json& data, const VECTOR& pos)
 	// ポインタを使うときはクラッシュしないようにNULLチェックを行うようにする
 	if (!actor) return;
 
-
 	auto base = SceneManager::GetInstance().GetNowScene();
+
+	// 衝突判定の管理クラス
+	std::shared_ptr<CollisionManager> collisionManager;
 
 	switch (SceneManager::GetInstance().GetSceneID())
 	{
 	case SCENE_ID::GAME:
-
-		std::shared_ptr<CollisionManager> collisionManager = base->GetCollisionManager();
+		collisionManager = base->GetCollisionManager();
 		// 衝突判定の管理クラスに登録
 		collisionManager->Register(actor);
 		break;
-	default:
+	case SCENE_ID::BOSS_APPEARANCE:
+		collisionManager = base->GetCollisionManager();
+		// 衝突判定の管理クラスに登録
+		collisionManager->Register(actor);
 		break;
-	}
-
-	// タイトルシーンがあるかチェック
-	std::shared_ptr<TitleScene> titleScene =
-		std::dynamic_pointer_cast<TitleScene>(SceneManager::GetInstance().GetNowScene());
-
-	// ゲームシーンがあるかチェック
-	std::shared_ptr<GameScene> gameScene =
-		std::dynamic_pointer_cast<GameScene>(SceneManager::GetInstance().GetNowScene());
-
-	// ボスの登場シーンがあるかチェック
-	std::shared_ptr<BossAppearanceScene> bossAppearanceScene =
-		std::dynamic_pointer_cast<BossAppearanceScene>(SceneManager::GetInstance().GetNowScene());
-
-	// ボスバトルシーンがあるかチェック
-	std::shared_ptr<BossBattleScene> bossBattleScene =
-		std::dynamic_pointer_cast<BossBattleScene>(SceneManager::GetInstance().GetNowScene());
-
-	// ゲームクリアシーンがあるかチェック
-	std::shared_ptr<GameClearScene> gameClearScene =
-		std::dynamic_pointer_cast<GameClearScene>(SceneManager::GetInstance().GetNowScene());
-
-	if (!titleScene && !gameScene && !bossAppearanceScene && !bossBattleScene && !gameClearScene)return;
-
-	if (gameScene)
-	{
-		std::shared_ptr<CollisionManager> collisionManager = gameScene->GetCollisionManager();
+	case SCENE_ID::BOSS_BATTLE:
+		collisionManager = base->GetCollisionManager();
 		// 衝突判定の管理クラスに登録
 		collisionManager->Register(actor);
-	}
-
-	if (bossAppearanceScene)
-	{
-		std::shared_ptr<CollisionManager> collisionManager = bossAppearanceScene->GetCollisionManager();
-		// 衝突判定の管理クラスに登録
-		collisionManager->Register(actor);
-	}
-
-	if (bossBattleScene)
-	{
-		std::shared_ptr<CollisionManager> collisionManager = bossBattleScene->GetCollisionManager();
-		// 衝突判定の管理クラスに登録
-		collisionManager->Register(actor);
+		break;
 	}
 
 	// deactiveActorData_の中にすでに同じ型が生成されているかチェックする

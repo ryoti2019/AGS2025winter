@@ -7,7 +7,7 @@ public:
 
 	GameClearActorCreate();
 
-	~GameClearActorCreate() override = default;
+	~GameClearActorCreate()override = default;
 
 private:
 

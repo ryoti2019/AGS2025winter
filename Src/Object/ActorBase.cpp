@@ -52,12 +52,12 @@ void ActorBase::Init(const VECTOR& pos)
 
 #pragma region オブジェクトの情報
 
-	//transform_->SetModel(modelId_);
-	//SetPos(pos);
-	//transform_->scl = { scl_,scl_,scl_ };
-	//transform_->quaRot = Quaternion::Euler({ Utility::Deg2RadF(0.0f) , Utility::Deg2RadF(INIT_ANGLE),Utility::Deg2RadF(0.0f) });
-	//transform_->quaRotLocal = Quaternion::Euler({ Utility::Deg2RadF(0.0f) , Utility::Deg2RadF(180.0f),Utility::Deg2RadF(0.0f) });
-	//transform_->Update();
+	transform_->SetModel(modelId_);
+	SetPos(pos);
+	transform_->scl = { scl_,scl_,scl_ };
+	transform_->quaRot = Quaternion::Euler({ Utility::Deg2RadF(0.0f) , Utility::Deg2RadF(INIT_ANGLE),Utility::Deg2RadF(0.0f) });
+	transform_->quaRotLocal = Quaternion::Euler({ Utility::Deg2RadF(0.0f) , Utility::Deg2RadF(180.0f),Utility::Deg2RadF(0.0f) });
+	transform_->Update();
 
 #pragma endregion
 

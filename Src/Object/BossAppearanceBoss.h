@@ -29,7 +29,7 @@ public:
 
 	BossAppearanceBoss(const VECTOR& pos, const json& data);
 
-	~BossAppearanceBoss() = default;
+	~BossAppearanceBoss()override = default;
 
 	void Init(const VECTOR& pos)override;
 	void Update(const float deltaTime)override;

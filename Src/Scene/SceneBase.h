@@ -31,7 +31,7 @@ public:
 	const std::shared_ptr<ActorManager>& GetActorManager() const { return actorManager_; }
 
 	// Õ“Ë”»’è‚ÌŠÇ—ƒNƒ‰ƒX‚ğæ“¾
-	const std::shared_ptr<CollisionManager>& GetCollisionManager() const { return collisionManager_; }
+	const std::shared_ptr<CollisionManager>& GetCollisionManager() const {return collisionManager_;}
 
 protected:
 

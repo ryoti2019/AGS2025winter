@@ -154,7 +154,7 @@ void BossAppearanceBoss::Update(const float deltaTime)
 {
 
 	// ImGuiのデバッグ描画の更新
-	UpdateDebugImGui();
+	//UpdateDebugImGui();
 
 	// 衝突判定の更新
 	ActorBase::CollisionUpdate();

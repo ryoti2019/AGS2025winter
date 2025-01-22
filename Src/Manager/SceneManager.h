@@ -59,7 +59,22 @@ public:
 	bool GetGamePad(void);
 
 	// ゲームパッドで操作するフラグを取得する
-	void SetGamePad(bool isPad);
+	void SetGamePad(const bool isPad);
+
+	// Releaseを1回だけ通らないようにするフラグ
+	const void SetIsFirstRelease(const bool isFirstRelease) { isFirstRelease_ = isFirstRelease; }
+
+	// プレイヤーの必殺技ゲージを取得
+	const int GetPlayerSpecialAttackGauge()const { return playerSpecialAttackGauge_; }
+
+	// プレイヤーの必殺技ゲージを設定
+	void SetPlayerSpecialAttackGauge(const int playerSpecialAttackGauge) { playerSpecialAttackGauge_ = playerSpecialAttackGauge; }
+
+	// プレイヤーのHPを取得
+	const int GetPlayerHp()const { return playerHp_; }
+
+	// プレイヤーのHPを設定
+	void SetPlayerHp(const int playerHp) { playerHp_ = playerHp; }
 
 private:
 
@@ -99,8 +114,14 @@ private:
 	// 操作説明のフラグ
 	bool isOperation_;
 
-	// 最初の1回目は通らない
-	bool isFirst_;
+	// Releaseを1回だけ通らないようにするフラグ
+	bool isFirstRelease_;
+
+	// プレイヤーの必殺技ゲージ
+	int playerSpecialAttackGauge_;
+
+	// プレイヤーのHP
+	int playerHp_;
 
 	// デフォルトコンストラクタをprivateにして、
 	// 外部から生成できない様にする

@@ -8,7 +8,7 @@ public:
 
 	BossBattleActorCreate();
 
-	~BossBattleActorCreate() = default;
+	~BossBattleActorCreate()override = default;
 
 	void Update()override;
 

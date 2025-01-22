@@ -192,6 +192,24 @@ public:
 
 #pragma endregion
 
+#pragma region ボスの登場シーン
+
+		SOUND_BOSS_APPEARANCE_SCENE_BGM,
+
+#pragma endregion
+
+#pragma region ボスバトルシーン
+
+		SOUND_BOSS_BATTLE_SCENE_BGM,
+
+#pragma endregion
+
+#pragma region ゲームクリアシーン
+
+		SOUND_GAME_CLEAR_SCENE_BGM,
+
+#pragma endregion
+
 #pragma endregion
 
 		MAX
@@ -244,7 +262,7 @@ public:
 
 #pragma endregion
 
-#pragma region ゲームシーン
+#pragma region ゲームクリアシーン
 
 		"IMAGE_GAME_CLEAR",
 
@@ -371,7 +389,25 @@ public:
 
 #pragma region ゲームシーン
 
-		"SOUND_GAME_SCENE_BGM"
+		"SOUND_GAME_SCENE_BGM",
+
+#pragma endregion
+
+#pragma region ボスの登場シーン
+
+		"SOUND_BOSS_APPEARANCE_SCENE_BGM",
+
+#pragma endregion
+
+#pragma region ボスバトルシーン
+
+		"SOUND_BOSS_BATTLE_SCENE_BGM",
+
+#pragma endregion
+
+#pragma region ゲームクリアシーン
+
+		"SOUND_GAME_CLEAR_SCENE_BGM"
 
 #pragma endregion
 

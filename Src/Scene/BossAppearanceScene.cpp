@@ -27,6 +27,23 @@ void BossAppearanceScene::Init()
 	// カメラモードをボスの登場用のモードに変更
 	SceneManager::GetInstance().GetCamera().lock()->ChangeMode(Camera::MODE::APPEARANCE);
 
+	// BGMとSEの初期化
+	InitBGMAndSE();
+
+}
+
+void BossAppearanceScene::InitBGMAndSE()
+{
+
+	// BGMの初期化
+	bgm_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::SOUND_BOSS_APPEARANCE_SCENE_BGM)]).handleId_;
+
+	// BGMのボリュームの変更
+	ChangeVolumeSoundMem(255 * 0.5, bgm_);
+
+	// BGM再生
+	PlaySoundMem(bgm_, DX_PLAYTYPE_LOOP, true);
+
 }
 
 void BossAppearanceScene::Update(const float deltaTime)

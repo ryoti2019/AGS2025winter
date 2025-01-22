@@ -6,15 +6,12 @@
 #include "../Object/Common/ActorCreate.h"
 #include "../Object/Common/InputController.h"
 #include "GameScene.h"
+#include "../Object/Player.h"
 #include "../Object/Area1Collision.h"
 #include "../Object/Area2Collision.h"
 #include "../Object/Area5Collision.h"
 
 GameScene::GameScene()
-{
-}
-
-GameScene::~GameScene()
 {
 }
 
@@ -113,8 +110,14 @@ void GameScene::Update(const float deltaTime)
 	// ステージがあるかチェック
 	if (!actorManager_->GetActiveActorData().contains(ActorType::STAGE))return;
 
+	// プレイヤーがあるかチェック
+	if (!actorManager_->GetActiveActorData().contains(ActorType::PLAYER))return;
+
 	// ステージを取り出す
 	auto& stages = actorManager_->GetActiveActorData().at(ActorType::STAGE);
+
+	// プレイヤーを取り出す
+	auto& players = actorManager_->GetActiveActorData().at(ActorType::PLAYER);
 
 	// Area5Collisionを探してあれば代入する
 	auto area5Collision = std::find_if(stages.begin(), stages.end(), [](const std::shared_ptr<ActorBase>& ptr)
@@ -125,10 +128,28 @@ void GameScene::Update(const float deltaTime)
 	// Area5にキャスト
 	auto area5 = std::dynamic_pointer_cast<Area5Collision>(*area5Collision);
 
-	// 衝突していればボスの登場シーンに遷移
+	// プレイヤーを探してあれば代入する
+	auto player = std::find_if(players.begin(), players.end(), [](const std::shared_ptr<ActorBase>& ptr)
+		{
+			return ptr == std::dynamic_pointer_cast<Player>(ptr);
+		});
+
+	// プレイヤーにキャスト
+	auto p = std::dynamic_pointer_cast<Player>(*player);
+
+	// 衝突しているか
 	if (area5->GetIsCollision())
 	{
+
+		// ボスの登場シーンに遷移
 		SceneManager::GetInstance().ChangeScene(SCENE_ID::BOSS_APPEARANCE);
+
+		// プレイヤーのHPを設定
+		SceneManager::GetInstance().SetPlayerSpecialAttackGauge(p->GetSpecialAttackGauge());
+
+		// プレイヤーのHPを設定
+		SceneManager::GetInstance().SetPlayerHp(p->GetHp());
+
 	}
 
 }

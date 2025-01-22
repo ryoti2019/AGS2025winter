@@ -31,7 +31,7 @@ public:
 
 	BossAppearancePlayer(const VECTOR& pos, const json& data);
 
-	~BossAppearancePlayer() = default;
+	~BossAppearancePlayer()override = default;
 
 	void Init(const VECTOR& pos)override;
 	void Update(const float deltaTime)override;

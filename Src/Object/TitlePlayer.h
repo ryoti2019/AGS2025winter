@@ -31,7 +31,7 @@ public:
 
 	TitlePlayer(const VECTOR& pos, const json& data);
 
-	~TitlePlayer() = default;
+	~TitlePlayer()override = default;
 
 	void Init(const VECTOR& pos)override;
 	void Update(const float deltaTime)override;

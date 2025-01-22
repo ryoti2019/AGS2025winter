@@ -84,6 +84,12 @@ void ResourceManager::ImgLoad(const nlohmann::json_abi_v3_11_3::json& objectData
 	// ゲームシーンの画像データの初期化
 	InitResource(Application::PATH_IMAGE, gameSceneImageData);
 
+	// ゲームシーンの画像データ
+	const auto& gameClearSceneImageData = objectData[0]["ImageData"]["GameClearScene"];
+
+	// ゲームシーンの画像データの初期化
+	InitResource(Application::PATH_IMAGE, gameClearSceneImageData);
+
 }
 
 void ResourceManager::ModelAndAnimationLoad(const nlohmann::json_abi_v3_11_3::json& objectData)
@@ -141,11 +147,29 @@ void ResourceManager::BGMAndSELoad(const nlohmann::json_abi_v3_11_3::json& objec
 	// タイトルシーンの画像データの初期化
 	InitResource(Application::PATH_SOUND, titleSceneSoundData);
 
-	// タイトルシーンの画像データ
+	// ゲームシーンの画像データ
 	const auto& gameSceneSoundData = objectData[0]["SoundData"]["GameScene"];
 
-	// タイトルシーンの画像データの初期化
+	// ゲームシーンの画像データの初期化
 	InitResource(Application::PATH_SOUND, gameSceneSoundData);
+
+	// ボスの登場シーンの画像データ
+	const auto& bossAppearanceSceneSoundData = objectData[0]["SoundData"]["BossAppearanceScene"];
+
+	// ボスの登場シーンの画像データの初期化
+	InitResource(Application::PATH_SOUND, bossAppearanceSceneSoundData);
+
+	// ボスバトルシーンの画像データ
+	const auto& bossBattleSceneSoundData = objectData[0]["SoundData"]["BossBattleScene"];
+
+	// ボスバトルシーンの画像データの初期化
+	InitResource(Application::PATH_SOUND, bossBattleSceneSoundData);
+
+	// ゲームクリアシーンの画像データ
+	const auto& gameClearSceneSoundData = objectData[0]["SoundData"]["GameClearScene"];
+
+	// ゲームクリアシーンの画像データの初期化
+	InitResource(Application::PATH_SOUND, gameClearSceneSoundData);
 
 }
 

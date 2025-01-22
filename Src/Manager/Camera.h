@@ -209,7 +209,7 @@ private:
 	// ボスの登場シーンの3つ目のカメラの動きのフラグ
 	bool isBossAppearanceCameraMove3_;
 
-	// ボスシーンが終わったかのフラグ
+	// ボスの登場シーンが終わったかのフラグ
 	bool isEndBossAppearanceScene_;
 
 	// カメラモードの遷移

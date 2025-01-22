@@ -17,7 +17,6 @@ Camera::Camera()
 	angle_ = { 0.0f, Utility::Deg2RadF(90.0f), 0.0f};
 	lockOn_ = false;
 	specialMoveCnt_ = 0.0f;
-	isEndBossAppearanceScene_ = false;
 
 	// カメラの初期設定
 	SetDefault();
@@ -56,7 +55,7 @@ void Camera::Update()
 {
 
 	// ImGuiのデバッグ描画の更新
-	UpdateDebugImGui();
+	//UpdateDebugImGui();
 
 }
 
@@ -182,6 +181,9 @@ void Camera::ChangeAppearance()
 
 	// ボスの登場シーンの3つ目のカメラの動きのフラグ
 	isBossAppearanceCameraMove3_ = false;
+
+	// ボスの登場シーンが終わったかのフラグ
+	isEndBossAppearanceScene_ = false;
 
 	// カメラの座標を設定
 	pos_ = VAdd(bossTransform_->pos, localRotPos);

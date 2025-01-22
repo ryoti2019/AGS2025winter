@@ -7,7 +7,7 @@ public:
 
 	Area5Collision(const VECTOR& pos, const json& data);
 
-	~Area5Collision() = default;
+	~Area5Collision()override = default;
 
 	void Draw(const float deltaTime)override;
 

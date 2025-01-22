@@ -83,7 +83,7 @@ void Application::Destroy()
 	InputManager::GetInstance().Destroy();
 	ResourceManager::GetInstance().Destroy();
 	SceneManager::GetInstance().Destroy();
-	//ImGuiWrapper::GetInstance().Destroy();
+	ImGuiWrapper::GetInstance().Destroy();
 
 	Effkseer_End();
 
@@ -139,7 +139,7 @@ Application::Application()
 	//// シーン管理初期化
 	SceneManager::CreateInstance();
 
-	//// デバッグ描画初期化
-	//ImGuiWrapper::CreateInstance();
+	// デバッグ描画初期化
+	ImGuiWrapper::CreateInstance();
 
 }

@@ -62,7 +62,7 @@ public:
 
 	EnemyBase(const VECTOR& pos, const json& data);
 
-	virtual ~EnemyBase() = default;
+	virtual ~EnemyBase()override = default;
 
 	void Init();
 

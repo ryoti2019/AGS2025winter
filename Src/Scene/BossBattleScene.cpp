@@ -3,6 +3,7 @@
 #include "../Manager/SceneManager.h"
 #include "../Object/Common/BossBattleActorCreate.h"
 #include "BossBattleScene.h"
+#include "../Object/Boss.h"
 
 BossBattleScene::BossBattleScene()
 {
@@ -26,6 +27,23 @@ void BossBattleScene::Init()
 	// プレイヤーに追従するモードに変更
 	SceneManager::GetInstance().GetCamera().lock()->ChangeMode(Camera::MODE::FOLLOW);
 
+	// BGMとSEの初期化
+	InitBGMAndSE();
+
+}
+
+void BossBattleScene::InitBGMAndSE()
+{
+
+	// BGMの初期化
+	bgm_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::SOUND_BOSS_BATTLE_SCENE_BGM)]).handleId_;
+
+	// BGMのボリュームの変更
+	ChangeVolumeSoundMem(255 * 0.5, bgm_);
+
+	// BGM再生
+	PlaySoundMem(bgm_, DX_PLAYTYPE_LOOP, true);
+
 }
 
 void BossBattleScene::Update(const float deltaTime)
@@ -39,6 +57,27 @@ void BossBattleScene::Update(const float deltaTime)
 
 	// アクターの生成クラスの更新
 	actorCreate_->Update();
+
+	// ボスがあるかチェック
+	if (!actorManager_->GetActiveActorData().contains(ActorType::BOSS))return;
+
+	// ステージを取り出す
+	auto& stages = actorManager_->GetActiveActorData().at(ActorType::BOSS);
+
+	// Area5Collisionを探してあれば代入する
+	auto boss = std::find_if(stages.begin(), stages.end(), [](const std::shared_ptr<ActorBase>& ptr)
+		{
+			return ptr == std::dynamic_pointer_cast<Boss>(ptr);
+		});
+
+	// Area5にキャスト
+	auto b = std::dynamic_pointer_cast<Boss>(*boss);
+
+	// 衝突していればボスの登場シーンに遷移
+	if (!b->GetIsActive())
+	{
+		SceneManager::GetInstance().ChangeScene(SCENE_ID::GAME_CLEAR);
+	}
 
 }
 

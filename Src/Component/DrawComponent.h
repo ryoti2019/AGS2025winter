@@ -6,7 +6,7 @@ class DrawComponent : public Component
 
 public:
 
-	DrawComponent(std::weak_ptr<ActorBase> actor);
+	DrawComponent(std::shared_ptr<ActorBase> actor);
 
 	void Update()override;
 

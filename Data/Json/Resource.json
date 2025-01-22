@@ -84,7 +84,7 @@
         "GameClearScene": [
           {
             "TYPE": 1,
-            "PATH": "GameScene/GameClear.png",
+            "PATH": "GameClearScene/GameClear.png",
             "SRC": "IMAGE_GAME_CLEAR"
           }
         ]
@@ -448,6 +448,27 @@
             "TYPE": 5,
             "PATH": "GameScene/GameSceneBGM.mp3",
             "SRC": "SOUND_GAME_SCENE_BGM"
+          }
+        ],
+        "BossAppearanceScene": [
+          {
+            "TYPE": 5,
+            "PATH": "BossAppearanceScene/BossAppearanceSceneBGM.mp3",
+            "SRC": "SOUND_BOSS_APPEARANCE_SCENE_BGM"
+          }
+        ],
+        "BossBattleScene": [
+          {
+            "TYPE": 5,
+            "PATH": "BossBattleScene/BossBattleSceneBGM.mp3",
+            "SRC": "SOUND_BOSS_BATTLE_SCENE_BGM"
+          }
+        ],
+        "GameClearScene": [
+          {
+            "TYPE": 5,
+            "PATH": "GameClearScene/GameClearSceneBGM.mp3",
+            "SRC": "SOUND_GAME_CLEAR%_SCENE_BGM"
           }
         ]
       }

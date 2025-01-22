@@ -37,7 +37,7 @@ void TitlePlayer::Update(const float deltaTime)
 {
 
 	// ImGuiのデバッグ描画の更新
-	UpdateDebugImGui();
+	//UpdateDebugImGui();
 
 	// モデル情報を更新
 	transform_->Update();

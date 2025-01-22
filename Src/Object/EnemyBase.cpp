@@ -45,10 +45,7 @@ std::optional<VECTOR> EnemyBase::GetPlayerPos()
 		std::dynamic_pointer_cast<BossBattleScene>(SceneManager::GetInstance().GetNowScene());
 
 	// NULLチェック
-	if (!gameScene && !bossBattleScene)
-	{
-		return std::nullopt;
-	}
+	if (!gameScene && !bossBattleScene)return std::nullopt;
 
 	// アクターマネージャーを取得
 	if (gameScene)

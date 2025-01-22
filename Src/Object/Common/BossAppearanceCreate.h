@@ -8,7 +8,7 @@ public:
 
 	BossAppearanceCreate();
 
-	~BossAppearanceCreate() = default;
+	~BossAppearanceCreate()override = default;
 
 	void Update()override;
 

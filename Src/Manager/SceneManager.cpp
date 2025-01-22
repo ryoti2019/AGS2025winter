@@ -27,7 +27,7 @@ void SceneManager::Init()
 {
 
 	// シーンID
-	sceneId_ = SCENE_ID::GAME_CLEAR;
+	sceneId_ = SCENE_ID::TITLE;
 	waitSceneId_ = SCENE_ID::NONE;
 
 	//関数ポインタの初期化
@@ -55,16 +55,16 @@ void SceneManager::Init()
 	Init3D();
 
 	// 最初だけReleaseに入らないようにする
-	isFirst_ = true;
+	isFirstRelease_ = true;
 
 	// 初期シーンの設定
-	DoChangeScene(SCENE_ID::GAME_CLEAR);
+	DoChangeScene(SCENE_ID::TITLE);
 
 	// ゲームパッドを使うときtrue
-	isGamePad_ = true;
+	isGamePad_ = false;
 
 	// 操作説明のフラグ
-	isOperation_ = true;
+	isOperation_ = false;
 
 }
 
@@ -202,7 +202,7 @@ void SceneManager::Fade(void)
 void SceneManager::DoChangeScene(const SCENE_ID& sceneId)
 {
 
-	if (!isFirst_)
+	if (!isFirstRelease_)
 	{
 		// リソースの解放
 		ResourceManager::GetInstance().Release();
@@ -221,7 +221,7 @@ void SceneManager::DoChangeScene(const SCENE_ID& sceneId)
 	waitSceneId_ = SCENE_ID::NONE;
 
 	// 最初通ったら通るようになる
-	isFirst_ = false;
+	isFirstRelease_ = false;
 
 }
 
@@ -230,7 +230,7 @@ bool SceneManager::GetGamePad(void)
 	return isGamePad_;
 }
 
-void SceneManager::SetGamePad(bool isPad)
+void SceneManager::SetGamePad(const bool isPad)
 {
 	isGamePad_ = isPad;
 }

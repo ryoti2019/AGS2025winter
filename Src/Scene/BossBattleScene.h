@@ -12,7 +12,7 @@ public:
 	BossBattleScene();
 
 	// デストラクタ
-	~BossBattleScene() = default;
+	~BossBattleScene()override = default;
 
 	void Init() override;
 	void Update(const float deltaTime) override;
@@ -25,6 +25,9 @@ private:
 
 	// アクターの生成クラス
 	std::shared_ptr<BossBattleActorCreate> actorCreate_;
+
+	// BGMとSEの初期化
+	void InitBGMAndSE()override;
 
 };
 

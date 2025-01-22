@@ -12,7 +12,7 @@ public:
 	StageBase(const VECTOR& pos, const json& data);
 
 	//virtual ~StageBase() = default;
-	virtual ~StageBase() override = default;
+	virtual ~StageBase() = default;
 
 	void Init(const VECTOR& pos)override;
 

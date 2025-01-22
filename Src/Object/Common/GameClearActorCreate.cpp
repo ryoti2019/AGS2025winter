@@ -52,11 +52,11 @@ GameClearActorCreate::GameClearActorCreate()
 	cnt = s.use_count();
 	int b = 2;
 	b = 3;
-	//// プレイヤー
-	//const auto& playerData = objectData[0]["PlayerData"];
+	// プレイヤー
+	const auto& playerData = objectData[0]["PlayerData"];
 
-	//// プレイヤーを生成
-	//actorManager->CreateActor<GameClearPlayer>(playerData, { -8700.0f,-19500.0f,-140000.0f });
-	//actorManager->ActiveData(ActorType::PLAYER, { -8700.0f,-19500.0f,-140000.0f });
+	// プレイヤーを生成
+	actorManager->CreateActor<GameClearPlayer>(playerData, { -8700.0f,-19500.0f,-140000.0f });
+	actorManager->ActiveData(ActorType::PLAYER, { -8700.0f,-19500.0f,-140000.0f });
 
 }
