@@ -63,9 +63,6 @@ void SceneManager::Init()
 	// ゲームパッドを使うときtrue
 	isGamePad_ = false;
 
-	// 操作説明のフラグ
-	isOperation_ = false;
-
 }
 
 void SceneManager::Init3D()
@@ -165,8 +162,7 @@ SceneManager::SceneManager()
 	waitSceneId_(SCENE_ID::NONE),
 	scene_(nullptr),
 	isSceneChanging_(false),
-	isGamePad_(false),
-	isOperation_(false)
+	isGamePad_(false)
 {
 }
 

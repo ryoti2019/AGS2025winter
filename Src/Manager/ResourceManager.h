@@ -57,6 +57,12 @@ public:
 
 #pragma endregion
 
+#pragma region ボスの登場シーン
+
+		IMAGE_BOSS_APPEARANCE,
+
+#pragma endregion
+
 #pragma region ゲームクリアシーン
 
 		IMAGE_GAME_CLEAR,
@@ -259,6 +265,12 @@ public:
 		"IMAGE_KEYBOARD_USER_GUIDE_MOVE",
 		"IMAGE_KEYBOARD_USER_GUIDE_ATTACK",
 		"IMAGE_KEYBOARD_USER_GUIDE_SPECIAL_ATTACK",
+
+#pragma endregion
+
+#pragma region ボスの登場シーン
+
+		"IMAGE_BOSS_APPEARANCE",
 
 #pragma endregion
 

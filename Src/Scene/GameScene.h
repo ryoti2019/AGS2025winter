@@ -22,6 +22,9 @@ public:
 	// アクターの生成クラスを取得
 	const std::shared_ptr<ActorCreate>& GetActorCreate() const { return actorCreate_; }
 
+	// 操作説明を見ているかのフラグ
+	const bool GetIsViewUserGuide()const;
+
 private:
 
 	// アクターの生成クラス

@@ -84,10 +84,16 @@ void ResourceManager::ImgLoad(const nlohmann::json_abi_v3_11_3::json& objectData
 	// ゲームシーンの画像データの初期化
 	InitResource(Application::PATH_IMAGE, gameSceneImageData);
 
-	// ゲームシーンの画像データ
+	// ボスの登場シーンの画像データ
+	const auto& bossAppearanceSceneImageData = objectData[0]["ImageData"]["BossAppearanceScene"];
+
+	// ボスの登場シーンの画像データの初期化
+	InitResource(Application::PATH_IMAGE, bossAppearanceSceneImageData);
+
+	// ゲームクリアシーンの画像データ
 	const auto& gameClearSceneImageData = objectData[0]["ImageData"]["GameClearScene"];
 
-	// ゲームシーンの画像データの初期化
+	// ゲームクリアシーンの画像データの初期化
 	InitResource(Application::PATH_IMAGE, gameClearSceneImageData);
 
 }

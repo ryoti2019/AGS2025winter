@@ -253,3 +253,8 @@ void GameScene::Draw(const float deltaTime)
 	}
 
 }
+
+const bool GameScene::GetIsViewUserGuide() const
+{
+	return isViewUserGuide_;
+}

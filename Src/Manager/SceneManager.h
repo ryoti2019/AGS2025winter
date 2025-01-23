@@ -111,9 +111,6 @@ private:
 	// ゲームパッドで操作するためのフラグ
 	bool isGamePad_;
 
-	// 操作説明のフラグ
-	bool isOperation_;
-
 	// Releaseを1回だけ通らないようにするフラグ
 	bool isFirstRelease_;
 

@@ -5,6 +5,7 @@
 #include "InputManager.h"
 #include "SceneManager.h" 
 #include "../Application.h"
+#include "../Scene/GameScene.h"
 #include "../Object/Common/Transform.h"
 #include "Camera.h"
 
@@ -291,6 +292,16 @@ void Camera::SetBeforeDrawFollow(const float deltaTime)
 
 	auto& sce = SceneManager::GetInstance();
 
+	// 基底クラスから使いたい型へキャストする
+	std::shared_ptr<GameScene> gameScene =
+		std::dynamic_pointer_cast<GameScene>(SceneManager::GetInstance().GetNowScene());
+
+	// NULLチェック
+	if (!gameScene) return;
+
+	// NULLチェック
+	if (gameScene->GetIsViewUserGuide())return;
+
 	// マウスでの操作
 	if (!SceneManager::GetInstance().GetGamePad())
 	{
@@ -469,7 +480,7 @@ void Camera::SetBeforeDrawAppearance(const float deltaTime)
 		
 		}
 		// 敵が地面に降りてきて待機状態になるまで
-		else if (elapsedTime_ >= 5.0f && elapsedTime_ < 10.0f)
+		else if (elapsedTime_ >= 5.0f && elapsedTime_ < 12.0f)
 		{
 
 			// ボスから見たカメラのローカル座標

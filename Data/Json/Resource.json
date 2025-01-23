@@ -81,6 +81,13 @@
             "SRC": "IMAGE_KEYBOARD_USER_GUIDE_SPECIAL_ATTACK"
           }
         ],
+        "BossAppearanceScene": [
+          {
+            "TYPE": 1,
+            "PATH": "BossAppearanceScene/BossAppearance.png",
+            "SRC": "IMAGE_BOSS_APPEARANCE"
+          }
+        ],
         "GameClearScene": [
           {
             "TYPE": 1,

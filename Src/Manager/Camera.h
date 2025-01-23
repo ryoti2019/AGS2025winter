@@ -118,11 +118,14 @@ public:
 	// ボスの登場シーンの2つ目のカメラの動きのフラグを取得
 	const bool GetIsBossAppearanceCameraMove2() { return isBossAppearanceCameraMove2_; }
 
-	// ボスの登場シーンの2つ目のカメラの動きのフラグを取得
+	// ボスの登場シーンの3つ目のカメラの動きのフラグを取得
 	const bool GetIsBossAppearanceCameraMove3() { return isBossAppearanceCameraMove3_; }
 
 	// ボスシーンが終わったかのフラグ
 	const bool GetIsEndBossAppearanceScene() { return isEndBossAppearanceScene_; }
+
+	// カメラが何秒移動したか計るカウンタ
+	const float GetElapsedTime()const { return elapsedTime_; }
 
 private:
 
