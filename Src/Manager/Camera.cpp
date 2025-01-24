@@ -125,6 +125,7 @@ void Camera::ChangeFollow()
 	modeDraw_ = std::bind(&Camera::SetBeforeDrawFollow, this, std::placeholders::_1);
 
 	targetPos_ = VAdd(playerTransform_->pos, playerTransform_->quaRot.PosAxis(LOCAL_P2T_POS));
+
 	angle_.y = playerTransform_->quaRot.ToEuler().y;
 	rotY_ = playerTransform_->quaRot;
 	rotXY_ = playerTransform_->quaRot;
@@ -296,11 +297,17 @@ void Camera::SetBeforeDrawFollow(const float deltaTime)
 	std::shared_ptr<GameScene> gameScene =
 		std::dynamic_pointer_cast<GameScene>(SceneManager::GetInstance().GetNowScene());
 
-	// NULLチェック
-	if (!gameScene) return;
+	if ( gameScene && gameScene->GetIsViewUserGuide())
+	{
 
-	// NULLチェック
-	if (gameScene->GetIsViewUserGuide())return;
+		// 追従対象からカメラまでの相対座標
+		VECTOR relativeCPos = rotXY_.PosAxis(LOCAL_P2C_POS);
+
+		// カメラ座標
+		pos_ = VAdd(playerTransform_->pos, relativeCPos);
+		return;
+	
+	}
 
 	// マウスでの操作
 	if (!SceneManager::GetInstance().GetGamePad())

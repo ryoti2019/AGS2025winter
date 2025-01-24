@@ -304,7 +304,7 @@ void Enemy::Update(const float deltaTime)
 	}
 	 
 	// HPが0以下だったら死ぬアニメーションに遷移
-	if (state_ != EnemyState::DEATH && state_ != EnemyState::HIT_FLY && hp_ <= 0)
+	if (state_ != EnemyState::DEATH && state_ != EnemyState::HIT_FLY && state_ != EnemyState::HIT_KNOCK_BACK && hp_ <= 0)
 	{
 		ChangeState(EnemyState::DEATH);
 	}

@@ -856,6 +856,9 @@ void Player::ChangeChargePunch()
 	// 右手の攻撃判定をなくす
 	collisionData_.isRightHandAttack = false;
 
+	// ダメージ量
+	damage_ = ATTACK_CHARGE_PUNCH_DAMAGE;
+
 	// スピード
 	speed_ = ATTACK_MOVE_POW;
 

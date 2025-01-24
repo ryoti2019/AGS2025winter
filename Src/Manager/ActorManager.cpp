@@ -161,21 +161,9 @@ std::shared_ptr<ActorBase> ActorManager::ActiveData(const ActorType type, const 
 	// deactiveActorData_の先頭部分を削除
 	deactiveActorData_[type].erase(deactiveActorData_[type].begin());
 	
-	//if (deactiveActorData_[type].size() == 0)
-	//{
-	//	deactiveActorData_.erase(type);
-	//	int cnt = active.use_count();
-	//	int b = 2;
-	//	b = 3;
-	//}
-
 	// アクティブ状態にする
 	active->Init(pos);
-	int cnt = active.use_count();
-	int b = 2;
-	b = 3;
 	active->SetIsActive(true);
-
 	// activeActorData_に格納
 	auto actorElem = activeActorData_.find(type);
 
@@ -190,9 +178,6 @@ std::shared_ptr<ActorBase> ActorManager::ActiveData(const ActorType type, const 
 	{
 		actorElem->second.emplace_back(active);
 	}
-
-
-	cnt = active.use_count();
 
 	// アクティブ状態になったものを返す
 	return active;
