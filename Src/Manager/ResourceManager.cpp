@@ -53,7 +53,7 @@ void ResourceManager::Init(void)
 	EffectLoad(objectData);
 
 	// BGMとSEのロード
-	BGMAndSELoad(objectData);
+	SoundLoad(objectData);
 
 }
 
@@ -95,6 +95,12 @@ void ResourceManager::ImgLoad(const nlohmann::json_abi_v3_11_3::json& objectData
 
 	// ゲームクリアシーンの画像データの初期化
 	InitResource(Application::PATH_IMAGE, gameClearSceneImageData);
+
+	// ゲームオーバーシーンの画像データ
+	const auto& gameOverSceneImageData = objectData[0]["ImageData"]["GameOverScene"];
+
+	// ゲームオーバーシーンの画像データの初期化
+	InitResource(Application::PATH_IMAGE, gameOverSceneImageData);
 
 }
 
@@ -138,44 +144,50 @@ void ResourceManager::EffectLoad(const nlohmann::json_abi_v3_11_3::json& objectD
 
 }
 
-void ResourceManager::BGMAndSELoad(const nlohmann::json_abi_v3_11_3::json& objectData)
+void ResourceManager::SoundLoad(const nlohmann::json_abi_v3_11_3::json& objectData)
 {
 
-	// タイトルシーンの画像データ
+	// タイトルシーンのサウンドデータ
 	const auto& playerSoundData = objectData[0]["SoundData"]["Player"];
 
-	// タイトルシーンの画像データの初期化
+	// タイトルシーンのサウンドデータの初期化
 	InitResource(Application::PATH_SOUND, playerSoundData);
 
-	// タイトルシーンの画像データ
+	// タイトルシーンのサウンドデータ
 	const auto& titleSceneSoundData = objectData[0]["SoundData"]["TitleScene"];
 
-	// タイトルシーンの画像データの初期化
+	// タイトルシーンのサウンドデータの初期化
 	InitResource(Application::PATH_SOUND, titleSceneSoundData);
 
-	// ゲームシーンの画像データ
+	// ゲームシーンのサウンドデータ
 	const auto& gameSceneSoundData = objectData[0]["SoundData"]["GameScene"];
 
-	// ゲームシーンの画像データの初期化
+	// ゲームシーンのサウンドデータの初期化
 	InitResource(Application::PATH_SOUND, gameSceneSoundData);
 
-	// ボスの登場シーンの画像データ
+	// ボスの登場シーンのサウンドデータ
 	const auto& bossAppearanceSceneSoundData = objectData[0]["SoundData"]["BossAppearanceScene"];
 
-	// ボスの登場シーンの画像データの初期化
+	// ボスの登場シーンのサウンドデータの初期化
 	InitResource(Application::PATH_SOUND, bossAppearanceSceneSoundData);
 
-	// ボスバトルシーンの画像データ
+	// ボスバトルシーンのサウンドデータ
 	const auto& bossBattleSceneSoundData = objectData[0]["SoundData"]["BossBattleScene"];
 
-	// ボスバトルシーンの画像データの初期化
+	// ボスバトルシーンのサウンドデータの初期化
 	InitResource(Application::PATH_SOUND, bossBattleSceneSoundData);
 
-	// ゲームクリアシーンの画像データ
+	// ゲームクリアシーンのサウンドデータ
 	const auto& gameClearSceneSoundData = objectData[0]["SoundData"]["GameClearScene"];
 
-	// ゲームクリアシーンの画像データの初期化
+	// ゲームクリアシーンのサウンドデータの初期化
 	InitResource(Application::PATH_SOUND, gameClearSceneSoundData);
+
+	// ゲームオーバーシーンのサウンドデータ
+	const auto& gameOverSceneSoundData = objectData[0]["SoundData"]["GameOverScene"];
+
+	// ゲームオーバーシーンのサウンドデータの初期化
+	InitResource(Application::PATH_SOUND, gameOverSceneSoundData);
 
 }
 

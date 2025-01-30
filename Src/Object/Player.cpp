@@ -235,10 +235,12 @@ void Player::InitParameter()
 	{
 
 		// プレイヤー必殺技のゲージを設定 
-		specialAttackGauge_ =SceneManager::GetInstance().GetPlayerSpecialAttackGauge();
+		//specialAttackGauge_ = SceneManager::GetInstance().GetPlayerSpecialAttackGauge();
+		specialAttackGauge_ = 0;
 
 		// プレイヤーのHPを設定
-		hp_ = SceneManager::GetInstance().GetPlayerHp();
+		//hp_ = SceneManager::GetInstance().GetPlayerHp();
+		hp_ = 100;
 
 	}
 
@@ -938,7 +940,11 @@ void Player::ChangeHitBody()
 
 void Player::ChangeDeath()
 {
+
 	stateUpdate_ = std::bind(&Player::UpdateDeath, this, std::placeholders::_1);
+
+	SceneManager::GetInstance().GetCamera().lock()->ChangeMode(Camera::MODE::GAME_OVER);
+
 }
 
 void Player::UpdateIdle(const float deltaTime)
@@ -1279,4 +1285,33 @@ void Player::UpdateHitBody(const float deltaTime)
 
 void Player::UpdateDeath(const float deltaTime)
 {
+
+	// 待機状態に遷移
+	if (animationController_->IsEndPlayAnimation())
+	{
+
+		// ゲームシーンの情報を取得
+		std::shared_ptr<GameScene> gameScene =
+			std::dynamic_pointer_cast<GameScene>(SceneManager::GetInstance().GetNowScene());
+
+		// ボスバトルシーンの情報を取得
+		std::shared_ptr<BossBattleScene> bossBattleScene =
+			std::dynamic_pointer_cast<BossBattleScene>(SceneManager::GetInstance().GetNowScene());
+
+		// NULLチェック
+		if (gameScene)
+		{
+			// アニメション再生が終わったら死ぬ
+			gameScene->SetIsPlayerDeath(true);
+		}
+
+		// NULLチェック
+		if (bossBattleScene)
+		{
+			// アニメション再生が終わったら死ぬ
+			bossBattleScene->SetIsPlayerDeath(true);
+		}
+
+	}
+
 }

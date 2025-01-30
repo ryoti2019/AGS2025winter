@@ -36,14 +36,17 @@ public:
 	// 必殺技
 	bool SpecialAttack();
 
-	// キーボードかコントローラーどちらかを決める
-	bool SelectInputDevice();
-
 	// 決定
 	bool Decide();
 
 	// キャンセル
 	bool Cancel();
+
+	// 右選択
+	bool SelectRight();
+
+	// 左選択
+	bool SelectLeft();
 
 private:
 

@@ -24,14 +24,16 @@ public:
 	// DxLib定数、DX_OTHER等に対応
 	enum class JOYPAD_TYPE
 	{
-		OTHER = 0,
+		OTHER,
 		XBOX_360,
 		XBOX_ONE,
+		DUAL_SHOCK_3,
 		DUAL_SHOCK_4,
 		DUAL_SENSE,
 		SWITCH_JOY_CON_L,
 		SWITCH_JOY_CON_R,
 		SWITCH_PRO_CTRL,
+		SWITCH_HORI_PAD,
 		MAX
 	};
 
@@ -134,18 +136,18 @@ public:
 	bool IsPadBtnTrgUp(JOYPAD_NO no, JOYPAD_BTN btn) const;
 
 	// 左のアナログキーが押された
-	bool IsPadLStickTrgDown(JOYPAD_NO no, JOYPAD_BTN btn) const;
-	// 左のアナログキーXが押された
-	bool IsPadXStickTrgDownX(JOYPAD_NO no, JOYPAD_BTN btn) const;
-	// 左のアナログキーYが押された
-	bool IsPadZStickTrgDownZ(JOYPAD_NO no, JOYPAD_BTN btn) const;
+	bool IsPadLStickTrgDown(JOYPAD_NO no) const;
+	// 左のアナログキーが横軸に倒された
+	bool IsPadLXStickTrgDownX(JOYPAD_NO no) const;
+	// 左のアナログキーが縦軸に倒された
+	bool IsPadLZStickTrgDownZ(JOYPAD_NO no) const;
 
 	// 右のアナログキーが押された
-	bool IsPadRStickTrgDown(JOYPAD_NO no, JOYPAD_BTN btn) const;
-	// 左のアナログキーXが押された
-	bool IsPadRXStickTrgDownX(JOYPAD_NO no, JOYPAD_BTN btn) const;
-	// 左のアナログキーYが押された
-	bool IsPadRZStickTrgDownZ(JOYPAD_NO no, JOYPAD_BTN btn) const;
+	bool IsPadRStickTrgDown(JOYPAD_NO no) const;
+	// 右のアナログキーが横軸に倒された
+	bool IsPadRXStickTrgDownX(JOYPAD_NO no) const;
+	// 右のアナログキーが縦軸に倒された
+	bool IsPadRZStickTrgDownZ(JOYPAD_NO no) const;
 
 private:
 

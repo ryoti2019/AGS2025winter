@@ -5,6 +5,7 @@
 BossAIComponent::BossAIComponent(const std::shared_ptr<Boss> boss)
 {
 	boss_ = boss;
+	actor_ = boss;
 }
 
 void BossAIComponent::Update(const float deltaTime)
@@ -33,7 +34,7 @@ void BossAIComponent::SelectAction(const float deltaTime)
 	std::mt19937 gen(rd());
 
 	// w’è‚Ì”ÍˆÍ‚Åƒ‰ƒ“ƒ_ƒ€‚È”‚ğæ“¾
-	std::uniform_int_distribution<> dist_int(0, 2);
+	std::uniform_int_distribution<> dist_int(0, 3);
 	int number = dist_int(gen);
 
 	if (number == 0)
@@ -50,6 +51,15 @@ void BossAIComponent::SelectAction(const float deltaTime)
 	{
 		// ‰“‹——£UŒ‚ˆ—
 		LongRangeAttack(deltaTime);
+	}
+	else if (number == 3 && boss_->GetCreateEnemyCoolTimeCnt() == 0.0f)
+	{
+
+		boss_->ChangeState(BossState::CALL);
+
+		// s“®‚ğŒˆ‚ß‚½
+		boss_->SetIsActionDecided(true);
+
 	}
 
 }

@@ -30,11 +30,13 @@ void ActorManager::Update(const float deltaTime)
 		{
 			if (actor && !actor->GetIsActive())
 			{
+
 				// 非アクティブになったものを格納
 				DeactiveData(actor);
 
 				// 非アクティブになったものを削除
 				data.second.erase(data.second.begin() += num);
+
 			}
 			num++;
 		}
@@ -157,6 +159,30 @@ std::shared_ptr<ActorBase> ActorManager::ActiveData(const ActorType type, const 
 
 	// deactiveActorData_の先頭部分
 	std::shared_ptr<ActorBase> active = deactiveActorData_[type].front();
+
+	auto base = SceneManager::GetInstance().GetNowScene();
+
+	// 衝突判定の管理クラス
+	std::shared_ptr<CollisionManager> collisionManager;
+
+	switch (SceneManager::GetInstance().GetSceneID())
+	{
+	case SCENE_ID::GAME:
+		collisionManager = base->GetCollisionManager();
+		// 衝突判定の管理クラスに登録
+		collisionManager->Register(active);
+		break;
+	case SCENE_ID::BOSS_APPEARANCE:
+		collisionManager = base->GetCollisionManager();
+		// 衝突判定の管理クラスに登録
+		collisionManager->Register(active);
+		break;
+	case SCENE_ID::BOSS_BATTLE:
+		collisionManager = base->GetCollisionManager();
+		// 衝突判定の管理クラスに登録
+		collisionManager->Register(active);
+		break;
+	}
 
 	// deactiveActorData_の先頭部分を削除
 	deactiveActorData_[type].erase(deactiveActorData_[type].begin());

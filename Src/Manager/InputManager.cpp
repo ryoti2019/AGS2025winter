@@ -337,6 +337,8 @@ InputManager::JOYPAD_IN_STATE InputManager::GetJPadInputState(JOYPAD_NO no)
 
 	}
 	break;
+	case InputManager::JOYPAD_TYPE::DUAL_SHOCK_3:
+		break;
 	case InputManager::JOYPAD_TYPE::DUAL_SHOCK_4:
 		break;
 	case InputManager::JOYPAD_TYPE::DUAL_SENSE:
@@ -405,6 +407,8 @@ InputManager::JOYPAD_IN_STATE InputManager::GetJPadInputState(JOYPAD_NO no)
 		break;
 	case InputManager::JOYPAD_TYPE::SWITCH_PRO_CTRL:
 		break;
+	case InputManager::JOYPAD_TYPE::SWITCH_HORI_PAD:
+		break;
 	case InputManager::JOYPAD_TYPE::MAX:
 		break;
 	}
@@ -428,32 +432,32 @@ bool InputManager::IsPadBtnTrgUp(JOYPAD_NO no, JOYPAD_BTN btn) const
 	return padInfos_[static_cast<int>(no)].IsTrgUp[static_cast<int>(btn)];
 }
 
-bool InputManager::IsPadLStickTrgDown(JOYPAD_NO no, JOYPAD_BTN btn) const
+bool InputManager::IsPadLStickTrgDown(JOYPAD_NO no) const
 {
 	return  padInfos_[static_cast<int>(no)].AKeyLTrgDown;
 }
 
-bool InputManager::IsPadXStickTrgDownX(JOYPAD_NO no, JOYPAD_BTN btn) const
+bool InputManager::IsPadLXStickTrgDownX(JOYPAD_NO no) const
 {
 	return  padInfos_[static_cast<int>(no)].AKeyLXTrgDown;
 }
 
-bool InputManager::IsPadZStickTrgDownZ(JOYPAD_NO no, JOYPAD_BTN btn) const
+bool InputManager::IsPadLZStickTrgDownZ(JOYPAD_NO no) const
 {
 	return  padInfos_[static_cast<int>(no)].AKeyLZTrgDown;
 }
 
-bool InputManager::IsPadRStickTrgDown(JOYPAD_NO no, JOYPAD_BTN btn) const
+bool InputManager::IsPadRStickTrgDown(JOYPAD_NO no) const
 {
 	return  padInfos_[static_cast<int>(no)].AKeyRTrgDown;
 }
 
-bool InputManager::IsPadRXStickTrgDownX(JOYPAD_NO no, JOYPAD_BTN btn) const
+bool InputManager::IsPadRXStickTrgDownX(JOYPAD_NO no) const
 {
 	return  padInfos_[static_cast<int>(no)].AKeyRXTrgDown;
 }
 
-bool InputManager::IsPadRZStickTrgDownZ(JOYPAD_NO no, JOYPAD_BTN btn) const
+bool InputManager::IsPadRZStickTrgDownZ(JOYPAD_NO no) const
 {
 	return  padInfos_[static_cast<int>(no)].AKeyRZTrgDown;
 }

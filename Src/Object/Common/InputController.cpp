@@ -245,3 +245,43 @@ bool InputController::Cancel()
 	return false;
 
 }
+
+bool InputController::SelectRight()
+{
+
+	auto& ins = InputManager::GetInstance();
+
+	// キーボード
+	if (!SceneManager::GetInstance().GetGamePad() && ins.IsTrgDown(KEY_INPUT_D))
+	{
+		return true;
+	}
+	// ゲームパッド
+	else if (SceneManager::GetInstance().GetGamePad() && ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD1).AKeyLX > 0)
+	{
+		return true;
+	}
+
+	return false;
+
+}
+
+bool InputController::SelectLeft()
+{
+
+	auto& ins = InputManager::GetInstance();
+
+	// キーボード
+	if (!SceneManager::GetInstance().GetGamePad() && ins.IsTrgDown(KEY_INPUT_A))
+	{
+		return true;
+	}
+	// ゲームパッド
+	else if (SceneManager::GetInstance().GetGamePad() && ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD1).AKeyLX < 0)
+	{
+		return true;
+	}
+
+	return false;
+
+}

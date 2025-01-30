@@ -61,7 +61,8 @@ public:
 		LOCKON,			// ロックオンモード
 		SPECIAL,		// 必殺技モード
 		APPEARANCE,		// ボスの登場モード
-		GAME_CLEAR		// ゲームクリアシーン
+		GAME_CLEAR,		// ゲームクリアモード
+		GAME_OVER		// ゲームオーバーモード
 	};
 
 	Camera();
@@ -225,6 +226,7 @@ private:
 	void ChangeSpecial();
 	void ChangeAppearance();
 	void ChangeGameClear();
+	void ChangeGameOver();
 
 	// カメラモードの更新
 	std::function<void(const float deltaTime)> modeDraw_;
@@ -236,6 +238,7 @@ private:
 	void SetBeforeDrawSpecial(const float deltaTime);
 	void SetBeforeDrawAppearance(const float deltaTime);
 	void SetBeforeDrawGameClear(const float deltaTime);
+	void SetBeforeDrawGameOver(const float deltaTime);
 
 	// 関数ポインタの初期化
 	void InitFunctionPointer();

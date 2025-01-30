@@ -69,6 +69,15 @@ public:
 
 #pragma endregion
 
+#pragma region ゲームオーバーシーン
+
+		IMAGE_GAME_OVER,
+		IMAGE_CONTINUE,
+		IMAGE_YES,
+		IMAGE_NO,
+
+#pragma endregion
+
 #pragma endregion
 
 #pragma region モデルとアニメーション
@@ -216,6 +225,13 @@ public:
 
 #pragma endregion
 
+#pragma region ゲームオーバーシーン
+
+		SOUND_GAME_OVER_SCENE_VOICE,
+		SOUND_CURSOR_MOVE_SE,
+
+#pragma endregion
+
 #pragma endregion
 
 		MAX
@@ -277,6 +293,15 @@ public:
 #pragma region ゲームクリアシーン
 
 		"IMAGE_GAME_CLEAR",
+
+#pragma endregion
+
+#pragma region ゲームオーバーシーン
+
+		"IMAGE_GAME_OVER",
+		"IMAGE_CONTINUE",
+		"IMAGE_YES",
+		"IMAGE_NO",
 
 #pragma endregion
 
@@ -419,7 +444,14 @@ public:
 
 #pragma region ゲームクリアシーン
 
-		"SOUND_GAME_CLEAR_SCENE_BGM"
+		"SOUND_GAME_CLEAR_SCENE_BGM",
+
+#pragma endregion
+
+#pragma region ゲームオーバーシーン
+
+		"SOUND_GAME_OVER_SCENE_VOICE",
+		"SOUND_CURSOR_MOVE_SE"
 
 #pragma endregion
 
@@ -481,7 +513,7 @@ private:
 	// エフェクトのロード
 	void EffectLoad(const nlohmann::json_abi_v3_11_3::json& objectData);
 
-	// BGMとSEのロード
-	void BGMAndSELoad(const nlohmann::json_abi_v3_11_3::json& objectData);
+	// サウンドのロード
+	void SoundLoad(const nlohmann::json_abi_v3_11_3::json& objectData);
 
 };

@@ -224,6 +224,7 @@
 				"HP": 1000,
 				"SUPER_ARMOR_HP": 200,
 				"SUPER_ARMOR_HP_COOL_TIME": 20.0,
+				"CREATE_ENEMY_COOL_TIME": 10.0,
 				"HP_BAR_LENGTH": 500,
 				"ACTOR_TYPE": 2,
 				"ANIM": [
@@ -289,7 +290,8 @@
 					},
 					{
 						"NAME": "CALL",
-						"SPEED": 30.0
+						"SPEED": 30.0,
+						"CREATE_ENEMY_FRAME": 70.0
 					},
 					{
 						"NAME": "DEATH",

@@ -7,13 +7,14 @@ InputComponent::InputComponent(std::shared_ptr<Player> player)
 {
 	inputController_ = std::make_unique<InputController>();
 	player_ = player;
+	actor_ = player;
 }
 
 void InputComponent::Update(const float deltaTime)
 {
 
 	// ƒqƒbƒg’†‚Ís“®‚Å‚«‚È‚¢
-	if (player_->GetHitState())return;
+	if (player_->GetHitState() || player_->GetHp() <= 0)return;
 
 	// UŒ‚
 	Attack(deltaTime);

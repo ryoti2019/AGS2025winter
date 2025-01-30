@@ -99,30 +99,6 @@ inline void ActorManager::CreateActor(const json& data, const VECTOR& pos)
 	// ポインタを使うときはクラッシュしないようにNULLチェックを行うようにする
 	if (!actor) return;
 
-	auto base = SceneManager::GetInstance().GetNowScene();
-
-	// 衝突判定の管理クラス
-	std::shared_ptr<CollisionManager> collisionManager;
-
-	switch (SceneManager::GetInstance().GetSceneID())
-	{
-	case SCENE_ID::GAME:
-		collisionManager = base->GetCollisionManager();
-		// 衝突判定の管理クラスに登録
-		collisionManager->Register(actor);
-		break;
-	case SCENE_ID::BOSS_APPEARANCE:
-		collisionManager = base->GetCollisionManager();
-		// 衝突判定の管理クラスに登録
-		collisionManager->Register(actor);
-		break;
-	case SCENE_ID::BOSS_BATTLE:
-		collisionManager = base->GetCollisionManager();
-		// 衝突判定の管理クラスに登録
-		collisionManager->Register(actor);
-		break;
-	}
-
 	// deactiveActorData_の中にすでに同じ型が生成されているかチェックする
 	auto deactorElem = deactiveActorData_.find(actor->GetActorType());
 

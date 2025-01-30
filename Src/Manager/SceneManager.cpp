@@ -61,7 +61,7 @@ void SceneManager::Init()
 	DoChangeScene(SCENE_ID::TITLE);
 
 	// ゲームパッドを使うときtrue
-	isGamePad_ = false;
+	isGamePad_ = true;
 
 }
 
