@@ -33,8 +33,6 @@ AnimationController::AnimationController(int modelId)
 AnimationController::~AnimationController(void)
 {
 	animData_.clear();
-
-	//MV1DeleteModel(modelId_);
 }
 
 void AnimationController::Add(const std::string state,float startStep,

@@ -195,7 +195,17 @@ void ResourceManager::Release(void)
 {
 	for (auto& p : loadedMap_)
 	{
-		p.second->Release();
+
+		if (p.first == "MODEL_ENEMY" || p.first.substr(0, 4) == "ANIM")
+		{
+			int a = 1;
+			a = 2;
+		}
+		// アニメーションモデルはDeleteModelしない
+		if (p.first.substr(0, 4) != "ANIM")
+		{
+			p.second->Release();
+		}
 		delete p.second;
 	}
 
@@ -216,7 +226,7 @@ Resource ResourceManager::Load(std::string src)
 	{
 		return Resource();
 	}
-	Resource ret = *res;
+	//Resource ret = *res;
 	return *res;
 }
 
@@ -265,6 +275,13 @@ ResourceManager::ResourceManager(void)
 
 Resource* ResourceManager::_Load(std::string src)
 {
+
+	if (src == "MODEL_ENEMY" || src == "ANIM_ENEMY_IDLE")
+	{
+		int a = 1;
+		a = 2;
+	}
+
 	const auto& lPair = loadedMap_.find(src);
 	if (lPair != loadedMap_.end())
 	{

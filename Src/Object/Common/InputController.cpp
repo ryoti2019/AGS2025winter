@@ -252,7 +252,7 @@ bool InputController::Cancel()
 	auto& ins = InputManager::GetInstance();
 
 	// キーボード
-	if (!SceneManager::GetInstance().GetGamePad() && ins.IsNew(KEY_INPUT_ESCAPE))
+	if (!SceneManager::GetInstance().GetGamePad() && ins.IsNew(KEY_INPUT_Z))
 	{
 		return true;
 	}

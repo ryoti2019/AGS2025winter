@@ -198,17 +198,19 @@ void SceneManager::Fade(void)
 void SceneManager::DoChangeScene(const SCENE_ID& sceneId)
 {
 
-	if (!isFirstRelease_)
-	{
-		// リソースの解放
-		ResourceManager::GetInstance().Release();
-	}
+
 
 	// シーンを変更する
 	sceneId_ = sceneId;
 
 	// シーンを変更
 	sceneChange_[sceneId_]();
+
+	if (!isFirstRelease_)
+	{
+		// リソースの解放
+		ResourceManager::GetInstance().Release();
+	}
 
 	// シーンを初期化
 	scene_->Init();

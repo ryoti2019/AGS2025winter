@@ -78,6 +78,7 @@ void InputComponent::Attack(const float deltaTime)
 		player_->ChangeState(PlayerState::POWER_CHARGE);
 	}
 
+	// 必殺技の時と力をためるときは何も操作できないようにする
 	if (static_cast<PlayerState>(player_->GetState()) == PlayerState::POWER_CHARGE || static_cast<PlayerState>(player_->GetState()) == PlayerState::ATTACK_SPECIAL_PUNCH)return;
 
 	// 溜めパンチ用のボタンを長押ししているか
@@ -158,6 +159,9 @@ void InputComponent::Attack(const float deltaTime)
 
 void InputComponent::Evasion()
 {
+
+	// 必殺技の時と力をためるときは何も操作できないようにする
+	if (static_cast<PlayerState>(player_->GetState()) == PlayerState::POWER_CHARGE || static_cast<PlayerState>(player_->GetState()) == PlayerState::ATTACK_SPECIAL_PUNCH)return;
 
 	// 回避しようとしているか判定
 	if (inputController_->Dir().x != 0.0f && inputController_->Evasion())

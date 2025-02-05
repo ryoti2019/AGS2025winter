@@ -116,7 +116,7 @@ void BossAppearanceBoss::InitAnimation()
 			jsonData_["ANIM"][i - 1]["SPEED"],
 
 			// アニメーションハンドル
-			resMng_.LoadModelDuplicate(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::MODEL_BOSS) + i]),
+			resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::MODEL_BOSS) + i]).handleId_,
 
 			// アニメーションのループ再生
 			isLoop,
