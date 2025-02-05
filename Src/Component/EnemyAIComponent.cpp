@@ -5,6 +5,7 @@
 EnemyAIComponent::EnemyAIComponent(const std::shared_ptr<Enemy> enemy)
 {
 	enemy_ = enemy;
+	actor_ = enemy;
 }
 
 void EnemyAIComponent::Update(const float deltaTime)

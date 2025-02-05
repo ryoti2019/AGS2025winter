@@ -60,10 +60,6 @@ BossBattleActorCreate::BossBattleActorCreate()
 	actorManager->CreateActor<Area5Collision>(stageData, { 0.0f,0.0f,0.0f });
 	actorManager->ActiveData(ActorType::STAGE, { stageData["POS"]["x"], stageData["POS"]["y"] ,stageData["POS"]["z"] });
 
-	// 基底クラスから使いたい型へキャストする
-	std::shared_ptr<GameScene> gameScene =
-		std::dynamic_pointer_cast<GameScene>(SceneManager::GetInstance().GetNowScene());
-
 	// ステージ
 	const auto& stages = actorManager->GetActiveActorData().find(ActorType::STAGE);
 
@@ -112,6 +108,49 @@ BossBattleActorCreate::BossBattleActorCreate()
 
 void BossBattleActorCreate::Update()
 {
+
+	// 基底クラスから使いたい型へキャストする
+	std::shared_ptr<BossBattleScene> bossBattleScene =
+		std::dynamic_pointer_cast<BossBattleScene>(SceneManager::GetInstance().GetNowScene());
+
+	// NULLチェック
+	if (!bossBattleScene) return;
+
+	// アクターマネージャーを取得
+	std::shared_ptr<ActorManager> actorManager = bossBattleScene->GetActorManager();
+
+	// ボス
+	const auto& bosses = actorManager->GetActiveActorData().find(ActorType::BOSS);
+
+	// プレイヤーの中身が入っているか確認
+	if (bosses == actorManager->GetActiveActorData().end()) return;
+
+	for (auto& boss : bosses->second)
+	{
+
+		// Bossにキャスト
+		std::shared_ptr<Boss> b = std::dynamic_pointer_cast<Boss>(boss);
+		
+		// BossがCALLになったら敵を生成する
+		if (b->GetState() == static_cast<int>(BossState::CALL) && b->GetAnimationController()->GetStepAnim() >= b->CREATE_ENEMY_FRAME && b->GetCreateEnemyCoolTimeCnt() == 0.0f)
+		{
+
+			// 敵を生成
+			for (int i = 0; i < 5; i++)
+			{
+			
+				// 座標をランダムで指定
+				float x = GenerateRandNumber();
+				float z = GenerateRandNumber();
+				actorManager->ActiveData(ActorType::ENEMY,
+					{ -9000.0f + x, 1000.0f, -140000.0f + z });
+			
+			}
+		
+		}
+
+	}
+
 }
 
 void BossBattleActorCreate::Draw()

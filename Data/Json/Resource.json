@@ -94,6 +94,28 @@
             "PATH": "GameClearScene/GameClear.png",
             "SRC": "IMAGE_GAME_CLEAR"
           }
+        ],
+        "GameOverScene": [
+          {
+            "TYPE": 1,
+            "PATH": "GameOverScene/GameOver.png",
+            "SRC": "IMAGE_GAME_OVER"
+          },
+          {
+            "TYPE": 1,
+            "PATH": "GameOverScene/Continue.png",
+            "SRC": "IMAGE_CONTINUE"
+          },
+          {
+            "TYPE": 1,
+            "PATH": "GameOverScene/Yes.png",
+            "SRC": "IMAGE_YES"
+          },
+          {
+            "TYPE": 1,
+            "PATH": "GameOverScene/No.png",
+            "SRC": "IMAGE_NO"
+          }
         ]
       },
       "ModelData": {
@@ -157,6 +179,11 @@
             "TYPE": 3,
             "PATH": "Player/PowerUp.mv1",
             "SRC": "ANIM_PLAYER_POWER_CHARGE"
+          },
+          {
+            "TYPE": 3,
+            "PATH": "Player/Evasion.mv1",
+            "SRC": "ANIM_PLAYER_EVASION"
           },
           {
             "TYPE": 3,
@@ -388,47 +415,47 @@
         "Player": [
           {
             "TYPE": 5,
-            "PATH": "Player/FootSteps.mp3",
+            "PATH": "Player/FootStepsSE.mp3",
             "SRC": "SOUND_PLAYER_FOOT_STEPS_SE"
           },
           {
             "TYPE": 5,
-            "PATH": "Player/Jab.mp3",
+            "PATH": "Player/JabSE.mp3",
             "SRC": "SOUND_PLAYER_JAB_SE"
           },
           {
             "TYPE": 5,
-            "PATH": "Player/Straight.mp3",
+            "PATH": "Player/StraightSE.mp3",
             "SRC": "SOUND_PLAYER_STRAIGHT_SE"
           },
           {
             "TYPE": 5,
-            "PATH": "Player/Hook.mp3",
+            "PATH": "Player/HookSE.mp3",
             "SRC": "SOUND_PLAYER_HOOK_SE"
           },
           {
             "TYPE": 5,
-            "PATH": "Player/Upper.mp3",
+            "PATH": "Player/UpperSE.mp3",
             "SRC": "SOUND_PLAYER_UPPER_SE"
           },
           {
             "TYPE": 5,
-            "PATH": "Player/ChargePunch.mp3",
+            "PATH": "Player/ChargePunchSE.mp3",
             "SRC": "SOUND_PLAYER_CHARGE_PUNCH_SE"
           },
           {
             "TYPE": 5,
-            "PATH": "Player/LeftKick.mp3",
+            "PATH": "Player/LeftKickSE.mp3",
             "SRC": "SOUND_PLAYER_LEFT_KICK_SE"
           },
           {
             "TYPE": 5,
-            "PATH": "Player/RightKick.mp3",
+            "PATH": "Player/RightKickSE.mp3",
             "SRC": "SOUND_PLAYER_RIGHT_KICK_SE"
           },
           {
             "TYPE": 5,
-            "PATH": "Player/SpecialAttack.mp3",
+            "PATH": "Player/SpecialAttackSE.mp3",
             "SRC": "SOUND_PLAYER_SPECIAL_ATTACK_SE"
           }
         ],
@@ -475,7 +502,19 @@
           {
             "TYPE": 5,
             "PATH": "GameClearScene/GameClearSceneBGM.mp3",
-            "SRC": "SOUND_GAME_CLEAR%_SCENE_BGM"
+            "SRC": "SOUND_GAME_CLEAR_SCENE_BGM"
+          }
+        ],
+        "GameOverScene": [
+          {
+            "TYPE": 5,
+            "PATH": "GameOverScene/GameOverSceneVoice.mp3",
+            "SRC": "SOUND_GAME_OVER_SCENE_VOICE"
+          },
+          {
+            "TYPE": 5,
+            "PATH": "GameOverScene/CursorMoveSE.mp3",
+            "SRC": "SOUND_CURSOR_MOVE_SE"
           }
         ]
       }

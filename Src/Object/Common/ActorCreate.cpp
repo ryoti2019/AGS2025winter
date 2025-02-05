@@ -177,9 +177,12 @@ void ActorCreate::AreaCollision()
 				// 敵を生成
 				for (int i = 0; i < AREA1_TOTAL_ENEMYS; i++)
 				{
-					float x = std::rand() % 10000;
-					float z = std::rand() % 10000;
+
+					// 座標をランダムで指定
+					float x = GenerateRandNumber();
+					float z = GenerateRandNumber();
 					actorManager->ActiveData(ActorType::ENEMY, { 25000.0f + x,-18000.0f,26000.0f + z });
+
 				}
 
 			}
@@ -197,9 +200,12 @@ void ActorCreate::AreaCollision()
 				// 敵を生成
 				for (int i = 0; i < AREA2_TOTAL_ENEMYS; i++)
 				{
-					float x = std::rand() % 100;
-					float z = std::rand() % 100;
+
+					// 座標をランダムで指定
+					float x = GenerateRandNumber();
+					float z = GenerateRandNumber();
 					actorManager->ActiveData(ActorType::ENEMY, { -30000.0f + x,-18000.0f,-21000.0f + z});
+	
 				}
 
 			}
@@ -217,9 +223,12 @@ void ActorCreate::AreaCollision()
 				// 敵を生成
 				for (int i = 0; i < AREA3_TOTAL_ENEMYS; i++)
 				{
-					float x = std::rand() % 100;
-					float z = std::rand() % 100;
+
+					// 座標をランダムで指定
+					float x = GenerateRandNumber();
+					float z = GenerateRandNumber();
 					actorManager->ActiveData(ActorType::ENEMY, { -82000.0f + x ,-18000.0f,-62000.0f + z});
+				
 				}
 
 			}
@@ -237,9 +246,12 @@ void ActorCreate::AreaCollision()
 				// 敵を生成
 				for (int i = 0; i < AREA4_TOTAL_ENEMYS; i++)
 				{
-					float x = std::rand() % 1000;
-					float z = std::rand() % 1000;
+					
+					// 座標をランダムで指定
+					float x = GenerateRandNumber();
+					float z = GenerateRandNumber();
 					actorManager->ActiveData(ActorType::ENEMY, { -26000.0f + x,-18000.0f,-68000.0f + z });
+				
 				}
 
 			}

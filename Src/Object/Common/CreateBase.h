@@ -14,6 +14,9 @@ public:
 
 protected:
 
+	// —”¶¬
+	float GenerateRandNumber();
+
 private:
 
 

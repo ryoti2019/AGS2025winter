@@ -27,6 +27,12 @@ public:
 	// スーパーアーマーHPが回復するまでのクールタイム
 	const int SUPER_ARMOR_HP_COOL_TIME;
 
+	// 敵を生成するときのクールタイム
+	const float CREATE_ENEMY_COOL_TIME;
+
+	// 敵を生成するフレーム
+	const float CREATE_ENEMY_FRAME;
+
 	// アニメーションコントローラーに渡す引数
 	std::string ANIM_DATA_KEY[static_cast<int>(BossState::MAX)] =
 	{
@@ -92,6 +98,15 @@ public:
 
 	// ダメージ量を取得
 	const int GetDamage()const { return damage_; }
+
+	// 敵を生成したかどうかのフラグを取得
+	const bool GetIsCreateEnemy()const { return isCreateEnemy_; }
+
+	// 敵を生成したかどうかのフラグを設定
+	void SetIsCreateEnemy(const bool isCreateEnemy) { isCreateEnemy_ = isCreateEnemy; }
+
+	// 敵を生成するときのクールタイムのカウンタ
+	const float GetCreateEnemyCoolTimeCnt()const { return createEnemyCoolTimeCnt_; }
 
 private:
 
@@ -200,6 +215,12 @@ private:
 	// スーパーアーマーが回復するまでのクールタイムのカウンタ
 	float superArmorCoolTimeCnt_;
 
+	// 敵を生成するときのクールタイムのカウンタ
+	float createEnemyCoolTimeCnt_;
+
+	// 敵を生成したかどうかのフラグ
+	bool isCreateEnemy_;
+
 	// 状態遷移
 	std::unordered_map<BossState, std::function<void()>> stateChange_;
 	void ChangeIdle();
@@ -213,6 +234,7 @@ private:
 	void ChangeHitFlinchUp();
 	void ChangeHitKnockback();
 	void ChangeKipUp();
+	void ChangeCall();
 	void ChangeDeath();
 
 	// 状態の更新
@@ -227,7 +249,8 @@ private:
 	void UpdateHitFly(const float deltaTime);
 	void UpdateHitFlinchUp(const float deltaTime);
 	void UpdateHitKnockback(const float deltaTime);
-	void UpdateHitKipUp(const float deltaTime);
+	void UpdateKipUp(const float deltaTime);
+	void UpdateCall(const float deltaTime);
 	void UpdateDeath(const float deltaTime);
 
 	// 機能の初期化
@@ -267,4 +290,3 @@ private:
 	void DeathAnim(int state)override;
 
 };
-

@@ -172,8 +172,10 @@ void CollisionManager::CheckAttackCollision(const float deltaTime)
 				// このアニメーション中の無敵時間が消えていなければ処理しない
 				if (a->second > 0.0f)continue;
 
-				// 非アクティブだったら処理しない
-				if (!target->GetIsActive())continue;
+				//// 非アクティブだったら処理しない
+				//if (!target->GetIsActive())continue;
+
+				if (target->GetHp() <= 0)continue;
 
 				// 右手の判定
 				if (HitCheck_Capsule_Capsule(attacker->GetCollisionData().rightHandCapsuleUpPos, attacker->GetCollisionData().rightHandCapsuleDownPos,

@@ -34,5 +34,8 @@ private:
 	// UŒ‚ˆ—
 	void Attack(const float deltaTime);
 
+	// ‰ñ”ğˆ—
+	void Evasion();
+
 };
 

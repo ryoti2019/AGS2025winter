@@ -8,6 +8,7 @@
 				"LEFT_FOOT_FRAME_NAME": "mixamorig:LeftFoot",
 				"BODY_FRAME_NAME": "mixamorig:Hips",
 				"RUN_MOVE_POW": 200.0,
+				"EVASION_MOVE_POW": 100.0,
 				"ATTACK_MOVE_POW": 100.0,
 				"ATTACK_CHARGE_PUNCH_TIME": 1.0,
 				"ATTACK_SPECIAL_PUNCH_COLLISION_TIME": 3.0,
@@ -87,6 +88,10 @@
 					{
 						"NAME": "POWER_CHARGE",
 						"SPEED": 20.0
+					},
+					{
+						"NAME": "EVASION",
+						"SPEED": 40.0
 					},
 					{
 						"NAME": "HIT_HEAD",
@@ -224,6 +229,7 @@
 				"HP": 1000,
 				"SUPER_ARMOR_HP": 200,
 				"SUPER_ARMOR_HP_COOL_TIME": 20.0,
+				"CREATE_ENEMY_COOL_TIME": 10.0,
 				"HP_BAR_LENGTH": 500,
 				"ACTOR_TYPE": 2,
 				"ANIM": [
@@ -289,7 +295,8 @@
 					},
 					{
 						"NAME": "CALL",
-						"SPEED": 30.0
+						"SPEED": 30.0,
+						"CREATE_ENEMY_FRAME": 70.0
 					},
 					{
 						"NAME": "DEATH",

@@ -9,11 +9,13 @@ Boss::Boss(const VECTOR& pos, const json& data)
 	:
 	EnemyBase(pos, data),
 	ATTACK_PROJECTILE_START_FRAME(data["ANIM"][static_cast<int>(BossState::ATTACK_PROJECTILE) - 1]["ATTACK_START_FRAME"]),
+	CREATE_ENEMY_FRAME(data["ANIM"][static_cast<int>(BossState::CALL) - 1]["CREATE_ENEMY_FRAME"]),
 	ATTACK_PROJECTILE_DAMAGE(data["ANIM"][static_cast<int>(BossState::ATTACK_PROJECTILE) - 1]["DAMAGE"]),
 	ATTACK_PROJECTILE_COLLISION_TIME(data["ATTACK_PROJECTILE_COLLISION_TIME"]),
 	LONG_RANGE_ATTACK_DISTANCE(data["LONG_RANGE_ATTACK_DISTANCE"]),
 	SUPER_ARMOR_HP(data["SUPER_ARMOR_HP"]),
 	SUPER_ARMOR_HP_COOL_TIME(data["SUPER_ARMOR_HP_COOL_TIME"]),
+	CREATE_ENEMY_COOL_TIME(data["CREATE_ENEMY_COOL_TIME"]),
 	projectileDir_({0.0f,0.0f,0.0f}),
 	projectileCollisionCnt_(0.0f)
 {
@@ -198,6 +200,9 @@ void Boss::InitParameter()
 	// 敵がまっすく飛んでいくときのカウンタ
 	knockBackCnt_ = 0.0f;
 
+	// 敵を生成したかどうかのフラグ
+	isCreateEnemy_ = false;
+
 }
 
 void Boss::InitAnimation()
@@ -288,6 +293,7 @@ void Boss::InitFunctionPointer()
 	stateChange_.emplace(BossState::HIT_FLINCH_UP, std::bind(&Boss::ChangeHitFlinchUp, this));
 	stateChange_.emplace(BossState::HIT_KNOCK_BACK, std::bind(&Boss::ChangeHitKnockback, this));
 	stateChange_.emplace(BossState::KIP_UP, std::bind(&Boss::ChangeKipUp, this));
+	stateChange_.emplace(BossState::CALL, std::bind(&Boss::ChangeCall, this));
 	stateChange_.emplace(BossState::DEATH, std::bind(&Boss::ChangeDeath, this));
 
 }
@@ -466,6 +472,21 @@ void Boss::Update(const float deltaTime)
 		Gravity(gravityScale_);
 	}
  
+	// HPが0以下だったら死ぬアニメーションに遷移
+	if (state_ != BossState::DEATH && state_ != BossState::HIT_FLY && state_ != BossState::HIT_KNOCK_BACK && hp_ <= 0)
+	{
+		ChangeState(BossState::DEATH);
+	}
+
+	// 敵を生成するクールタイムのカウンタを加算
+	createEnemyCoolTimeCnt_ -= deltaTime;
+
+	// クールタイムが終わったらカウンタをリセットする
+	if (createEnemyCoolTimeCnt_ <= 0.0f)
+	{
+		createEnemyCoolTimeCnt_ = 0.0f;
+	}
+
 	// モデル情報を更新
 	transform_->Update();
 
@@ -1066,11 +1087,18 @@ void Boss::ChangeHitKnockback()
 void Boss::ChangeKipUp()
 {
 
-	stateUpdate_ = std::bind(&Boss::UpdateHitKipUp, this, std::placeholders::_1);
+	stateUpdate_ = std::bind(&Boss::UpdateKipUp, this, std::placeholders::_1);
 
 	// 体の角度をリセット
 	transform_->quaRot.x = Quaternion().x;
 	transform_->quaRot.z = Quaternion().z;
+
+}
+
+void Boss::ChangeCall()
+{
+
+	stateUpdate_ = std::bind(&Boss::UpdateCall, this, std::placeholders::_1);
 
 }
 
@@ -1327,13 +1355,35 @@ void Boss::UpdateHitKnockback(const float deltaTime)
 
 }
 
-void Boss::UpdateHitKipUp(const float deltaTime)
+void Boss::UpdateKipUp(const float deltaTime)
 {
 
 	// アニメーションが終了したら待機状態へ遷移する
 	if (animationController_->IsEndPlayAnimation())
 	{
 		ChangeState(BossState::IDLE);
+	}
+
+}
+
+void Boss::UpdateCall(const float deltaTime)
+{
+
+	if (animationController_->GetStepAnim() >= CREATE_ENEMY_FRAME && createEnemyCoolTimeCnt_ == 0.0f)
+	{
+		// 敵を再び生成するまでのクールタイム
+		createEnemyCoolTimeCnt_ = CREATE_ENEMY_COOL_TIME;
+	}
+
+	// アニメーションが終了したら待機状態へ遷移する
+	if (animationController_->IsEndPlayAnimation())
+	{
+
+		ChangeState(BossState::IDLE);
+
+		// クールタイムを設定
+		coolTime_ = COOL_TIME;
+
 	}
 
 }

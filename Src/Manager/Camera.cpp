@@ -49,6 +49,7 @@ void Camera::InitFunctionPointer()
 	modeChange_.emplace(MODE::SPECIAL, std::bind(&Camera::ChangeSpecial, this));
 	modeChange_.emplace(MODE::APPEARANCE, std::bind(&Camera::ChangeAppearance, this));
 	modeChange_.emplace(MODE::GAME_CLEAR, std::bind(&Camera::ChangeGameClear, this));
+	modeChange_.emplace(MODE::GAME_OVER, std::bind(&Camera::ChangeGameOver, this));
 
 }
 
@@ -203,6 +204,19 @@ void Camera::ChangeGameClear()
 	targetPos_ = VAdd(playerTransform_->pos, playerTransform_->quaRot.PosAxis({ -1200.0f, 1000.0f, 0.0f }));
 
 	pos_ = VAdd(playerTransform_->pos, playerTransform_->quaRot.PosAxis({ -1200.0f,800.0f,2500.0f }));
+
+}
+
+void Camera::ChangeGameOver()
+{
+
+	modeDraw_ = std::bind(&Camera::SetBeforeDrawGameOver, this, std::placeholders::_1);
+
+	targetPos_ = VAdd(playerTransform_->pos, playerTransform_->quaRot.PosAxis(LOCAL_P2T_POS));
+
+	angle_.y = playerTransform_->quaRot.ToEuler().y;
+	rotY_ = playerTransform_->quaRot;
+	rotXY_ = playerTransform_->quaRot;
 
 }
 
@@ -519,6 +533,37 @@ void Camera::SetBeforeDrawAppearance(const float deltaTime)
 
 void Camera::SetBeforeDrawGameClear(const float deltaTime)
 {
+}
+
+void Camera::SetBeforeDrawGameOver(const float deltaTime)
+{
+
+	// カメラを回転させる
+	// X軸のカメラの移動制御
+	angle_.y += Utility::Deg2RadF(0.5f);
+
+	rotY_ = Quaternion::AngleAxis(angle_.y, Utility::AXIS_Y);
+
+	rotXY_ = rotY_.Mult(Quaternion::AngleAxis(angle_.x, Utility::AXIS_X));
+
+	// 追従対象の位置
+	VECTOR followPos = playerTransform_->pos;
+
+	// 追従対象から注視点までの相対座標を回転
+	VECTOR relativeTPos = rotY_.PosAxis(LOCAL_P2T_POS);
+
+	// 追従対象からカメラまでの相対座標
+	VECTOR relativeCPos = rotXY_.PosAxis({ 0.0f,3000.0f,-2000.0f });
+
+	// カメラ座標をゆっくり移動させる
+	pos_ = Utility::Lerp(pos_, VAdd(followPos, relativeCPos), 0.1f);
+
+	// 注視点をゆっくり移動させる
+	targetPos_ = Utility::Lerp(targetPos_, VAdd(followPos, relativeTPos), 0.1f);
+
+	// カメラの上方向
+	cameraUp_ = Utility::DIR_U;
+
 }
 
 void Camera::Draw()
