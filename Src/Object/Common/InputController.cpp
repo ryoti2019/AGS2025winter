@@ -130,6 +130,25 @@ bool InputController::Run()
 
 }
 
+bool InputController::Evasion()
+{
+
+	auto& ins = InputManager::GetInstance();
+
+	// キーボード
+	if (!SceneManager::GetInstance().GetGamePad() && ins.IsTrgDown(KEY_INPUT_R))
+	{
+		return true;
+	}
+	// ゲームパッド
+	else if (SceneManager::GetInstance().GetGamePad() && ins.IsPadBtnTrgUp(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN))
+	{
+		return true;
+	}
+
+	return false;
+}
+
 bool InputController::Attack()
 {
 

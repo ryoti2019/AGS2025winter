@@ -30,6 +30,7 @@ public:
 		"ATTACK_CHARGE_PUNCH",
 		"ATTACK_SPECIAL_PUNCH",
 		"POWER_CHARGE",
+		"EVASION",
 		"HIT_HEAD",
 		"HIT_BODY",
 		"DEATH",
@@ -112,6 +113,9 @@ public:
 	// 必殺技の攻撃が続く時間
 	const float ATTACK_SPECIAL_PUNCH_COLLISION_TIME;
 
+	// 回避の移動量
+	const float EVASION_MOVE_POW;
+
 	Player(const VECTOR& pos, const json& data);
 
 	~Player()override = default;
@@ -171,8 +175,6 @@ public:
 	// 状態遷移
 	void ChangeState(const PlayerState state);
 
-	// 
-
 private:
 
 	// 入力用のコンポーネント
@@ -226,6 +228,7 @@ private:
 	// スーパーアーマー状態
 	const std::vector<PlayerState> superArmorState_ =
 	{
+		{PlayerState::EVASION},
 		{PlayerState::POWER_CHARGE},
 		{PlayerState::ATTACK_SPECIAL_PUNCH}
 	};
@@ -330,6 +333,7 @@ private:
 	void ChangeChargePunch();
 	void ChangeSpecialAttack();
 	void ChangePowerCharge();
+	void ChangeEvasion();
 	void ChangeHitHead();
 	void ChangeHitBody();
 	void ChangeDeath();
@@ -347,6 +351,7 @@ private:
 	void UpdateChargePunch(const float deltaTime);
 	void UpdateSpecialAttack(const float deltaTime);
 	void UpdatePowerCharge(const float deltaTime);
+	void UpdateEvasion(const float deltaTime);
 	void UpdateHitHead(const float deltaTime);
 	void UpdateHitBody(const float deltaTime);
 	void UpdateDeath(const float deltaTime);
@@ -371,6 +376,9 @@ private:
 
 	// ImGuiのデバッグ描画の更新
 	void UpdateDebugImGui()override;
+
+	// アニメーションのフレームを固定
+	void AnimationFrame()override;
 
 	// どのヒットアニメーションかチェックする
 	virtual void AttackHitCheck(const int type);

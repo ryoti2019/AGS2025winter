@@ -24,6 +24,9 @@ public:
 	// ‘–‚é
 	bool Run();
 
+	//‰ñ”ğ
+	bool Evasion();
+
 	// UŒ‚
 	bool Attack();
 

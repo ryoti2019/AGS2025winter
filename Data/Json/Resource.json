@@ -182,6 +182,11 @@
           },
           {
             "TYPE": 3,
+            "PATH": "Player/Evasion.mv1",
+            "SRC": "ANIM_PLAYER_EVASION"
+          },
+          {
+            "TYPE": 3,
             "PATH": "Player/HitHead.mv1",
             "SRC": "ANIM_PLAYER_HIT_HEAD"
           },

@@ -39,7 +39,8 @@ Player::Player(const VECTOR& pos, const json& data)
 	ATTACK_CHARGE_PUNCH_TIME(data["ATTACK_CHARGE_PUNCH_TIME"]),
 	ATTACK_SPECIAL_PUNCH_START_FRAME(data["ANIM"][static_cast<int>(PlayerState::ATTACK_SPECIAL_PUNCH) - 1]["ATTACK_START_FRAME"]),
 	ATTACK_SPECIAL_PUNCH_DAMAGE(data["ANIM"][static_cast<int>(PlayerState::ATTACK_SPECIAL_PUNCH) - 1]["DAMAGE"]),
-	ATTACK_SPECIAL_PUNCH_COLLISION_TIME(data["ATTACK_SPECIAL_PUNCH_COLLISION_TIME"])
+	ATTACK_SPECIAL_PUNCH_COLLISION_TIME(data["ATTACK_SPECIAL_PUNCH_COLLISION_TIME"]),
+	EVASION_MOVE_POW(data["EVASION_MOVE_POW"])
 {
 
 	// 機能の初期化
@@ -110,6 +111,7 @@ void Player::InitFunctionPointer()
 	stateChange_.emplace(PlayerState::ATTACK_CHARGE_PUNCH, std::bind(&Player::ChangeChargePunch, this));
 	stateChange_.emplace(PlayerState::ATTACK_SPECIAL_PUNCH, std::bind(&Player::ChangeSpecialAttack, this));
 	stateChange_.emplace(PlayerState::POWER_CHARGE, std::bind(&Player::ChangePowerCharge, this));
+	stateChange_.emplace(PlayerState::EVASION, std::bind(&Player::ChangeEvasion, this));
 	stateChange_.emplace(PlayerState::HIT_HEAD, std::bind(&Player::ChangeHitHead, this));
 	stateChange_.emplace(PlayerState::HIT_BODY, std::bind(&Player::ChangeHitBody, this));
 	stateChange_.emplace(PlayerState::DEATH, std::bind(&Player::ChangeDeath, this));
@@ -235,12 +237,12 @@ void Player::InitParameter()
 	{
 
 		// プレイヤー必殺技のゲージを設定 
-		//specialAttackGauge_ = SceneManager::GetInstance().GetPlayerSpecialAttackGauge();
-		specialAttackGauge_ = 0;
+		specialAttackGauge_ = SceneManager::GetInstance().GetPlayerSpecialAttackGauge();
+		//specialAttackGauge_ = 0;
 
 		// プレイヤーのHPを設定
-		//hp_ = SceneManager::GetInstance().GetPlayerHp();
-		hp_ = 100;
+		hp_ = SceneManager::GetInstance().GetPlayerHp();
+		//hp_ = 100;
 
 	}
 
@@ -364,6 +366,9 @@ void Player::Update(const float deltaTime)
 	// アニメーション再生
 	animationController_->Update(deltaTime);
 
+	// アニメーションのフレームを固定
+	AnimationFrame();
+
 	// 走っているとき以外は足音を止める
 	if (state_ != PlayerState::RUN)
 	{
@@ -441,6 +446,40 @@ void Player::UpdateDebugImGui()
 	ImGui::InputFloat3("Pos", &transform_->pos.x);
 	// 終了処理
 	ImGui::End();
+
+}
+
+void Player::AnimationFrame()
+{
+
+	// 対象フレームのローカル行列を初期値にリセットする
+	MV1ResetFrameUserLocalMatrix(transform_->modelId, collisionData_.body);
+
+	// 座標を固定する
+	if (animationController_->IsBlendPlay("EVASION"))
+	{
+
+		// 対象フレームのローカル行列(大きさ、回転、位置)を取得する
+		auto mat = MV1GetFrameLocalMatrix(transform_->modelId, collisionData_.body);
+
+		auto scl = MGetSize(mat); // 行列から大きさを取り出す
+		auto rot = MGetRotElem(mat); // 行列から回転を取り出す
+		auto pos = MGetTranslateElem(mat); // 行列から移動値を取り出す
+
+		// 大きさ、回転、位置をローカル行列に戻す
+		MATRIX mix = MGetIdent();
+		mix = MMult(mix, MGetScale(scl)); // 大きさ
+		mix = MMult(mix, rot); // 回転
+
+		// ここでローカル座標を行列に、そのまま戻さず、
+		// 調整したローカル座標を設定する
+		mix = MMult(mix, MGetTranslate({ 0.0f, pos.y, 0.0f }));
+
+		// 合成した行列を対象フレームにセットし直して、
+		// アニメーションの移動値を無効化
+		MV1SetFrameUserLocalMatrix(transform_->modelId, collisionData_.body, mix);
+
+	}
 
 }
 
@@ -900,6 +939,16 @@ void Player::ChangePowerCharge()
 
 }
 
+void Player::ChangeEvasion()
+{
+
+	stateUpdate_ = std::bind(&Player::UpdateEvasion, this, std::placeholders::_1);
+
+	// スピード
+	speed_ = EVASION_MOVE_POW;
+
+}
+
 void Player::ChangeHitHead()
 {
 
@@ -1257,6 +1306,20 @@ void Player::UpdatePowerCharge(const float deltaTime)
 	if (animationController_->IsEndPlayAnimation())
 	{
 		ChangeState(PlayerState::ATTACK_SPECIAL_PUNCH);
+	}
+
+}
+
+void Player::UpdateEvasion(const float deltaTime)
+{
+
+	// 移動処理
+	moveComponent_->Move();
+
+	// 待機状態に遷移
+	if (animationController_->IsEndPlayAnimation())
+	{
+		ChangeState(PlayerState::IDLE);
 	}
 
 }

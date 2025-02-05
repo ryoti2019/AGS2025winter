@@ -22,6 +22,9 @@ void InputComponent::Update(const float deltaTime)
 	// ˆÚ“®
 	Move();
 
+	// ‰ñ”ð
+	Evasion();
+
 }
 
 void InputComponent::Dir()
@@ -45,7 +48,8 @@ void InputComponent::Move()
 	VECTOR dir = inputController_->Dir();
 
 	// UŒ‚’†‚ÍˆÚ“®‚Å‚«‚È‚¢
-	if (!player_->GetAttackState() && player_->GetState() != static_cast<int>(PlayerState::POWER_CHARGE))
+	if (!player_->GetAttackState() && player_->GetState() != static_cast<int>(PlayerState::POWER_CHARGE)
+		&& player_->GetState() != static_cast<int>(PlayerState::EVASION))
 	{
 		// “ü—Í‚µ‚Ä‚¢‚½‚çˆÚ“®‚·‚é
 		if (!Utility::EqualsVZero(dir))
@@ -148,6 +152,18 @@ void InputComponent::Attack(const float deltaTime)
 			}
 		}
 
+	}
+
+}
+
+void InputComponent::Evasion()
+{
+
+	// ‰ñ”ð‚µ‚æ‚¤‚Æ‚µ‚Ä‚¢‚é‚©”»’è
+	if (inputController_->Dir().x != 0.0f && inputController_->Evasion())
+	{
+		// ‰ñ”ðó‘Ô‚É‘JˆÚ
+		player_->ChangeState(PlayerState::EVASION);
 	}
 
 }
