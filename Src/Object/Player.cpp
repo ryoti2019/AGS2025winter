@@ -64,6 +64,9 @@ Player::Player(const VECTOR& pos, const json& data)
 	// アニメーションの初期化
 	InitAnimation();
 
+	// エフェクトの初期化
+	InitEffect();
+
 	// BGMとSEの初期化
 	InitBGMAndSE();
 
@@ -242,7 +245,7 @@ void Player::InitParameter()
 
 		// プレイヤーのHPを設定
 		hp_ = SceneManager::GetInstance().GetPlayerHp();
-		//hp_ = 100;
+		//hp_ = 10000;
 
 	}
 
@@ -304,6 +307,31 @@ void Player::InitAnimation()
 
 	// 初期状態
 	ChangeState(PlayerState::IDLE);
+
+}
+
+void Player::InitEffect(void)
+{
+
+	// エフェクトコントローラーの生成
+	effekseerController_ = std::make_unique<EffekseerController>();
+
+	// エフェクトコントローラーにアニメーションを追加
+	for (int i = static_cast<int>(EffectData::HIT); i < static_cast<int>(EffectData::MAX); ++i)
+	{
+
+		effekseerController_->Add(
+
+			// エフェクトの名前
+			jsonData_["EFFECT"][i - 1]["NAME"],
+
+			// エフェクトハンドル
+			resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::EFFECT_PLAYER_HIT) + i - 1]).handleId_,
+
+			// エフェクトのスケール
+			jsonData_["EFFECT"][i - 1]["SCALE"]);
+
+	}
 
 }
 
@@ -937,6 +965,9 @@ void Player::ChangePowerCharge()
 	std::weak_ptr<Camera> camera = SceneManager::GetInstance().GetCamera();
 	camera.lock()->ChangeMode(Camera::MODE::SPECIAL);
 
+	// エフェクト再生
+	effekseerController_->Draw(transform_->pos, Quaternion::Identity(), { 0.0f,0.0,0.0f }, "POWER_CHARGE");
+
 }
 
 void Player::ChangeEvasion()
@@ -1049,9 +1080,10 @@ void Player::UpdateJab(const float deltaTime)
 		collisionData_.isLeftHandAttack = false;
 	}
 
-	// 攻撃が当たっていたら音を再生
+	// 攻撃が当たっていたらエフェクトと音を再生
 	if (isHitAttack_)
 	{
+		effekseerController_->Draw(collisionData_.leftHandCapsuleUpPos, Quaternion::Identity(), { 0.0f,0.0,0.0f }, "HIT");
 		PlaySoundMem(jabSE_, DX_PLAYTYPE_BACK, true);
 		isHitAttack_ = false;
 	}
@@ -1083,9 +1115,10 @@ void Player::UpdateStraight(const float deltaTime)
 		collisionData_.isRightHandAttack = false;
 	}
 
-	// 攻撃が当たっていたら音を再生
+	// 攻撃が当たっていたらエフェクトと音を再生
 	if (isHitAttack_)
 	{
+		effekseerController_->Draw(collisionData_.rightHandCapsuleUpPos, Quaternion::Identity(), { 0.0f,0.0,0.0f }, "HIT");
 		PlaySoundMem(straightSE_, DX_PLAYTYPE_BACK, true);
 		isHitAttack_ = false;
 	}
@@ -1117,9 +1150,10 @@ void Player::UpdateHook(const float deltaTime)
 		collisionData_.isLeftHandAttack = false;
 	}
 
-	// 攻撃が当たっていたら音を再生
+	// 攻撃が当たっていたらエフェクトと音を再生
 	if (isHitAttack_)
 	{
+		effekseerController_->Draw(collisionData_.rightHandCapsuleUpPos, Quaternion::Identity(), { 0.0f,0.0,0.0f }, "HIT");
 		PlaySoundMem(hookSE_, DX_PLAYTYPE_BACK, true);
 		isHitAttack_ = false;
 	}
@@ -1151,9 +1185,10 @@ void Player::UpdateLeftKick(const float deltaTime)
 		collisionData_.isLeftFootAttack = false;
 	}
 
-	// 攻撃が当たっていたら音を再生
+	// 攻撃が当たっていたらエフェクトと音を再生
 	if (isHitAttack_)
 	{
+		effekseerController_->Draw(collisionData_.leftFootCapsuleUpPos, Quaternion::Identity(), { 0.0f,0.0,0.0f }, "HIT");
 		PlaySoundMem(leftKickSE_, DX_PLAYTYPE_BACK, true);
 		isHitAttack_ = false;
 	}
@@ -1185,9 +1220,10 @@ void Player::UpdateRightKick(const float deltaTime)
 		collisionData_.isRightFootAttack = false;
 	}
 
-	// 攻撃が当たっていたら音を再生
+	// 攻撃が当たっていたらエフェクトと音を再生
 	if (isHitAttack_)
 	{
+		effekseerController_->Draw(collisionData_.rightFootCapsuleUpPos, Quaternion::Identity(), { 0.0f,0.0,0.0f }, "HIT");
 		PlaySoundMem(rightKickSE_, DX_PLAYTYPE_BACK, true);
 		isHitAttack_ = false;
 	}
@@ -1216,9 +1252,10 @@ void Player::UpdateUpper(const float deltaTime)
 		collisionData_.isRightHandAttack = false;
 	}
 
-	// 攻撃が当たっていたら音を再生
+	// 攻撃が当たっていたらエフェクトと音を再生
 	if (isHitAttack_)
 	{
+		effekseerController_->Draw(collisionData_.rightHandCapsuleUpPos, Quaternion::Identity(), { 0.0f,0.0,0.0f }, "HIT");
 		PlaySoundMem(upperSE_, DX_PLAYTYPE_BACK, true);
 		isHitAttack_ = false;
 	}
@@ -1247,9 +1284,10 @@ void Player::UpdateChargePunch(const float deltaTime)
 		collisionData_.isRightHandAttack = false;
 	}
 
-	// 攻撃が当たっていたら音を再生
+	// 攻撃が当たっていたらエフェクトと音を再生
 	if (isHitAttack_)
 	{
+		effekseerController_->Draw(collisionData_.rightHandCapsuleUpPos, Quaternion::Identity(), { 0.0f,0.0,0.0f }, "HIT");
 		PlaySoundMem(chargePunchSE_, DX_PLAYTYPE_BACK, true);
 		isHitAttack_ = false;
 	}
@@ -1278,22 +1316,46 @@ void Player::UpdateSpecialAttack(const float deltaTime)
 		// 必殺技の衝突判定が続く時間のカウンタを加算
 		attackSpecialPunchCollisionCnt_ += deltaTime;
 
+		// すでに再生しているか判定
+		if (!effekseerController_->IsDraw("SPECIAL_ATTACK") && !effekseerController_->IsDraw("SPECIAL_ATTACK2"))
+		{
+
+			// 必殺技のエフェクトを再生
+			effekseerController_->Draw(specialAttackHitEnemyPos_, transform_->quaRot.Mult(transform_->quaRot.AngleAxis(Utility::Deg2RadF(0.0f),Utility::AXIS_Y)),
+				{0.0f,0.0,0.0f}, "SPECIAL_ATTACK");
+			effekseerController_->Draw(transform_->pos, transform_->quaRot.Mult(transform_->quaRot.AngleAxis(Utility::Deg2RadF(0.0f), Utility::AXIS_Y)),
+				{ 0.0f,0.0,0.0f }, "SPECIAL_ATTACK2");
+		
+		}
+		
+		// エフェクトを追従させる
+		effekseerController_->FollowPos(collisionData_.projectilePos, transform_->quaRot.Mult(transform_->quaRot.AngleAxis(Utility::Deg2RadF(0.0f), Utility::AXIS_Y)),
+			{ 0.0f,500.0f,0.0f }, "SPECIAL_ATTACK");
+
 	}
 
-	// 攻撃が当たっていたら音を再生
+	// 攻撃が当たっていたらエフェクトと音を再生
 	if (isHitAttack_)
 	{
+
+		effekseerController_->Draw(specialAttackHitEnemyPos_, Quaternion::Identity(), { 0.0f,0.0,0.0f }, "HIT");
 		PlaySoundMem(specialAttackSE_, DX_PLAYTYPE_BACK, true);
 		isHitAttack_ = false;
+
 	}
 
 	// 待機状態に遷移
 	if (animationController_->IsEndPlayAnimation())
 	{
+
 		ChangeState(PlayerState::IDLE);
 
 		// 当たり判定を消す
 		collisionData_.isProjectileAttack = false;
+
+		// エフェクトを止める
+		effekseerController_->DrawStop("SPECIAL_ATTACK");
+		effekseerController_->DrawStop("SPECIAL_ATTACK2");
 
 	}
 

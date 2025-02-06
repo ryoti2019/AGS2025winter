@@ -395,16 +395,44 @@
       },
       "EffectData": {
         "Player": [
-
+          {
+            "TYPE": 4,
+            "PATH": "Player/Hit.efkefc",
+            "SRC": "EFFECT_PLAYER_HIT"
+          },
+          {
+            "TYPE": 4,
+            "PATH": "Player/SpecialAttack.efkefc",
+            "SRC": "EFFECT_PLAYER_SPECIAL_ATTACK"
+          },
+          {
+            "TYPE": 4,
+            "PATH": "Player/SpecialAttack2.efkefc",
+            "SRC": "EFFECT_PLAYER_SPECIAL_ATTACK2"
+          },
+          {
+            "TYPE": 4,
+            "PATH": "Player/PowerCharge.efkefc",
+            "SRC": "EFFECT_PLAYER_POWER_CHARGE"
+          }
         ],
         "Enemy": [
-
+          {
+            "TYPE": 4,
+            "PATH": "Enemy/Hit.efkefc",
+            "SRC": "EFFECT_ENEMY_HIT"
+          }
         ],
         "Boss": [
           {
             "TYPE": 4,
             "PATH": "Boss/Projectile.efkefc",
             "SRC": "EFFECT_BOSS_PROJECTILE"
+          },
+          {
+            "TYPE": 4,
+            "PATH": "Boss/Hit.efkefc",
+            "SRC": "EFFECT_BOSS_HIT"
           }
         ],
         "Stage": [

@@ -136,6 +136,18 @@ void ResourceManager::ModelAndAnimationLoad(const nlohmann::json_abi_v3_11_3::js
 void ResourceManager::EffectLoad(const nlohmann::json_abi_v3_11_3::json& objectData)
 {
 
+	// プレイヤーのエフェクトデータ
+	const auto& playerEffectData = objectData[0]["EffectData"]["Player"];
+
+	// プレイヤーのエフェクトデータの初期化
+	InitResource(Application::PATH_EFFECT, playerEffectData);
+
+	// 敵のエフェクトデータ
+	const auto& enemyEffectData = objectData[0]["EffectData"]["Enemy"];
+
+	// 敵のエフェクトデータの初期化
+	InitResource(Application::PATH_EFFECT, enemyEffectData);
+
 	// ボスのエフェクトデータ
 	const auto& bossEffectData = objectData[0]["EffectData"]["Boss"];
 
@@ -147,10 +159,10 @@ void ResourceManager::EffectLoad(const nlohmann::json_abi_v3_11_3::json& objectD
 void ResourceManager::SoundLoad(const nlohmann::json_abi_v3_11_3::json& objectData)
 {
 
-	// タイトルシーンのサウンドデータ
+	// プレイヤーのサウンドデータ
 	const auto& playerSoundData = objectData[0]["SoundData"]["Player"];
 
-	// タイトルシーンのサウンドデータの初期化
+	// プレイヤーのサウンドデータの初期化
 	InitResource(Application::PATH_SOUND, playerSoundData);
 
 	// タイトルシーンのサウンドデータ

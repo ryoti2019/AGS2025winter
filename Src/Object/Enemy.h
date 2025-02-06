@@ -29,6 +29,14 @@ public:
 		"DEATH"
 	};
 
+	// エフェクトデータ
+	enum class EffectData
+	{
+		NONE,
+		HIT,
+		MAX
+	};
+
 	Enemy(const VECTOR& pos, const json& data);
 
 	~Enemy()override = default;
@@ -193,6 +201,12 @@ private:
 
 	// アニメーションの初期化
 	void InitAnimation()override;
+
+	// エフェクトの初期化
+	void InitEffect(void)override;
+
+	// BGMとSEの初期化
+	void InitBGMAndSE()override;
 
 	// 関数ポインタの初期化
 	void InitFunctionPointer()override;

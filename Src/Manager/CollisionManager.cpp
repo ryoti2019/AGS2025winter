@@ -246,7 +246,7 @@ void CollisionManager::OnAttackCollision(const std::shared_ptr<ActorBase>& attac
 	auto& data = isCloseRangeAttackHitData_[target];
 
 	// ターゲットに今攻撃された攻撃状態の無敵時間を設定する
-	data[attacker->GetState() - ATTACK_START_NUM] = 1.0f;
+	data[attacker->GetState() - ATTACK_START_NUM] = 0.5f;
 
 }
 
@@ -332,6 +332,16 @@ void CollisionManager::OnProjectileCollision(const std::shared_ptr<ActorBase>& a
 
 	// 攻撃が当たったフラグをtrueにする
 	attacker->SetIsHitAttack(true);
+
+	// プレイヤーにキャスト
+	std::shared_ptr<Player> player = std::dynamic_pointer_cast<Player>(attacker);
+
+	// プレイヤーか判定
+	if (player)
+	{
+		// 必殺技が当たった時の敵の座標を設定
+		player->SetSpecialAttackHitEnemyPos(target->GetTransform()->pos);
+	}
 
 	// 敵の飛び道具だけ当たり判定を消す
 	if (attacker->GetActorType() == ActorType::BOSS)

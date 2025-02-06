@@ -44,6 +44,9 @@ Boss::Boss(const VECTOR& pos, const json& data)
 	// エフェクトの初期化
 	InitEffect();
 
+	// BGMとSEの初期化
+	InitBGMAndSE();
+
 }
 
 void Boss::Init(const VECTOR& pos)
@@ -72,6 +75,9 @@ void Boss::Init(const VECTOR& pos)
 
 	//エフェクトの初期化
 	InitEffect();
+
+	// BGMとSEの初期化
+	InitBGMAndSE();
 
 	// AIコンポーネントを追加
 	aiComponent_ = std::make_unique<BossAIComponent>(std::static_pointer_cast<Boss>(GetThis()));
@@ -269,12 +275,26 @@ void Boss::InitEffect(void)
 			jsonData_["EFFECT"][i - 1]["NAME"],
 
 			// エフェクトハンドル
-			resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::EFFECT_BOSS_PROJECTILE)]).handleId_,
+			resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::EFFECT_BOSS_PROJECTILE) + i - 1]).handleId_,
 
 			// エフェクトのスケール
 			jsonData_["EFFECT"][i - 1]["SCALE"]);
 
 	}
+
+}
+
+void Boss::InitBGMAndSE()
+{
+
+	// パンチの音の初期化
+	punchSE_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::SOUND_PLAYER_STRAIGHT_SE)]).handleId_;
+
+	// キックの音の初期化
+	kickSE_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::SOUND_PLAYER_RIGHT_KICK_SE)]).handleId_;
+
+	// 飛び道具の音の初期化
+	projectileSE_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::SOUND_PLAYER_CHARGE_PUNCH_SE)]).handleId_;
 
 }
 
@@ -620,6 +640,14 @@ void Boss::Projectile(const float deltaTime)
 
 		// エフェクトを追従させる
 		effekseerController_->FollowPos(collisionData_.projectilePos, Quaternion::Identity(), { 0.0f,500.0f,0.0f }, "PROJECTILE");
+
+		// 攻撃が当たっていたらエフェクトと音を再生
+		if (isHitAttack_)
+		{
+			effekseerController_->Draw(collisionData_.projectilePos, Quaternion::Identity(), { 0.0f,0.0,0.0f }, "HIT");
+			PlaySoundMem(kickSE_, DX_PLAYTYPE_BACK, true);
+			isHitAttack_ = false;
+		}
 
 	}
 	else if (!collisionData_.isProjectileAttack || ATTACK_PROJECTILE_COLLISION_TIME <= projectileCollisionCnt_)
@@ -1195,6 +1223,14 @@ void Boss::UpdatePunch(const float deltaTime)
 		collisionData_.isRightHandAttack = false;
 	}
 
+	// 攻撃が当たっていたらエフェクトと音を再生
+	if (isHitAttack_)
+	{
+		effekseerController_->Draw(collisionData_.rightHandCapsuleUpPos, Quaternion::Identity(), { 0.0f,0.0,0.0f }, "HIT");
+		PlaySoundMem(punchSE_, DX_PLAYTYPE_BACK, true);
+		isHitAttack_ = false;
+	}
+
 	// アニメーションが終了したら待機状態へ遷移する
 	if (animationController_->IsEndPlayAnimation())
 	{
@@ -1219,6 +1255,14 @@ void Boss::UpdateKick(const float deltaTime)
 	else
 	{
 		collisionData_.isRightFootAttack = false;
+	}
+
+	// 攻撃が当たっていたらエフェクトと音を再生
+	if (isHitAttack_)
+	{
+		effekseerController_->Draw(collisionData_.rightFootCapsuleUpPos, Quaternion::Identity(), { 0.0f,0.0,0.0f }, "HIT");
+		PlaySoundMem(kickSE_, DX_PLAYTYPE_BACK, true);
+		isHitAttack_ = false;
 	}
 
 	// アニメーションが終了したら待機状態へ遷移する

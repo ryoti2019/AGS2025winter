@@ -98,6 +98,12 @@ protected:
 	// 敵がまっすく飛んでいくときのカウンタ
 	float knockBackCnt_;
 
+	// パンチの音
+	int punchSE_;
+
+	// キックの音
+	int kickSE_;
+
 private:
 
 };

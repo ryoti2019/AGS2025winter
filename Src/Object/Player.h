@@ -38,6 +38,17 @@ public:
 		"VICTORY"
 	};
 
+	// エフェクトデータ
+	enum class EffectData
+	{
+		NONE,
+		HIT,
+		SPECIAL_ATTACK,
+		SPECIAL_ATTACK2,
+		POWER_CHARGE,
+		MAX
+	};
+
 	// ジャブの攻撃開始フレーム
 	const float ATTACK_JAB_START_FRAME;
 
@@ -175,6 +186,12 @@ public:
 	// 状態遷移
 	void ChangeState(const PlayerState state);
 
+	// 必殺技が当たった時の敵の座標を取得
+	const VECTOR GetSpecialAttackHitEnemyPos()const { return specialAttackHitEnemyPos_; }
+
+	// 必殺技が当たった時の敵の座標を設定
+	void SetSpecialAttackHitEnemyPos(const VECTOR specialAttackHitEnemyPos) { specialAttackHitEnemyPos_ = specialAttackHitEnemyPos; }
+
 private:
 
 	// 入力用のコンポーネント
@@ -278,6 +295,9 @@ private:
 	// 攻撃を入力しているか
 	std::map<PlayerState, bool> isCombo_;
 
+	// 必殺技が当たった時の敵の座標
+	VECTOR specialAttackHitEnemyPos_;
+
 	// 溜めパンチのカウンタ
 	float attackChargePunchCnt_;
 
@@ -367,6 +387,9 @@ private:
 
 	// アニメーションの初期化
 	void InitAnimation()override;
+
+	// エフェクトの初期化
+	void InitEffect(void)override;
 
 	// BGMとSEの初期化
 	void InitBGMAndSE()override;

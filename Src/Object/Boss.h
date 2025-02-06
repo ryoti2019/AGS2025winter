@@ -54,10 +54,12 @@ public:
 		"DEATH"
 	};
 
+	// エフェクトデータ
 	enum class EffectData
 	{
 		NONE,
 		PROJECTILE,
+		HIT,
 		MAX
 	};
 
@@ -218,6 +220,9 @@ private:
 	// 敵を生成するときのクールタイムのカウンタ
 	float createEnemyCoolTimeCnt_;
 
+	// 飛び道具の音
+	int projectileSE_;
+	
 	// 敵を生成したかどうかのフラグ
 	bool isCreateEnemy_;
 
@@ -264,6 +269,9 @@ private:
 
 	// エフェクトの初期化
 	void InitEffect(void)override;
+
+	// BGMとSEの初期化
+	void InitBGMAndSE()override;
 
 	// 関数ポインタの初期化
 	void InitFunctionPointer()override;

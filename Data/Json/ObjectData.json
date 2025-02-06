@@ -113,6 +113,24 @@
 						"NAME": "VICTORY",
 						"SPEED": 30.0
 					}
+				],
+				"EFFECT": [
+					{
+						"NAME": "HIT",
+						"SCALE": 100.0
+					},
+					{
+						"NAME": "SPECIAL_ATTACK",
+						"SCALE": 500.0
+					},
+					{
+						"NAME": "SPECIAL_ATTACK2",
+						"SCALE": 500.0
+					},
+					{
+						"NAME": "POWER_CHARGE",
+						"SCALE": 2000.0
+					}
 				]
 			}
 		},
@@ -195,6 +213,12 @@
 					{
 						"NAME": "DEATH",
 						"SPEED": 30.0
+					}
+				],
+				"EFFECT": [
+					{
+						"NAME": "HIT",
+						"SCALE": 100.0
 					}
 				]
 			}
@@ -307,6 +331,10 @@
 					{
 						"NAME": "PROJECTILE",
 						"SCALE": 500.0
+					},
+					{
+						"NAME": "HIT",
+						"SCALE": 100.0
 					}
 				]
 			}

@@ -161,19 +161,23 @@ public:
 
 #pragma region プレイヤー
 
-
+		EFFECT_PLAYER_HIT,
+		EFFECT_PLAYER_SPECIAL_ATTACK,
+		EFFECT_PLAYER_SPECIAL_ATTACK2,
+		EFFECT_PLAYER_POWER_CHARGE,
 
 #pragma endregion
 
 #pragma region 敵
 
-
+		EFFECT_ENEMY_HIT,
 
 #pragma endregion
 
 #pragma region ボス
 
 		EFFECT_BOSS_PROJECTILE,
+		EFFECT_BOSS_HIT,
 
 #pragma endregion
 
@@ -389,15 +393,23 @@ public:
 
 #pragma region プレイヤー
 
+		"EFFECT_PLAYER_HIT",
+		"EFFECT_PLAYER_SPECIAL_ATTACK",
+		"EFFECT_PLAYER_SPECIAL_ATTACK2",
+		"EFFECT_PLAYER_POWER_CHARGE",
+
 #pragma endregion
 
 #pragma region 敵
+
+		"EFFECT_ENEMY_HIT",
 
 #pragma endregion
 
 #pragma region ボス
 
 		"EFFECT_BOSS_PROJECTILE",
+		"EFFECT_BOSS_HIT",
 
 #pragma endregion
 
