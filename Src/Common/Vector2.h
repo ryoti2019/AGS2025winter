@@ -1,6 +1,7 @@
 #pragma once
 class Vector2
 {
+
 public:
 
 	int x;
@@ -14,5 +15,7 @@ public:
 
 	// デストラクタ
 	~Vector2();
+
+private:
 
 };

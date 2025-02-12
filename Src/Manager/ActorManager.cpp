@@ -7,9 +7,6 @@
 #include "../Object/Stage.h"
 
 ActorManager::ActorManager()
-	:
-	minEnemy_(nullptr),
-	minDistance_(10000.0f)
 {
 }
 
@@ -50,82 +47,6 @@ void ActorManager::Update(const float deltaTime)
 			actor->Update(deltaTime);
 		}
 	}
-
-	//// 敵がロックオンしているものがあるか確認する処理
-	//for (const auto& data : activeActorData_)
-	//{
-	//	for (const auto& actor : data.second)
-	//	{
-
-	//		// 敵
-	//		const auto& enemys = activeActorData_.find(ActorType::ENEMY);
-
-	//		// 中身が入っているか確認
-	//		if (enemys == activeActorData_.end())continue;
-
-	//		for (const std::shared_ptr<ActorBase>& enemy : enemys->second)
-	//		{
-	//			// 敵の中で1つでもtrueだったら処理しない
-	//			if (enemy->GetIsLockOn())return;
-	//		}
-	//	}
-	//}
-
-	//// 敵をロックオンするための処理
-	//for (const auto& data : activeActorData_)
-	//{
-	//	for (const auto& actor : data.second)
-	//	{
-
-	//		// プレイヤー
-	//		const auto& players = activeActorData_.find(ActorType::PLAYER);
-
-	//		// 敵
-	//		const auto& enemys = activeActorData_.find(ActorType::ENEMY);
-
-	//		// 中身が入っているか確認
-	//		if (players == activeActorData_.end())continue;
-	//		if (enemys == activeActorData_.end())continue;
-
-	//		for (const std::shared_ptr<ActorBase>& player : players->second)
-	//		{
-	//			for (const std::shared_ptr<ActorBase>& enemy : enemys->second)
-	//			{
-
-	//				// ポインタが入っているか確認
-	//				if (!player)return;
-	//				if (!enemy)return;
-
-	//				// プレイヤーから敵に向けてのベクトル
-	//				const VECTOR& vec = VSub(enemy->GetPos(), player->GetPos());
-
-	//				// ベクトルの距離
-	//				const float distance = Utility::MagnitudeF(vec);
-
-	//				// 一番小さい距離と比べて今比較しているほうが小さかったら今のを一番小さい値に設定する
-	//				if (distance > minDistance_)continue;
-
-	//				minDistance_ = distance;
-	//				minEnemy_ = enemy;
-	//				
-
-	//				// この敵をロックオンする
-	//				minEnemy_->SetIsLockOn(true);
-
-	//				// カメラにこの敵を追従させるためTransformを渡す
-	//				SceneManager::GetInstance().GetCamera().lock()->SetEnemy(&minEnemy_->GetTransform());
-
-	//				// カメラにロックオン機能をONにする
- //					SceneManager::GetInstance().GetCamera().lock()->SetLockOn(true);
-
-	//				// 決まったら距離を初期化する
-	//				minDistance_ = 10000.0f;
-	//				return;
-
-	//			}
-	//		}
-	//	}
-	//}
 
 }
 

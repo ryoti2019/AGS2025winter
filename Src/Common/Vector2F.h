@@ -19,4 +19,6 @@ public:
 	Vector2F operator+(const Vector2F& value);
 	Vector2F operator-(const Vector2F& value);
 
+private:
+
 };

@@ -24,28 +24,8 @@ class ActorManager
 public:
 
 	ActorManager();
-	//~ActorManager() = default;
-	~ActorManager()
-	{
-		for (const auto& m : deactiveActorData_)
-		{
-			for (const auto& v : m.second)
-			{
-				int cnt = v.use_count();
-			}
-		}
-		deactiveActorData_.clear();
-		for (const auto& m : activeActorData_)
-		{
-			for (const auto& v : m.second)
-			{
-				int cnt = v.use_count();
-				int q = 1;
-				q = 2;
-			}
-		}
-		activeActorData_.clear();
-	}
+
+	~ActorManager() = default;
 
 	void Init();
 	void Update(const float deltaTime);
@@ -82,12 +62,6 @@ private:
 		}
 	};
 
-	// 距離が一番短い敵のポインタ
-	std::shared_ptr<ActorBase> minEnemy_;
-
-	// 一番短い距離を保持するポインタ
-	float minDistance_;
-
 };
 
 template<typename T>
@@ -109,10 +83,6 @@ inline void ActorManager::CreateActor(const json& data, const VECTOR& pos)
 		std::vector<std::shared_ptr<ActorBase>> data;
 		data.emplace_back(actor);
 		deactiveActorData_.emplace(actor->GetActorType(), data);
-
-		cnt = actor.use_count();
-		int b = 2;
-		b = 3;
 	}
 	// 生成されている場合はすでにある箱の中に要素を入れていく
 	else

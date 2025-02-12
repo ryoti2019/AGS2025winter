@@ -15,6 +15,16 @@ class Player : public ActorBase
 
 public:
 
+	// ボス戦の初期角度
+	static constexpr float BOSS_BATTLE_INIT_ANGLE = 180.0f;
+
+	// サウンドの最大音量
+	static constexpr int SOUND_MAX = 255;
+
+	// 足音の音量の割合
+	static constexpr float SOUND_FOOT_STEPS_VOLUME = 0.6f;
+
+
 	// アニメーションコントローラーに渡す引数
 	std::string ANIM_DATA_KEY[static_cast<int>(PlayerState::MAX)] =
 	{

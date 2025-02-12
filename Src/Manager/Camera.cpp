@@ -15,8 +15,8 @@ Camera::Camera()
 	pos_ = { 0.0f,0.0f,0.0f };
 	targetPos_ = { 0.0f, 0.0f, 0.0f };
 	movePow_ = { 0.0f,0.0f,0.0f };
-	angle_ = { 0.0f, Utility::Deg2RadF(90.0f), 0.0f};
-	lockOn_ = false;
+	angle_ = { 0.0f, Utility::Deg2RadF(INIT_ANGLE), 0.0f};
+	isLazy_ = false;
 	specialMoveCnt_ = 0.0f;
 
 	// カメラの初期設定
@@ -45,7 +45,6 @@ void Camera::InitFunctionPointer()
 	modeChange_.emplace(MODE::FREE, std::bind(&Camera::ChangeFree, this));
 	modeChange_.emplace(MODE::TITLE, std::bind(&Camera::ChangeTitle, this));
 	modeChange_.emplace(MODE::FOLLOW, std::bind(&Camera::ChangeFollow, this));
-	modeChange_.emplace(MODE::LOCKON, std::bind(&Camera::ChangeLockOn, this));
 	modeChange_.emplace(MODE::SPECIAL, std::bind(&Camera::ChangeSpecial, this));
 	modeChange_.emplace(MODE::APPEARANCE, std::bind(&Camera::ChangeAppearance, this));
 	modeChange_.emplace(MODE::GAME_CLEAR, std::bind(&Camera::ChangeGameClear, this));
@@ -95,12 +94,13 @@ void Camera::ChangeMode(const MODE& mode)
 
 void Camera::ChangeFixedPoint()
 {
+
 	modeDraw_ = std::bind(&Camera::SetBeforeDrawFixedPoint, this, std::placeholders::_1);
 
 	// カメラの初期設定
 	SetDefault();
-	pos_ = { 0.0f,200.0f,-500.0f };
-	targetPos_ = { 0.0f,150.0f,0.0f };
+	pos_ = FIXED_POINT_CAMERA_POS;
+	targetPos_ = FIXED_POINT_CAMERA_TARGET_POS;
 
 }
 
@@ -114,9 +114,9 @@ void Camera::ChangeTitle()
 
 	modeDraw_ = std::bind(&Camera::SetBeforeDrawTitle, this, std::placeholders::_1);
 
-	targetPos_ = VAdd(playerTransform_->pos, playerTransform_->quaRot.PosAxis({-1200.0f, 1000.0f, 0.0f}));
+	pos_ = VAdd(playerTransform_->pos, playerTransform_->quaRot.PosAxis(TITLE_CAMERA_LOCAL_POS));
 
-	pos_ = VAdd(playerTransform_->pos, playerTransform_->quaRot.PosAxis({ -1200.0f,800.0f,2500.0f }));
+	targetPos_ = VAdd(playerTransform_->pos, playerTransform_->quaRot.PosAxis(TITLE_CAMERA_TARGET_LOCAL_POS));
 
 }
 
@@ -125,22 +125,11 @@ void Camera::ChangeFollow()
 
 	modeDraw_ = std::bind(&Camera::SetBeforeDrawFollow, this, std::placeholders::_1);
 
-	targetPos_ = VAdd(playerTransform_->pos, playerTransform_->quaRot.PosAxis(LOCAL_P2T_POS));
+	targetPos_ = VAdd(playerTransform_->pos, playerTransform_->quaRot.PosAxis(FOLLOW_CAMERA_LOCAL_TARGET_POS));
 
 	angle_.y = playerTransform_->quaRot.ToEuler().y;
 	rotY_ = playerTransform_->quaRot;
 	rotXY_ = playerTransform_->quaRot;
-	lockOnAngles_ = { 0.0f, 0.0f, 0.0f };
-}
-
-void Camera::ChangeLockOn()
-{
-
-	modeDraw_ = std::bind(&Camera::SetBeforeDrawLockOn, this, std::placeholders::_1);
-
-	angle_ = { 0.0f,0.0f,0.0f };
-	lockOnAngles_ = { 0.0f, 0.0f, 0.0f };
-
 }
 
 void Camera::ChangeSpecial()
@@ -152,10 +141,9 @@ void Camera::ChangeSpecial()
 
 	movedPos_ = { 0.0f,0.0f,0.0f };
 
-	pos_ = VAdd(playerTransform_->pos, { 0.0f,1500.0f,0.0f });
+	pos_ = VAdd(playerTransform_->pos, playerTransform_->quaRot.PosAxis(SPECIAL_CAMERA_INIT_LOCAL_POS));
 
-	// 回転している
-	targetPos_ = VAdd(playerTransform_->pos, playerTransform_->quaRot.PosAxis({ 0.0f,1000.0f,0.0f }));
+	targetPos_ = VAdd(playerTransform_->pos, playerTransform_->quaRot.PosAxis(SPECIAL_CAMERA_LOCAL_TARGET_POS));
 
 	specialMoveCnt_ = 0.0f;
 
@@ -170,8 +158,8 @@ void Camera::ChangeAppearance()
 
 	movedPos_ = { 0.0f,0.0f,0.0f };
 
-	// プレイヤーから見たカメラのローカル座標
-	VECTOR localRotPos = bossTransform_->quaRot.PosAxis({ 500.0f,2000.0f,-2000.0f });
+	// ボスから見たカメラのローカル座標
+	VECTOR localRotPos = bossTransform_->quaRot.PosAxis(BOSS_APPEARANCE_CAMERA_INIT_LOCAL_POS);
 
 	// カメラが何秒移動したか計るカウンタ
 	elapsedTime_ = 0.0f;
@@ -191,8 +179,8 @@ void Camera::ChangeAppearance()
 	// カメラの座標を設定
 	pos_ = VAdd(bossTransform_->pos, localRotPos);
 
-	// 回転している
-	targetPos_ = VAdd(bossTransform_->pos, bossTransform_->quaRot.PosAxis({ 0.0f,1000.0f,0.0f }));
+	// 注視点の座標を設定
+	targetPos_ = VAdd(pos_, BOSS_APPEARANCE_CAMERA_INIT_LOCAL_TARGET_POS);
 	
 }
 
@@ -201,9 +189,9 @@ void Camera::ChangeGameClear()
 
 	modeDraw_ = std::bind(&Camera::SetBeforeDrawGameClear, this, std::placeholders::_1);
 
-	targetPos_ = VAdd(playerTransform_->pos, playerTransform_->quaRot.PosAxis({ -1200.0f, 1000.0f, 0.0f }));
+	pos_ = VAdd(playerTransform_->pos, playerTransform_->quaRot.PosAxis(GAME_CLEAR_CAMERA_LOCAL_POS));
 
-	pos_ = VAdd(playerTransform_->pos, playerTransform_->quaRot.PosAxis({ -1200.0f,800.0f,2500.0f }));
+	targetPos_ = VAdd(playerTransform_->pos, playerTransform_->quaRot.PosAxis(GAME_CLEAR_CAMERA_LOCAL_TRAGET_POS));
 
 }
 
@@ -212,7 +200,7 @@ void Camera::ChangeGameOver()
 
 	modeDraw_ = std::bind(&Camera::SetBeforeDrawGameOver, this, std::placeholders::_1);
 
-	targetPos_ = VAdd(playerTransform_->pos, playerTransform_->quaRot.PosAxis(LOCAL_P2T_POS));
+	targetPos_ = VAdd(playerTransform_->pos, playerTransform_->quaRot.PosAxis(FOLLOW_CAMERA_LOCAL_TARGET_POS));
 
 	angle_.y = playerTransform_->quaRot.ToEuler().y;
 	rotY_ = playerTransform_->quaRot;
@@ -222,7 +210,7 @@ void Camera::ChangeGameOver()
 
 void Camera::SetBeforeDrawFixedPoint(const float deltaTime)
 {
-	pos_ = { 0.0f,5000.0f,-5000.0f };
+	pos_ = FIXED_POINT_CAMERA_POS;
 }
 
 void Camera::SetBeforeDrawFree(const float deltaTime)
@@ -233,10 +221,10 @@ void Camera::SetBeforeDrawFree(const float deltaTime)
 #pragma region 回転
 
 	VECTOR axisDeg = Utility::VECTOR_ZERO;
-	if (ins.IsNew(KEY_INPUT_UP)) { axisDeg.x += -0.01f; }
-	if (ins.IsNew(KEY_INPUT_DOWN)) { axisDeg.x += 0.01f; }
-	if (ins.IsNew(KEY_INPUT_LEFT)) { axisDeg.y += -0.01f; }
-	if (ins.IsNew(KEY_INPUT_RIGHT)) { axisDeg.y += 0.01f; }
+	if (ins.IsNew(KEY_INPUT_UP)) { axisDeg.x += -FREE_MODE_ROTATION_POW; }
+	if (ins.IsNew(KEY_INPUT_DOWN)) { axisDeg.x += FREE_MODE_ROTATION_POW; }
+	if (ins.IsNew(KEY_INPUT_LEFT)) { axisDeg.y += -FREE_MODE_ROTATION_POW; }
+	if (ins.IsNew(KEY_INPUT_RIGHT)) { axisDeg.y += FREE_MODE_ROTATION_POW; }
 
 
 	if (!Utility::EqualsVZero(axisDeg))
@@ -246,17 +234,12 @@ void Camera::SetBeforeDrawFree(const float deltaTime)
 		angle_.y += Utility::Deg2RadF(axisDeg.y);
 	}
 
-
 	rotY_ = Quaternion::AngleAxis(angle_.y, Utility::AXIS_Y);
 	rotXY_ = rotY_.Mult(Quaternion::AngleAxis(angle_.x, Utility::AXIS_X));
 
 	// 注視点(通常重力でいうところのY値を追従対象と同じにする)
-	VECTOR localPos = rotXY_.PosAxis(LOCAL_P2T_POS);
+	VECTOR localPos = rotXY_.PosAxis(FOLLOW_CAMERA_LOCAL_TARGET_POS);
 	targetPos_ = VAdd(bossTransform_->pos, localPos);
-
-	//// カメラ位置
-	//localPos = rotXY_.PosAxis(LOCAL_P2C_POS);
-	//pos_ = VAdd(playerTransform_->pos, localPos);
 
 	// カメラの上方向
 	cameraUp_ = rotXY_.GetUp();
@@ -335,51 +318,6 @@ void Camera::SetBeforeDrawFollow(const float deltaTime)
 		GamePadController();
 	}
 
-	//// Qキーを押したらtrueになる
-	//if (isLazy_)
-	//{
-	//	LazyRotation();
-	//}
-
-	//// ステージの衝突判定
-	//CollisionStage();
-
-}
-
-void Camera::SetBeforeDrawLockOn(const float deltaTime)
-{
-
-	// 同期先の位置
-	VECTOR playerPos = playerTransform_->pos;
-
-	// 敵の位置
-	VECTOR enemyPos = { 0.0f,1000.0f,5000.0f };
-
-	if (lockOn_)
-	{
-		enemyPos = bossTransform_->pos;
-		enemyPos = VAdd(enemyPos, { 0.0f,1000.0f,0.0f });
-	}
-
-	// プレイヤーと敵の中間地点を設定
-	VECTOR centerPos = VAdd(playerPos, enemyPos);
-
-	// プレイヤーとロックオン対象の距離を計算
-	float distance = VSize(VSub(playerPos, enemyPos));
-
-	centerPos = VScale(centerPos, 0.5f);
-
-	VECTOR pos = rotY_.PosAxis(LOCAL_P2C_POS);
-	
-	// カメラの位置
-	pos_ = VAdd(playerPos, pos);
-
-	// 注視点を設定
-	targetPos_ = centerPos;
-
-	// カメラの上方向
-	cameraUp_ = Utility::DIR_U;
-
 }
 
 void Camera::SetBeforeDrawSpecial(const float deltaTime)
@@ -394,14 +332,14 @@ void Camera::SetBeforeDrawSpecial(const float deltaTime)
 	specialMoveCnt_ += deltaTime;
 
 	// カメラのオフセット
-	VECTOR pow = { 20.0f,0.02f,20.0f };
+	VECTOR pow = SPECIAL_CAMERA_MOVE_POW;
 
 	// カメラが動ける時間まで移動させる
 	if (SPECIAL_MOVE_MAX_TIME >= specialMoveCnt_)
 	{
 
 		// プレイヤーから見たカメラのローカル座標
-		VECTOR localRotPos = playerTransform_->quaRot.PosAxis({ 500.0f,2000.0f,500.0f });
+		VECTOR localRotPos = playerTransform_->quaRot.PosAxis(SPECIAL_CAMERA_INIT_LOCAL_POS);
 
 		// カメラの座標を設定
 		pos_ = VAdd(playerTransform_->pos, localRotPos);
@@ -426,25 +364,26 @@ void Camera::SetBeforeDrawAppearance(const float deltaTime)
 	if (isBossAppearanceCameraMove1_)
 	{
 		// 移動する力
-		movePow_.x = 10.0f;
+		movePow_.x = CAMERA_MOVE_POW;
 
 		// 移動後座標
 		movedPos_.x += movePow_.x;
 
 		// 敵から見たカメラのローカル座標
-		VECTOR localRotPos = bossTransform_->quaRot.PosAxis({ -1000.0f + movedPos_.x ,2000.0f,-1000.0f });
+		VECTOR localRotPos = bossTransform_->quaRot.PosAxis({
+			BOSS_APPEARANCE_CAMERA_INIT_LOCAL_POS.x + movedPos_.x, BOSS_APPEARANCE_CAMERA_INIT_LOCAL_POS.y, BOSS_APPEARANCE_CAMERA_INIT_LOCAL_POS.z });
 
 		// カメラの座標を設定
 		pos_ = VAdd(bossTransform_->pos, localRotPos);
 
 		// 注視点の座標を設定
-		targetPos_ = VAdd(pos_, { 0.0f,-1000.0f,1000.0f });
+		targetPos_ = VAdd(pos_, BOSS_APPEARANCE_CAMERA_INIT_LOCAL_TARGET_POS);
 
 		// カメラが何秒動いたか計算
 		elapsedTime_ += deltaTime;
 
 		// カメラが一定秒数動いたらカメラの動きを変える
-		if (elapsedTime_ >= 3.0f)
+		if (elapsedTime_ >= FIRST_CAMERA_TIME)
 		{
 			isBossAppearanceCameraMove1_ = false;
 			isBossAppearanceCameraMove2_ = true;
@@ -457,7 +396,7 @@ void Camera::SetBeforeDrawAppearance(const float deltaTime)
 	{
 
 		// 移動する力
-		movePow_.y = 10.0f;
+		movePow_.y = CAMERA_MOVE_POW;
 
 		// 移動後座標
 		movedPos_.y += movePow_.y;
@@ -550,7 +489,7 @@ void Camera::SetBeforeDrawGameOver(const float deltaTime)
 	VECTOR followPos = playerTransform_->pos;
 
 	// 追従対象から注視点までの相対座標を回転
-	VECTOR relativeTPos = rotY_.PosAxis(LOCAL_P2T_POS);
+	VECTOR relativeTPos = rotY_.PosAxis(FOLLOW_CAMERA_LOCAL_TARGET_POS);
 
 	// 追従対象からカメラまでの相対座標
 	VECTOR relativeCPos = rotXY_.PosAxis({ 0.0f,3000.0f,-2000.0f });
@@ -582,16 +521,6 @@ void Camera::SetLazyAngles(const VECTOR angles)
 
 }
 
-void Camera::SetLockOn(const bool lockOn)
-{
-	lockOn_ = lockOn;
-}
-
-void Camera::AddLockOnAnglesY(float rad)
-{
-	lockOnAngles_.y += rad;
-}
-
 void Camera::SetStageID(const int modelId)
 {
 	stageId_ = modelId;
@@ -604,7 +533,7 @@ void Camera::SetDefault()
 	pos_ = DEFAULT_CAMERA_POS;
 
 	// 注視点
-	targetPos_ = VAdd(pos_, LOCAL_P2T_POS);
+	targetPos_ = VAdd(pos_, FOLLOW_CAMERA_LOCAL_TARGET_POS);
 
 	// カメラの上方向
 	cameraUp_ = { 0.0f, 1.0f, 0.0f };
@@ -613,9 +542,6 @@ void Camera::SetDefault()
 	// この傾いた状態を角度ゼロ、傾き無しとする
 	rotY_ = Quaternion::AngleAxis(angle_.y, Utility::AXIS_Y);
 	rotXY_ = rotY_.Mult(Quaternion::AngleAxis(angle_.x, Utility::AXIS_X));
-
-	// ロックオン
-	lockOn_ = false;
 
 }
 
@@ -777,7 +703,7 @@ void Camera::KeyboardController()
 	VECTOR followPos = playerTransform_->pos;
 
 	// 追従対象から注視点までの相対座標を回転
-	VECTOR relativeTPos = rotY_.PosAxis(LOCAL_P2T_POS);
+	VECTOR relativeTPos = rotY_.PosAxis(FOLLOW_CAMERA_LOCAL_TARGET_POS);
 
 	// 追従対象からカメラまでの相対座標
 	VECTOR relativeCPos = rotXY_.PosAxis(LOCAL_P2C_POS);
@@ -790,66 +716,6 @@ void Camera::KeyboardController()
 
 	// カメラの上方向
 	cameraUp_ = Utility::DIR_U;
-
-}
-
-void Camera::KeyboardLockOnController()
-{
-
-	auto& ins = InputManager::GetInstance();
-
-	// マウスカーソルを非表示にする
-	SetMouseDispFlag(false);
-
-	// 回転
-	//-------------------------------------
-	VECTOR axisDeg = Utility::VECTOR_ZERO;
-
-	// マウス回転量
-	float rotPow = 3.0f;
-
-	// マウス位置
-	Vector2 mousePos;
-
-	// 画面の中心位置
-	Vector2 center = { Application::SCREEN_SIZE_X / 2,Application::SCREEN_SIZE_Y / 2 };
-
-	// マウス位置の取得
-	GetMousePoint(&mousePos.x, &mousePos.y);
-
-	// カメラ回転の計算(マウスカーソル位置と画面の中心の差分を計算し、回転量/FPSを乗算する)
-	// これが回転量
-	rotPowY_ = float(std::clamp(mousePos.x - center.x, -120, 120)) * rotPow / GetFPS();	// マウス横移動
-	rotPowX_ = float(std::clamp(mousePos.y - center.y, -120, 120)) * rotPow / GetFPS();	// マウス縦移動
-
-	// カメラ位置を中心にセット
-	SetMousePoint(center.x, center.y);
-
-	if (center.x <= mousePos.x) { axisDeg.y += rotPowY_; }
-	if (center.x >= mousePos.x) { axisDeg.y += rotPowY_; }
-
-	if (center.y >= mousePos.y && Utility::Rad2DegF(lockOnAngles_.x) >= -20.0f)
-	{
-		axisDeg.x += rotPowX_;
-	}
-	if (center.y <= mousePos.y && Utility::Rad2DegF(lockOnAngles_.x) <= 10.0f)
-	{
-		axisDeg.x += rotPowX_;
-	}
-
-	if (!Utility::EqualsVZero(axisDeg))
-	{
-
-		// カメラを回転させる
-		// X軸のカメラの移動制御
-		lockOnAngles_.x += Utility::Deg2RadF(axisDeg.x);
-		lockOnAngles_.y += Utility::Deg2RadF(axisDeg.y);
-
-		rotY_ = Quaternion::AngleAxis(lockOnAngles_.y, Utility::AXIS_Y);
-
-		rotXY_ = rotY_.Mult(Quaternion::AngleAxis(lockOnAngles_.x, Utility::AXIS_X));
-
-	}
 
 }
 
@@ -918,7 +784,7 @@ void Camera::GamePadController()
 	VECTOR followPos = playerTransform_->pos;
 
 	// 追従対象から注視点までの相対座標を回転
-	VECTOR relativeTPos = rotY_.PosAxis(LOCAL_P2T_POS);
+	VECTOR relativeTPos = rotY_.PosAxis(FOLLOW_CAMERA_LOCAL_TARGET_POS);
 
 	// 追従対象からカメラまでの相対座標
 	VECTOR relativeCPos = rotXY_.PosAxis(LOCAL_P2C_POS);
@@ -931,67 +797,6 @@ void Camera::GamePadController()
 
 	// カメラの上方向
 	cameraUp_ = Utility::DIR_U;
-
-}
-
-void Camera::GamePadLockOnController()
-{
-
-	auto& ins = InputManager::GetInstance();
-
-	// 回転
-	//-------------------------------------
-	VECTOR axisDeg = Utility::VECTOR_ZERO;
-
-	// ゲームパッドの番号を取得
-	auto pad = ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD1);
-
-	// パッドの方向をdirに直す
-	// 右方向
-	if (pad.AKeyRX > 0)
-	{
-		axisDeg.y = pad.AKeyRX;
-		// 方向を正規化
-		axisDeg = VNorm(axisDeg);
-		axisDeg = VScale(axisDeg, 3.0f);
-	}
-	// 左方向
-	if (pad.AKeyRX < 0)
-	{
-		axisDeg.y = pad.AKeyRX;
-		// 方向を正規化
-		axisDeg = VNorm(axisDeg);
-		axisDeg = VScale(axisDeg, 3.0f);
-	}
-	// 上方向
-	if (pad.AKeyRZ < 0 && Utility::Rad2DegF(lockOnAngles_.x) <= 10.0f)
-	{
-		axisDeg.x = -pad.AKeyRZ;
-		// 方向を正規化
-		axisDeg = VNorm(axisDeg);
-		axisDeg = VScale(axisDeg, 3.0f);
-	}
-	// 下方向
-	if (pad.AKeyRZ > 0 && Utility::Rad2DegF(lockOnAngles_.x) >= -20.0f)
-	{
-		axisDeg.x = -pad.AKeyRZ;
-		// 方向を正規化
-		axisDeg = VNorm(axisDeg);
-		axisDeg = VScale(axisDeg, 3.0f);
-	}
-
-
-	if (axisDeg.x != 0.0f || axisDeg.y != 0.0f)
-	{
-		// カメラを回転させる
-		// X軸のカメラの移動制御
-		lockOnAngles_.x += Utility::Deg2RadF(axisDeg.x);
-		lockOnAngles_.y += Utility::Deg2RadF(axisDeg.y);
-
-		rotY_ = Quaternion::AngleAxis(lockOnAngles_.y, Utility::AXIS_Y);
-
-		rotXY_ = rotY_.Mult(Quaternion::AngleAxis(lockOnAngles_.x, Utility::AXIS_X));
-	}
 
 }
 

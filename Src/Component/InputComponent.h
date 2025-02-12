@@ -11,6 +11,9 @@ class InputComponent : public Component
 
 public:
 
+	// アッパーのクールタイム
+	static constexpr float UPPER_COOL_TIME = 2.0f;
+
 	InputComponent(std::shared_ptr<Player> player);
 
 	void Update(const float deltaTime);
@@ -27,6 +30,9 @@ private:
 
 	// 溜めパンチのカウンタ
 	float attackChargePunchCnt_;
+
+	// アッパーのクールタイム
+	float upperCoolTimeCnt_;
 
 	// 移動処理
 	void Move();

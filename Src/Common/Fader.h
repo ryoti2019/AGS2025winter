@@ -8,6 +8,9 @@ public:
 	// フェードが進む速さ
 	static constexpr float SPEED_ALPHA = 5.0f;
 
+	// フェードの最大値
+	static constexpr int ALPHA_MAX = 255;
+
 	// 状態
 	enum class STATE
 	{

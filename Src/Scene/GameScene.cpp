@@ -91,16 +91,16 @@ void GameScene::InitImage()
 	gameOverImg2_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_GAME_OVER)]).handleId_;
 
 	// 画像のスケール
-	scale_ = 2.0f;
+	scale_ = SCALE;
 
 	// 画像のスケール
-	scale2_ = 1.0f;
+	scale2_ = SCALE2;
 
 	// 透明度
 	alpha_ = 0;
 
 	// 透明度
-	alpha2_ = 255;
+	alpha2_ = ALPHA_MAX;
 
 	// コンティニュー画像の初期化
 	continueImg_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_CONTINUE)]).handleId_;
@@ -120,7 +120,7 @@ void GameScene::InitBGMAndSE()
 	bgm_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::SOUND_GAME_SCENE_BGM)]).handleId_;
 
 	// BGMのボリュームの変更
-	ChangeVolumeSoundMem(255 * 0.5, bgm_);
+	ChangeVolumeSoundMem(SOUND_MAX * BGM_VOLUME, bgm_);
 
 	// BGM再生
 	PlaySoundMem(bgm_, DX_PLAYTYPE_LOOP, true);
@@ -265,7 +265,7 @@ void GameScene::SelectContinueOrGameOver(const float deltaTime)
 	{
 
 		// ゲームオーバーになって5秒たってからタイトルに戻る
-		if (gameOverCnt_ >= 5.0f)
+		if (gameOverCnt_ >= GAME_OVER_DELAY)
 		{
 
 			SceneManager::GetInstance().ChangeScene(SCENE_ID::TITLE);
@@ -309,19 +309,22 @@ void GameScene::DrawUserGuide()
 	{
 
 		// 半透明の黒い矩形を画面全体に描画
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200); // 半透明（128: 50%の透明度）
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, USER_GUIDE_ALPHA);
+		
 		DrawBox(0, 0, Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, GetColor(0, 0, 0), TRUE);
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0); // ブレンドモード解除
+		
+		// ブレンドモード解除
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 		if (!SceneManager::GetInstance().GetGamePad())
 		{
 			// キーボードの操作説明の画像を描画
-			DrawRotaGraph(Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 2, 0.5f, 0.0f, keyboardUserGuideImg_, true);
+			DrawRotaGraph(Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 2, USER_GUIDE_IMAGE_SCALE, 0.0f, keyboardUserGuideImg_, true);
 		}
 		else if (SceneManager::GetInstance().GetGamePad())
 		{
 			// ゲームパッドの操作説明の画像を描画
-			DrawRotaGraph(Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 2, 0.5f, 0.0f, gamePadUserGuideImg_, true);
+			DrawRotaGraph(Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 2, USER_GUIDE_IMAGE_SCALE, 0.0f, gamePadUserGuideImg_, true);
 		}
 
 		return;
@@ -345,12 +348,12 @@ void GameScene::DrawUserGuide()
 			if (area1Collision && !area1Collision->GetIsCollision() && !area1Collision->GetIsDissolve())
 			{
 				// 移動のチュートリアル画像を描画
-				DrawRotaGraph(150, 200, 0.5, 0.0, keyboardUserGuideMoveImg_, true);
+				DrawRotaGraph(USER_GUIDE_POS_X, USER_GUIDE_POS_Y, USER_GUIDE_IMAGE_SCALE, 0.0, keyboardUserGuideMoveImg_, true);
 			}
 			else if (area1Collision && area1Collision->GetIsCollision())
 			{
 				// 攻撃のチュートリアル画像を描画
-				DrawRotaGraph(150, 200, 0.5, 0.0, keyboardUserGuideAttackImg_, true);
+				DrawRotaGraph(USER_GUIDE_POS_X, USER_GUIDE_POS_Y, USER_GUIDE_IMAGE_SCALE, 0.0, keyboardUserGuideAttackImg_, true);
 			}
 
 			// Area2Collisionにキャスト
@@ -359,7 +362,7 @@ void GameScene::DrawUserGuide()
 			if (area2Collision && area2Collision->GetIsCollision())
 			{
 				// 必殺技のチュートリアル画像を描画
-				DrawRotaGraph(150, 200, 0.5, 0.0, keyboardUserGuideSpecialAttackImg_, true);
+				DrawRotaGraph(USER_GUIDE_POS_X, USER_GUIDE_POS_Y, USER_GUIDE_IMAGE_SCALE, 0.0, keyboardUserGuideSpecialAttackImg_, true);
 			}
 
 		}
@@ -372,12 +375,12 @@ void GameScene::DrawUserGuide()
 			if (area1Collision && !area1Collision->GetIsCollision() && !area1Collision->GetIsDissolve())
 			{
 				// 移動のチュートリアル画像を描画
-				DrawRotaGraph(150, 200, 0.5, 0.0, gamePadUserGuideMoveImg_, true);
+				DrawRotaGraph(USER_GUIDE_POS_X, USER_GUIDE_POS_Y, USER_GUIDE_IMAGE_SCALE, 0.0, gamePadUserGuideMoveImg_, true);
 			}
 			else if (area1Collision && area1Collision->GetIsCollision())
 			{
 				// 攻撃のチュートリアル画像を描画
-				DrawRotaGraph(150, 200, 0.5, 0.0, gamePadUserGuideAttackImg_, true);
+				DrawRotaGraph(USER_GUIDE_POS_X, USER_GUIDE_POS_Y, USER_GUIDE_IMAGE_SCALE, 0.0, gamePadUserGuideAttackImg_, true);
 			}
 
 			// Area2Collisionにキャスト
@@ -386,7 +389,7 @@ void GameScene::DrawUserGuide()
 			if (area2Collision && area2Collision->GetIsCollision())
 			{
 				// 必殺技のチュートリアル画像を描画
-				DrawRotaGraph(150, 200, 0.5, 0.0, gamePadUserGuideSpecialAttackImg_, true);
+				DrawRotaGraph(USER_GUIDE_POS_X, USER_GUIDE_POS_Y, USER_GUIDE_IMAGE_SCALE, 0.0, gamePadUserGuideSpecialAttackImg_, true);
 			}
 
 		}
@@ -399,7 +402,7 @@ void GameScene::DrawGameOver()
 {
 
 	// 半透明の黒い矩形を画面全体に描画
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128); // 半透明（128: 50%の透明度）
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, GAME_OVER_ALPHA); // 半透明（128: 50%の透明度）
 	DrawBox(0, 0, Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, GetColor(0, 0, 0), true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0); // ブレンドモード解除
 
@@ -416,19 +419,19 @@ void GameScene::DrawGameOver()
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 		// アルファ値を増加（255を上限とする）
-		alpha_ += 2;
+		alpha_ += ALPHA_INCREMENT;
 
 		// 最少値は255にする
-		alpha_ = std::min(alpha_, 255);
+		alpha_ = std::min(alpha_, ALPHA_MAX);
 
 		// 画像のスケールを減少
-		scale_ -= 0.02f;
+		scale_ -= ALPHA_DECREMENRT;
 
 		// 最大値は1.0fにする
-		scale_ = std::max(scale_, 1.0f);
+		scale_ = std::max(scale_, SCALE_MAX);
 
 		// 1枚目の画像のスケールが1.0になったら後ろから画像を出す
-		if (scale_ == 1.0f && scale2_ <= 3.0f)
+		if (scale_ == SCALE_MAX && scale2_ <= SCALE2_MAX)
 		{
 
 			// ブレンドモードの設定
@@ -441,16 +444,16 @@ void GameScene::DrawGameOver()
 			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 			// アルファ値を増加（255を上限とする）
-			alpha2_ -= 10; // アルファ値を増やす速度を調整可能
+			alpha2_ -= ALPHA2_DECREMENRT; // アルファ値を増やす速度を調整可能
 
 			// 最小値は0にする
 			alpha2_ = std::max(alpha2_, 0);
 
 			// スケール値を増加
-			scale2_ += 0.05f;
+			scale2_ += ALPHA2_INCREMENT;
 
 			// 最大値は3.0fにする
-			scale_ = std::min(scale_, 3.0f);
+			scale_ = std::min(scale_, SCALE2_MAX);
 
 		}
 
@@ -459,30 +462,30 @@ void GameScene::DrawGameOver()
 	{
 
 		// コンティニュー画像の描画
-		DrawRotaGraph(Application::SCREEN_SIZE_X / 2, 200, 0.8, 0.0, continueImg_, true);
+		DrawRotaGraph(Application::SCREEN_SIZE_X / 2, CONTINUE_POS_Y, CONTINUE_IMAGE_SCALE, 0.0, continueImg_, true);
 
-		float yesImgScale = 1.0f;
-		float noImgScale = 1.0f;
+		float yesImgScale = YES_IMAGE_SCALE;
+		float noImgScale = NO_IMAGE_SCALE;
 
 		// アニメーションの速度
-		const float animationSpeed = 0.05f;
+		const float animationSpeed = ANIM_SPEED;
 
 		if (isContinue_)
 		{
 			// YES画像のスケールを時間に応じて変更
-			yesImgScale = 1.0 + 0.1f * std::sin(frameCount_ * animationSpeed);
+			yesImgScale = YES_IMAGE_SCALE + SCLAE_VARIATION * std::sin(frameCount_ * animationSpeed);
 		}
 		else
 		{
 			// NO画像のスケールを時間に応じて変更
-			noImgScale = 1.0 + 0.1f * std::sin(frameCount_ * animationSpeed);
+			noImgScale = NO_IMAGE_SCALE + SCLAE_VARIATION * std::sin(frameCount_ * animationSpeed);
 		}
 
 		// YES画像の描画
-		DrawRotaGraph(Application::SCREEN_SIZE_X / 2 - 300, 500, yesImgScale, 0.0, yesImg_, true);
+		DrawRotaGraph(Application::SCREEN_SIZE_X / 2 - YES_POS_X_OFFSET, YES_POS_Y, yesImgScale, 0.0, yesImg_, true);
 
 		// NO画像の描画
-		DrawRotaGraph(Application::SCREEN_SIZE_X / 2 + 300, 500, noImgScale, 0.0, noImg_, true);
+		DrawRotaGraph(Application::SCREEN_SIZE_X / 2 + NO_POS_X_OFFSET, NO_POS_Y, noImgScale, 0.0, noImg_, true);
 	
 		// フレームカウントを更新
 		frameCount_++;

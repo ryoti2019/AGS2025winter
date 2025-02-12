@@ -5,7 +5,29 @@ class Boss;
 
 class BossAIComponent : public Component
 {
+
 public:
+
+	// s“®í—Ş
+	enum class ACTION_TYPE
+	{
+		MOVE,
+		CLOSE_RANGE,
+		LONG_RANGE,
+		CALL,
+		MAX
+	};
+
+	// ‹ßÚUŒ‚í—Ş
+	enum class CLOSE_RANGE_TYPE
+	{
+		PUNCH,
+		KICK,
+		MAX
+	};
+
+	// ‰ñ“]‚Ì‹–—eŒë·
+	static constexpr float ANGLE_TOLERANCE = 5.0f;
 
 	BossAIComponent(const std::shared_ptr<Boss> boss);
 

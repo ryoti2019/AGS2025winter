@@ -51,6 +51,7 @@ void InputComponent::Move()
 	if (!player_->GetAttackState() && player_->GetState() != static_cast<int>(PlayerState::POWER_CHARGE)
 		&& player_->GetState() != static_cast<int>(PlayerState::EVASION))
 	{
+
 		// 入力していたら移動する
 		if (!Utility::EqualsVZero(dir))
 		{
@@ -64,6 +65,7 @@ void InputComponent::Move()
 		{
 			player_->ChangeState(PlayerState::IDLE);
 		}
+
 	}
 
 }
@@ -96,7 +98,7 @@ void InputComponent::Attack(const float deltaTime)
 	}
 
 	// 攻撃の先行入力 ため攻撃の後通らないようにする
-	if (inputController_->Attack()/* && player_->GetKey() != player_->ANIM_DATA_KEY[static_cast<int>(PlayerState::ATTACK_CHARGE_PUNCH)]*/)
+	if (inputController_->Attack() && player_->GetKey() != player_->ANIM_DATA_KEY[static_cast<int>(PlayerState::ATTACK_CHARGE_PUNCH)])
 	{
 
 		// コンボの先行入力の処理

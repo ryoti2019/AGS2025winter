@@ -34,27 +34,28 @@ void BossAIComponent::SelectAction(const float deltaTime)
 	std::mt19937 gen(rd());
 
 	// w’è‚Ì”ÍˆÍ‚Åƒ‰ƒ“ƒ_ƒ€‚È”‚ğæ“¾
-	std::uniform_int_distribution<> dist_int(0, 3);
+	std::uniform_int_distribution<> dist_int(0, static_cast<int>(ACTION_TYPE::MAX) - 1);
 	int number = dist_int(gen);
 
-	if (number == 0)
+	if (number == static_cast<int>(ACTION_TYPE::MOVE))
 	{
 		// ˆÚ“®ˆ—
 		Move(deltaTime);
 	}
-	else if (number == 1)
+	else if (number == static_cast<int>(ACTION_TYPE::CLOSE_RANGE))
 	{
 		// ‹ß‹——£UŒ‚ˆ—
 		CloseRangeAttack(deltaTime);
 	}
-	else if (number == 2)
+	else if (number == static_cast<int>(ACTION_TYPE::LONG_RANGE))
 	{
 		// ‰“‹——£UŒ‚ˆ—
 		LongRangeAttack(deltaTime);
 	}
-	else if (number == 3 && boss_->GetCreateEnemyCoolTimeCnt() == 0.0f)
+	else if (number == static_cast<int>(ACTION_TYPE::CALL) && boss_->GetCreateEnemyCoolTimeCnt() == 0.0f)
 	{
 
+		// G‹›‚ğŒÄ‚Ôs“®
 		boss_->ChangeState(BossState::CALL);
 
 		// s“®‚ğŒˆ‚ß‚½
@@ -102,7 +103,7 @@ void BossAIComponent::CloseRangeAttack(const float deltaTime)
 	std::mt19937 gen(rd());
 
 	// w’è‚Ì”ÍˆÍ‚Åƒ‰ƒ“ƒ_ƒ€‚È”‚ğæ“¾
-	std::uniform_int_distribution<> dist_int(0, 1);
+	std::uniform_int_distribution<> dist_int(0, static_cast<int>(CLOSE_RANGE_TYPE::MAX) - 1);
 	int number = dist_int(gen);
 
 	// ƒvƒŒƒCƒ„[‚ÌÀ•W
@@ -148,9 +149,9 @@ void BossAIComponent::CloseRangeAttack(const float deltaTime)
 	sub = abs(sub);
 
 	// ‰ñ“]‚µ‚«‚é‚Ü‚Åˆ—‚µ‚È‚¢
-	if (sub >= 1.0f)return;
+	if (sub >= ANGLE_TOLERANCE)return;
 
-	if (number == 0)
+	if (number == static_cast<int>(CLOSE_RANGE_TYPE::PUNCH))
 	{
 
 		// ƒpƒ“ƒ`UŒ‚‚É‘JˆÚ
@@ -160,7 +161,7 @@ void BossAIComponent::CloseRangeAttack(const float deltaTime)
 		boss_->SetIsActionDecided(true);
 
 	}
-	else if (number == 1)
+	else if (number == static_cast<int>(CLOSE_RANGE_TYPE::KICK))
 	{
 
 		// ƒLƒbƒNUŒ‚‚É‘JˆÚ
@@ -219,7 +220,7 @@ void BossAIComponent::LongRangeAttack(const float deltaTime)
 	sub = abs(sub);
 
 	// ‰ñ“]‚µ‚«‚é‚Ü‚Åˆ—‚µ‚È‚¢
-	if (sub >= 1.0f)return;
+	if (sub >= ANGLE_TOLERANCE)return;
 
 	// ”ò‚Ñ“¹‹ïUŒ‚‚É‘JˆÚ
 	boss_->ChangeState(BossState::ATTACK_PROJECTILE);

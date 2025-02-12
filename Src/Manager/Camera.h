@@ -17,8 +17,8 @@ public:
 	// プレイヤーからカメラの位置までの相対座標
 	static constexpr VECTOR LOCAL_P2C_POS = { 0.0f, 1500.0f,-3000.0f };
 
-	// プレイヤーから注視点までの相対座標
-	static constexpr VECTOR LOCAL_P2T_POS = { 0.0f,800.0f,0.0f };
+	// プレイヤー追従時のカメラのローカル注視点
+	static constexpr VECTOR FOLLOW_CAMERA_LOCAL_TARGET_POS = { 0.0f,800.0f,0.0f };
 
 	// 敵からカメラの位置までの相対座標
 	static constexpr VECTOR LOCAL_E2C_POS = { 0.0f, 500.0f,-400.0f };
@@ -50,6 +50,51 @@ public:
 	// 当たり判定の半径
 	static constexpr float COLLISION_RADIUS = 100.0f;
 
+	// 最初の角度
+	static constexpr float INIT_ANGLE = 90.0f;
+
+	// 定点カメラの座標
+	static constexpr VECTOR FIXED_POINT_CAMERA_POS = { 0.0f,200.0f,-500.0f };
+
+	// 定点カメラの注視点
+	static constexpr VECTOR FIXED_POINT_CAMERA_TARGET_POS = { 0.0f,150.0f,0.0f };
+
+	// タイトルのカメラのローカル座標
+	static constexpr VECTOR TITLE_CAMERA_LOCAL_POS = { -1200.0f,800.0f,2500.0f };
+
+	// タイトルのカメラのローカル注視点
+	static constexpr VECTOR TITLE_CAMERA_TARGET_LOCAL_POS = { -1200.0f, 1000.0f, 0.0f };
+
+	// 必殺技のカメラの初期ローカル座標
+	static constexpr VECTOR SPECIAL_CAMERA_INIT_LOCAL_POS = { 500.0f,2000.0f,500.0f };
+
+	// 必殺技のカメラのローカル注視点
+	static constexpr VECTOR SPECIAL_CAMERA_LOCAL_TARGET_POS = { 0.0f,1000.0f,0.0f };
+
+	// ボスの登場シーンのカメラの初期ローカル座標
+	static constexpr VECTOR BOSS_APPEARANCE_CAMERA_INIT_LOCAL_POS = { -1000.0f, 2000.0f, -1000.0f };
+
+	// ボスの登場シーンのカメラの初期注視点
+	static constexpr VECTOR BOSS_APPEARANCE_CAMERA_INIT_LOCAL_TARGET_POS = { 0.0f,-1000.0f,1000.0f };
+
+	// ゲームクリアシーンのカメラのローカル座標
+	static constexpr VECTOR GAME_CLEAR_CAMERA_LOCAL_POS = { -1200.0f,800.0f,2500.0f };
+
+	// ゲームクリアシーンのカメラの注視点
+	static constexpr VECTOR GAME_CLEAR_CAMERA_LOCAL_TRAGET_POS = { -1200.0f, 1000.0f, 0.0f };
+
+	// フリーモードの時のカメラの回転量
+	static constexpr float FREE_MODE_ROTATION_POW = 0.01f;
+
+	// 必殺技のカメラの移動量
+	static constexpr VECTOR SPECIAL_CAMERA_MOVE_POW = { 20.0f,0.02f,20.0f };
+
+	// 必殺技のカメラ1つ目の移動量
+	static constexpr float CAMERA_MOVE_POW = 10.0f;
+
+	// 必殺技シーンの1つ目の動く時間
+	static constexpr float FIRST_CAMERA_TIME = 3.0f;
+
 	// カメラモード
 	enum class MODE
 	{
@@ -58,7 +103,6 @@ public:
 		FREE,			// フリーモード
 		TITLE,			// タイトルシーンモード
 		FOLLOW,			// 追従モード
-		LOCKON,			// ロックオンモード
 		SPECIAL,		// 必殺技モード
 		APPEARANCE,		// ボスの登場モード
 		GAME_CLEAR,		// ゲームクリアモード
@@ -83,17 +127,11 @@ public:
 	// 追従対象の設定
 	void SetBoss(const std::shared_ptr<Transform>& follow) { bossTransform_ = follow; }
 
-	// ロックオンの設定
-	void SetLockOn(const bool lockOn);
-
 	// カメラモードの変更
 	void ChangeMode(const MODE& mode);
 
 	// 遅延回転
 	void LazyRotation();
-
-	//	ロックオン中のY軸の角度を足す
-	void AddLockOnAnglesY(float rad);
 
 	// ステージのモデルIDを設定
 	void SetStageID(const int modelId);
@@ -152,9 +190,6 @@ private:
 	// カメラの上方向
 	VECTOR cameraUp_;
 
-	// ロックオン専用コントローラ制御角
-	VECTOR lockOnAngles_;
-
 	VECTOR goalCameraPos_;
 
 	// カメラの回転
@@ -169,8 +204,6 @@ private:
 
 	// Y軸のゴールの角度
 	Quaternion lazyGoalRotY_;
-
-	Quaternion lockOnLook_;
 
 	// ステージのID
 	int stageId_;
@@ -188,12 +221,7 @@ private:
 	float operationCnt_;
 
 	// SetLazyAngleに値が入ったらtrue
-	bool isLazy_ = false;
-
-	// ロックオンのフラグ
-	bool lockOn_;
-
-	bool isNearLockOnTarget_;
+	bool isLazy_;
 
 	// ポリゴンと当たっているか
 	bool pHit_;
@@ -222,7 +250,6 @@ private:
 	void ChangeFree();
 	void ChangeTitle();
 	void ChangeFollow();
-	void ChangeLockOn();
 	void ChangeSpecial();
 	void ChangeAppearance();
 	void ChangeGameClear();
@@ -234,7 +261,6 @@ private:
 	void SetBeforeDrawFree(const float deltaTime);
 	void SetBeforeDrawTitle(const float deltaTime);
 	void SetBeforeDrawFollow(const float deltaTime);
-	void SetBeforeDrawLockOn(const float deltaTime);
 	void SetBeforeDrawSpecial(const float deltaTime);
 	void SetBeforeDrawAppearance(const float deltaTime);
 	void SetBeforeDrawGameClear(const float deltaTime);
@@ -251,11 +277,9 @@ private:
 
 	// キーボードの操作
 	void KeyboardController();
-	void KeyboardLockOnController();
 
 	// ゲームパッドの操作
 	void GamePadController();
-	void GamePadLockOnController();
 
 	// ImGuiのデバッグ描画の更新
 	void UpdateDebugImGui();

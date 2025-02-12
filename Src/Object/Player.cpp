@@ -140,7 +140,7 @@ void Player::InitParameter()
 	if (SceneManager::GetInstance().GetSceneID() == SCENE_ID::BOSS_BATTLE)
 	{
 		// 角度を変更
-		transform_->quaRot = Quaternion::Euler({ Utility::Deg2RadF(0.0f) , Utility::Deg2RadF(180.0f),Utility::Deg2RadF(0.0f) });
+		transform_->quaRot = Quaternion::Euler({ Utility::Deg2RadF(0.0f) , Utility::Deg2RadF(BOSS_BATTLE_INIT_ANGLE),Utility::Deg2RadF(0.0f) });
 		transform_->Update();
 	}
 
@@ -241,11 +241,9 @@ void Player::InitParameter()
 
 		// プレイヤー必殺技のゲージを設定 
 		specialAttackGauge_ = SceneManager::GetInstance().GetPlayerSpecialAttackGauge();
-		//specialAttackGauge_ = 0;
 
 		// プレイヤーのHPを設定
 		hp_ = SceneManager::GetInstance().GetPlayerHp();
-		//hp_ = 10000;
 
 	}
 
@@ -342,7 +340,7 @@ void Player::InitBGMAndSE()
 	footStepsSE_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::SOUND_PLAYER_FOOT_STEPS_SE)]).handleId_;
 
 	// 足音のボリュームの変更
-	ChangeVolumeSoundMem(255 * 60 / 100, footStepsSE_);
+	ChangeVolumeSoundMem(SOUND_MAX * SOUND_FOOT_STEPS_VOLUME, footStepsSE_);
 
 	// ジャブの音の初期化
 	jabSE_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::SOUND_PLAYER_JAB_SE)]).handleId_;
@@ -411,14 +409,41 @@ void Player::Draw(const float deltaTime)
 	// 基底クラスの描画処理
 	ActorBase::Draw(deltaTime);
 
-	// HPバー描画
-	int H;
-	int hpGauge;
-	H = hp_ * (static_cast<int>(512.0f) / HP_MAX) - 100;
-	int R = min(max((384 - H), 0), 0xff);
-	int G = min(max((H + 64), 0), 0xff);
-	int B = max((H - 384), 0);
-	hpGauge = HP_BAR_LENGTH * hp_ / HP_MAX;
+	// HPバーの長さ
+	const int HP_LENGTH = 400;
+
+	// HPバーの半分の長さ
+	const int HP_LENGTH_HARF = HP_LENGTH / 2;
+
+	// HPバーの高さ
+	const int HP_HEIGHT = 10;
+
+	// HPバーの幅
+	const int HP_BAR_WIDTH = 25;
+
+	// RGBのスケール調整値
+	const float RGB_SCALE = 512.0f;
+
+	// RとBの変化を制御するためのバランス点
+	const int COLOR_BALANCE_POINT = 384;
+
+	// 緑色の変化を調整するオフセット
+	const int GREEN_COLOR_SHIFT_OFFSET = 64;
+
+	// HPの割合を元にバーの色を決める処理
+	int H = hp_ * (RGB_SCALE / HP_MAX) - 100;
+
+	// 赤成分
+	int R = min(max((COLOR_BALANCE_POINT - H), 0), 0xff);
+
+	//緑成分
+	int G = min(max((H + GREEN_COLOR_SHIFT_OFFSET), 0), 0xff);
+
+	// 青成分
+	int B = max((H - COLOR_BALANCE_POINT), 0);
+
+	// HPゲージ
+	int hpGauge = HP_BAR_LENGTH * hp_ / HP_MAX;
 
 	// 必殺技ゲージの描画
 	int specialAttackGauge = SPECIAL_ATTACK_GAUGE_LENGTH * specialAttackGauge_ / SPECIAL_ATTACK_MAX_GAUGE;

@@ -9,6 +9,87 @@ class GameScene :public SceneBase
 
 public:
 
+	// 1枚目の画像スケール
+	static constexpr float SCALE = 2.0f;
+
+	// 2枚目の画像スケール
+	static constexpr float SCALE2 = 1.0f;
+
+	// 2枚目の画像の透明度
+	static constexpr int ALPHA_MAX = 255;
+
+	// 音の最大音量
+	static constexpr int SOUND_MAX = 255;
+
+	// BGMの音量の割合
+	static constexpr float BGM_VOLUME = 0.5f;
+
+	// ゲームオーバーに遷移するまでの時間
+	static constexpr float GAME_OVER_DELAY = 5.0f;
+
+	// 操作説明の時の後ろの画面の透明度
+	static constexpr int USER_GUIDE_ALPHA = 200;
+
+	// 操作説明画像のスケール
+	static constexpr float USER_GUIDE_IMAGE_SCALE = 0.5f;
+
+	// 操作説明のX座標
+	static constexpr int USER_GUIDE_POS_X = 150;
+
+	// 操作説明のY座標
+	static constexpr int USER_GUIDE_POS_Y = 200;
+
+	// ゲームオーバーの時の後ろの画面の透明度
+	static constexpr int GAME_OVER_ALPHA = 128;
+
+	// 画像1の透明度の増える量
+	static constexpr int ALPHA_INCREMENT = 2;
+
+	// 画像1の透明度の減る量
+	static constexpr float ALPHA_DECREMENRT = -0.02f;
+
+	// 画像1のスケールの最大値
+	static constexpr float SCALE_MAX = 1.0f;
+
+	// 画像2のスケールの最大値
+	static constexpr float SCALE2_MAX = 3.0f;
+
+	// 画像1の透明度の増える量
+	static constexpr float ALPHA2_INCREMENT = 0.05f;
+
+	// 画像1の透明度の減る量
+	static constexpr int ALPHA2_DECREMENRT = -10;
+
+	// コンティニュー画像のY座標
+	static constexpr int CONTINUE_POS_Y = 200;
+
+	// コンティニュー画像のスケール
+	static constexpr float CONTINUE_IMAGE_SCALE = 0.8f;
+
+	// YES画像のスケール
+	static constexpr float YES_IMAGE_SCALE = 1.0f;
+
+	// NO画像のスケール
+	static constexpr float NO_IMAGE_SCALE = 1.0f;
+
+	// YES画像のX座標のオフセット
+	static constexpr int YES_POS_X_OFFSET = 300;
+
+	// NO画像のX座標のオフセット
+	static constexpr int NO_POS_X_OFFSET = 300;
+
+	// YES画像のY座標
+	static constexpr int YES_POS_Y = 500;
+
+	// NO画像のY座標
+	static constexpr int NO_POS_Y = 500;
+
+	// YESとNO画像のスケールの変動量
+	static constexpr float SCLAE_VARIATION = 0.1f;
+
+	// YESとNO画像のアニメーション速度
+	static constexpr float ANIM_SPEED = 0.05f;
+
 	// コンストラクタ
 	GameScene();
 

@@ -8,6 +8,22 @@ class EnemyAIComponent : public Component
 
 public:
 
+	// s“®í—Ş
+	enum class ACTION_TYPE
+	{
+		MOVE,
+		ATTACK,
+		MAX
+	};
+
+	// ‹ßÚUŒ‚í—Ş
+	enum class CLOSE_RANGE_TYPE
+	{
+		PUNCH,
+		KICK,
+		MAX
+	};
+
 	EnemyAIComponent(const std::shared_ptr<Enemy> enemy);
 
 	void Update(const float deltaTime);

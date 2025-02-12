@@ -34,15 +34,15 @@ void EnemyAIComponent::SelectAction(const float deltaTime)
 	std::mt19937 gen(rd());
 
 	// 指定の範囲でランダムな数を取得
-	std::uniform_int_distribution<> dist_int(0, 1);
+	std::uniform_int_distribution<> dist_int(0, static_cast<int>(ACTION_TYPE::MAX) - 1);
 	int number = dist_int(gen);
 
-	if (number == 0)
+	if (number == static_cast<int>(ACTION_TYPE::MOVE))
 	{
 		// 移動処理
 		Move(deltaTime);
 	}
-	else if (number == 1)
+	else if (number == static_cast<int>(ACTION_TYPE::ATTACK))
 	{
 		//攻撃処理
 		Attack(deltaTime);
@@ -88,7 +88,7 @@ void EnemyAIComponent::Attack(const float deltaTime)
 	std::mt19937 gen(rd());
 
 	// 指定の範囲でランダムな数を取得
-	std::uniform_int_distribution<> dist_int(0, 1);
+	std::uniform_int_distribution<> dist_int(0, static_cast<int>(CLOSE_RANGE_TYPE::MAX) - 1);
 	int number = dist_int(gen);
 
 	// プレイヤーの座標
@@ -106,7 +106,7 @@ void EnemyAIComponent::Attack(const float deltaTime)
 	// プレイヤーとの距離が遠かったら攻撃できない
 	if (length >= enemy_->ACTIVATION_DISTANCE) return;
 
-	if (number == 0)
+	if (number == static_cast<int>(CLOSE_RANGE_TYPE::PUNCH))
 	{
 
 		enemy_->ChangeState(EnemyState::ATTACK_PUNCH);
@@ -115,7 +115,7 @@ void EnemyAIComponent::Attack(const float deltaTime)
 		enemy_->SetIsActionDecided(true);
 
 	}
-	else if (number == 1)
+	else if (number == static_cast<int>(CLOSE_RANGE_TYPE::KICK))
 	{
 
 		enemy_->ChangeState(EnemyState::ATTACK_KICK);
