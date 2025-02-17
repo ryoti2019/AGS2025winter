@@ -89,11 +89,40 @@ public:
 	// 必殺技のカメラの移動量
 	static constexpr VECTOR SPECIAL_CAMERA_MOVE_POW = { 20.0f,0.02f,20.0f };
 
+	// ボスの登場シーンカメラの動き2つ目のカメラのローカル座標
+	static constexpr VECTOR BOSS_APPEARANCE_CAMERA2_LOCAL_POS = { 300.0f,100.0f,300.0f };
+
+	// ボスの登場シーンカメラの動き2つ目の注視点のローカル座標
+	static constexpr VECTOR BOSS_APPEARANCE_CAMERA2_LOCAL_TARGET_POS = { 10.0f,0.0f,0.0f };
+
+	// ボスの登場シーンカメラの動き3つ目のカメラのローカル座標
+	static constexpr VECTOR BOSS_APPEARANCE_CAMERA3_LOCAL_POS = { 2000.0f,2000.0f,-2000.0f };
+
+	// ボスの登場シーンカメラの動き3つ目の注視点の座標
+	static constexpr VECTOR BOSS_APPEARANCE_CAMERA3_TARGET_POS = { -10800.0f,-18000.0f,-140000.0f };
+
+	// ボスの登場シーンカメラの動き3つ目のカメラのローカル座標2
+	static constexpr VECTOR BOSS_APPEARANCE_CAMERA3_LOCAL_POS2 = { 0.0f ,1000.0f ,2000.0f };
+
+	// ボスの登場シーンカメラの動き3つ目の注視点のローカル座標2
+	static constexpr VECTOR BOSS_APPEARANCE_CAMERA3_TARGET_LOCAL_POS2 = { 0.0f ,1000.0f ,0.0f };
+
 	// 必殺技のカメラ1つ目の移動量
 	static constexpr float CAMERA_MOVE_POW = 10.0f;
 
-	// 必殺技シーンの1つ目の動く時間
+	// 必殺技シーンの1つ目の動ける時間
 	static constexpr float FIRST_CAMERA_TIME = 3.0f;
+
+	// 必殺技シーンの2つ目の動ける時間
+	static constexpr float SECOND_CAMERA_TIME = 2.0f;
+
+	// 必殺技シーンの3つ目の動ける時間
+	static constexpr float THIRD_CAMERA_TIME = 5.0f;
+
+	// 
+
+	// カメラが敵に近づいていく力
+	static constexpr float CAMERA_APPROACH_FORCE = 0.05f;
 
 	// カメラモード
 	enum class MODE

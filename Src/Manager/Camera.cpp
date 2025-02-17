@@ -9,6 +9,7 @@
 #include "../Object/Common/Transform.h"
 #include "Camera.h"
 
+
 Camera::Camera()
 {
 
@@ -402,19 +403,21 @@ void Camera::SetBeforeDrawAppearance(const float deltaTime)
 		movedPos_.y += movePow_.y;
 
 		// 敵から見たカメラのローカル座標
-		VECTOR localRotPos = bossTransform_->quaRot.PosAxis({ 300.0f ,100.0f + movedPos_.y,300.0f });
+		VECTOR localRotPos = bossTransform_->quaRot.PosAxis(
+			{ BOSS_APPEARANCE_CAMERA2_LOCAL_POS.x ,BOSS_APPEARANCE_CAMERA2_LOCAL_POS.y + movedPos_.y,BOSS_APPEARANCE_CAMERA2_LOCAL_POS.z });
 
 		// カメラの座標を設定
 		pos_ = VAdd(bossTransform_->pos, localRotPos);
 
 		// 注視点の座標を設定
-		targetPos_ = VAdd(bossTransform_->pos, bossTransform_->quaRot.PosAxis({ 10.0f,movedPos_.y,0.0f }));
+		targetPos_ = VAdd(bossTransform_->pos, bossTransform_->quaRot.PosAxis(
+			{ BOSS_APPEARANCE_CAMERA2_LOCAL_TARGET_POS.x,BOSS_APPEARANCE_CAMERA2_LOCAL_TARGET_POS.y + movedPos_.y,BOSS_APPEARANCE_CAMERA2_LOCAL_TARGET_POS.z }));
 
 		// カメラが何秒動いたか計算
 		elapsedTime_ += deltaTime;
 
 		// カメラが一定秒数動いたらカメラの動きを変える
-		if (elapsedTime_ >= 2.0f)
+		if (elapsedTime_ >= SECOND_CAMERA_TIME)
 		{
 			isBossAppearanceCameraMove2_ = false;
 			isBossAppearanceCameraMove3_ = true;
@@ -426,31 +429,31 @@ void Camera::SetBeforeDrawAppearance(const float deltaTime)
 	{
 
 		// 敵が地面に降りてきて待機状態になるまで
-		if (elapsedTime_ < 5.0f)
+		if (elapsedTime_ < THIRD_CAMERA_TIME)
 		{
 
 			// プレイヤーから見たカメラのローカル座標
-			VECTOR localRotPos = playerTransform_->quaRot.PosAxis({ 2000.0f ,2000.0f ,-2000.0f });
+			VECTOR localRotPos = playerTransform_->quaRot.PosAxis(BOSS_APPEARANCE_CAMERA3_LOCAL_POS);
 
 			// カメラの座標を設定
 			pos_ = VAdd(playerTransform_->pos, localRotPos);
 
 			// 注視点の座標を設定
-			targetPos_ = { -10800.0f,-18000.0f,-140000.0f };
+			targetPos_ = BOSS_APPEARANCE_CAMERA3_TARGET_POS;
 		
 		}
 		// 敵が地面に降りてきて待機状態になるまで
-		else if (elapsedTime_ >= 5.0f && elapsedTime_ < 12.0f)
+		else if (elapsedTime_ >= THIRD_CAMERA_TIME/* && elapsedTime_ < 12.0f*/)
 		{
 
 			// ボスから見たカメラのローカル座標
-			VECTOR localRotCameraPos = bossTransform_->quaRot.PosAxis({ 0.0f ,1000.0f ,2000.0f });
+			VECTOR localRotCameraPos = bossTransform_->quaRot.PosAxis(BOSS_APPEARANCE_CAMERA3_LOCAL_POS2);
 
 			// ボスから見た注視点のローカル座標
-			VECTOR localRotTargetPos = bossTransform_->quaRot.PosAxis({ 0.0f ,1000.0f ,0.0f });
+			VECTOR localRotTargetPos = bossTransform_->quaRot.PosAxis(BOSS_APPEARANCE_CAMERA3_TARGET_LOCAL_POS2);
 
 			// 徐々に敵に近づけていく
-			pos_ = Utility::Lerp(pos_, VAdd(bossTransform_->pos, localRotCameraPos),0.05f);
+			pos_ = Utility::Lerp(pos_, VAdd(bossTransform_->pos, localRotCameraPos), CAMERA_APPROACH_FORCE);
 
 			// 注視点
 			targetPos_ = VAdd(bossTransform_->pos, localRotTargetPos);
@@ -466,7 +469,6 @@ void Camera::SetBeforeDrawAppearance(const float deltaTime)
 		elapsedTime_ += deltaTime;
 
 	}
-
 
 }
 
