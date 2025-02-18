@@ -31,7 +31,7 @@ void MoveComponent::Lerp()
 	const VECTOR movedPos = VAdd(actor_.lock()->GetTransform()->pos,VScale(normDir, actor_.lock()->GetSpeed()));
 
 	// ­‚µ‘O‚É‚ä‚Á‚­‚èˆÚ“®
-	actor_.lock()->SetPos(Utility::Lerp(actor_.lock()->GetTransform()->pos, movedPos, 0.1f));
+	actor_.lock()->SetPos(Utility::Lerp(actor_.lock()->GetTransform()->pos, movedPos, MOVE_SMOOTHNESS));
 
 }
 

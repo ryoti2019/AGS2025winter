@@ -228,6 +228,9 @@ void Player::InitParameter()
 	// アニメーション番号
 	ANIM_INDEX = jsonData_["ANIM_INDEX"];
 
+	// 無敵時間
+	INVINCIBILITY_TIME = jsonData_["INVINCIBILITY_TIME"];
+
 	// ゲームシーンの情報を取得
 	std::shared_ptr<BossBattleScene> bossBattleScene =
 		std::dynamic_pointer_cast<BossBattleScene>(SceneManager::GetInstance().GetNowScene());

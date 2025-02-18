@@ -21,6 +21,7 @@
 				"SPECIAL_ATTACK_MAX_GAUGE": 200,
 				"SPECIAL_ATTACK_GAUGE_LENGTH": 360,
 				"ACTOR_TYPE": 0,
+				"INVINCIBILITY_TIME": 1.0,
 				"ANIM": [
 					{
 						"NAME": "IDLE",
@@ -163,6 +164,7 @@
 				"HP": 100,
 				"HP_BAR_LENGTH": 100,
 				"ACTOR_TYPE": 1,
+				"INVINCIBILITY_TIME": 0.5,
 				"ANIM": [
 					{
 						"NAME": "IDLE",
@@ -256,6 +258,7 @@
 				"CREATE_ENEMY_COOL_TIME": 10.0,
 				"HP_BAR_LENGTH": 500,
 				"ACTOR_TYPE": 2,
+				"INVINCIBILITY_TIME": 0.5,
 				"ANIM": [
 					{
 						"NAME": "IDLE",

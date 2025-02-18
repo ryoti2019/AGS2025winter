@@ -44,10 +44,6 @@ void SceneManager::Init()
 	// カメラの初期化
 	camera_ = std::make_shared<Camera>();
 
-	// シーンの初期化
-	//scene_ = std::make_unique<GameClearScene>();
-	//scene_->Init();
-
 	// シーン遷移中判定
 	isSceneChanging_ = false;
 
@@ -69,7 +65,7 @@ void SceneManager::Init3D()
 {
 
 	// 背景色設定
-	SetBackgroundColor(255, 255, 255);
+	SetBackgroundColor(COLOR_MAX, COLOR_MAX, COLOR_MAX);
 
 	// Zバッファを有効にする
 	SetUseZBuffer3D(true);
@@ -84,7 +80,7 @@ void SceneManager::Init3D()
 	SetUseLighting(true);
 
 	// 正面から斜め下に向かったライト
-	ChangeLightTypeDir({ 0.0f, -1.0f, 1.0f });
+	ChangeLightTypeDir(LIGHT_DIR);
 
 }
 
@@ -198,19 +194,17 @@ void SceneManager::Fade(void)
 void SceneManager::DoChangeScene(const SCENE_ID& sceneId)
 {
 
-
-
 	// シーンを変更する
 	sceneId_ = sceneId;
-
-	// シーンを変更
-	sceneChange_[sceneId_]();
 
 	if (!isFirstRelease_)
 	{
 		// リソースの解放
 		ResourceManager::GetInstance().Release();
 	}
+
+	// シーンを変更
+	sceneChange_[sceneId_]();
 
 	// シーンを初期化
 	scene_->Init();

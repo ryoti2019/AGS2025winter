@@ -260,6 +260,9 @@ public:
 	// アニメーション番号
 	int ANIM_INDEX;
 
+	// 無敵時間
+	float INVINCIBILITY_TIME;
+
 	ActorBase(const VECTOR& pos, const json& data);
 
 	virtual ~ActorBase() = default;

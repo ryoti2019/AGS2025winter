@@ -43,11 +43,11 @@ bool FpsControl::Update()
 		//1フレーム目なら時刻を記憶
 		mStartTime = GetNowCount();
 	}
-	if (mCount == N)
+	if (mCount == FPS_AVERAGE_FRAME_COUNT)
 	{
 		//60フレーム目なら平均を計算する
 		int t = GetNowCount();
-		mFps = static_cast<float>(MS_PER_SECOND) / ((t - mStartTime) / (float)N);
+		mFps = static_cast<float>(MS_PER_SECOND) / ((t - mStartTime) / (float)FPS_AVERAGE_FRAME_COUNT);
 		mCount = 0;
 		mStartTime = t;
 	}

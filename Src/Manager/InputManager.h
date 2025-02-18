@@ -55,6 +55,38 @@ public:
 		MAX
 	};
 
+	// XBOX_ONEコントローラー
+	enum class XBOX_ONE
+	{
+		A_BUTTON,
+		B_BUTTON,
+		X_BUTTON,
+		Y_BUTTON,
+		L_BUTTON,
+		R_BUTTON,
+		BACK_BUTTON,
+		START_BUTTON,
+		L_TRIGGER,
+		R_TRIGGER
+	};
+
+	// XBOX_ONEコントローラー
+	enum class DUAL_SENSE
+	{
+		LEFT,
+		DOWN,
+		RIGHT,
+		TOP,
+		L_BUTTON,
+		R_BOTTON,
+		ZL_BUTTON,
+		ZR_BUTTON,
+		BACK_BOTTON,
+		START_BOTTON,
+		L_TRIGGER,
+		R_TRIGGER
+	};
+
 	// ゲームコントローラーの入力情報
 	struct JOYPAD_IN_STATE
 	{
@@ -95,59 +127,59 @@ public:
 	void Clear(void);
 
 	// キーの押下判定
-	bool IsNew(int key) const;
+	const bool IsNew(int key) const { return Find(key).keyNew; }
 
 	// キーの押下判定(押しっぱなしはNG)
-	bool IsTrgDown(int key) const;
+	const bool IsTrgDown(int key) const { return Find(key).keyTrgDown; }
 
 	// キーを離した時の判定
-	bool IsTrgUp(int key) const;
+	const bool IsTrgUp(int key) const { return Find(key).keyTrgUp; }
 
 	// マウス座標の取得
-	Vector2 GetMousePos(void) const;
+	const Vector2 GetMousePos(void) const { return mousePos_; }
 
 	// マウスのクリック状態を取得(MOUSE_INPUT_LEFT、RIGHT)
-	int GetMouse(void) const;
+	const int GetMouse(void) const { return mouseInput_; }
 
 	// マウスが左クリックされたか
-	bool IsClickMouseLeft(void) const;
+	const bool IsClickMouseLeft(void) const { return mouseInput_ == MOUSE_INPUT_LEFT; }
 
 	// マウスが右クリックされたか
-	bool IsClickMouseRight(void) const;
+	const bool IsClickMouseRight(void) const { return mouseInput_ == MOUSE_INPUT_RIGHT; }
 
 	// マウスが左クリックされたか(押しっぱなしはNG)
-	bool IsTrgDownMouseLeft(void) const;
+	const bool IsTrgDownMouseLeft(void) const { return FindMouse(MOUSE_INPUT_LEFT).keyTrgDown; }
 
 	// マウスが左クリックされたか(押しっぱなしはNG)
-	bool IsTrgUpMouseLeft(void) const;
+	const bool IsTrgUpMouseLeft(void) const { return FindMouse(MOUSE_INPUT_LEFT).keyTrgUp; };
 
 	// マウスが右クリックされたか(押しっぱなしはNG)
-	bool IsTrgDownMouseRight(void) const;
+	const bool IsTrgDownMouseRight(void) const { return FindMouse(MOUSE_INPUT_RIGHT).keyTrgDown; }
 
 	// マウスが右クリックされたか(押しっぱなしはNG)
-	bool IsTrgUpMouseRight(void) const;
+	const bool IsTrgUpMouseRight(void) const { return FindMouse(MOUSE_INPUT_RIGHT).keyTrgUp; }
 
 	// コントローラの入力情報を取得する
 	JOYPAD_IN_STATE GetJPadInputState(JOYPAD_NO no);
 
 	// ボタンが押された
-	bool IsPadBtnNew(JOYPAD_NO no, JOYPAD_BTN btn) const;
-	bool IsPadBtnTrgDown(JOYPAD_NO no, JOYPAD_BTN btn) const;
-	bool IsPadBtnTrgUp(JOYPAD_NO no, JOYPAD_BTN btn) const;
+	const bool IsPadBtnNew(JOYPAD_NO no, JOYPAD_BTN btn) const { return padInfos_[static_cast<int>(no)].IsNew[static_cast<int>(btn)]; }
+	const bool IsPadBtnTrgDown(JOYPAD_NO no, JOYPAD_BTN btn) const { return padInfos_[static_cast<int>(no)].IsTrgDown[static_cast<int>(btn)]; }
+	const bool IsPadBtnTrgUp(JOYPAD_NO no, JOYPAD_BTN btn) const { return padInfos_[static_cast<int>(no)].IsTrgUp[static_cast<int>(btn)]; }
 
 	// 左のアナログキーが押された
-	bool IsPadLStickTrgDown(JOYPAD_NO no) const;
+	const bool IsPadLStickTrgDown(JOYPAD_NO no) const { return  padInfos_[static_cast<int>(no)].AKeyLTrgDown; }
 	// 左のアナログキーが横軸に倒された
-	bool IsPadLXStickTrgDownX(JOYPAD_NO no) const;
+	const bool IsPadLXStickTrgDownX(JOYPAD_NO no) const { return  padInfos_[static_cast<int>(no)].AKeyLXTrgDown; }
 	// 左のアナログキーが縦軸に倒された
-	bool IsPadLZStickTrgDownZ(JOYPAD_NO no) const;
+	const bool IsPadLZStickTrgDownZ(JOYPAD_NO no) const { return  padInfos_[static_cast<int>(no)].AKeyLZTrgDown; }
 
 	// 右のアナログキーが押された
-	bool IsPadRStickTrgDown(JOYPAD_NO no) const;
+	const bool IsPadRStickTrgDown(JOYPAD_NO no) const { return  padInfos_[static_cast<int>(no)].AKeyRTrgDown; }
 	// 右のアナログキーが横軸に倒された
-	bool IsPadRXStickTrgDownX(JOYPAD_NO no) const;
+	const bool IsPadRXStickTrgDownX(JOYPAD_NO no) const { return  padInfos_[static_cast<int>(no)].AKeyRXTrgDown; }
 	// 右のアナログキーが縦軸に倒された
-	bool IsPadRZStickTrgDownZ(JOYPAD_NO no) const;
+	const bool IsPadRZStickTrgDownZ(JOYPAD_NO no) const { return  padInfos_[static_cast<int>(no)].AKeyRZTrgDown; }
 
 private:
 
@@ -210,13 +242,23 @@ private:
 	const InputManager::MouseInfo& FindMouse(int key) const;
 
 	// 接続されたコントローラの種別を取得する
-	JOYPAD_TYPE GetJPadType(JOYPAD_NO no);
+	JOYPAD_TYPE GetJPadType(JOYPAD_NO no) { return static_cast<InputManager::JOYPAD_TYPE>(GetJoypadType(static_cast<int>(no))); }
 
 	// コントローラの入力情報を取得する
-	DINPUT_JOYSTATE GetJPadDInputState(JOYPAD_NO no);
+	DINPUT_JOYSTATE GetJPadDInputState(JOYPAD_NO no)	
+	{
+		// コントローラ情報
+		GetJoypadDirectInputState(static_cast<int>(no), &joyDInState_);
+		return joyDInState_;
+	}
 
 	// コントローラ(XBOX)の入力情報を取得する
-	XINPUT_STATE GetJPadXInputState(JOYPAD_NO no);
+	XINPUT_STATE GetJPadXInputState(JOYPAD_NO no)
+	{
+		// コントローラ情報
+		GetJoypadXInputState(static_cast<int>(no), &joyXInState_);
+		return joyXInState_;
+	};
 
 	// コントローラの入力情報を更新する
 	void SetJPadInState(JOYPAD_NO jpNo);

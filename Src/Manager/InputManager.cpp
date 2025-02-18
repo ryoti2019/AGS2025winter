@@ -30,19 +30,22 @@ void InputManager::Init(void)
 	// シーン遷移キー
 	InputManager::GetInstance().Add(KEY_INPUT_SPACE);
 
-	// カメラの制御を止めるキー
-	InputManager::GetInstance().Add(KEY_INPUT_LSHIFT);
-	InputManager::GetInstance().Add(KEY_INPUT_LCONTROL);
-
-	// プレイヤーの移動キー
+	// 移動キー
 	InputManager::GetInstance().Add(KEY_INPUT_W);
 	InputManager::GetInstance().Add(KEY_INPUT_A);
 	InputManager::GetInstance().Add(KEY_INPUT_S);
 	InputManager::GetInstance().Add(KEY_INPUT_D);
-	InputManager::GetInstance().Add(KEY_INPUT_F);
-	InputManager::GetInstance().Add(KEY_INPUT_R);
-	InputManager::GetInstance().Add(KEY_INPUT_Z);
+	InputManager::GetInstance().Add(KEY_INPUT_LSHIFT);
 
+	// 攻撃キー
+	InputManager::GetInstance().Add(KEY_INPUT_F);
+
+	// 回避キー
+	InputManager::GetInstance().Add(KEY_INPUT_R);
+
+	// キャンセルキー
+	InputManager::GetInstance().Add(KEY_INPUT_Z);
+	
 
 	// カメラの移動キー
 	InputManager::GetInstance().Add(KEY_INPUT_Y);
@@ -135,61 +138,6 @@ void InputManager::Clear(void)
 	keyInfos_.clear();
 }
 
-bool InputManager::IsNew(int key) const
-{
-	return Find(key).keyNew;
-}
-
-bool InputManager::IsTrgDown(int key) const
-{
-	return Find(key).keyTrgDown;
-}
-
-bool InputManager::IsTrgUp(int key) const
-{
-	return Find(key).keyTrgUp;
-}
-
-Vector2 InputManager::GetMousePos(void) const
-{
-	return mousePos_;
-}
-
-int InputManager::GetMouse(void) const
-{
-	return mouseInput_;
-}
-
-bool InputManager::IsClickMouseLeft(void) const
-{
-	return mouseInput_ == MOUSE_INPUT_LEFT;
-}
-
-bool InputManager::IsClickMouseRight(void) const
-{
-	return mouseInput_ == MOUSE_INPUT_RIGHT;
-}
-
-bool InputManager::IsTrgDownMouseLeft(void) const
-{
-	return FindMouse(MOUSE_INPUT_LEFT).keyTrgDown;
-}
-
-bool InputManager::IsTrgUpMouseLeft(void) const
-{
-	return FindMouse(MOUSE_INPUT_LEFT).keyTrgUp;
-}
-
-bool InputManager::IsTrgDownMouseRight(void) const
-{
-	return FindMouse(MOUSE_INPUT_RIGHT).keyTrgDown;
-}
-
-bool InputManager::IsTrgUpMouseRight(void) const
-{
-	return FindMouse(MOUSE_INPUT_RIGHT).keyTrgUp;
-}
-
 InputManager::InputManager(void)
 {
 	mouseInput_ = -1;
@@ -223,25 +171,6 @@ const InputManager::MouseInfo& InputManager::FindMouse(int key) const
 	return mouseInfoEmpty_;
 }
 
-InputManager::JOYPAD_TYPE InputManager::GetJPadType(JOYPAD_NO no)
-{
-	return static_cast<InputManager::JOYPAD_TYPE>(GetJoypadType(static_cast<int>(no)));
-}
-
-DINPUT_JOYSTATE InputManager::GetJPadDInputState(JOYPAD_NO no)
-{
-	// コントローラ情報
-	GetJoypadDirectInputState(static_cast<int>(no), &joyDInState_);
-	return joyDInState_;
-}
-
-XINPUT_STATE InputManager::GetJPadXInputState(JOYPAD_NO no)
-{
-	// コントローラ情報
-	GetJoypadXInputState(static_cast<int>(no), &joyXInState_);
-	return joyXInState_;
-}
-
 void InputManager::SetJPadInState(JOYPAD_NO jpNo)
 {
 
@@ -257,7 +186,6 @@ void InputManager::SetJPadInState(JOYPAD_NO jpNo)
 		stateNow.ButtonsNew[i] = stateNew.ButtonsNew[i];
 
 		stateNow.IsOld[i] = stateNow.IsNew[i];
-		//stateNow.IsNew[i] = stateNow.ButtonsNew[i] == 128 || stateNow.ButtonsNew[i] == 255;
 		stateNow.IsNew[i] = stateNow.ButtonsNew[i] > 0;
 
 		stateNow.IsTrgDown[i] = stateNow.IsNew[i] && !stateNow.IsOld[i];
@@ -306,28 +234,34 @@ InputManager::JOYPAD_IN_STATE InputManager::GetJPadInputState(JOYPAD_NO no)
 		// X   B
 		//   A
 		idx = static_cast<int>(JOYPAD_BTN::DOWN);
-		ret.ButtonsNew[idx] = d.Buttons[0];// Aボタン
+		ret.ButtonsNew[idx] = d.Buttons[static_cast<int>(XBOX_ONE::A_BUTTON)];// Aボタン
 
 		idx = static_cast<int>(JOYPAD_BTN::RIGHT);
-		ret.ButtonsNew[idx] = d.Buttons[1];// Bボタン
+		ret.ButtonsNew[idx] = d.Buttons[static_cast<int>(XBOX_ONE::B_BUTTON)];// Bボタン
 
 		idx = static_cast<int>(JOYPAD_BTN::LEFT);
-		ret.ButtonsNew[idx] = d.Buttons[2];// Xボタン
+		ret.ButtonsNew[idx] = d.Buttons[static_cast<int>(XBOX_ONE::X_BUTTON)];// Xボタン
 
 		idx = static_cast<int>(JOYPAD_BTN::TOP);
-		ret.ButtonsNew[idx] = d.Buttons[3];// Yボタン
+		ret.ButtonsNew[idx] = d.Buttons[static_cast<int>(XBOX_ONE::Y_BUTTON)];// Yボタン
 
 		idx = static_cast<int>(JOYPAD_BTN::L_BUTTON);
-		ret.ButtonsNew[idx] = d.Buttons[4];// Lボタン
+		ret.ButtonsNew[idx] = d.Buttons[static_cast<int>(XBOX_ONE::L_BUTTON)];// Lボタン
 
 		idx = static_cast<int>(JOYPAD_BTN::R_BUTTON);
-		ret.ButtonsNew[idx] = d.Buttons[5];// Rボタン
+		ret.ButtonsNew[idx] = d.Buttons[static_cast<int>(XBOX_ONE::R_BUTTON)];// Rボタン
+
+		idx = static_cast<int>(JOYPAD_BTN::BACK_BUTTON);
+		ret.ButtonsNew[idx] = d.Buttons[static_cast<int>(XBOX_ONE::BACK_BUTTON)];// Backボタン
+
+		idx = static_cast<int>(JOYPAD_BTN::START_BUTTON);
+		ret.ButtonsNew[idx] = d.Buttons[static_cast<int>(XBOX_ONE::START_BUTTON)];// Startボタン
 
 		idx = static_cast<int>(JOYPAD_BTN::L_TRIGGER);
-		ret.ButtonsNew[idx] = d.Buttons[8]; // Lスティック押し込み
+		ret.ButtonsNew[idx] = d.Buttons[static_cast<int>(XBOX_ONE::L_TRIGGER)]; // Lスティック押し込み
 
 		idx = static_cast<int>(JOYPAD_BTN::R_TRIGGER);
-		ret.ButtonsNew[idx] = d.Buttons[9];// Rスティック押し込み
+		ret.ButtonsNew[idx] = d.Buttons[static_cast<int>(XBOX_ONE::R_TRIGGER)];// Rスティック押し込み
 
 		// 左スティック
 		ret.AKeyLX = d.X;
@@ -355,43 +289,41 @@ InputManager::JOYPAD_IN_STATE InputManager::GetJPadInputState(JOYPAD_NO no)
 		// □  〇
 		//   ×
 
-
-
 		idx = static_cast<int>(JOYPAD_BTN::LEFT);
-		ret.ButtonsNew[idx] = d.Buttons[0];// □
+		ret.ButtonsNew[idx] = d.Buttons[static_cast<int>(DUAL_SENSE::LEFT)];// □
 
 		idx = static_cast<int>(JOYPAD_BTN::DOWN);
-		ret.ButtonsNew[idx] = d.Buttons[1];// ×
+		ret.ButtonsNew[idx] = d.Buttons[static_cast<int>(DUAL_SENSE::DOWN)];// ×
 
 		idx = static_cast<int>(JOYPAD_BTN::RIGHT);
-		ret.ButtonsNew[idx] = d.Buttons[2];// 〇
+		ret.ButtonsNew[idx] = d.Buttons[static_cast<int>(DUAL_SENSE::RIGHT)];// 〇
 
 		idx = static_cast<int>(JOYPAD_BTN::TOP);
-		ret.ButtonsNew[idx] = d.Buttons[3];// △
+		ret.ButtonsNew[idx] = d.Buttons[static_cast<int>(DUAL_SENSE::TOP)];// △
 
 		idx = static_cast<int>(JOYPAD_BTN::L_BUTTON);
-		ret.ButtonsNew[idx] = d.Buttons[4];// L1ボタン
+		ret.ButtonsNew[idx] = d.Buttons[static_cast<int>(DUAL_SENSE::L_BUTTON)];// L1ボタン
 
 		idx = static_cast<int>(JOYPAD_BTN::R_BUTTON);
-		ret.ButtonsNew[idx] = d.Buttons[5];// R1ボタン
+		ret.ButtonsNew[idx] = d.Buttons[static_cast<int>(DUAL_SENSE::R_BOTTON)];// R1ボタン
 
 		idx = static_cast<int>(JOYPAD_BTN::ZL_BUTTON);
-		ret.ButtonsNew[idx] = d.Buttons[6];// L2ボタン
+		ret.ButtonsNew[idx] = d.Buttons[static_cast<int>(DUAL_SENSE::ZL_BUTTON)];// L2ボタン
 
 		idx = static_cast<int>(JOYPAD_BTN::ZR_BUTTON);
-		ret.ButtonsNew[idx] = d.Buttons[7];// R2ボタン
+		ret.ButtonsNew[idx] = d.Buttons[static_cast<int>(DUAL_SENSE::ZR_BUTTON)];// R2ボタン
 
 		idx = static_cast<int>(JOYPAD_BTN::BACK_BUTTON);
-		ret.ButtonsNew[idx] = d.Buttons[8]; // SHAREボタン
+		ret.ButtonsNew[idx] = d.Buttons[static_cast<int>(DUAL_SENSE::BACK_BOTTON)]; // SHAREボタン
 
 		idx = static_cast<int>(JOYPAD_BTN::START_BUTTON);
-		ret.ButtonsNew[idx] = d.Buttons[9]; // OPTIONボタン
+		ret.ButtonsNew[idx] = d.Buttons[static_cast<int>(DUAL_SENSE::START_BOTTON)]; // OPTIONボタン
 
 		idx = static_cast<int>(JOYPAD_BTN::L_TRIGGER);
-		ret.ButtonsNew[idx] = d.Buttons[10];// Lスティック押し込み
+		ret.ButtonsNew[idx] = d.Buttons[static_cast<int>(DUAL_SENSE::L_TRIGGER)];// Lスティック押し込み
 
 		idx = static_cast<int>(JOYPAD_BTN::R_TRIGGER);
-		ret.ButtonsNew[idx] = d.Buttons[11];// Rスティック押し込み
+		ret.ButtonsNew[idx] = d.Buttons[static_cast<int>(DUAL_SENSE::R_TRIGGER)];// Rスティック押し込み
 
 		// 左スティック
 		ret.AKeyLX = d.X;
@@ -417,49 +349,4 @@ InputManager::JOYPAD_IN_STATE InputManager::GetJPadInputState(JOYPAD_NO no)
 
 	return ret;
 
-}
-
-bool InputManager::IsPadBtnNew(JOYPAD_NO no, JOYPAD_BTN btn) const
-{
-	return padInfos_[static_cast<int>(no)].IsNew[static_cast<int>(btn)];
-}
-
-bool InputManager::IsPadBtnTrgDown(JOYPAD_NO no, JOYPAD_BTN btn) const
-{
-	return padInfos_[static_cast<int>(no)].IsTrgDown[static_cast<int>(btn)];
-}
-
-bool InputManager::IsPadBtnTrgUp(JOYPAD_NO no, JOYPAD_BTN btn) const
-{
-	return padInfos_[static_cast<int>(no)].IsTrgUp[static_cast<int>(btn)];
-}
-
-bool InputManager::IsPadLStickTrgDown(JOYPAD_NO no) const
-{
-	return  padInfos_[static_cast<int>(no)].AKeyLTrgDown;
-}
-
-bool InputManager::IsPadLXStickTrgDownX(JOYPAD_NO no) const
-{
-	return  padInfos_[static_cast<int>(no)].AKeyLXTrgDown;
-}
-
-bool InputManager::IsPadLZStickTrgDownZ(JOYPAD_NO no) const
-{
-	return  padInfos_[static_cast<int>(no)].AKeyLZTrgDown;
-}
-
-bool InputManager::IsPadRStickTrgDown(JOYPAD_NO no) const
-{
-	return  padInfos_[static_cast<int>(no)].AKeyRTrgDown;
-}
-
-bool InputManager::IsPadRXStickTrgDownX(JOYPAD_NO no) const
-{
-	return  padInfos_[static_cast<int>(no)].AKeyRXTrgDown;
-}
-
-bool InputManager::IsPadRZStickTrgDownZ(JOYPAD_NO no) const
-{
-	return  padInfos_[static_cast<int>(no)].AKeyRZTrgDown;
 }

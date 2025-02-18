@@ -78,6 +78,12 @@ public:
 
 private:
 
+	// 正面から斜め下方向
+	static constexpr VECTOR LIGHT_DIR = { 0.0f, -1.0f, 1.0f };
+
+	// 背景色
+	static constexpr int COLOR_MAX = 255;
+
 	// 静的インスタンス
 	static SceneManager* instance_;
 

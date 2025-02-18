@@ -10,31 +10,44 @@ class CollisionManager
 
 public:
 
-
-
 	// 攻撃の最初の状態の番号
-	const int ATTACK_START_NUM;
+	static constexpr int ATTACK_START_NUM = 3;
 
 	// ステージと衝突しているか判定する回数
-	const int STAGE_COLLISION_COUNT;
+	static constexpr int STAGE_COLLISION_COUNT = 10;
 
 	// 敵同士の押し合う力
-	const float ENEMY_PUSH_FORCE;
+	static constexpr float ENEMY_PUSH_FORCE = 10.0f;
 
 	// ステージとの当たり判定で押し返す力
-	const float OBJECT_COLLISION_PUSH_FORCE;
+	static constexpr float OBJECT_COLLISION_PUSH_FORCE = 50.0f;
 
 	// ステージとカメラの当たり判定で押し返す力
-	const float CAMERA_COLLISION_PUSH_FORCE;
+	static constexpr float CAMERA_COLLISION_PUSH_FORCE = 1000.0f;
 
 	// ほぼ真下への向き
-	const float DOWN_DIR;
+	static constexpr float DOWN_DIR = 0.9f;
 
 	// カメラの衝突判定で使う長さ
-	const float LEN_CAMERACOLLISION_LINE;
+	static constexpr float LEN_CAMERACOLLISION_LINE = 500.0f;
 
 	// カメラの衝突判定で一番短い長さ
-	const float MIN_LEN_CAMERA_COLLISION_LINE;
+	static constexpr float MIN_LEN_CAMERA_COLLISION_LINE = 1.0f;
+
+	// 攻撃の半分を必殺技ゲージに加算する割合
+	static constexpr int SPECIAL_ATTACK_GAUGE_RATIO = 10;
+
+	// 無敵時間
+	static constexpr int INVINCIBILITY_TIME = 0.5f;
+
+	// カメラの押し返す力
+	static constexpr float REPEL_FORCE = 10.0f;
+
+	// カメラの最大距離
+	static constexpr float MAX_CAMERA_DISTANCE = 5000.0f;
+
+	// 線形補完の補完割合
+	static constexpr float INTERPOLATION_RATIO = 0.1f;
 
 	CollisionManager();
 	~CollisionManager() = default;

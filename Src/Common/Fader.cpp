@@ -44,11 +44,11 @@ void Fader::Update(void)
 		return;
 
 	case STATE::FADE_OUT:
-		alpha_ += SPEED_ALPHA;
-		if (alpha_ > ALPHA_MAX)
+		alpha_ += FADE_SPEED;
+		if (alpha_ > FADE_ALPHA_MAX)
 		{
 			// フェード終了
-			alpha_ = ALPHA_MAX;
+			alpha_ = FADE_ALPHA_MAX;
 			if (isPreEnd_)
 			{
 				// 1フレーム後(Draw後)に終了とする
@@ -60,7 +60,7 @@ void Fader::Update(void)
 		break;
 
 	case STATE::FADE_IN:
-		alpha_ -= SPEED_ALPHA;
+		alpha_ -= FADE_SPEED;
 		if (alpha_ < 0)
 		{
 			// フェード終了

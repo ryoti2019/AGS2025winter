@@ -19,5 +19,8 @@ public:
 
 private:
 
+	// ˆÚ“®—Ê
+	static constexpr float MOVE_SMOOTHNESS = 0.1f;
+
 };
 

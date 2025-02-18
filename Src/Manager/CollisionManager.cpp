@@ -16,14 +16,6 @@
 
 CollisionManager::CollisionManager()
 	:
-	ATTACK_START_NUM(3),
-	STAGE_COLLISION_COUNT(10),
-	ENEMY_PUSH_FORCE(10.0f),
-	OBJECT_COLLISION_PUSH_FORCE(50.0f),
-	CAMERA_COLLISION_PUSH_FORCE(1000.0f),
-	DOWN_DIR(0.9f),
-	LEN_CAMERACOLLISION_LINE(500.0f),
-	MIN_LEN_CAMERA_COLLISION_LINE(1.0f),
 	collisionLineStageCamera_(0.0f)
 {
 
@@ -172,9 +164,7 @@ void CollisionManager::CheckAttackCollision(const float deltaTime)
 				// このアニメーション中の無敵時間が消えていなければ処理しない
 				if (a->second > 0.0f)continue;
 
-				//// 非アクティブだったら処理しない
-				//if (!target->GetIsActive())continue;
-
+				// HPが0以下だったら処理しない
 				if (target->GetHp() <= 0)continue;
 
 				// 右手の判定
@@ -239,14 +229,14 @@ void CollisionManager::OnAttackCollision(const std::shared_ptr<ActorBase>& attac
 	if (player && target->GetHp() > 0)
 	{
 		// 敵に与えた攻撃の半分を必殺技ゲージに追加
-		attacker->AddSpecialAttackGauge(attacker->GetDamage() / 10);
+		attacker->AddSpecialAttackGauge(attacker->GetDamage() / SPECIAL_ATTACK_GAUGE_RATIO);
 	}
 
 	// 当たったターゲットの情報を取得
 	auto& data = isCloseRangeAttackHitData_[target];
 
 	// ターゲットに今攻撃された攻撃状態の無敵時間を設定する
-	data[attacker->GetState() - ATTACK_START_NUM] = 0.5f;
+	data[attacker->GetState() - ATTACK_START_NUM] = target->INVINCIBILITY_TIME;
 
 }
 
@@ -353,7 +343,7 @@ void CollisionManager::OnProjectileCollision(const std::shared_ptr<ActorBase>& a
 	auto& data = isLongRangeAttackHitData_[target];
 
 	// ターゲットに今攻撃された攻撃状態の無敵時間を設定する
-	data = 1.0f;
+	data = target->INVINCIBILITY_TIME;
 
 }
 
@@ -460,7 +450,7 @@ void CollisionManager::CheckActorsAndStageCollision()
 						VAdd(target->GetCollisionData().bodyCapsuleDownPos, VECTOR(0.0f, -target->GetCollisionData().bodyCollisionRadius, 0.0f)));
 
 					// 地面に当たっている時と下方向に動いている時のみ判定する
-					if (hit.HitFlag > 0 && VDot({ 0.0f,-1.0f,0.0f }, target->GetVelocity()) > DOWN_DIR)
+					if (hit.HitFlag > 0 && VDot(Utility::DIR_D, target->GetVelocity()) > DOWN_DIR)
 					{
 
 						// 衝突地点から、少し上に移動
@@ -480,13 +470,6 @@ void CollisionManager::CheckActorsAndStageCollision()
 					}
 				}
 			}
-
-			// もし地面を貫通して下に行ってしまったとき
-			//if (target->GetTransform()->pos.y < -19500.0f)
-			//{
-			//	target->SetPos({ target->GetTransform()->pos.x, -19500.0f,target->GetTransform()->pos.z });
-			//}
-
 		}
 	}
 
@@ -526,7 +509,7 @@ void CollisionManager::CheckCameraAndStageCollision()
 		{
 
 			// 当たった地点に座標を設定
-			camera_.lock()->SetPos(VAdd(hit.HitPosition, VScale(cDir, 10.0f)));
+			camera_.lock()->SetPos(VAdd(hit.HitPosition, VScale(cDir, REPEL_FORCE)));
 
 			// カメラ座標
 			auto tmpCPos = camera_.lock()->GetPos();
@@ -535,17 +518,17 @@ void CollisionManager::CheckCameraAndStageCollision()
 			auto tmpTPos = camera_.lock()->GetTargetPos();
 
 			// ワールドの上方向と地面の法線が近しい方向だったらカメラの上昇補正を処理しない
-			auto a = VDot({ 0.0f,1.0f,0.0f }, hit.Normal);
-			if (a > 0.9f)return;
+			auto a = VDot(Utility::DIR_U, hit.Normal);
+			if (a > DOWN_DIR)return;
 
 			// カメラと注視点の距離を計算
 			auto disPow2 = Utility::SqrMagnitude(tmpCPos, tmpTPos);
 
 			// 距離
-			float len = 5000.0f;
+			float len = MAX_CAMERA_DISTANCE;
 			if (disPow2 < len * len)
 			{
-				auto l = Utility::Lerp(tmpCPos, VAdd(tmpCPos, { 0.0f,len ,0.0f }), 0.1f);
+				auto l = Utility::Lerp(tmpCPos, VAdd(tmpCPos, { 0.0f,len ,0.0f }), INTERPOLATION_RATIO);
 				camera_.lock()->SetPos(l);
 			}
 

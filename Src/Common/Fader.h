@@ -5,12 +5,6 @@ class Fader
 
 public:
 
-	// フェードが進む速さ
-	static constexpr float SPEED_ALPHA = 5.0f;
-
-	// フェードの最大値
-	static constexpr int ALPHA_MAX = 255;
-
 	// 状態
 	enum class STATE
 	{
@@ -33,6 +27,12 @@ public:
 	void Draw(void);
 
 private:
+
+	// フェードが進む速さ
+	static constexpr float FADE_SPEED = 5.0f;
+
+	// フェードの最大値
+	static constexpr int FADE_ALPHA_MAX = 255;
 
 	// 状態
 	STATE state_;

@@ -180,6 +180,9 @@ void Enemy::InitParameter()
 	// キックのダメージ量
 	ATTACK_KICK_DAMAGE = jsonData_["ANIM"][static_cast<int>(EnemyState::ATTACK_KICK) - 1]["DAMAGE"];
 
+	// 無敵時間
+	INVINCIBILITY_TIME = jsonData_["INVINCIBILITY_TIME"];
+
 	// 追いかけている時間
 	trackingTime_ = 0.0f;
 

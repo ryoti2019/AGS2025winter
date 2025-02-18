@@ -186,7 +186,6 @@ void Boss::InitParameter()
 
 	// スーパーアーマーHP
 	superArmorHp_ = SUPER_ARMOR_HP;
-	//superArmorHp_ = 0;
 
 	// スーパーアーマーが回復中のHP
 	superArmorRecoveryHp_ = 0;
@@ -202,6 +201,9 @@ void Boss::InitParameter()
 
 	// キックのダメージ量
 	ATTACK_KICK_DAMAGE = jsonData_["ANIM"][static_cast<int>(BossState::ATTACK_KICK) - 1]["DAMAGE"];
+
+	// 無敵時間
+	INVINCIBILITY_TIME = jsonData_["INVINCIBILITY_TIME"];
 
 	// 敵がまっすく飛んでいくときのカウンタ
 	knockBackCnt_ = 0.0f;

@@ -19,18 +19,14 @@
 #include "ActorCreate.h"
 
 ActorCreate::ActorCreate()
-	:
-	AREA1_TOTAL_ENEMYS(10),
-	AREA2_TOTAL_ENEMYS(10),
-	AREA3_TOTAL_ENEMYS(10),
-	AREA4_TOTAL_ENEMYS(10),
-	isCollisionArea1_(false),
-	isCollisionArea2_(false),
-	isCollisionArea3_(false),
-	isCollisionArea4_(false),
-	isCollisionArea5_(false),
-	deathEnemyCnt_(0)
 {
+
+	isCollisionArea1_ = false;
+	isCollisionArea2_ = false;
+	isCollisionArea3_ = false;
+	isCollisionArea4_ = false;
+	isCollisionArea5_ = false;
+	deathEnemyCnt_ = 0;
 
 	// 外部ファイルの読み込み
 	std::ifstream ifs;
@@ -63,7 +59,7 @@ ActorCreate::ActorCreate()
 	std::shared_ptr<ActorManager> actorManager = gameScene->GetActorManager();
 
 	// ステージ
-	const auto& stageData = objectData[3]["StageData"];
+	const auto& stageData = objectData[static_cast<int>(ActorType::STAGE)]["StageData"];
 
 	// ステージを生成
 	actorManager->CreateActor<Stage>(stageData, { 0.0f,0.0f,0.0f });
@@ -97,11 +93,8 @@ ActorCreate::ActorCreate()
 	const auto& playerData = objectData[0]["PlayerData"];
 
 	// プレイヤーを生成
-	actorManager->CreateActor<Player>(playerData, { -80000.0f,-19500.0f,25900.0f });
-	actorManager->ActiveData(ActorType::PLAYER, { -80000.0f,-19500.0f,25900.0f });
-
-	//actorManager->CreateActor<Player>(playerData, { -10800.0f,20000.0f,-160000.0f });
-	//actorManager->ActiveData(ActorType::PLAYER, { -10800.0f,20000.0f,-160000.0f });
+	actorManager->CreateActor<Player>(playerData, PLAYER_INIT_POS);
+	actorManager->ActiveData(ActorType::PLAYER, PLAYER_INIT_POS);
 
 	// 敵
 	const auto& enemyData = objectData[1]["EnemyData"];

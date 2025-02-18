@@ -11,6 +11,76 @@ class Camera
 
 public:
 
+	// カメラモード
+	enum class MODE
+	{
+		NONE,
+		FIXED_POINT,	// 定点カメラ
+		FREE,			// フリーモード
+		TITLE,			// タイトルシーンモード
+		FOLLOW,			// 追従モード
+		SPECIAL,		// 必殺技モード
+		APPEARANCE,		// ボスの登場モード
+		GAME_CLEAR,		// ゲームクリアモード
+		GAME_OVER		// ゲームオーバーモード
+	};
+
+	Camera();
+	~Camera();
+
+	void Init();
+	void Update();
+	void SetBeforeDraw(const float deltaTime);
+	void Draw();
+	void Release();
+
+	// プレイヤーが向いている角度
+	void SetLazyAngles(const VECTOR angles);
+
+	// 追従対象の設定
+	void SetPlayer(const std::shared_ptr<Transform>& follow) { playerTransform_ = follow; }
+
+	// 追従対象の設定
+	void SetBoss(const std::shared_ptr<Transform>& follow) { bossTransform_ = follow; }
+
+	// カメラモードの変更
+	void ChangeMode(const MODE& mode);
+
+	// ステージのモデルIDを設定
+	void SetStageID(const int modelId);
+
+	// モードを取得
+	const Camera::MODE& GetMode()const { return mode_; }
+
+	// カメラ座標を取得
+	const VECTOR& GetPos()const { return pos_; }
+
+	// カメラ座標を設定
+	void SetPos(const VECTOR& pos) { pos_ = pos; }
+
+	// 注視点を取得
+	const VECTOR& GetTargetPos()const { return targetPos_; }
+
+	// 角度を取得
+	const VECTOR& GetAngle()const { return angle_; }
+
+	// ボスの登場シーンの1つ目のカメラの動きのフラグを取得
+	const bool GetIsBossAppearanceCameraMove1() { return isBossAppearanceCameraMove1_; }
+
+	// ボスの登場シーンの2つ目のカメラの動きのフラグを取得
+	const bool GetIsBossAppearanceCameraMove2() { return isBossAppearanceCameraMove2_; }
+
+	// ボスの登場シーンの3つ目のカメラの動きのフラグを取得
+	const bool GetIsBossAppearanceCameraMove3() { return isBossAppearanceCameraMove3_; }
+
+	// ボスシーンが終わったかのフラグ
+	const bool GetIsEndBossAppearanceScene() { return isEndBossAppearanceScene_; }
+
+	// カメラが何秒移動したか計るカウンタ
+	const float GetElapsedTime()const { return elapsedTime_; }
+
+private:
+
 	// カメラの初期座標
 	static constexpr VECTOR DEFAULT_CAMERA_POS = { 0.0f, 0.0f, 0.0f };
 
@@ -119,83 +189,44 @@ public:
 	// 必殺技シーンの3つ目の動ける時間
 	static constexpr float THIRD_CAMERA_TIME = 5.0f;
 
-	// 
+	// ボスバトルに遷移する時間
+	static constexpr float BOSS_BATTLE_TRANSITION_TIME = 10.0f;
 
 	// カメラが敵に近づいていく力
 	static constexpr float CAMERA_APPROACH_FORCE = 0.05f;
 
-	// カメラモード
-	enum class MODE
-	{
-		NONE,
-		FIXED_POINT,	// 定点カメラ
-		FREE,			// フリーモード
-		TITLE,			// タイトルシーンモード
-		FOLLOW,			// 追従モード
-		SPECIAL,		// 必殺技モード
-		APPEARANCE,		// ボスの登場モード
-		GAME_CLEAR,		// ゲームクリアモード
-		GAME_OVER		// ゲームオーバーモード
-	};
+	// ゲームオーバー時のカメラが回転量
+	static constexpr float GAME_OVER_CAMERA_ROTATION_FORCE = 0.5f;
 
-	Camera();
-	~Camera();
+	// ボスの登場シーンカメラのローカル座標
+	static constexpr VECTOR GAME_OVER_CAMERA_LOCAL_POS = { 0.0f,3000.0f,-2000.0f };
 
-	void Init();
-	void Update();
-	void SetBeforeDraw(const float deltaTime);
-	void Draw();
-	void Release();
+	// ゲームオーバー時のカメラの移動量
+	static constexpr float GAME_OVER_CAMERA_MOVE_AMOUNT = 0.1f;
 
-	// プレイヤーが向いている角度
-	void SetLazyAngles(const VECTOR angles);
+	// ゲームオーバー時の注視点の移動量
+	static constexpr float GAME_OVER_TARGET_MOVE_AMOUNT = 0.1f;
 
-	// 追従対象の設定
-	void SetPlayer(const std::shared_ptr<Transform>& follow) { playerTransform_ = follow; }
+	// マウスの回転量
+	static constexpr float MOUSE_ROTATION_AMOUNT = 4.0f;
 
-	// 追従対象の設定
-	void SetBoss(const std::shared_ptr<Transform>& follow) { bossTransform_ = follow; }
+	// マウスカーソルの位置と画面の中心との差分の範囲制限値
+	static constexpr int MOUSE_ROTATION_CLAMP = 120;
 
-	// カメラモードの変更
-	void ChangeMode(const MODE& mode);
+	// カメラの下方向の制限
+	static constexpr float MOUSE_LOOK_MIN_ANGLE = -20.0f;
 
-	// 遅延回転
-	void LazyRotation();
+	// カメラの上方向の制限
+	static constexpr float MOUSE_LOOK_MAX_ANGLE = 50.0f;
 
-	// ステージのモデルIDを設定
-	void SetStageID(const int modelId);
+	// 追従時のカメラの移動量
+	static constexpr float FOLLOW_CAMERA_MOVE_AMOUNT = 0.1f;
 
-	// モードを取得
-	const Camera::MODE& GetMode()const { return mode_; }
+	// 追従時の注視点の移動量
+	static constexpr float FOLLOW_TARGET_MOVE_AMOUNT = 0.1f;
 
-	// カメラ座標を取得
-	const VECTOR& GetPos()const { return pos_; }
-
-	// カメラ座標を設定
-	void SetPos(const VECTOR& pos) { pos_ = pos; }
-
-	// 注視点を取得
-	const VECTOR& GetTargetPos()const { return targetPos_; }
-
-	// 角度を取得
-	const VECTOR& GetAngle()const { return angle_; }
-
-	// ボスの登場シーンの1つ目のカメラの動きのフラグを取得
-	const bool GetIsBossAppearanceCameraMove1() { return isBossAppearanceCameraMove1_; }
-
-	// ボスの登場シーンの2つ目のカメラの動きのフラグを取得
-	const bool GetIsBossAppearanceCameraMove2() { return isBossAppearanceCameraMove2_; }
-
-	// ボスの登場シーンの3つ目のカメラの動きのフラグを取得
-	const bool GetIsBossAppearanceCameraMove3() { return isBossAppearanceCameraMove3_; }
-
-	// ボスシーンが終わったかのフラグ
-	const bool GetIsEndBossAppearanceScene() { return isEndBossAppearanceScene_; }
-
-	// カメラが何秒移動したか計るカウンタ
-	const float GetElapsedTime()const { return elapsedTime_; }
-
-private:
+	// ゲームパッドの回転量
+	static constexpr float GAME_PAD_CAMERA_ROTATION_AMOUNT = 3.0f;
 
 	// 追従対象
 	std::shared_ptr<Transform> playerTransform_;

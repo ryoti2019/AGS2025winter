@@ -7,16 +7,19 @@ class ActorCreate : public CreateBase
 public:
 
 	// エリア1のすべての敵の数
-	const int AREA1_TOTAL_ENEMYS;
+	static constexpr int AREA1_TOTAL_ENEMYS = 10;
 
 	// エリア2のすべての敵の数
-	const int AREA2_TOTAL_ENEMYS;
+	static constexpr int AREA2_TOTAL_ENEMYS = 10;
 
 	// エリア3のすべての敵の数
-	const int AREA3_TOTAL_ENEMYS;
+	static constexpr int AREA3_TOTAL_ENEMYS = 10;
 
 	// エリア4のすべての敵の数
-	const int AREA4_TOTAL_ENEMYS;
+	static constexpr int AREA4_TOTAL_ENEMYS = 10;
+
+	// プレイヤーの初期値
+	static constexpr VECTOR PLAYER_INIT_POS = { -80000.0f, -19500.0f, 25900.0f };
 
 	ActorCreate();
 
