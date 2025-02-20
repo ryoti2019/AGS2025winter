@@ -19,6 +19,8 @@ protected:
 
 private:
 
+	// “G‚ªoŒ»‚·‚é”ÍˆÍ
+	static constexpr int ENEMY_SPAWN_AREA = 1000;
 
 };
 

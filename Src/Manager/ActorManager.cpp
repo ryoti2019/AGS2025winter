@@ -104,9 +104,6 @@ std::shared_ptr<ActorBase> ActorManager::ActiveData(const ActorType type, const 
 		collisionManager->Register(active);
 		break;
 	}
-
-	// deactiveActorData_の先頭部分を削除
-	deactiveActorData_[type].erase(deactiveActorData_[type].begin());
 	
 	// アクティブ状態にする
 	active->Init(pos);
@@ -125,6 +122,9 @@ std::shared_ptr<ActorBase> ActorManager::ActiveData(const ActorType type, const 
 	{
 		actorElem->second.emplace_back(active);
 	}
+
+	// deactiveActorData_の先頭部分を削除
+	deactiveActorData_[type].erase(deactiveActorData_[type].begin());
 
 	// アクティブ状態になったものを返す
 	return active;

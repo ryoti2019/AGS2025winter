@@ -10,7 +10,7 @@ BossAppearanceBoss::BossAppearanceBoss(const VECTOR& pos, const json& data)
 {
 
 	// 機能の初期化
-	InitFunction();
+	InitComponent();
 
 	// モデルID
 	modelId_ = resMng_.LoadModelDuplicate(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::MODEL_BOSS)]);
@@ -37,7 +37,7 @@ void BossAppearanceBoss::Init(const VECTOR& pos)
 
 }
 
-void BossAppearanceBoss::InitFunction()
+void BossAppearanceBoss::InitComponent()
 {
 
 	// カメラを生成

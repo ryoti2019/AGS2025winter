@@ -2,6 +2,7 @@
 #include <functional>
 #include <memory>
 #include <unordered_map>
+#include <DxLib.h>
 
 class Fader;
 class Camera;

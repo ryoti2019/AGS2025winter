@@ -505,7 +505,7 @@ protected:
 	bool isHitAttack_;
 
 	// 機能の初期化
-	virtual void InitFunction();
+	virtual void InitComponent();
 
 	// パラメータの初期化
 	virtual void InitParameter();

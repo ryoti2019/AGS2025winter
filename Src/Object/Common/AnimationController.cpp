@@ -3,21 +3,6 @@
 #include "../../Manager/ResourceManager.h"
 #include "../Common/AnimationController.h"
 
-#pragma region 定数宣言
-
-// アニメーションをスローにするレート
-static constexpr float SLOW_RATE = 5.0f;
-
-// デフォルトのゲームスピード
-static constexpr float DEFAULT_SPEED = 1.0f;
-
-// ブレンドレート
-static constexpr float BLEND_TIME = 0.3f;
-
-
-#pragma endregion
-
-
 AnimationController::AnimationController(int modelId)
 	:
 	modelId_(modelId),

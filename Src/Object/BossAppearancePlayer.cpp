@@ -9,7 +9,7 @@ BossAppearancePlayer::BossAppearancePlayer(const VECTOR& pos, const json& data)
 {
 
 	// 機能の初期化
-	InitFunction();
+	InitComponent();
 
 	// モデルID
 	modelId_ = resMng_.LoadModelDuplicate(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::MODEL_PLAYER)]);
@@ -51,7 +51,7 @@ void BossAppearancePlayer::Update(const float deltaTime)
 
 }
 
-void BossAppearancePlayer::InitFunction()
+void BossAppearancePlayer::InitComponent()
 {
 
 	// カメラを生成

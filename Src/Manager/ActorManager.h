@@ -69,6 +69,7 @@ inline void ActorManager::CreateActor(const json& data, const VECTOR& pos)
 {
 
 	std::shared_ptr<ActorBase> actor = std::make_shared<T>(pos, data);
+	actor->Init(pos);
 
 	// ポインタを使うときはクラッシュしないようにNULLチェックを行うようにする
 	if (!actor) return;

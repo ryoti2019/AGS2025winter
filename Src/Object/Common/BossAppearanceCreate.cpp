@@ -44,7 +44,7 @@ BossAppearanceCreate::BossAppearanceCreate()
 	std::shared_ptr<ActorManager> actorManager = bossAppearanceScene->GetActorManager();
 
 	// ステージ
-	const auto& stageData = objectData[3]["StageData"];
+	const auto& stageData = objectData[static_cast<int>(ActorType::STAGE)]["StageData"];
 
 	// ステージを生成
 	actorManager->CreateActor<Stage>(stageData, { 0.0f,0.0f,0.0f });
@@ -55,18 +55,18 @@ BossAppearanceCreate::BossAppearanceCreate()
 	actorManager->ActiveData(ActorType::STAGE, { stageData["POS"]["x"], stageData["POS"]["y"] ,stageData["POS"]["z"] });
 
 	// プレイヤー
-	const auto& playerData = objectData[0]["PlayerData"];
+	const auto& playerData = objectData[static_cast<int>(ActorType::PLAYER)]["PlayerData"];
 
 	// プレイヤーを生成
-	actorManager->CreateActor<BossAppearancePlayer>(playerData, { -10800.0f,-19500.0f,-120000.0f });
-	actorManager->ActiveData(ActorType::PLAYER, { -10800.0f,-19500.0f,-120000.0f });
+	actorManager->CreateActor<BossAppearancePlayer>(playerData, PLAYER_POS);
+	actorManager->ActiveData(ActorType::PLAYER, PLAYER_POS);
 
 	// ボス
-	const auto& bossData = objectData[2]["BossData"];
+	const auto& bossData = objectData[static_cast<int>(ActorType::BOSS)]["BossData"];
 
 	// ボスを生成
-	actorManager->CreateActor<BossAppearanceBoss>(bossData, { -10800.0f,10380.0f,-156000.0f });
-	actorManager->ActiveData(ActorType::BOSS, { -10800.0f,10380.0f,-156000.0f });
+	actorManager->CreateActor<BossAppearanceBoss>(bossData, BOSS_POS);
+	actorManager->ActiveData(ActorType::BOSS, BOSS_POS);
 
 }
 

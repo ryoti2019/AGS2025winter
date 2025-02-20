@@ -14,7 +14,7 @@ Enemy::Enemy(const VECTOR& pos, const json& data)
 {
 
 	// 機能の初期化
-	InitFunction();
+	InitComponent();
 
 	// モデルID
 	modelId_ = resMng_.LoadModelDuplicate(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::MODEL_ENEMY)]);
@@ -46,7 +46,7 @@ void Enemy::Init(const VECTOR& pos)
 {
 
 	// 機能の初期化
-	InitFunction();
+	InitComponent();
 
 	// モデルID
 	modelId_ = resMng_.LoadModelDuplicate(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::MODEL_ENEMY)]);
@@ -83,7 +83,7 @@ void Enemy::Init(const VECTOR& pos)
 
 }
 
-void Enemy::InitFunction()
+void Enemy::InitComponent()
 {
 }
 

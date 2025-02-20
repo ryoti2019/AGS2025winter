@@ -42,11 +42,11 @@ TitleActorCreate::TitleActorCreate()
 	std::shared_ptr<ActorManager> actorManager = titleScene->GetActorManager();
 
 	// ステージ
-	const auto& stageData = objectData[3]["StageData"];
+	//const auto& stageData = objectData[3]["StageData"];
 
-	// ステージを生成
-	actorManager->CreateActor<Stage>(stageData, { 0.0f,0.0f,0.0f });
-	actorManager->ActiveData(ActorType::STAGE, { stageData["POS"]["x"], stageData["POS"]["y"] ,stageData["POS"]["z"] });
+	//// ステージを生成
+	//actorManager->CreateActor<Stage>(stageData, { 0.0f,0.0f,0.0f });
+	//actorManager->ActiveData(ActorType::STAGE, { stageData["POS"]["x"], stageData["POS"]["y"] ,stageData["POS"]["z"] });
 
 	// プレイヤー
 	const auto& playerData = objectData[0]["PlayerData"];

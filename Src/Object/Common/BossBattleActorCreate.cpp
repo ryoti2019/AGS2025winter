@@ -46,7 +46,7 @@ BossBattleActorCreate::BossBattleActorCreate()
 	std::shared_ptr<ActorManager> actorManager = bossBattleScene->GetActorManager();
 
 	// ステージ
-	const auto& stageData = objectData[3]["StageData"];
+	const auto& stageData = objectData[static_cast<int>(ActorType::STAGE)]["StageData"];
 
 	// ステージを生成
 	actorManager->CreateActor<Stage>(stageData, { 0.0f,0.0f,0.0f });
@@ -68,6 +68,7 @@ BossBattleActorCreate::BossBattleActorCreate()
 
 	for (auto& stage : stages->second)
 	{
+
 		// Area5Collisionにキャスト
 		auto area5Collision = std::dynamic_pointer_cast<Area5Collision>(stage);
 
@@ -80,29 +81,27 @@ BossBattleActorCreate::BossBattleActorCreate()
 	}
 
 	// プレイヤー
-	const auto& playerData = objectData[0]["PlayerData"];
+	const auto& playerData = objectData[static_cast<int>(ActorType::PLAYER)]["PlayerData"];
 
 	// プレイヤーを生成
-	actorManager->CreateActor<Player>(playerData, { -10800.0f,-19500.0f,-120000.0f });
-	actorManager->ActiveData(ActorType::PLAYER, { -10800.0f,-19500.0f,-120000.0f });
+	actorManager->CreateActor<Player>(playerData, PLAYER_INIT_POS);
+	actorManager->ActiveData(ActorType::PLAYER, PLAYER_INIT_POS);
 
 	// 敵
-	const auto& enemyData = objectData[1]["EnemyData"];
+	const auto& enemyData = objectData[static_cast<int>(ActorType::ENEMY)]["EnemyData"];
 
 	// 敵を生成
-	for (int i = 0; i < 50; i++)
+	for (int i = 0; i < CREATE_ENEMYS; i++)
 	{
-		float x = std::rand() % 10;
-		float z = std::rand() % 10;
 		actorManager->CreateActor<Enemy>(enemyData, { 0.0f,0.0f,0.0f });
 	}
 
 	// ボス
-	const auto& bossData = objectData[2]["BossData"];
+	const auto& bossData = objectData[static_cast<int>(ActorType::BOSS)]["BossData"];
 
 	// ボスを生成
-	actorManager->CreateActor<Boss>(bossData, { -10800.0f,-19500.0f,-140000.0f });
-	actorManager->ActiveData(ActorType::BOSS, { -10800.0f,-19500.0f,-140000.0f });
+	actorManager->CreateActor<Boss>(bossData, BOSS_INIT_POS);
+	actorManager->ActiveData(ActorType::BOSS, BOSS_INIT_POS);
 
 }
 
@@ -136,14 +135,14 @@ void BossBattleActorCreate::Update()
 		{
 
 			// 敵を生成
-			for (int i = 0; i < 5; i++)
+			for (int i = 0; i < ENEMY_CREATE_NUM; i++)
 			{
 			
 				// 座標をランダムで指定
 				float x = GenerateRandNumber();
 				float z = GenerateRandNumber();
 				actorManager->ActiveData(ActorType::ENEMY,
-					{ -9000.0f + x, 1000.0f, -140000.0f + z });
+					{ ENEMY_POS.x + x, ENEMY_POS.y, ENEMY_POS.z + z });
 			
 			}
 		

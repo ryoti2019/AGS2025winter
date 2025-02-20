@@ -132,6 +132,15 @@ public:
 
 private:
 
+	// アニメーションをスローにするレート
+	static constexpr float SLOW_RATE = 5.0f;
+
+	// デフォルトのゲームスピード
+	static constexpr float DEFAULT_SPEED = 1.0f;
+
+	// ブレンドレート
+	static constexpr float BLEND_TIME = 0.3f;
+
 	// モデルのハンドルID
 	int modelId_;
 

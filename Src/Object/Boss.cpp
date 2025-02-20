@@ -21,7 +21,7 @@ Boss::Boss(const VECTOR& pos, const json& data)
 {
 
 	// 機能の初期化
-	InitFunction();
+	InitComponent();
 
 	// モデルID
 	modelId_ = resMng_.LoadModelDuplicate(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::MODEL_BOSS)]);
@@ -53,7 +53,7 @@ void Boss::Init(const VECTOR& pos)
 {
 
 	// 機能の初期化
-	InitFunction();
+	InitComponent();
 
 	// モデルID
 	modelId_ = resMng_.LoadModelDuplicate(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::MODEL_BOSS)]);
@@ -90,7 +90,7 @@ void Boss::Init(const VECTOR& pos)
 
 }
 
-void Boss::InitFunction()
+void Boss::InitComponent()
 {
 }
 

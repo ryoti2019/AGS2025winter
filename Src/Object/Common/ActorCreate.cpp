@@ -90,20 +90,18 @@ ActorCreate::ActorCreate()
 	actorManager->ActiveData(ActorType::STAGE, { stageData["POS"]["x"], stageData["POS"]["y"] ,stageData["POS"]["z"] });
 
 	// プレイヤー
-	const auto& playerData = objectData[0]["PlayerData"];
+	const auto& playerData = objectData[static_cast<int>(ActorType::PLAYER)]["PlayerData"];
 
 	// プレイヤーを生成
 	actorManager->CreateActor<Player>(playerData, PLAYER_INIT_POS);
 	actorManager->ActiveData(ActorType::PLAYER, PLAYER_INIT_POS);
 
 	// 敵
-	const auto& enemyData = objectData[1]["EnemyData"];
+	const auto& enemyData = objectData[static_cast<int>(ActorType::ENEMY)]["EnemyData"];
 
 	// 敵を生成
-	for (int i = 0; i < 50; i++)
+	for (int i = 0; i < CREATE_ENEMYS; i++)
 	{
-		float x = std::rand() % 10;
-		float z = std::rand() % 10;
 		actorManager->CreateActor<Enemy>(enemyData, { 0.0f,0.0f,0.0f });
 	}
 
@@ -174,7 +172,7 @@ void ActorCreate::AreaCollision()
 					// 座標をランダムで指定
 					float x = GenerateRandNumber();
 					float z = GenerateRandNumber();
-					actorManager->ActiveData(ActorType::ENEMY, { 25000.0f + x,-18000.0f,26000.0f + z });
+					actorManager->ActiveData(ActorType::ENEMY, { CREATE_ENEMY_POS1.x + x, CREATE_ENEMY_POS1.y, CREATE_ENEMY_POS1.z + z });
 
 				}
 
@@ -197,7 +195,7 @@ void ActorCreate::AreaCollision()
 					// 座標をランダムで指定
 					float x = GenerateRandNumber();
 					float z = GenerateRandNumber();
-					actorManager->ActiveData(ActorType::ENEMY, { -30000.0f + x,-18000.0f,-21000.0f + z});
+					actorManager->ActiveData(ActorType::ENEMY, { CREATE_ENEMY_POS2.x + x, CREATE_ENEMY_POS2.y, CREATE_ENEMY_POS2.z + z});
 	
 				}
 
@@ -220,7 +218,7 @@ void ActorCreate::AreaCollision()
 					// 座標をランダムで指定
 					float x = GenerateRandNumber();
 					float z = GenerateRandNumber();
-					actorManager->ActiveData(ActorType::ENEMY, { -82000.0f + x ,-18000.0f,-62000.0f + z});
+					actorManager->ActiveData(ActorType::ENEMY, { CREATE_ENEMY_POS3.x + x , CREATE_ENEMY_POS3.y, CREATE_ENEMY_POS3.z + z});
 				
 				}
 
@@ -243,7 +241,7 @@ void ActorCreate::AreaCollision()
 					// 座標をランダムで指定
 					float x = GenerateRandNumber();
 					float z = GenerateRandNumber();
-					actorManager->ActiveData(ActorType::ENEMY, { -26000.0f + x,-18000.0f,-68000.0f + z });
+					actorManager->ActiveData(ActorType::ENEMY, { CREATE_ENEMY_POS4.x + x, CREATE_ENEMY_POS4.y, CREATE_ENEMY_POS4.z + z });
 				
 				}
 
@@ -307,7 +305,7 @@ void ActorCreate::DeactiveAreaCollision()
 		}
 
 		// 完全に透過したら非アクティブにする
-		if (area1Collision && area1Collision->GetAlphaTime() >= 1.0f)
+		if (area1Collision && area1Collision->GetAlphaTime() >= ALPHA_TIME)
 		{
 			area1Collision->SetIsActive(false);
 		}
@@ -341,7 +339,7 @@ void ActorCreate::DeactiveAreaCollision()
 		}
 
 		// 完全に透過したら非アクティブにする
-		if (area2Collision && area2Collision->GetAlphaTime() >= 1.0f)
+		if (area2Collision && area2Collision->GetAlphaTime() >= ALPHA_TIME)
 		{
 			area2Collision->SetIsActive(false);
 		}
@@ -375,7 +373,7 @@ void ActorCreate::DeactiveAreaCollision()
 		}
 
 		// 完全に透過したら非アクティブにする
-		if (area3Collision && area3Collision->GetAlphaTime() >= 1.0f)
+		if (area3Collision && area3Collision->GetAlphaTime() >= ALPHA_TIME)
 		{
 			area3Collision->SetIsActive(false);
 		}
@@ -409,7 +407,7 @@ void ActorCreate::DeactiveAreaCollision()
 		}
 
 		// 完全に透過したら非アクティブにする
-		if (area4Collision && area4Collision->GetAlphaTime() >= 1.0f)
+		if (area4Collision && area4Collision->GetAlphaTime() >= ALPHA_TIME)
 		{
 			area4Collision->SetIsActive(false);
 		}

@@ -89,7 +89,7 @@ void ActorBase::LazyRotation(float goalRot)
 	transform_->quaRot = Quaternion::Slerp(transform_->quaRot, goal, ROTATION_POW);
 }
 
-void ActorBase::InitFunction()
+void ActorBase::InitComponent()
 {
 }
 

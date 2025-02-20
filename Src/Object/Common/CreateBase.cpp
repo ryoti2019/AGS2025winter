@@ -23,7 +23,7 @@ float CreateBase::GenerateRandNumber()
 	std::mt19937 gen(rd());
 
 	// w’è‚Ì”ÍˆÍ‚Åƒ‰ƒ“ƒ_ƒ€‚È”‚ğæ“¾
-	std::uniform_int_distribution<> dist_int(-1000, 1000);
+	std::uniform_int_distribution<> dist_int(-ENEMY_SPAWN_AREA, ENEMY_SPAWN_AREA);
 	float number = dist_int(gen);
 
     return number;

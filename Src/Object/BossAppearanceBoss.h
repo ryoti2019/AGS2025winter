@@ -55,7 +55,7 @@ private:
 	void UpdateLand(const float deltaTime);
 
 	// 機能の初期化
-	void InitFunction()override;
+	void InitComponent()override;
 
 	// パラメータの初期化
 	void InitParameter()override;

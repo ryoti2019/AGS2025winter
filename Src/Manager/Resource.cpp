@@ -67,6 +67,9 @@ void Resource::Load(void)
 	case Resource::TYPE::MODEL:
 		handleId_ = MV1LoadModel(path_.c_str());
 		break;
+	case Resource::TYPE::ANIM_MODEL:
+		handleId_ = MV1LoadModel(path_.c_str());
+		break;
 	case Resource::TYPE::EFFEKSEER:
 		handleId_ = LoadEffekseerEffect(path_.c_str());
 		break;
@@ -97,6 +100,16 @@ void Resource::Release(void)
 	}
 	break;
 	case Resource::TYPE::MODEL:
+	{
+		MV1DeleteModel(handleId_);
+		auto ids = duplicateModelIds_;
+		for (auto id : ids)
+		{
+			MV1DeleteModel(id);
+		}
+	}
+	break;
+	case Resource::TYPE::ANIM_MODEL:
 	{
 		MV1DeleteModel(handleId_);
 		auto ids = duplicateModelIds_;

@@ -207,18 +207,22 @@ void ResourceManager::Release(void)
 {
 	for (auto& p : loadedMap_)
 	{
-
-		if (p.first == "MODEL_ENEMY" || p.first.substr(0, 4) == "ANIM")
-		{
-			int a = 1;
-			a = 2;
-		}
-		// アニメーションモデルはDeleteModelしない
-		if (p.first.substr(0, 4) != "ANIM")
+		if (p.second->resType_ != Resource::TYPE::ANIM_MODEL)
 		{
 			p.second->Release();
+			delete p.second;
 		}
-		delete p.second;
+	}
+
+	// DxLibの解放処理不具合対策のため、
+	// アニメーションモデルのメモリ解放を最後に行う
+	for (auto& p : loadedMap_)
+	{
+		if (p.second->resType_ == Resource::TYPE::ANIM_MODEL)
+		{
+			p.second->Release();
+			delete p.second;
+		}
 	}
 
 	loadedMap_.clear();
