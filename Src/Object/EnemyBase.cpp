@@ -79,4 +79,6 @@ std::optional<VECTOR> EnemyBase::GetPlayerPos()
 
 	}
 
+	return std::nullopt;
+
 }

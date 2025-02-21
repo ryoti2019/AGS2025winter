@@ -204,6 +204,30 @@ public:
 
 private:
 
+	// HPバーの長さ
+	static constexpr int HP_BAR_LENGTH = 400;
+
+	// HPバーの半分の長さ
+	static constexpr int HP_LENGTH_HARF = HP_BAR_LENGTH / 2;
+
+	// HPバーの高さ
+	static constexpr int HP_HEIGHT = 5;
+
+	// HPバーの幅
+	static constexpr int HP_BAR_WIDTH = 25;
+
+	// RGBのスケール調整値
+	static constexpr int RGB_SCALE = 512.0f;
+
+	// RとBの変化を制御するためのバランス点
+	static constexpr int COLOR_BALANCE_POINT = 384;
+
+	// 緑色の変化を調整するオフセット
+	static constexpr int GREEN_COLOR_SHIFT_OFFSET = 64;
+
+	// HPバーの色の計算の調整値
+	static constexpr int HP_COLOR_OFFSET = 100;
+
 	// 入力用のコンポーネント
 	std::unique_ptr<InputComponent> inputComponent_;
 
@@ -387,7 +411,7 @@ private:
 	void UpdateDeath(const float deltaTime);
 
 	// 機能の初期化
-	void InitComponent()override;
+	void InitFunction()override;
 
 	// パラメータの初期化
 	void InitParameter()override;

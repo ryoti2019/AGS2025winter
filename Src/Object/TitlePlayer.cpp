@@ -8,7 +8,8 @@ TitlePlayer::TitlePlayer(const VECTOR& pos, const json& data)
 	ActorBase(pos, data)
 {
 
-	InitComponent();
+	// 機能の初期化
+	InitFunction();
 
 	// モデルID
 	modelId_ = resMng_.LoadModelDuplicate(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::MODEL_PLAYER)]);
@@ -46,7 +47,7 @@ void TitlePlayer::Update(const float deltaTime)
 
 }
 
-void TitlePlayer::InitComponent()
+void TitlePlayer::InitFunction()
 {
 
 	// カメラを生成

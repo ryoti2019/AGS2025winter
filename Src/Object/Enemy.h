@@ -80,6 +80,48 @@ public:
 
 private:
 
+	// 描画範囲
+	static constexpr float RANGE_DRAW = 45000.0f;
+
+	// モデル頭上フレーム
+	static constexpr int FRAME_NO_HEAD_TOP = 7;
+
+	// HPバーの長さ
+	static constexpr int HP_BAR_LENGTH = 40;
+
+	// HPバーの半分の長さ
+	static constexpr int HP_LENGTH_HARF = HP_BAR_LENGTH / 2;
+
+	// HPバーの高さ
+	static constexpr int HP_HEIGHT = 5;
+
+	// HPバーの幅
+	static constexpr int HP_BAR_WIDTH = 25;
+
+	// RGBのスケール調整値
+	static constexpr int RGB_SCALE = 512.0f;
+
+	// RとBの変化を制御するためのバランス点
+	static constexpr int COLOR_BALANCE_POINT = 384;
+
+	// 緑色の変化を調整するオフセット
+	static constexpr int GREEN_COLOR_SHIFT_OFFSET = 64;
+
+	// HPバーの色の計算の調整値
+	static constexpr int HP_COLOR_OFFSET = 100;
+
+	// モデルの頭上の相対座標
+	static constexpr VECTOR HEAD_LOCAL_POS = { 0.0f, 15.0f, -6.0f };
+
+	// 距離をスケール調整値
+	static constexpr float DISTANCE_SCALE = 1000.0f;
+
+	// 頭上オフセット調整値
+	static constexpr float HEAD_TOP_OFFSET_SCALE = 100.0f;
+
+	// カメラのZ軸範囲の最大値
+	static constexpr float CAMERA_MAX_Z = 1.0f;
+
 	// AIコンポーネント
 	std::unique_ptr<EnemyAIComponent> aiComponent_;
 
@@ -194,7 +236,7 @@ private:
 	void UpdateDeath(const float deltaTime);
 
 	// 機能の初期化
-	void InitComponent()override;
+	void InitFunction()override;
 
 	// パラメータの初期化
 	void InitParameter()override;

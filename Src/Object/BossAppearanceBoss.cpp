@@ -10,7 +10,7 @@ BossAppearanceBoss::BossAppearanceBoss(const VECTOR& pos, const json& data)
 {
 
 	// 機能の初期化
-	InitComponent();
+	InitFunction();
 
 	// モデルID
 	modelId_ = resMng_.LoadModelDuplicate(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::MODEL_BOSS)]);
@@ -37,7 +37,7 @@ void BossAppearanceBoss::Init(const VECTOR& pos)
 
 }
 
-void BossAppearanceBoss::InitComponent()
+void BossAppearanceBoss::InitFunction()
 {
 
 	// カメラを生成
@@ -204,12 +204,13 @@ void BossAppearanceBoss::ChangeJumpIdle()
 	stateUpdate_ = std::bind(&BossAppearanceBoss::UpdateJumpIdle, this, std::placeholders::_1);
 
 	// 座標を設定
-	transform_->pos = { -10800.0f,11000.0f,-140000.0f };
+	transform_->pos = JUMP_ANIM_INIT_POS;
 
 	// 衝突判定の更新
 	ActorBase::CollisionUpdate();
 
-	gravityScale_ = 1.0f;
+	// 重力を通常状態に戻す
+	gravityScale_ = NORMAL_GRAVITY_SCALE;
 
 }
 
@@ -270,7 +271,7 @@ void BossAppearanceBoss::UpdateDebugImGui()
 
 	// 大きさ
 	ImGui::Text("scale");
-	ImGui::InputFloat("Scl", &scl_);
+	ImGui::InputFloat("Scl", &modelScale_);
 
 	// 角度
 	VECTOR rotDeg = VECTOR();

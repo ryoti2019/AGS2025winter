@@ -25,8 +25,9 @@ ActorBase::ActorBase(const VECTOR& pos, const json& data)
 	moveDir_({ 0.0f,0.0f,0.0f }),
 	modelId_(-1),
 	damage_(0),
-	scl_(data["SCALE"]),
+	modelScale_(data["SCALE"]),
 	INIT_ANGLE(data["INIT_ANGLE"]),
+	INIT_LOCAL_ANGLE(180.0f),
 	FLOOR_HEIGHT(-19500.0f),
 	stepRotTime_(0.0f),
 	speed_(0.0f),
@@ -39,7 +40,8 @@ ActorBase::ActorBase(const VECTOR& pos, const json& data)
 	isLockOn_(false),
 	isOnGround_(false),
 	isHitAttack_(false),
-	jsonData_(data)
+	jsonData_(data),
+	NORMAL_GRAVITY_SCALE(1.0f)
 {
 
 	// ƒ‚ƒfƒ‹§Œä‚ÌŠî–{î•ñ‚ð¶¬
@@ -54,10 +56,13 @@ void ActorBase::Init(const VECTOR& pos)
 
 	transform_->SetModel(modelId_);
 	SetPos(pos);
-	transform_->scl = { scl_,scl_,scl_ };
+	transform_->scl = { modelScale_,modelScale_,modelScale_ };
 	transform_->quaRot = Quaternion::Euler({ Utility::Deg2RadF(0.0f) , Utility::Deg2RadF(INIT_ANGLE),Utility::Deg2RadF(0.0f) });
-	transform_->quaRotLocal = Quaternion::Euler({ Utility::Deg2RadF(0.0f) , Utility::Deg2RadF(180.0f),Utility::Deg2RadF(0.0f) });
+	transform_->quaRotLocal = Quaternion::Euler({ Utility::Deg2RadF(0.0f) , Utility::Deg2RadF(INIT_LOCAL_ANGLE),Utility::Deg2RadF(0.0f) });
 	transform_->Update();
+
+	// ”ò‚Ñ“¹‹ï‚É“–‚½‚è”»’è‚ª‚ ‚é‚©‚Ç‚¤‚©
+	collisionData_.isProjectileAttack = false;
 
 #pragma endregion
 
@@ -70,9 +75,9 @@ void ActorBase::Create(const VECTOR& pos)
 
 	transform_->SetModel(modelId_);
 	SetPos(pos);
-	transform_->scl = { scl_,scl_,scl_ };
+	transform_->scl = { modelScale_,modelScale_,modelScale_ };
 	transform_->quaRot = Quaternion::Euler({ Utility::Deg2RadF(0.0f) , Utility::Deg2RadF(INIT_ANGLE),Utility::Deg2RadF(0.0f) });
-	transform_->quaRotLocal = Quaternion::Euler({ Utility::Deg2RadF(0.0f) , Utility::Deg2RadF(180.0f),Utility::Deg2RadF(0.0f) });
+	transform_->quaRotLocal = Quaternion::Euler({ Utility::Deg2RadF(0.0f) , Utility::Deg2RadF(INIT_LOCAL_ANGLE),Utility::Deg2RadF(0.0f) });
 	transform_->Update();
 
 #pragma endregion
@@ -89,7 +94,7 @@ void ActorBase::LazyRotation(float goalRot)
 	transform_->quaRot = Quaternion::Slerp(transform_->quaRot, goal, ROTATION_POW);
 }
 
-void ActorBase::InitComponent()
+void ActorBase::InitFunction()
 {
 }
 

@@ -36,6 +36,9 @@ public:
 
 private:
 
+	// ジャンプ状態に入るときの初期座標
+	static constexpr VECTOR JUMP_ANIM_INIT_POS = { -10800.0f,11000.0f,-140000.0f };
+
 	// 状態
 	BossState state_;
 
@@ -55,7 +58,7 @@ private:
 	void UpdateLand(const float deltaTime);
 
 	// 機能の初期化
-	void InitComponent()override;
+	void InitFunction()override;
 
 	// パラメータの初期化
 	void InitParameter()override;

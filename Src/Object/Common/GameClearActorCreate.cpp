@@ -42,21 +42,17 @@ GameClearActorCreate::GameClearActorCreate()
 	std::shared_ptr<ActorManager> actorManager = gameClearScene->GetActorManager();
 
 	// ステージ
-	const auto& stageData = objectData[3]["StageData"];
+	const auto& stageData = objectData[static_cast<int>(ActorType::STAGE)]["StageData"];
 
 	// ステージを生成
 	actorManager->CreateActor<Stage>(stageData, { 0.0f,0.0f,0.0f });
-	int cnt = actorManager->GetDeActiveActorData().find(ActorType::STAGE)-> second[0].use_count();
-	//actorManager->ActiveData(ActorType::STAGE, { stageData["POS"]["x"], stageData["POS"]["y"] ,stageData["POS"]["z"] });
-	auto s = actorManager->ActiveData(ActorType::STAGE, { stageData["POS"]["x"], stageData["POS"]["y"] ,stageData["POS"]["z"] });
-	cnt = s.use_count();
-	int b = 2;
-	b = 3;
+	actorManager->ActiveData(ActorType::STAGE, { stageData["POS"]["x"], stageData["POS"]["y"] ,stageData["POS"]["z"] });
+
 	// プレイヤー
-	const auto& playerData = objectData[0]["PlayerData"];
+	const auto& playerData = objectData[static_cast<int>(ActorType::PLAYER)]["PlayerData"];
 
 	// プレイヤーを生成
-	actorManager->CreateActor<GameClearPlayer>(playerData, { -8700.0f,-19500.0f,-140000.0f });
-	actorManager->ActiveData(ActorType::PLAYER, { -8700.0f,-19500.0f,-140000.0f });
+	actorManager->CreateActor<GameClearPlayer>(playerData, PLAYER_POS);
+	actorManager->ActiveData(ActorType::PLAYER, PLAYER_POS);
 
 }

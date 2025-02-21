@@ -8,7 +8,7 @@ GameClearPlayer::GameClearPlayer(const VECTOR& pos, const json& data)
 {
 
 	// 機能の初期化
-	InitComponent();
+	InitFunction();
 
 	// モデルID
 	modelId_ = resMng_.LoadModelDuplicate(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::MODEL_PLAYER)]);
@@ -46,7 +46,7 @@ void GameClearPlayer::Update(const float deltaTime)
 
 }
 
-void GameClearPlayer::InitComponent()
+void GameClearPlayer::InitFunction()
 {
 
 	// カメラを生成

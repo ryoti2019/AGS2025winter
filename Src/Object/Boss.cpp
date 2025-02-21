@@ -17,11 +17,12 @@ Boss::Boss(const VECTOR& pos, const json& data)
 	SUPER_ARMOR_HP_COOL_TIME(data["SUPER_ARMOR_HP_COOL_TIME"]),
 	CREATE_ENEMY_COOL_TIME(data["CREATE_ENEMY_COOL_TIME"]),
 	projectileDir_({0.0f,0.0f,0.0f}),
-	projectileCollisionCnt_(0.0f)
+	projectileCollisionCnt_(0.0f),
+	PROJECTILE_SPEED(100.0f)
 {
 
 	// 機能の初期化
-	InitComponent();
+	InitFunction();
 
 	// モデルID
 	modelId_ = resMng_.LoadModelDuplicate(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::MODEL_BOSS)]);
@@ -53,7 +54,7 @@ void Boss::Init(const VECTOR& pos)
 {
 
 	// 機能の初期化
-	InitComponent();
+	InitFunction();
 
 	// モデルID
 	modelId_ = resMng_.LoadModelDuplicate(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::MODEL_BOSS)]);
@@ -90,7 +91,7 @@ void Boss::Init(const VECTOR& pos)
 
 }
 
-void Boss::InitComponent()
+void Boss::InitFunction()
 {
 }
 
@@ -328,7 +329,7 @@ void Boss::UpdateDebugImGui()
 
 	// 大きさ
 	ImGui::Text("scale");
-	ImGui::InputFloat("Scl", &scl_);
+	ImGui::InputFloat("Scl", &modelScale_);
 
 	// 角度
 	VECTOR rotDeg = VECTOR();
@@ -525,29 +526,8 @@ void Boss::Draw(const float deltaTime)
 
 	ActorBase::Draw(deltaTime);
 
-	// HPバーの長さ
-	const int HP_LENGTH = 400;
-
-	// HPバーの半分の長さ
-	const int HP_LENGTH_HARF = HP_LENGTH / 2;
-
-	// HPバーの高さ
-	const int HP_HEIGHT = 10;
-
-	// HPバーの幅
-	const int HP_BAR_WIDTH = 25;
-
-	// RGBのスケール調整値
-	const float RGB_SCALE = 512.0f;
-
-	// RとBの変化を制御するためのバランス点
-	const int COLOR_BALANCE_POINT = 384;
-
-	// 緑色の変化を調整するオフセット
-	const int GREEN_COLOR_SHIFT_OFFSET = 64;
-
 	// HPの割合を元にバーの色を決める処理
-	int H = hp_ * (RGB_SCALE / HP_MAX) - 100;
+	int H = hp_ * (RGB_SCALE / HP_MAX) - HP_COLOR_OFFSET;
 
 	// 赤成分
 	int R = min(max((COLOR_BALANCE_POINT - H), 0), 0xff);
@@ -559,7 +539,7 @@ void Boss::Draw(const float deltaTime)
 	int B = max((H - COLOR_BALANCE_POINT), 0);
 
 	// HPゲージ
-	int hpGauge = HP_LENGTH * hp_ / HP_MAX;
+	int hpGauge = HP_BAR_LENGTH * hp_ / HP_MAX;
 
 	// HPゲージ背景を描画
 	DrawBox(
@@ -577,14 +557,8 @@ void Boss::Draw(const float deltaTime)
 		HP_HEIGHT + HP_BAR_WIDTH,
 		GetColor(R, G, B), true);
 
-	// HPバーの高さ
-	const int SUPER_AMOR_HP_HEIGHT = 50;
-
-	// スーパーアーマーHPバーの幅
-	const int SUPER_ARMOR_HP_BAR_WIDTH = 10;
-
 	// スーパーアーマーHPの割合を元にバーの色を決める処理
-	H = superArmorHp_ * (RGB_SCALE / SUPER_ARMOR_HP) - 100;
+	H = superArmorHp_ * (RGB_SCALE / SUPER_ARMOR_HP) - HP_COLOR_OFFSET;
 
 	// 赤成分
 	R = min(max((COLOR_BALANCE_POINT - H), 0), 0xff);
@@ -596,10 +570,10 @@ void Boss::Draw(const float deltaTime)
 	B = max((H - COLOR_BALANCE_POINT), 0);
 
 	// HPゲージ
-	int superArmorHpGauge = HP_LENGTH * superArmorHp_ / SUPER_ARMOR_HP;
+	int superArmorHpGauge = HP_BAR_LENGTH * superArmorHp_ / SUPER_ARMOR_HP;
 
 	// スーパーアーマーが回復していくゲージ
-	int superArmorRecoveryGauge = HP_LENGTH * superArmorRecoveryHp_ / SUPER_ARMOR_HP;
+	int superArmorRecoveryGauge = HP_BAR_LENGTH * superArmorRecoveryHp_ / SUPER_ARMOR_HP;
 
 	// HPゲージ背景を描画
 	DrawBox(
@@ -635,13 +609,13 @@ void Boss::Projectile(const float deltaTime)
 	{
 
 		// 飛び道具の当たり判定の座標設定
-		collisionData_.projectilePos = VAdd(collisionData_.projectilePos, VScale(projectileDir_,100.0f));
+		collisionData_.projectilePos = VAdd(collisionData_.projectilePos, VScale(projectileDir_, PROJECTILE_SPEED));
 
 		// 飛び道具の衝突判定が続く時間のカウンタを加算
 		projectileCollisionCnt_ += deltaTime;
 
 		// エフェクトを追従させる
-		effekseerController_->FollowPos(collisionData_.projectilePos, Quaternion::Identity(), { 0.0f,500.0f,0.0f }, "PROJECTILE");
+		effekseerController_->FollowPos(collisionData_.projectilePos, Quaternion::Identity(), PROJECTILE_EFFECT_LOCAL_POS, "PROJECTILE");
 
 		// 攻撃が当たっていたらエフェクトと音を再生
 		if (isHitAttack_)
@@ -1038,7 +1012,7 @@ void Boss::ChangeHitFly()
 	transform_->quaRot.z = Quaternion().z;
 
 	// 重力を通常状態に戻す
-	gravityScale_ = 1.0f;
+	gravityScale_ = NORMAL_GRAVITY_SCALE;
 
 }
 
@@ -1291,7 +1265,7 @@ void Boss::UpdateProjectile(const float deltaTime)
 		collisionData_.isProjectileAttack = true;
 
 		// エフェクトを描画
-		effekseerController_->Draw(collisionData_.projectilePos, Quaternion::Identity(), { 0.0f,500.0f,0.0f }, "PROJECTILE");
+		effekseerController_->Draw(collisionData_.projectilePos, Quaternion::Identity(), PROJECTILE_EFFECT_LOCAL_POS, "PROJECTILE");
 
 	}
 

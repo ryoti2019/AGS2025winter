@@ -41,9 +41,9 @@ public:
 	// 非アクティブになったものを格納
 	void DeactiveData(const std::shared_ptr<ActorBase>& actor);
 
-	const std::unordered_map<ActorType, std::vector<std::shared_ptr<ActorBase>>>& const GetDeActiveActorData() { return deactiveActorData_; };
+	const std::unordered_map<ActorType, std::vector<std::shared_ptr<ActorBase>>>& GetDeActiveActorData() const{ return deactiveActorData_; };
 
-	const std::unordered_map<ActorType, std::vector<std::shared_ptr<ActorBase>>>& const GetActiveActorData() { return activeActorData_; };
+	const std::unordered_map<ActorType, std::vector<std::shared_ptr<ActorBase>>>& GetActiveActorData() const{ return activeActorData_; };
 
 private:
 
@@ -69,7 +69,6 @@ inline void ActorManager::CreateActor(const json& data, const VECTOR& pos)
 {
 
 	std::shared_ptr<ActorBase> actor = std::make_shared<T>(pos, data);
-	actor->Init(pos);
 
 	// ポインタを使うときはクラッシュしないようにNULLチェックを行うようにする
 	if (!actor) return;

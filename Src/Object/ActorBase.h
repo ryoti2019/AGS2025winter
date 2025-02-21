@@ -167,98 +167,8 @@ public:
 
 	};
 
-	// 右手のカプセルの上の相対座標
-	const VECTOR RIGHT_HAND_RELATIVE_UP_POS;
-
-	// 右手のカプセルの下の相対座標
-	const VECTOR RIGHT_HAND_RELATIVE_DOWN_POS;
-
-	// 左手のカプセルの上の相対座標
-	const VECTOR LEFT_HAND_RELATIVE_UP_POS;
-
-	// 左手のカプセルの下の相対座標
-	const VECTOR LEFT_HAND_RELATIVE_DOWN_POS;
-
-	// 右足のカプセルの上の相対座標
-	const VECTOR RIGHT_FOOT_RELATIVE_UP_POS;
-
-	// 右足のカプセルの下の相対座標
-	const VECTOR RIGHT_FOOT_RELATIVE_DOWN_POS;
-
-	// 左足のカプセルの上の相対座標
-	const VECTOR LEFT_FOOT_RELATIVE_UP_POS;
-
-	// 左足のカプセルの下の相対座標
-	const VECTOR LEFT_FOOT_RELATIVE_DOWN_POS;
-
-	// 体のカプセルの中心の相対座標
-	const VECTOR BODY_RELATIVE_CENTER_POS;
-
-	// 体のカプセルの上の相対座標
-	const VECTOR BODY_RELATIVE_UP_POS;
-
-	// 体のカプセルの下の相対座標
-	const VECTOR BODY_RELATIVE_DOWN_POS;
-
-	// 右手のフレーム名
-	std::string RIGHT_HAND_FRAME;
-
-	// 左手のフレーム名
-	std::string LEFT_HAND_FRAME;
-
-	// 右足のフレーム名
-	std::string RIGHT_FOOT_FRAME;
-
-	// 左足のフレーム名
-	std::string LEFT_FOOT_FRAME;
-
-	// 体のフレーム名
-	std::string BODY_FRAME;
-
-	// 走るときの移動量
-	float RUN_MOVE_POW;
-
-	// 攻撃するときに進む移動量
-	const float ATTACK_MOVE_POW;
-	
-	// 重力加速度
-	const float GRAVITY;
-
-	// 攻撃を受けたときに進む移動量
-	float HIT_MOVE_POW;
-
-	// 回転量
-	const float ROTATION_POW;
-
-	// 手足の当たり判定の半径
-	const float HAND_AND_FOOT_COLLISION_RADIUS;
-
-	// 体の当たり判定の半径
-	const float BODY_COLLISION_RADIUS;
-
-	// 飛び道具の当たり判定の半径
-	float PROJECTILE_COLLISION_RADIUS;
-
-	// 最初に向いている角度
-	float INIT_ANGLE;
-
-	// 床の高さ
-	const float FLOOR_HEIGHT;
-
-	// HPの最大値
-	int HP_MAX;
-
-	// HPバーの長さ
-	int HP_BAR_LENGTH;
-
 	// 必殺技ゲージの最大値
 	int SPECIAL_ATTACK_MAX_GAUGE;
-
-	// 必殺技ゲージの長さ
-	int SPECIAL_ATTACK_GAUGE_LENGTH;
-
-	// アニメーション番号
-	int ANIM_INDEX;
 
 	// 無敵時間
 	float INVINCIBILITY_TIME;
@@ -383,7 +293,7 @@ public:
 	void SetIsProjectileCollision(const bool isCollision) { collisionData_.isProjectileAttack = isCollision; }
 
 	// ポインタの取得
-	const std::shared_ptr<ActorBase>& GetThis() { return shared_from_this(); };
+	std::shared_ptr<ActorBase> GetThis() { return shared_from_this(); };
 
 	// 床と当たっているか判定を取得
 	void SetIsCollisionFloor(const bool isOnGround) { isOnGround_ = isOnGround; }
@@ -410,6 +320,102 @@ public:
 	const int GetSpecialAttackGauge() { return specialAttackGauge_; }
 
 protected:
+
+	// 右手のカプセルの上の相対座標
+	const VECTOR RIGHT_HAND_RELATIVE_UP_POS;
+
+	// 右手のカプセルの下の相対座標
+	const VECTOR RIGHT_HAND_RELATIVE_DOWN_POS;
+
+	// 左手のカプセルの上の相対座標
+	const VECTOR LEFT_HAND_RELATIVE_UP_POS;
+
+	// 左手のカプセルの下の相対座標
+	const VECTOR LEFT_HAND_RELATIVE_DOWN_POS;
+
+	// 右足のカプセルの上の相対座標
+	const VECTOR RIGHT_FOOT_RELATIVE_UP_POS;
+
+	// 右足のカプセルの下の相対座標
+	const VECTOR RIGHT_FOOT_RELATIVE_DOWN_POS;
+
+	// 左足のカプセルの上の相対座標
+	const VECTOR LEFT_FOOT_RELATIVE_UP_POS;
+
+	// 左足のカプセルの下の相対座標
+	const VECTOR LEFT_FOOT_RELATIVE_DOWN_POS;
+
+	// 体のカプセルの中心の相対座標
+	const VECTOR BODY_RELATIVE_CENTER_POS;
+
+	// 体のカプセルの上の相対座標
+	const VECTOR BODY_RELATIVE_UP_POS;
+
+	// 体のカプセルの下の相対座標
+	const VECTOR BODY_RELATIVE_DOWN_POS;
+
+	// 右手のフレーム名
+	std::string RIGHT_HAND_FRAME;
+
+	// 左手のフレーム名
+	std::string LEFT_HAND_FRAME;
+
+	// 右足のフレーム名
+	std::string RIGHT_FOOT_FRAME;
+
+	// 左足のフレーム名
+	std::string LEFT_FOOT_FRAME;
+
+	// 体のフレーム名
+	std::string BODY_FRAME;
+
+	// 走るときの移動量
+	float RUN_MOVE_POW;
+
+	// 攻撃するときに進む移動量
+	const float ATTACK_MOVE_POW;
+
+	// 重力加速度
+	const float GRAVITY;
+
+	// 攻撃を受けたときに進む移動量
+	float HIT_MOVE_POW;
+
+	// 回転量
+	const float ROTATION_POW;
+
+	// 手足の当たり判定の半径
+	const float HAND_AND_FOOT_COLLISION_RADIUS;
+
+	// 体の当たり判定の半径
+	const float BODY_COLLISION_RADIUS;
+
+	// 飛び道具の当たり判定の半径
+	float PROJECTILE_COLLISION_RADIUS;
+
+	// 最初に向いている角度
+	float INIT_ANGLE;
+
+	// ローカルの角度
+	const float INIT_LOCAL_ANGLE;
+
+	// 床の高さ
+	const float FLOOR_HEIGHT;
+
+	// HPの最大値
+	int HP_MAX;
+
+	// HPバーの長さ
+	int HP_BAR_LENGTH;
+
+	// 必殺技ゲージの長さ
+	int SPECIAL_ATTACK_GAUGE_LENGTH;
+
+	// アニメーション番号
+	int ANIM_INDEX;
+
+	// 通常時の重力のスケール
+	const float NORMAL_GRAVITY_SCALE;
 
 	// リソース管理
 	ResourceManager& resMng_;
@@ -481,7 +487,7 @@ protected:
 	float speed_;
 
 	// モデルの大きさ
-	float scl_;
+	float modelScale_;
 
 	// 回転する時間
 	float stepRotTime_;
@@ -505,7 +511,7 @@ protected:
 	bool isHitAttack_;
 
 	// 機能の初期化
-	virtual void InitComponent();
+	virtual void InitFunction();
 
 	// パラメータの初期化
 	virtual void InitParameter();

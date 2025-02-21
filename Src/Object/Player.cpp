@@ -44,7 +44,7 @@ Player::Player(const VECTOR& pos, const json& data)
 {
 
 	// 機能の初期化
-	InitComponent();
+	InitFunction();
 
 	// モデルID
 	modelId_ = resMng_.LoadModelDuplicate(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::MODEL_PLAYER)]);
@@ -86,7 +86,7 @@ void Player::Init(const VECTOR& pos)
 
 }
 
-void Player::InitComponent()
+void Player::InitFunction()
 {
 
 	// カメラを生成
@@ -131,7 +131,7 @@ void Player::InitParameter()
 	}
 
 	// 方向
-	dir_ = { 0.0f,0.0f,1.0f };
+	dir_ = Utility::DIR_F;
 
 	// 動く方向
 	moveDir_ = { 0.0f,0.0f,0.0f };
@@ -412,29 +412,8 @@ void Player::Draw(const float deltaTime)
 	// 基底クラスの描画処理
 	ActorBase::Draw(deltaTime);
 
-	// HPバーの長さ
-	const int HP_LENGTH = 400;
-
-	// HPバーの半分の長さ
-	const int HP_LENGTH_HARF = HP_LENGTH / 2;
-
-	// HPバーの高さ
-	const int HP_HEIGHT = 10;
-
-	// HPバーの幅
-	const int HP_BAR_WIDTH = 25;
-
-	// RGBのスケール調整値
-	const float RGB_SCALE = 512.0f;
-
-	// RとBの変化を制御するためのバランス点
-	const int COLOR_BALANCE_POINT = 384;
-
-	// 緑色の変化を調整するオフセット
-	const int GREEN_COLOR_SHIFT_OFFSET = 64;
-
 	// HPの割合を元にバーの色を決める処理
-	int H = hp_ * (RGB_SCALE / HP_MAX) - 100;
+	int H = hp_ * (RGB_SCALE / HP_MAX) - HP_COLOR_OFFSET;
 
 	// 赤成分
 	int R = min(max((COLOR_BALANCE_POINT - H), 0), 0xff);
@@ -481,7 +460,7 @@ void Player::UpdateDebugImGui()
 
 	// 大きさ
 	ImGui::Text("scale");
-	ImGui::InputFloat("Scl", &scl_);
+	ImGui::InputFloat("Scl", &modelScale_);
 
 	// 角度
 	VECTOR rotDeg = VECTOR();

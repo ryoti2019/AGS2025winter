@@ -43,7 +43,7 @@ private:
 	PlayerState state_;
 
 	// 機能の初期化
-	void InitComponent()override;
+	void InitFunction()override;
 
 	// パラメータの初期化
 	void InitParameter()override;

@@ -14,7 +14,7 @@ Enemy::Enemy(const VECTOR& pos, const json& data)
 {
 
 	// 機能の初期化
-	InitComponent();
+	InitFunction();
 
 	// モデルID
 	modelId_ = resMng_.LoadModelDuplicate(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::MODEL_ENEMY)]);
@@ -46,7 +46,7 @@ void Enemy::Init(const VECTOR& pos)
 {
 
 	// 機能の初期化
-	InitComponent();
+	InitFunction();
 
 	// モデルID
 	modelId_ = resMng_.LoadModelDuplicate(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::MODEL_ENEMY)]);
@@ -83,7 +83,7 @@ void Enemy::Init(const VECTOR& pos)
 
 }
 
-void Enemy::InitComponent()
+void Enemy::InitFunction()
 {
 }
 
@@ -256,7 +256,7 @@ void Enemy::UpdateDebugImGui()
 
 	// 大きさ
 	ImGui::Text("scale");
-	ImGui::InputFloat("Scl", &scl_);
+	ImGui::InputFloat("Scl", &modelScale_);
 
 	// 角度
 	VECTOR rotDeg = VECTOR();
@@ -376,38 +376,37 @@ void Enemy::Draw(const float deltaTime)
 
 	ActorBase::Draw(deltaTime);
 
-	// 描画範囲
-	const float RANGE_DRAW = 45000.0f;
+	// HPの割合を元にバーの色を決める処理
+	int H = hp_ * (RGB_SCALE / HP_MAX) - HP_COLOR_OFFSET;
 
-	// モデル頭上フレーム
-	const int FRAME_NO_HEAD_TOP = 7;
+	// 赤成分
+	int R = min(max((COLOR_BALANCE_POINT - H), 0), 0xff);
 
-	// HPバー
-	const int HP_LENGTH = 40;
-	const int HP_LENGTH_HARF = HP_LENGTH / 2.0f;
-	const int HP_HEIGHT = 5;
-	int H = hp_ * (512.0f / HP_MAX) - 100;
-	int R = min(max((384 - H), 0), 0xff);
-	int G = min(max((H + 64), 0), 0xff);
-	int B = max((H - 384), 0);
-	int hpGauge = HP_LENGTH * hp_ / HP_MAX;
+	//緑成分
+	int G = min(max((H + GREEN_COLOR_SHIFT_OFFSET), 0), 0xff);
+
+	// 青成分
+	int B = max((H - COLOR_BALANCE_POINT), 0);
+
+	// HPゲージ
+	int hpGauge = HP_BAR_LENGTH * hp_ / HP_MAX;
 
 	// モデルの頭上座標
 	VECTOR headTopPos = MV1GetFramePosition(transform_->modelId, FRAME_NO_HEAD_TOP);
-	headTopPos = VAdd(headTopPos, transform_->quaRot.PosAxis(VScale({ 0.0f, 15.0f, -6.0f }, scl_)));
+	headTopPos = VAdd(headTopPos, transform_->quaRot.PosAxis(VScale(HEAD_LOCAL_POS, modelScale_)));
 
 	// カメラからの距離
-	auto dis = Utility::Distance(transform_->pos, SceneManager::GetInstance().GetCamera().lock()->GetPos());
+	double dis = Utility::Distance(transform_->pos, SceneManager::GetInstance().GetCamera().lock()->GetPos());
 
 	// 頭上からのオフセット計算
-	float scale = dis / 1000.0f;
-	float headTopOffset = (dis / 100.0f);
+	float scale = dis / DISTANCE_SCALE;
+	float headTopOffset = (dis / HEAD_TOP_OFFSET_SCALE);
 
 	// オフセットを加算
 	headTopPos.y += headTopOffset;
 
 	// スクリーン座標変換
-	auto plusOffsetScreenPos = ConvWorldPosToScreenPos(headTopPos);
+	VECTOR plusOffsetScreenPos = ConvWorldPosToScreenPos(headTopPos);
 
 	// 自分の座標がカメラ内に写っているかどうか
 	if (CheckCameraViewClip(headTopPos))
@@ -416,7 +415,7 @@ void Enemy::Draw(const float deltaTime)
 	}
 
 	// カメラ範囲でなければ描画しない
-	if (plusOffsetScreenPos.z <= 0.0f && plusOffsetScreenPos.z >= 1.0f)
+	if (plusOffsetScreenPos.z <= 0.0f && plusOffsetScreenPos.z >= CAMERA_MAX_Z)
 	{
 		return;
 	}
@@ -442,8 +441,6 @@ void Enemy::Draw(const float deltaTime)
 		plusOffsetScreenPos.x - HP_LENGTH_HARF + hpGauge,
 		plusOffsetScreenPos.y + HP_HEIGHT,
 		0xff0000, true);
-
-	//DrawFormatString(0, 15, 0xff0000, "velocity:(%0.2f,%0.2f,%0.2f)", velocity_.x, velocity_.y, velocity_.z);
 
 }
 
@@ -710,7 +707,7 @@ void Enemy::ChangeIdle()
 	stateUpdate_ = std::bind(&Enemy::UpdateIdle, this, std::placeholders::_1);
 
 	// 重力を通常状態に戻す
- 	gravityScale_ = 1.0f;
+ 	gravityScale_ = NORMAL_GRAVITY_SCALE;
 
 }
 
@@ -820,7 +817,7 @@ void Enemy::ChangeHitFly()
 	transform_->quaRot.z = Quaternion().z;
 
 	// 重力を通常状態に戻す
-	gravityScale_ = 1.0f;
+	gravityScale_ = NORMAL_GRAVITY_SCALE;
 
 }
 

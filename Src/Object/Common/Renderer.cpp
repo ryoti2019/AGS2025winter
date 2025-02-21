@@ -22,11 +22,11 @@ void Renderer::MakeSquereVertex(void)
 	// 頂点インデックス
 	for (auto& v : vertexs_)
 	{
-		v.dif = GetColorU8(255, 255, 255, 255);
+		v.dif = GetColorU8(COLOR_MAX, COLOR_MAX, COLOR_MAX, COLOR_MAX);
 		v.spc = GetColorU8(0, 0, 0, 0);
 		v.rhw = 1.0f;
-		v.su = 0.5f;
-		v.sv = 0.5f;
+		v.su = HALF_TEX_COORD;
+		v.sv = HALF_TEX_COORD;
 	}
 	// 左上
 	vertexs_[0].pos = { 0.0f, 0.0f, 0.0f };
@@ -34,43 +34,30 @@ void Renderer::MakeSquereVertex(void)
 	vertexs_[0].v = 0.0f;
 	// 右上
 	vertexs_[1].pos = { Application::SCREEN_SIZE_X, 0.0f, 0.0f };
-	vertexs_[1].u = 1.0f;
+	vertexs_[1].u = FULL_TEX_COORD;
 	vertexs_[1].v = 0.0f;
 	// 左下
 	vertexs_[2].pos = { 0.0f, Application::SCREEN_SIZE_Y, 0.0f };
 	vertexs_[2].u = 0.0f;
-	vertexs_[2].v = 1.0f;
+	vertexs_[2].v = FULL_TEX_COORD;
 	// 右下
 	vertexs_[3].pos = { Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, 0.0f };
-	vertexs_[3].u = 1.0f;
-	vertexs_[3].v = 1.0f;
+	vertexs_[3].u = FULL_TEX_COORD;
+	vertexs_[3].v = FULL_TEX_COORD;
 
-	//0,1,2 1,3,2
-	indexes_[0] = 0;
-	indexes_[1] = 1;
-	indexes_[2] = 2;
-	indexes_[3] = 1;
-	indexes_[4] = 3;
-	indexes_[5] = 2;
+	// インデックス設定
+	for (int i = 0; i < NUM_INDICES; ++i)
+	{
+		indexes_[i] = INDEX_SEQUENCE[i];
+	}
 
 }
 
 void Renderer::Draw(void)
 {
 
-	//// メインスクリーン
-	//int mainScreen = SceneManager::GetInstance().GetMainScreen();
-
-	//SetDrawScreen(screen_);
-
-	//// 画面を初期化
-	//ClearDrawScreen();
-
 	// オリジナルシェーダ設定(ON)
 	MV1SetUseOrigShader(true);
-
-	// 頂点インデックス
-	//MakeSquereVertex();
 
 	// 頂点シェーダの設定
 	SetReserveVS();
@@ -89,8 +76,6 @@ void Renderer::Draw(void)
 	MV1DrawModel(modelId_);
 
 	// 後始末
-	//--------------------------------------------
-
 	// テクスチャアドレスタイプを元に戻す
 	SetTextureAddressModeUV(DX_TEXADDRESS_CLAMP, DX_TEXADDRESS_CLAMP);
 
@@ -109,12 +94,6 @@ void Renderer::Draw(void)
 
 	// オリジナルシェーダ設定(OFF)
 	MV1SetUseOrigShader(false);
-	//--------------------------------------------
-
-	//// メインに戻す
-	//SetDrawScreen(mainScreen);
-	//DrawGraph(0, 0, screen_, false);
-	//--------------------------------------------
 
 }
 
@@ -166,9 +145,6 @@ void Renderer::SetReservePS(void)
 
 	// 定数バッファをピクセルシェーダー用定数バッファレジスタに
 	SetShaderConstantBuffer(modelMaterial_->GetconstBufPS(), DX_SHADERTYPE_PIXEL, CONSTANT_BUF_SLOT_BEGIN_PS);
-
-	// 描画
-	//DrawPolygonIndexed2DToShader(vertexs_, NUM_VERTEX, indexes_, NUM_VERTEX_IDX);
 
 }
 

@@ -699,7 +699,7 @@ void Camera::GamePadController()
 	}
 
 	// ‰º•ûŒü
-	if (pad.AKeyRZ < 0 && Utility::Rad2DegF(angle_.x) >= -MOUSE_LOOK_MIN_ANGLE)
+	if (pad.AKeyRZ < 0 && Utility::Rad2DegF(angle_.x) >= MOUSE_LOOK_MIN_ANGLE)
 	{
 		axisDeg.x = pad.AKeyRZ;
 		// •ûŒü‚ğ³‹K‰»
@@ -747,7 +747,7 @@ void Camera::UpdateDebugImGui()
 
 	// ‘å‚«‚³
 	//ImGui::Text("scale");
-	//ImGui::InputFloat("Scl", &scl_);
+	//ImGui::InputFloat("Scl", &modelScale_);
 
 	// Šp“x
 	VECTOR rotDeg = VECTOR();

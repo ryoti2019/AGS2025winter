@@ -33,6 +33,9 @@ public:
 	// 敵を生成するフレーム
 	const float CREATE_ENEMY_FRAME;
 
+	// 飛び道具のスピード
+	const float PROJECTILE_SPEED;
+
 	// アニメーションコントローラーに渡す引数
 	std::string ANIM_DATA_KEY[static_cast<int>(BossState::MAX)] =
 	{
@@ -62,6 +65,39 @@ public:
 		HIT,
 		MAX
 	};
+
+	// HPバーの長さ
+	static constexpr int HP_BAR_LENGTH = 400;
+
+	// HPバーの半分の長さ
+	static constexpr int HP_LENGTH_HARF = HP_BAR_LENGTH / 2;
+
+	// HPバーの高さ
+	static constexpr int HP_HEIGHT = 10;
+
+	// HPバーの幅
+	static constexpr int HP_BAR_WIDTH = 25;
+
+	// RGBのスケール調整値
+	static constexpr int RGB_SCALE = 512.0f;
+
+	// RとBの変化を制御するためのバランス点
+	static constexpr int COLOR_BALANCE_POINT = 384;
+
+	// 緑色の変化を調整するオフセット
+	static constexpr int GREEN_COLOR_SHIFT_OFFSET = 64;
+
+	// HPバーの色の計算の調整値
+	static constexpr int HP_COLOR_OFFSET = 100;
+
+	// スーパーアーマーHPバーの高さ
+	static constexpr int SUPER_AMOR_HP_HEIGHT = 50;
+
+	// スーパーアーマーHPバーの幅
+	static constexpr int SUPER_ARMOR_HP_BAR_WIDTH = 10;
+
+	// 飛び道具エフェクトの相対座標
+	static constexpr VECTOR PROJECTILE_EFFECT_LOCAL_POS = { 0.0f,500.0f,0.0f };
 
 	Boss(const VECTOR& pos, const json& data);
 
@@ -259,7 +295,7 @@ private:
 	void UpdateDeath(const float deltaTime);
 
 	// 機能の初期化
-	void InitComponent()override;
+	void InitFunction()override;
 
 	// パラメータの初期化
 	void InitParameter()override;

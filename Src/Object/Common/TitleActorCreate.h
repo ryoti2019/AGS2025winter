@@ -11,5 +11,8 @@ public:
 
 private:
 
+	// プレイヤーの座標
+	static constexpr VECTOR PLAYER_POS = { -80000.0f,-19500.0f,25900.0f };
+
 };
 
