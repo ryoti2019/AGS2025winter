@@ -58,17 +58,17 @@ void BossBattleScene::InitImage()
 	// ゲームオーバー画像2の初期化
 	gameOverImg2_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_GAME_OVER)]).handleId_;
 
-	// 画像のスケール
-	scale_ = 2.0f;
+	// 1枚目の画像のスケール
+	img1Scale_ = 2.0f;
 
-	// 画像のスケール
-	scale2_ = 1.0f;
+	// 2枚目の画像のスケール
+	img2Scale_ = 1.0f;
 
-	// 透明度
-	alpha_ = 0;
+	// 1枚目の透明度
+	img1Alpha_ = 0;
 
-	// 透明度
-	alpha2_ = 255;
+	// 2枚目の透明度
+	img2Alpha_ = 255;
 
 	// コンティニュー画像の初期化
 	continueImg_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_CONTINUE)]).handleId_;
@@ -88,7 +88,7 @@ void BossBattleScene::InitBGMAndSE()
 	bgm_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::SOUND_BOSS_BATTLE_SCENE_BGM)]).handleId_;
 
 	// BGMのボリュームの変更
-	ChangeVolumeSoundMem(255 * 0.5, bgm_);
+	ChangeVolumeSoundMem(SOUND_MAX * SOUND_BGM_VOLUME, bgm_);
 
 	// BGM再生
 	PlaySoundMem(bgm_, DX_PLAYTYPE_LOOP, true);
@@ -156,6 +156,7 @@ void BossBattleScene::CheckTransitionGameClearScene()
 void BossBattleScene::SelectContinueOrGameOver(const float deltaTime)
 {
 
+
 	// 右方向にスティックを倒しているか
 	if (inputController_->SelectRight() && isContinue_)
 	{
@@ -183,7 +184,7 @@ void BossBattleScene::SelectContinueOrGameOver(const float deltaTime)
 	{
 		SceneManager::GetInstance().ChangeScene(SCENE_ID::GAME);
 	}
-	else if (!isContinue_ && inputController_->Decide())
+	else if (!isContinue_ && inputController_->Decide() && !isGameOver_)
 	{
 
 		isGameOver_ = true;
@@ -201,7 +202,7 @@ void BossBattleScene::SelectContinueOrGameOver(const float deltaTime)
 	{
 
 		// ゲームオーバーになって5秒たってからタイトルに戻る
-		if (gameOverCnt_ >= 5.0f)
+		if (gameOverCnt_ >= GAME_OVER_TRANSITION_TIME)
 		{
 
 			SceneManager::GetInstance().ChangeScene(SCENE_ID::TITLE);
@@ -238,7 +239,7 @@ void BossBattleScene::DrawGameOver()
 {
 
 	// 半透明の黒い矩形を画面全体に描画
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128); // 半透明（128: 50%の透明度）
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, BOSS_BATTLE_ALPHA); // 半透明（128: 50%の透明度）
 	DrawBox(0, 0, Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, GetColor(0, 0, 0), true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0); // ブレンドモード解除
 
@@ -246,50 +247,50 @@ void BossBattleScene::DrawGameOver()
 	{
 
 		// ブレンドモードの設定
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha_);
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, img1Alpha_);
 
 		// ゲームオーバーの描画
-		DrawRotaGraph(Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 2, 1.0, 0.0, gameOverImg_, true);
+		DrawRotaGraph(Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 2, BOSS_BATTLE_IMG_SCALE, 0.0, gameOverImg_, true);
 
 		// ブレンドモードを解除
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 		// アルファ値を増加（255を上限とする）
-		alpha_ += 2;
+		img1Alpha_ += IMG1_ALPHA_INCREMENT;
 
 		// 最少値は255にする
-		alpha_ = std::min(alpha_, 255);
+		img1Alpha_ = std::min(img1Alpha_, IMG1_ALPHA_MAX);
 
 		// 画像のスケールを減少
-		scale_ -= 0.02f;
+		img1Scale_ -= IMG1_SCALE_DECREASE;
 
 		// 最大値は1.0fにする
-		scale_ = std::max(scale_, 1.0f);
+		img1Scale_ = std::max(img1Scale_, IMG1_SCALE_MIN);
 
 		// 1枚目の画像のスケールが1.0になったら後ろから画像を出す
-		if (scale_ == 1.0f && scale2_ <= 3.0f)
+		if (img1Scale_ == IMG1_SCALE_MIN && img2Scale_ <= IMG2_SCALE_MAX)
 		{
 
 			// ブレンドモードの設定
-			SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha2_);
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, img2Alpha_);
 
 			// ボスが現れた!!用の画像の描画
-			DrawRotaGraph(Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 2, scale2_, 0.0, gameOverImg2_, true);
+			DrawRotaGraph(Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 2, img2Scale_, 0.0, gameOverImg2_, true);
 
 			// ブレンドモードを解除
 			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
-			// アルファ値を増加（255を上限とする）
-			alpha2_ -= 10; // アルファ値を増やす速度を調整可能
+			// アルファ値を減少（255を上限とする）
+			img2Alpha_ -= IMG2_ALPHA_DECREASE; // アルファ値を増やす速度を調整可能
 
 			// 最小値は0にする
-			alpha2_ = std::max(alpha2_, 0);
+			img2Alpha_ = std::max(img2Alpha_, 0);
 
 			// スケール値を増加
-			scale2_ += 0.05f;
+			img2Scale_ += IMG2_SCALE_INCREMENT;
 
 			// 最大値は3.0fにする
-			scale_ = std::min(scale_, 3.0f);
+			img1Scale_ = std::min(img1Scale_, IMG2_SCALE_MAX);
 
 		}
 
@@ -298,30 +299,30 @@ void BossBattleScene::DrawGameOver()
 	{
 
 		// コンティニュー画像の描画
-		DrawRotaGraph(Application::SCREEN_SIZE_X / 2, 200, 0.8, 0.0, continueImg_, true);
+		DrawRotaGraph(Application::SCREEN_SIZE_X / 2, CONTINUE_IMG_Y, CONTINUE_SCALE, 0.0, continueImg_, true);
 
-		float yesImgScale = 1.0f;
-		float noImgScale = 1.0f;
+		// Yes画像のスケール
+		float yesImgScale = YES_NO_IMG_SCALE;
 
-		// アニメーションの速度
-		const float animationSpeed = 0.05f;
+		// No画像のスケール
+		float noImgScale = YES_NO_IMG_SCALE;
 
 		if (isContinue_)
 		{
 			// YES画像のスケールを時間に応じて変更
-			yesImgScale = 1.0 + 0.1f * std::sin(frameCount_ * animationSpeed);
+			yesImgScale = YES_NO_IMG_SCALE + SCALE_AMPLITUDE * std::sin(frameCount_ * YES_NO_IMG_ANIM_SPEED);
 		}
 		else
 		{
 			// NO画像のスケールを時間に応じて変更
-			noImgScale = 1.0 + 0.1f * std::sin(frameCount_ * animationSpeed);
+			noImgScale = YES_NO_IMG_SCALE + SCALE_AMPLITUDE * std::sin(frameCount_ * YES_NO_IMG_ANIM_SPEED);
 		}
 
 		// YES画像の描画
-		DrawRotaGraph(Application::SCREEN_SIZE_X / 2 - 300, 500, yesImgScale, 0.0, yesImg_, true);
+		DrawRotaGraph(Application::SCREEN_SIZE_X / 2 - YES_NO_IMG_X_OFFSET, YES_NO_IMG_Y, yesImgScale, 0.0, yesImg_, true);
 
 		// NO画像の描画
-		DrawRotaGraph(Application::SCREEN_SIZE_X / 2 + 300, 500, noImgScale, 0.0, noImg_, true);
+		DrawRotaGraph(Application::SCREEN_SIZE_X / 2 + YES_NO_IMG_X_OFFSET, YES_NO_IMG_Y, noImgScale, 0.0, noImg_, true);
 
 		// フレームカウントを更新
 		frameCount_++;

@@ -9,14 +9,32 @@ class GameScene :public SceneBase
 
 public:
 
-	// 1枚目の画像スケール
-	static constexpr float SCALE = 2.0f;
+	// コンストラクタ
+	GameScene();
 
-	// 2枚目の画像スケール
-	static constexpr float SCALE2 = 1.0f;
+	// デストラクタ
+	~GameScene()override = default;
 
-	// 2枚目の画像の透明度
-	static constexpr int ALPHA_MAX = 255;
+	void Init() override;
+	void Update(const float deltaTime) override;
+	void Draw(const float deltaTime) override;
+
+	// アクターの生成クラスを取得
+	const std::shared_ptr<ActorCreate>& GetActorCreate() const { return actorCreate_; }
+
+	// 操作説明を見ているかのフラグ
+	const bool GetIsViewUserGuide()const { return isViewUserGuide_; }
+
+	// プレイヤーが死んだときのフラグを取得
+	const bool GetIsPlayerDeath() const { return isPlayerDeath_; }
+
+	// プレイヤーが死んだときのフラグを設定
+	void SetIsPlayerDeath(const bool isPlayerDeath) { isPlayerDeath_ = isPlayerDeath; }
+
+private:
+
+	// 1枚目の画像の透明度
+	static constexpr int IMG1_ALPHA_MAX = 255;
 
 	// 音の最大音量
 	static constexpr int SOUND_MAX = 255;
@@ -30,6 +48,9 @@ public:
 	// 操作説明の時の後ろの画面の透明度
 	static constexpr int USER_GUIDE_ALPHA = 200;
 
+	// ゲームオーバーの画像のスケール
+	static constexpr double GAME_OVER_IMG_SCALE = 1.0;
+
 	// 操作説明画像のスケール
 	static constexpr float USER_GUIDE_IMAGE_SCALE = 0.5f;
 
@@ -42,23 +63,23 @@ public:
 	// ゲームオーバーの時の後ろの画面の透明度
 	static constexpr int GAME_OVER_ALPHA = 128;
 
-	// 画像1の透明度の増える量
-	static constexpr int ALPHA_INCREMENT = 2;
+	// 1枚目の画像の透明度の増加量
+	static constexpr int IMG1_ALPHA_INCREMENT = 2;
 
-	// 画像1の透明度の減る量
-	static constexpr float ALPHA_DECREMENRT = -0.02f;
+	// 1枚目の画像の透明度の減少量
+	static constexpr float IMG1_ALPHA_DECREASE = 0.02f;
 
-	// 画像1のスケールの最大値
-	static constexpr float SCALE_MAX = 1.0f;
+	// 1枚目の画像のスケールの最大値
+	static constexpr float IMG1_SCALE_MAX = 1.0f;
 
-	// 画像2のスケールの最大値
-	static constexpr float SCALE2_MAX = 3.0f;
+	// 2枚目の画像のスケールの最大値
+	static constexpr float IMG2_SCALE_MAX = 3.0f;
 
-	// 画像1の透明度の増える量
-	static constexpr float ALPHA2_INCREMENT = 0.05f;
+	// 2枚目の画像の透明度の増加量
+	static constexpr float IMG2_ALPHA_INCREMENT = 0.05f;
 
-	// 画像1の透明度の減る量
-	static constexpr int ALPHA2_DECREMENRT = -10;
+	// 2枚目の画像の透明度の減少量
+	static constexpr int IMG2_ALPHA_DECREASE = 10;
 
 	// コンティニュー画像のY座標
 	static constexpr int CONTINUE_POS_Y = 200;
@@ -89,30 +110,6 @@ public:
 
 	// YESとNO画像のアニメーション速度
 	static constexpr float ANIM_SPEED = 0.05f;
-
-	// コンストラクタ
-	GameScene();
-
-	// デストラクタ
-	~GameScene()override = default;
-
-	void Init() override;
-	void Update(const float deltaTime) override;
-	void Draw(const float deltaTime) override;
-
-	// アクターの生成クラスを取得
-	const std::shared_ptr<ActorCreate>& GetActorCreate() const { return actorCreate_; }
-
-	// 操作説明を見ているかのフラグ
-	const bool GetIsViewUserGuide()const { return isViewUserGuide_; }
-
-	// プレイヤーが死んだときのフラグを取得
-	const bool GetIsPlayerDeath() const { return isPlayerDeath_; }
-
-	// プレイヤーが死んだときのフラグを設定
-	void SetIsPlayerDeath(const bool isPlayerDeath) { isPlayerDeath_ = isPlayerDeath; }
-
-private:
 
 	// アクターの生成クラス
 	std::shared_ptr<ActorCreate> actorCreate_;
@@ -148,16 +145,16 @@ private:
 	int gameOverImg2_;
 
 	// 画像の透明度
-	int alpha_;
+	int img1Alpha_;
 
 	// 2枚目の画像の透明度
-	int alpha2_;
+	int img2Alpha_;
 
 	// 画像のスケール
-	float scale_;
+	float img1Scale_;
 
 	// 2枚目の画像のスケール
-	float scale2_;
+	float img2Scale_;
 
 	// コンティニューの画像
 	int continueImg_;

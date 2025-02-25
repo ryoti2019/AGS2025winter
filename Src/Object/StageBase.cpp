@@ -19,10 +19,7 @@ void StageBase::Init(const VECTOR& pos)
 	// 共通部分は基底クラスで初期化
 	ActorBase::Init(pos);
 
-	// 描画用のコンポーネント
-	//drawComponent_ = std::make_unique<DrawComponent>(std::static_pointer_cast<StageBase>(GetThis()));
-	//drawComponent_ = std::make_unique<DrawComponent>(std::static_pointer_cast<ActorBase>(GetThis()));
-	//drawComponent_ = std::make_unique<DrawComponent>(GetThis().get());
+	// 描画用のコンポーネントを初期化
 	drawComponent_ = std::make_unique<DrawComponent>(shared_from_this());
 
 }
@@ -48,10 +45,10 @@ void StageBase::CollisionDraw(const float deltaTime)
 		deltaTime_ += deltaTime;
 		if (isDissolve_)
 		{
-			alphaTime_ += 0.005f;
+			alphaTime_ += IMG1_ALPHA_INCREMENT;
 		}
-		modelMaterial_->SetConstBufsPS({ 0.0f,0.0f,0.0f,deltaTime_ }, 2);
-		modelMaterial_->SetConstBufsPS({ alphaTime_,0.0f,0.0f,0.0f }, 3);
+		modelMaterial_->SetConstBufsPS({ 0.0f,0.0f,0.0f,deltaTime_ }, PS_CONST_BUF_SLOT_2);
+		modelMaterial_->SetConstBufsPS({ alphaTime_,0.0f,0.0f,0.0f }, PS_CONST_BUF_SLOT_3);
 		modelMaterial_->SetTextureAddress(ModelMaterial::TEXADDRESS::MIRROR);
 		renderer_->Draw();
 	}
@@ -66,14 +63,14 @@ void StageBase::CollisionInit(std::shared_ptr<Transform>& transform)
 
 	// モデル描画用
 	std::vector<FLOAT4> constBufsPtrVS;
-	//constBufsPtrVS.push_back({ 1.0f, 1.0f, 1.0f, 1.0f });
 
 	std::vector<FLOAT4> constBufsPtrPS;
+
 	// 拡散光
-	constBufsPtrPS.push_back({ 1.0f, 1.0f, 1.0f, 1.0f });
+	constBufsPtrPS.push_back(DIFFUSE_LIGHT);
 
 	// 環境光
-	constBufsPtrPS.push_back({ 0.2f, 0.2f, 0.2f, 1.0f });
+	constBufsPtrPS.push_back(AMBIENT_LIGHT);
 
 	// 光の向いている方向(ワールド空間)(ディレクショナルライト)
 	auto lDir = GetLightDirection();
@@ -83,10 +80,10 @@ void StageBase::CollisionInit(std::shared_ptr<Transform>& transform)
 	constBufsPtrPS.push_back({ alphaTime_,0.0f,0.0f,0.0f });
 
 	std::map<int, int> textures;
-	textures.emplace(1, texId_);
+	textures.emplace(TEXTURE_SLOT_DIFFUSE, texId_);
 	modelMaterial_ = std::make_shared<ModelMaterial>(
-		(Application::PATH_SHADER + "GateModelVS.cso"), sizeof(FLOAT4) * 1, constBufsPtrVS,
-		(Application::PATH_SHADER + "GateModelPS.cso"), sizeof(FLOAT4) * 4, constBufsPtrPS, textures
+		(Application::PATH_SHADER + "GateModelVS.cso"), VS_CONST_BUF_SIZE, constBufsPtrVS,
+		(Application::PATH_SHADER + "GateModelPS.cso"), PS_CONST_BUF_SIZE, constBufsPtrPS, textures
 	);
 
 	renderer_ = std::make_shared<Renderer>(transform->modelId, modelMaterial_);

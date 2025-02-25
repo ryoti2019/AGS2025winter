@@ -109,7 +109,7 @@ Application::Application()
 	SetWindowText("AGS2025winter");
 
 	// ウィンドウサイズ
-	SetGraphMode(SCREEN_SIZE_X, SCREEN_SIZE_Y, 32);
+	SetGraphMode(SCREEN_SIZE_X, SCREEN_SIZE_Y, COLOR_BIT_DEPTH);
 	ChangeWindowMode(true);
 
 	// DxLibの初期化
@@ -122,7 +122,7 @@ Application::Application()
 	}
 
 	// Effekseerの初期化
-	if (Effekseer_Init(8000) == -1)
+	if (Effekseer_Init(EFFEKSEER_MAX_EFFECTS) == -1)
 	{
 		DxLib_End();
 	}

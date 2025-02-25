@@ -185,6 +185,12 @@ void Boss::InitParameter()
 	// HP
 	hp_ = HP_MAX;
 
+	// HPバーの長さ
+	HP_BAR_LENGTH = jsonData_["HP_BAR_LENGTH"];
+
+	// HPバーの半分の長さ
+	HP_LENGTH_HARF = HP_BAR_LENGTH / 2;
+
 	// スーパーアーマーHP
 	superArmorHp_ = SUPER_ARMOR_HP;
 
@@ -193,9 +199,6 @@ void Boss::InitParameter()
 
 	// スーパーアーマーが回復するまでのクールタイムのカウンタ
 	superArmorCoolTimeCnt_ = SUPER_ARMOR_HP_COOL_TIME;
-
-	// HPバーの長さ
-	HP_BAR_LENGTH = jsonData_["HP_BAR_LENGTH"];
 
 	// パンチのダメージ量
 	ATTACK_PUNCH_DAMAGE = jsonData_["ANIM"][static_cast<int>(BossState::ATTACK_PUNCH) - 1]["DAMAGE"];

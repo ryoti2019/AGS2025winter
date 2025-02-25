@@ -408,6 +408,9 @@ protected:
 	// HPバーの長さ
 	int HP_BAR_LENGTH;
 
+	// HPバーの半分の長さ
+	int HP_LENGTH_HARF;
+
 	// 必殺技ゲージの長さ
 	int SPECIAL_ATTACK_GAUGE_LENGTH;
 

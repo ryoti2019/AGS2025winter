@@ -174,6 +174,9 @@ void Enemy::InitParameter()
 	// HPバーの長さ
 	HP_BAR_LENGTH = jsonData_["HP_BAR_LENGTH"];
 
+	// HPバーの半分の長さ
+	HP_LENGTH_HARF = HP_BAR_LENGTH / 2;
+
 	// パンチのダメージ量
 	ATTACK_PUNCH_DAMAGE = jsonData_["ANIM"][static_cast<int>(EnemyState::ATTACK_PUNCH) - 1]["DAMAGE"];
 

@@ -17,7 +17,7 @@
 				"SCALE": 1.0,
 				"INIT_ANGLE": 90.0,
 				"HP": 200,
-				"HP_BAR_LENGTH": 360,
+				"HP_BAR_LENGTH": 400,
 				"SPECIAL_ATTACK_MAX_GAUGE": 200,
 				"SPECIAL_ATTACK_GAUGE_LENGTH": 360,
 				"ACTOR_TYPE": 0,
@@ -162,7 +162,7 @@
 				"SCALE": 10.0,
 				"INIT_ANGLE": 0.0,
 				"HP": 100,
-				"HP_BAR_LENGTH": 100,
+				"HP_BAR_LENGTH": 40,
 				"ACTOR_TYPE": 1,
 				"INVINCIBILITY_TIME": 0.5,
 				"ANIM": [

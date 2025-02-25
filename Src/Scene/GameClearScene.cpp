@@ -48,7 +48,7 @@ void GameClearScene::InitBGMAndSE()
 	bgm_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::SOUND_GAME_CLEAR_SCENE_BGM)]).handleId_;
 
 	// BGMのボリュームの変更
-	ChangeVolumeSoundMem(255 * 0.5, bgm_);
+	ChangeVolumeSoundMem(SOUND_MAX * SOUND_BGM_VOLUME, bgm_);
 
 	// BGM再生
 	PlaySoundMem(bgm_, DX_PLAYTYPE_LOOP, true);
@@ -96,16 +96,16 @@ void GameClearScene::Draw(const float deltaTime)
 	actorManager_->Draw(deltaTime);
 
 	// ゲームクリア画像の描画
-	DrawRotaGraph(850, 200, 2.0, 0.0, gameClearImg_, true);
+	DrawRotaGraph(GAME_CLEAR_X, GAME_CLEAR_Y, GAME_CLEAR_SCALE, 0.0, gameClearImg_, true);
 
-	float scale = 1.0f;  // 拡大率
-	const float animationSpeed = 0.05f; // アニメーションの速度
+	// 拡大率
+	float scale = GAME_CLEAR_IMG_SCALE;
 
 	// スケールを時間に応じて変更（sin波で変化）
-	scale = 1.0 + 0.1f * std::sin(frameCount_ * animationSpeed);
+	scale = GAME_CLEAR_IMG_SCALE + SCALE_AMPLITUDE * std::sin(frameCount_ * GAME_CLEAR_ANIM_SPEED);
 
 	// Press A Button or Spaceの画像の描画
-	DrawRotaGraph(850, 500, scale, 0.0, pressAButtonOrSpaceImg_, true);
+	DrawRotaGraph(PRESS_A_BUTTON_OR_SPACE_X, PRESS_A_BUTTON_OR_SPACE_Y, scale, 0.0, pressAButtonOrSpaceImg_, true);
 
 	// フレームカウントを更新
 	frameCount_++;

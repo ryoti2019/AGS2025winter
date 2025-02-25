@@ -15,16 +15,6 @@ class Player : public ActorBase
 
 public:
 
-	// ボス戦の初期角度
-	static constexpr float BOSS_BATTLE_INIT_ANGLE = 180.0f;
-
-	// サウンドの最大音量
-	static constexpr int SOUND_MAX = 255;
-
-	// 足音の音量の割合
-	static constexpr float SOUND_FOOT_STEPS_VOLUME = 0.6f;
-
-
 	// アニメーションコントローラーに渡す引数
 	std::string ANIM_DATA_KEY[static_cast<int>(PlayerState::MAX)] =
 	{
@@ -204,11 +194,14 @@ public:
 
 private:
 
-	// HPバーの長さ
-	static constexpr int HP_BAR_LENGTH = 400;
+	// ボス戦の初期角度
+	static constexpr float BOSS_BATTLE_INIT_ANGLE = 180.0f;
 
-	// HPバーの半分の長さ
-	static constexpr int HP_LENGTH_HARF = HP_BAR_LENGTH / 2;
+	// サウンドの最大音量
+	static constexpr int SOUND_MAX = 255;
+
+	// 足音の音量の割合
+	static constexpr float SOUND_FOOT_STEPS_VOLUME = 0.6f;
 
 	// HPバーの高さ
 	static constexpr int HP_HEIGHT = 5;
@@ -227,6 +220,36 @@ private:
 
 	// HPバーの色の計算の調整値
 	static constexpr int HP_COLOR_OFFSET = 100;
+
+	// HPバーの左上スクリーンX座標
+	static constexpr int HP_BAR_TOP_LEFT_X = 200;
+
+	// HPバーの左上スクリーンY座標
+	static constexpr int HP_BAR_TOP_LEFT_Y = 550;
+
+	// HPバーの右下スクリーンY座標
+	static constexpr int HP_BAR_BOTTOM_RIGHT_Y = 570;
+
+	// 必殺技ゲージの左上スクリーンX座標
+	static constexpr int SPECIAL_ATTACK_GAUGE_TOP_LEFT_X = 200;
+
+	// 必殺技ゲージのの左上スクリーンY座標
+	static constexpr int SPECIAL_ATTACK_GAUGE_TOP_LEFT_Y = 600;
+
+	// 必殺技ゲージのの右下スクリーンY座標
+	static constexpr int SPECIAL_ATTACK_GAUGE_BOTTOM_RIGHT_Y = 620;
+
+	// アイコンの中心のスクリーンX座標
+	static constexpr int ICON_CENTER_X = 100;
+
+	// アイコンの中心のスクリーンY座標
+	static constexpr int ICON_CENTER_Y = 550;
+
+	// アイコンのスケール
+	static constexpr double ICON_SCALE = 0.5;
+
+	// エフェクトのローカル座標
+	static constexpr VECTOR EFFECT_LOCAL_POS = { 0.0f,500.0f,0.0f };
 
 	// 入力用のコンポーネント
 	std::unique_ptr<InputComponent> inputComponent_;

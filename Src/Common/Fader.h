@@ -38,7 +38,7 @@ private:
 	STATE state_;
 
 	// 透明度
-	float alpha_;
+	float img1Alpha_;
 
 	// 状態(STATE)を保ったまま終了判定を行うため、
 	// Update->Draw->Updateの1フレーム判定用

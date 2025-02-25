@@ -86,12 +86,6 @@ private:
 	// モデル頭上フレーム
 	static constexpr int FRAME_NO_HEAD_TOP = 7;
 
-	// HPバーの長さ
-	static constexpr int HP_BAR_LENGTH = 40;
-
-	// HPバーの半分の長さ
-	static constexpr int HP_LENGTH_HARF = HP_BAR_LENGTH / 2;
-
 	// HPバーの高さ
 	static constexpr int HP_HEIGHT = 5;
 

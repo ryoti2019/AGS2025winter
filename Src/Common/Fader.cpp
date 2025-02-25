@@ -25,7 +25,7 @@ void Fader::SetFade(STATE state)
 void Fader::Init(void)
 {
 	state_ = STATE::NONE;
-	alpha_ = 0;
+	img1Alpha_ = 0;
 	isPreEnd_ = true;
 	isEnd_ = true;
 }
@@ -44,11 +44,11 @@ void Fader::Update(void)
 		return;
 
 	case STATE::FADE_OUT:
-		alpha_ += FADE_SPEED;
-		if (alpha_ > FADE_ALPHA_MAX)
+		img1Alpha_ += FADE_SPEED;
+		if (img1Alpha_ > FADE_ALPHA_MAX)
 		{
 			// フェード終了
-			alpha_ = FADE_ALPHA_MAX;
+			img1Alpha_ = FADE_ALPHA_MAX;
 			if (isPreEnd_)
 			{
 				// 1フレーム後(Draw後)に終了とする
@@ -60,11 +60,11 @@ void Fader::Update(void)
 		break;
 
 	case STATE::FADE_IN:
-		alpha_ -= FADE_SPEED;
-		if (alpha_ < 0)
+		img1Alpha_ -= FADE_SPEED;
+		if (img1Alpha_ < 0)
 		{
 			// フェード終了
-			alpha_ = 0;
+			img1Alpha_ = 0;
 			if (isPreEnd_)
 			{
 				// 1フレーム後(Draw後)に終了とする
@@ -89,7 +89,7 @@ void Fader::Draw(void)
 		return;
 	case STATE::FADE_OUT:
 	case STATE::FADE_IN:
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>(alpha_));
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>(img1Alpha_));
 		DrawBox(
 			0, 0,
 			Application::SCREEN_SIZE_X,

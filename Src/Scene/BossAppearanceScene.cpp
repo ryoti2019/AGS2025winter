@@ -47,17 +47,17 @@ void BossAppearanceScene::InitImage()
 	// ボスが現れた!!用の画像
 	appearance2Img_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_BOSS_APPEARANCE)]).handleId_;
 
-	// 画像のスケール
-	scale_ = 2.0f;
+	// 1枚目の画像のスケール
+	img1Scale_ = 2.0f;
 
-	// 画像のスケール
-	scale2_ = 1.0f;
+	// 2枚目の画像のスケール
+	img2Scale_ = 1.0f;
 
-	// 透明度
-	alpha_ = 0;
+	// 1枚目の透明度
+	img1Alpha_ = 0;
 
-	// 透明度
-	alpha2_ = 255;
+	// 2枚目の透明度
+	img2Alpha_ = 255;
 
 }
 
@@ -68,7 +68,7 @@ void BossAppearanceScene::InitBGMAndSE()
 	bgm_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::SOUND_BOSS_APPEARANCE_SCENE_BGM)]).handleId_;
 
 	// BGMのボリュームの変更
-	ChangeVolumeSoundMem(255 * 0.5, bgm_);
+	ChangeVolumeSoundMem(SOUND_MAX * SOUND_BGM_VOLUME, bgm_);
 
 	// BGM再生
 	PlaySoundMem(bgm_, DX_PLAYTYPE_LOOP, true);
@@ -104,54 +104,54 @@ void BossAppearanceScene::Draw(const float deltaTime)
 	// アクターの管理クラスの更新
 	actorManager_->Draw(deltaTime);
 
-	if (SceneManager::GetInstance().GetCamera().lock()->GetElapsedTime() >= 6.0f && SceneManager::GetInstance().GetCamera().lock()->GetIsBossAppearanceCameraMove3())
+	if (SceneManager::GetInstance().GetCamera().lock()->GetElapsedTime() >= BOSS_NAME_DRAW_START_TIME && SceneManager::GetInstance().GetCamera().lock()->GetIsBossAppearanceCameraMove3())
 	{
 
 		// ブレンドモードの設定
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha_);
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, img1Alpha_);
 
 		// ボスが現れた!!用の画像の描画
-		DrawRotaGraph(Application::SCREEN_SIZE_X / 2, 500, scale_, 0.0, appearanceImg_, true);
+		DrawRotaGraph(Application::SCREEN_SIZE_X / 2, BOSS_APPEAR_TEXT_Y, img1Scale_, 0.0, appearanceImg_, true);
 
 		// ブレンドモードを解除
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 		// アルファ値を増加（255を上限とする）
-		alpha_ += 2;
+		img1Alpha_ += IMG1_ALPHA_INCREMENT;
 
-		// 最少値は255にする
-		alpha_ = std::min(alpha_,255);
+		// 最大値は255にする
+		img1Alpha_ = std::min(img1Alpha_, IMG1_ALPHA_MAX);
 
 		// 画像のスケールを減少
-		scale_ -= 0.02f;
+		img1Scale_ -= IMG1_SCALE_DECREASE;
 		
-		// 最大値は1.0fにする
-		scale_ = std::max(scale_, 1.0f);
+		// 最小値は1.0fにする
+		img1Scale_ = std::max(img1Scale_, IMG1_SCALE_MIN);
 
 		// 1枚目の画像のスケールが1.0になったら後ろから画像を出す
-		if (scale_ == 1.0f && scale2_ <= 3.0f)
+		if (img1Scale_ == IMG1_SCALE_MIN && img2Scale_ <= IMG2_SCALE_MAX)
 		{
 
 			// ブレンドモードの設定
-			SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha2_);
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, img2Alpha_);
 
 			// ボスが現れた!!用の画像の描画
-			DrawRotaGraph(Application::SCREEN_SIZE_X / 2, 500, scale2_, 0.0, appearance2Img_, true);
+			DrawRotaGraph(Application::SCREEN_SIZE_X / 2, BOSS_APPEAR_TEXT_Y, img2Scale_, 0.0, appearance2Img_, true);
 
 			// ブレンドモードを解除
 			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
-			// アルファ値を増加（255を上限とする）
-			alpha2_ -= 10; // アルファ値を増やす速度を調整可能
+			// アルファ値を減少（255を上限とする）
+			img2Alpha_ -= IMG2_ALPHA_DECREASE; // アルファ値を増やす速度を調整可能
 			
 			// 最小値は0にする
-			alpha2_ = std::max(alpha2_, 0);
+			img2Alpha_ = std::max(img2Alpha_, 0);
 
 			// スケール値を増加
-			scale2_ += 0.05f;
+			img2Scale_ += IMG2_SCALE_INCREMENT;
 
 			// 最大値は3.0fにする
-			scale_ = std::min(scale_, 3.0f);
+			img1Scale_ = std::min(img1Scale_, IMG2_SCALE_MAX);
 
 		}
 

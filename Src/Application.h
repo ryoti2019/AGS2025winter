@@ -47,6 +47,15 @@ public:
 
 private:
 
+	// ナノ秒を変換するための定数
+	static constexpr double NANOSECONDS_TO_SECONDS = 1e-9;
+
+	// カラービット数
+	static constexpr int COLOR_BIT_DEPTH = 32;
+
+	// Effkseerの設定
+	static constexpr int EFFEKSEER_MAX_EFFECTS = 8000;
+	
 	// 静的インスタンス
 	static Application* instance_;
 

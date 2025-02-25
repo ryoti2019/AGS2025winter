@@ -91,16 +91,16 @@ void GameScene::InitImage()
 	gameOverImg2_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_GAME_OVER)]).handleId_;
 
 	// 画像のスケール
-	scale_ = SCALE;
+	img1Scale_ = 2.0f;
 
 	// 画像のスケール
-	scale2_ = SCALE2;
+	img2Scale_ = 1.0f;
 
 	// 透明度
-	alpha_ = 0;
+	img1Alpha_ = 0;
 
 	// 透明度
-	alpha2_ = ALPHA_MAX;
+	img2Alpha_ = IMG1_ALPHA_MAX;
 
 	// コンティニュー画像の初期化
 	continueImg_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::IMAGE_CONTINUE)]).handleId_;
@@ -410,50 +410,50 @@ void GameScene::DrawGameOver()
 	{
 
 		// ブレンドモードの設定
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha_);
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, img1Alpha_);
 
 		// ゲームオーバーの描画
-		DrawRotaGraph(Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 2, 1.0, 0.0, gameOverImg_, true);
+		DrawRotaGraph(Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 2, GAME_OVER_IMG_SCALE, 0.0, gameOverImg_, true);
 
 		// ブレンドモードを解除
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 		// アルファ値を増加（255を上限とする）
-		alpha_ += ALPHA_INCREMENT;
+		img1Alpha_ += IMG1_ALPHA_INCREMENT;
 
 		// 最少値は255にする
-		alpha_ = std::min(alpha_, ALPHA_MAX);
+		img1Alpha_ = std::min(img1Alpha_, IMG1_ALPHA_MAX);
 
 		// 画像のスケールを減少
-		scale_ -= ALPHA_DECREMENRT;
+		img1Scale_ -= IMG1_ALPHA_DECREASE;
 
 		// 最大値は1.0fにする
-		scale_ = std::max(scale_, SCALE_MAX);
+		img1Scale_ = std::max(img1Scale_, IMG1_SCALE_MAX);
 
 		// 1枚目の画像のスケールが1.0になったら後ろから画像を出す
-		if (scale_ == SCALE_MAX && scale2_ <= SCALE2_MAX)
+		if (img1Scale_ == IMG1_SCALE_MAX && img2Scale_ <= IMG2_SCALE_MAX)
 		{
 
 			// ブレンドモードの設定
-			SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha2_);
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, img2Alpha_);
 
 			// ボスが現れた!!用の画像の描画
-			DrawRotaGraph(Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 2, scale2_, 0.0, gameOverImg2_, true);
+			DrawRotaGraph(Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 2, img2Scale_, 0.0, gameOverImg2_, true);
 
 			// ブレンドモードを解除
 			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 			// アルファ値を増加（255を上限とする）
-			alpha2_ -= ALPHA2_DECREMENRT; // アルファ値を増やす速度を調整可能
+			img2Alpha_ -= IMG2_ALPHA_DECREASE; // アルファ値を増やす速度を調整可能
 
 			// 最小値は0にする
-			alpha2_ = std::max(alpha2_, 0);
+			img2Alpha_ = std::max(img2Alpha_, 0);
 
 			// スケール値を増加
-			scale2_ += ALPHA2_INCREMENT;
+			img2Scale_ += IMG2_ALPHA_INCREMENT;
 
 			// 最大値は3.0fにする
-			scale_ = std::min(scale_, SCALE2_MAX);
+			img1Scale_ = std::min(img1Scale_, IMG2_SCALE_MAX);
 
 		}
 

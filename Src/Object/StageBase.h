@@ -93,5 +93,29 @@ protected:
 
 private:
 
+	// アルファ値の増加量
+	static constexpr float IMG1_ALPHA_INCREMENT = 0.005f;
+
+	// ピクセルシェーダーの定数バッファスロット2
+	static constexpr int PS_CONST_BUF_SLOT_2 = 2;
+
+	// ピクセルシェーダーの定数バッファスロット3
+	static constexpr int PS_CONST_BUF_SLOT_3 = 3;
+
+	// 拡散光の強さ
+	static constexpr FLOAT4 DIFFUSE_LIGHT = { 1.0f,1.0f,1.0f,1.0f };
+
+	// 環境光の強さ
+	static constexpr FLOAT4 AMBIENT_LIGHT = { 0.2f,0.2f,0.2f,1.0f };
+
+	// テクスチャスロット番号
+	static constexpr int TEXTURE_SLOT_DIFFUSE = 1;
+
+	// 頂点シェーダーの定数バッファサイズ
+	static constexpr size_t VS_CONST_BUF_SIZE = sizeof(FLOAT4) * 1;
+
+	// 頂点シェーダーの定数バッファサイズ
+	static constexpr size_t PS_CONST_BUF_SIZE = sizeof(FLOAT4) * 4;
+
 };
 

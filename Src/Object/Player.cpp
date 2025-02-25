@@ -213,6 +213,9 @@ void Player::InitParameter()
 	// HPƒo[‚Ì’·‚³
 	HP_BAR_LENGTH = jsonData_["HP_BAR_LENGTH"];
 
+	// HPƒo[‚Ì”¼•ª‚Ì’·‚³
+	HP_LENGTH_HARF = HP_BAR_LENGTH / 2;
+
 	// •KŽE‹ZƒQ[ƒW
 	specialAttackGauge_ = 0;
 
@@ -434,21 +437,21 @@ void Player::Draw(const float deltaTime)
 	{
 
 		// HPƒo[
-		DrawBox(200, 550, 200 + hpGauge, 570, GetColor(R, G, B), true);
+		DrawBox(HP_BAR_TOP_LEFT_X, HP_BAR_TOP_LEFT_Y, HP_BAR_TOP_LEFT_X + hpGauge, HP_BAR_BOTTOM_RIGHT_Y, GetColor(R, G, B), true);
 
-		// HPƒo[‚Ì” 
-		DrawExtendGraph(200, 550, 200 + HP_BAR_LENGTH, 570, hpBarImg_, true);
+		// HPƒo[‚Ì”wŒi
+		DrawExtendGraph(HP_BAR_TOP_LEFT_X, HP_BAR_TOP_LEFT_Y, HP_BAR_TOP_LEFT_X + HP_BAR_LENGTH, HP_BAR_BOTTOM_RIGHT_Y, hpBarImg_, true);
 
 		// •KŽE‹ZƒQ[ƒW
-		DrawBox(200, 600, 200 + specialAttackGauge, 620, 0x65bbe9, true);
+		DrawBox(SPECIAL_ATTACK_GAUGE_TOP_LEFT_X, SPECIAL_ATTACK_GAUGE_TOP_LEFT_Y, HP_BAR_TOP_LEFT_X + specialAttackGauge, SPECIAL_ATTACK_GAUGE_BOTTOM_RIGHT_Y, 0x65bbe9, true);
 
-		// •KŽE‹ZƒQ[ƒW‚Ì” 
-		DrawExtendGraph(200, 600, 200 + SPECIAL_ATTACK_GAUGE_LENGTH, 620, hpBarImg_, true);
+		// •KŽE‹ZƒQ[ƒW‚Ì”wŒi
+		DrawExtendGraph(SPECIAL_ATTACK_GAUGE_TOP_LEFT_X, SPECIAL_ATTACK_GAUGE_TOP_LEFT_Y, HP_BAR_TOP_LEFT_X + SPECIAL_ATTACK_GAUGE_LENGTH, SPECIAL_ATTACK_GAUGE_BOTTOM_RIGHT_Y, hpBarImg_, true);
 
 	}
 
 	// ƒAƒCƒRƒ“‚Ì•`‰æ
-	DrawRotaGraph(100, 550, 0.5, 0.0, iconImg_, true);
+	DrawRotaGraph(ICON_CENTER_X, ICON_CENTER_Y, ICON_SCALE, 0.0, iconImg_, true);
 
 }
 
@@ -799,7 +802,7 @@ void Player::ChangeIdle(void)
 	stateUpdate_ = std::bind(&Player::UpdateIdle, this, std::placeholders::_1);
 
 	// d—Í‚ð’Êíó‘Ô‚É–ß‚·
-	gravityScale_ = 1.0f;
+	gravityScale_ = NORMAL_GRAVITY_SCALE;
 
 }
 
@@ -1337,7 +1340,7 @@ void Player::UpdateSpecialAttack(const float deltaTime)
 		
 		// ƒGƒtƒFƒNƒg‚ð’Ç]‚³‚¹‚é
 		effekseerController_->FollowPos(collisionData_.projectilePos, transform_->quaRot.Mult(transform_->quaRot.AngleAxis(Utility::Deg2RadF(0.0f), Utility::AXIS_Y)),
-			{ 0.0f,500.0f,0.0f }, "SPECIAL_ATTACK");
+			EFFECT_LOCAL_POS, "SPECIAL_ATTACK");
 
 	}
 

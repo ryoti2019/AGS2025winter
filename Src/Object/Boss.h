@@ -66,12 +66,6 @@ public:
 		MAX
 	};
 
-	// HPバーの長さ
-	static constexpr int HP_BAR_LENGTH = 400;
-
-	// HPバーの半分の長さ
-	static constexpr int HP_LENGTH_HARF = HP_BAR_LENGTH / 2;
-
 	// HPバーの高さ
 	static constexpr int HP_HEIGHT = 10;
 

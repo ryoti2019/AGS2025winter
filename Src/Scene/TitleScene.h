@@ -26,6 +26,30 @@ public:
 
 private:
 
+	// サウンドの最大音量
+	static constexpr int SOUND_MAX = 255;
+
+	// BGMの音量の割合
+	static constexpr float SOUND_BGM_VOLUME = 0.5f;
+
+	// タイトルロゴのスクリーンX座標
+	static constexpr int TITLE_LOGO_X = 850;
+
+	// タイトルロゴのスクリーンY座標
+	static constexpr int TITLE_LOGO_Y = 300;
+
+	// タイトルロゴのスケール
+	static constexpr float TITLE_LOGO_SCALE = 1.0f;
+
+	// YESとNO画像のスケール変化量
+	static constexpr float SCALE_AMPLITUDE = 0.1f;
+
+	// Press A Button or Spaceの画像のスクリーンX座標
+	static constexpr float PRESS_A_BUTTON_OR_SPACE_X = 850;
+
+	// Press A Button or Spaceの画像のスクリーンY座標
+	static constexpr float PRESS_A_BUTTON_OR_SPACE_Y = 500;
+
 	// アクターの管理クラス
 	std::shared_ptr<ActorManager> actorManager_;
 

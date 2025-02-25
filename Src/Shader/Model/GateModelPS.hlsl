@@ -19,6 +19,13 @@ cbuffer cbParam : register(b4)
     float2 dummy;
 }
 
+// 揺れの設定
+// X座標の揺れの周波数
+static const float WAVE_FREQUENCY = 10.0f;
+
+// Y方向の揺れの振幅
+static const float WAVE_AMPLITUDE = 0.2f;
+
 Texture2D noise : register(t1); //テクスチャ
 SamplerState noiseMapSampler : register(s1);
 
@@ -29,7 +36,7 @@ float4 main(PS_INPUT PSInput) : SV_TARGET
     float2 uv = PSInput.uv;
 
     // 時間ベースで揺れを加える
-    uv.y += sin(g_time + uv.x * 10.0f) * 0.2f; // x座標に基づいてy方向に揺れ
+    uv.y += sin(g_time + uv.x * WAVE_FREQUENCY) * WAVE_AMPLITUDE; // x座標に基づいてy方向に揺れ
 
     // ノイズテクスチャをサンプリング
     float4 noiseColor = noise.Sample(noiseMapSampler, uv);

@@ -50,7 +50,7 @@ void TitleScene::InitBGMAndSE()
 	bgm_ = resMng_.Load(resMng_.RESOURCE_KEY[static_cast<int>(ResourceManager::SRC::SOUND_TITLE_SCENE_BGM)]).handleId_;
 
 	// BGMのボリュームの変更
-	ChangeVolumeSoundMem(255 * 0.5, bgm_);
+	ChangeVolumeSoundMem(SOUND_MAX * SOUND_BGM_VOLUME, bgm_);
 
 	// BGM再生
 	PlaySoundMem(bgm_, DX_PLAYTYPE_LOOP, true);
@@ -105,16 +105,16 @@ void TitleScene::Draw(const float deltaTime)
 	actorManager_->Draw(deltaTime);
 
 	// タイトルロゴの画像の描画
-	DrawRotaGraph(850, 300, 1.0, 0.0, titleLogoImg_, true);
+	DrawRotaGraph(TITLE_LOGO_X, TITLE_LOGO_Y, TITLE_LOGO_SCALE, 0.0, titleLogoImg_, true);
 
-	float scale = 1.0f;  // 拡大率
+	float scale = TITLE_LOGO_SCALE;  // 拡大率
 	const float animationSpeed = 0.05f; // アニメーションの速度
 
 	// スケールを時間に応じて変更（sin波で変化）
-	scale = 1.0 + 0.1f * std::sin(frameCount_ * animationSpeed);
+	scale = TITLE_LOGO_SCALE + SCALE_AMPLITUDE * std::sin(frameCount_ * animationSpeed);
 
 	// Press A Button or Spaceの画像の描画
-	DrawRotaGraph(850, 500, scale, 0.0, pressAButtonOrSpaceImg_, true);
+	DrawRotaGraph(PRESS_A_BUTTON_OR_SPACE_X, PRESS_A_BUTTON_OR_SPACE_Y, scale, 0.0, pressAButtonOrSpaceImg_, true);
 
 	// フレームカウントを更新
 	frameCount_++;

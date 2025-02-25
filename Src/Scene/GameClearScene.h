@@ -12,12 +12,7 @@ public:
 	GameClearScene();
 
 	// デストラクタ
-	//~GameClearScene() override = default;
-	~GameClearScene() override
-	{
-		int a = actorManager_.use_count();
-		int b = actorCreate_.use_count();
-	}
+	~GameClearScene()override = default;
 
 	void Init() override;
 	void Update(const float deltaTime) override;
@@ -30,6 +25,36 @@ public:
 	const std::shared_ptr<GameClearActorCreate>& GetActorCreate() const { return actorCreate_; }
 
 private:
+
+	// サウンドの最大音量
+	static constexpr int SOUND_MAX = 255;
+
+	// BGMの音量の割合
+	static constexpr float SOUND_BGM_VOLUME = 0.5f;
+
+	// ゲームクリア画像のスクリーンX座標
+	static constexpr int GAME_CLEAR_X = 850;
+
+	// ゲームクリア画像のスクリーンX座標
+	static constexpr int GAME_CLEAR_Y = 200;
+	
+	// ゲームクリア画像のスケール
+	static constexpr double GAME_CLEAR_SCALE = 2.0;
+
+	// ゲームクリア画像のアニメーションスピード
+	static constexpr float GAME_CLEAR_ANIM_SPEED = 0.05f;
+
+	// ゲームクリア画像の通常スケール
+	static constexpr float GAME_CLEAR_IMG_SCALE = 1.0f;
+
+	// ゲームクリア画像のスケール変化量
+	static constexpr float SCALE_AMPLITUDE = 0.1f;
+
+	// Press A Button or Spaceの画像のスクリーンのX座標
+	static constexpr float PRESS_A_BUTTON_OR_SPACE_X = 850;
+
+	// Press A Button or Spaceの画像のスクリーンのY座標
+	static constexpr float PRESS_A_BUTTON_OR_SPACE_Y = 500;
 
 	// アクターの管理クラス
 	std::shared_ptr<ActorManager> actorManager_;
