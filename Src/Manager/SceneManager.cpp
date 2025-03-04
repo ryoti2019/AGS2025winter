@@ -27,7 +27,7 @@ void SceneManager::Init()
 {
 
 	// シーンID
-	sceneId_ = SCENE_ID::TITLE;
+	sceneId_ = SCENE_ID::BOSS_APPEARANCE;
 	waitSceneId_ = SCENE_ID::NONE;
 
 	//関数ポインタの初期化
@@ -54,7 +54,7 @@ void SceneManager::Init()
 	isFirstRelease_ = true;
 
 	// 初期シーンの設定
-	DoChangeScene(SCENE_ID::TITLE);
+	DoChangeScene(SCENE_ID::BOSS_APPEARANCE);
 
 	// ゲームパッドを使うときtrue
 	isGamePad_ = false;

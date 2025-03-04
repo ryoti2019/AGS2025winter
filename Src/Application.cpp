@@ -46,14 +46,11 @@ void Application::Run()
 
 		// 本番は上にする
 		// デルタタイム
-		//auto nowTime = std::chrono::system_clock::now();
-		//deltaTime_ = static_cast<float>(
-			//std::chrono::duration_cast<std::chrono::nanoseconds>(nowTime - preTime_).count() / 1000000000.0);
+		auto nowTime = std::chrono::system_clock::now();
+		deltaTime_ = static_cast<float>(
+			std::chrono::duration_cast<std::chrono::nanoseconds>(nowTime - preTime_).count() / 1000000000.0);
 			
-		//preTime_ = nowTime;
-		
-		// デバッグの時使う
-		deltaTime_ = 1.0f / 60.0f;
+		preTime_ = nowTime;
 
 		inputManager.Update();
 		imGuiWrapper.Update();
