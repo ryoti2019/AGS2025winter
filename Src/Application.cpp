@@ -4,6 +4,7 @@
 #include "Manager/InputManager.h"
 #include "Manager/SceneManager.h"
 #include "../Lib/ImGuiWrapper.h"
+#include "../Common/FpsControl.h"
 #include "Application.h"
 
 Application* Application::instance_ = nullptr;
@@ -39,21 +40,22 @@ void Application::Run()
 	auto& inputManager = InputManager::GetInstance();
 	auto& sceneManager = SceneManager::GetInstance();
 	auto& imGuiWrapper = ImGuiWrapper::GetInstance();
+	auto& fpsControl = FpsControl::GetInstance();
 
 	// ゲームループ
 	while (ProcessMessage() == 0 && CheckHitKey(KEY_INPUT_ESCAPE) == 0)
 	{
 
+		//更新
+		fpsControl.Update();
+
 		// 本番は上にする
 		// デルタタイム
-		//auto nowTime = std::chrono::system_clock::now();
-		//deltaTime_ = static_cast<float>(
-			//std::chrono::duration_cast<std::chrono::nanoseconds>(nowTime - preTime_).count() / 1000000000.0);
+		auto nowTime = std::chrono::system_clock::now();
+		deltaTime_ = static_cast<float>(
+			std::chrono::duration_cast<std::chrono::nanoseconds>(nowTime - preTime_).count() / 1000000000.0);
 			
-		//preTime_ = nowTime;
-		
-		// デバッグの時使う
-		deltaTime_ = 1.0f / 60.0f;
+		preTime_ = nowTime;
 
 		inputManager.Update();
 		imGuiWrapper.Update();
@@ -73,6 +75,8 @@ void Application::Run()
 
 		ScreenFlip();
 
+		//待機
+		fpsControl.Wait();
 	}
 
 }
@@ -102,7 +106,7 @@ Application::Application()
 	isInitFail_(false),
 	isReleaseFail_(false),
 	preTime_(std::chrono::system_clock::now()),
-	deltaTime_(1.0f / 60.0f)
+	deltaTime_(0.0f)
 {
 
 	// アプリケーションの初期設定
@@ -133,13 +137,16 @@ Application::Application()
 	SetUseDirectInputFlag(true);
 	InputManager::CreateInstance();
 
-	//// リソース管理初期化
+	// リソース管理初期化
 	ResourceManager::CreateInstance();
 
-	//// シーン管理初期化
+	// シーン管理初期化
 	SceneManager::CreateInstance();
 
 	// デバッグ描画初期化
 	ImGuiWrapper::CreateInstance();
+
+	//fps制御
+	FpsControl::CreateInstance();
 
 }
